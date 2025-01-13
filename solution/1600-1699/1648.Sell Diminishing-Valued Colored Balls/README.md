@@ -1,10 +1,27 @@
-# [1648. 销售价值减少的颜色球](https://leetcode-cn.com/problems/sell-diminishing-valued-colored-balls)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1648.Sell%20Diminishing-Valued%20Colored%20Balls/README.md
+rating: 2050
+source: 第 214 场周赛 Q3
+tags:
+    - 贪心
+    - 数组
+    - 数学
+    - 二分查找
+    - 排序
+    - 堆（优先队列）
+---
+
+<!-- problem:start -->
+
+# [1648. 销售价值减少的颜色球](https://leetcode.cn/problems/sell-diminishing-valued-colored-balls)
 
 [English Version](/solution/1600-1699/1648.Sell%20Diminishing-Valued%20Colored%20Balls/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>你有一些球的库存 <code>inventory</code> ，里面包含着不同颜色的球。一个顾客想要 <strong>任意颜色</strong> 总数为 <code>orders</code> 的球。</p>
 
@@ -17,7 +34,7 @@
 <p> </p>
 
 <p><strong>示例 1：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1600-1699/1648.Sell%20Diminishing-Valued%20Colored%20Balls/images/jj.gif" style="width: 480px; height: 270px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1600-1699/1648.Sell%20Diminishing-Valued%20Colored%20Balls/images/jj.gif" style="width: 480px; height: 270px;" />
 <pre>
 <b>输入：</b>inventory = [2,5], orders = 4
 <b>输出：</b>14
@@ -59,32 +76,171 @@
 	<li><code>1 <= orders <= min(sum(inventory[i]), 10<sup>9</sup>)</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：贪心 + 优化模拟
+
+要使得总价值最大，我们可以贪心地每次卖出数量最多的一种颜色的球。由于 `orders` 值域较大，如果直接简单地模拟，会超时。因此，我们需要优化模拟的过程。
+
+实际上，我们不需要一次次进行模拟，我们可以跟踪数量最多的同色球的种类数 `cnt`，每一次可以卖出一批球，从而达到加速模拟的目的。
+
+时间复杂度 $O(n\log n)$，空间复杂度 $O(1)$。其中 $n$ 为数组 `inventory` 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def maxProfit(self, inventory: List[int], orders: int) -> int:
+        inventory.sort(reverse=True)
+        mod = 10**9 + 7
+        ans = i = 0
+        n = len(inventory)
+        while orders > 0:
+            while i < n and inventory[i] >= inventory[0]:
+                i += 1
+            nxt = 0
+            if i < n:
+                nxt = inventory[i]
+            cnt = i
+            x = inventory[0] - nxt
+            tot = cnt * x
+            if tot > orders:
+                decr = orders // cnt
+                a1, an = inventory[0] - decr + 1, inventory[0]
+                ans += (a1 + an) * decr // 2 * cnt
+                ans += (inventory[0] - decr) * (orders % cnt)
+            else:
+                a1, an = nxt + 1, inventory[0]
+                ans += (a1 + an) * x // 2 * cnt
+                inventory[0] = nxt
+            orders -= tot
+            ans %= mod
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
+class Solution {
+    private static final int MOD = (int) 1e9 + 7;
 
+    public int maxProfit(int[] inventory, int orders) {
+        Arrays.sort(inventory);
+        int n = inventory.length;
+        for (int i = 0, j = n - 1; i < j; ++i, --j) {
+            int t = inventory[i];
+            inventory[i] = inventory[j];
+            inventory[j] = t;
+        }
+        long ans = 0;
+        int i = 0;
+        while (orders > 0) {
+            while (i < n && inventory[i] >= inventory[0]) {
+                ++i;
+            }
+            int nxt = i < n ? inventory[i] : 0;
+            int cnt = i;
+            long x = inventory[0] - nxt;
+            long tot = cnt * x;
+            if (tot > orders) {
+                int decr = orders / cnt;
+                long a1 = inventory[0] - decr + 1, an = inventory[0];
+                ans += (a1 + an) * decr / 2 * cnt;
+                ans += (a1 - 1) * (orders % cnt);
+            } else {
+                long a1 = nxt + 1, an = inventory[0];
+                ans += (a1 + an) * x / 2 * cnt;
+                inventory[0] = nxt;
+            }
+            orders -= tot;
+            ans %= MOD;
+        }
+        return (int) ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& inventory, int orders) {
+        long ans = 0, mod = 1e9 + 7;
+        int i = 0, n = inventory.size();
+        sort(inventory.rbegin(), inventory.rend());
+        while (orders > 0) {
+            while (i < n && inventory[i] >= inventory[0]) {
+                ++i;
+            }
+            int nxt = i < n ? inventory[i] : 0;
+            int cnt = i;
+            long x = inventory[0] - nxt;
+            long tot = cnt * x;
+            if (tot > orders) {
+                int decr = orders / cnt;
+                long a1 = inventory[0] - decr + 1, an = inventory[0];
+                ans += (a1 + an) * decr / 2 * cnt;
+                ans += (a1 - 1) * (orders % cnt);
+            } else {
+                long a1 = nxt + 1, an = inventory[0];
+                ans += (a1 + an) * x / 2 * cnt;
+                inventory[0] = nxt;
+            }
+            orders -= tot;
+            ans %= mod;
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func maxProfit(inventory []int, orders int) int {
+	var mod int = 1e9 + 7
+	i, n, ans := 0, len(inventory), 0
+	sort.Ints(inventory)
+	for i, j := 0, n-1; i < j; i, j = i+1, j-1 {
+		inventory[i], inventory[j] = inventory[j], inventory[i]
+	}
+	for orders > 0 {
+		for i < n && inventory[i] >= inventory[0] {
+			i++
+		}
+		nxt := 0
+		if i < n {
+			nxt = inventory[i]
+		}
+		cnt := i
+		x := inventory[0] - nxt
+		tot := cnt * x
+		if tot > orders {
+			decr := orders / cnt
+			a1, an := inventory[0]-decr+1, inventory[0]
+			ans += (a1 + an) * decr / 2 * cnt
+			ans += (a1 - 1) * (orders % cnt)
+		} else {
+			a1, an := nxt+1, inventory[0]
+			ans += (a1 + an) * x / 2 * cnt
+			inventory[0] = nxt
+		}
+		orders -= tot
+		ans %= mod
+	}
+	return ans
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

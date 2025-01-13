@@ -1,23 +1,26 @@
-# [189. 旋转数组](https://leetcode-cn.com/problems/rotate-array)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0189.Rotate%20Array/README.md
+tags:
+    - 数组
+    - 数学
+    - 双指针
+---
+
+<!-- problem:start -->
+
+# [189. 轮转数组](https://leetcode.cn/problems/rotate-array)
 
 [English Version](/solution/0100-0199/0189.Rotate%20Array/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个数组，将数组中的元素向右移动 <code>k</code><em> </em>个位置，其中 <code>k</code><em> </em>是非负数。</p>
+<p>给定一个整数数组 <code>nums</code>，将数组中的元素向右轮转 <code>k</code><em>&nbsp;</em>个位置，其中&nbsp;<code>k</code><em>&nbsp;</em>是非负数。</p>
 
-<p> </p>
-
-<p><strong>进阶：</strong></p>
-
-<ul>
-	<li>尽可能想出更多的解决方案，至少有三种不同的方法可以解决这个问题。</li>
-	<li>你可以使用空间复杂度为 O(1) 的 <strong>原地 </strong>算法解决这个问题吗？</li>
-</ul>
-
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>示例 1:</strong></p>
 
@@ -25,176 +28,168 @@
 <strong>输入:</strong> nums = [1,2,3,4,5,6,7], k = 3
 <strong>输出:</strong> <code>[5,6,7,1,2,3,4]</code>
 <strong>解释:</strong>
-向右旋转 1 步: <code>[7,1,2,3,4,5,6]</code>
-向右旋转 2 步: <code>[6,7,1,2,3,4,5]
-</code>向右旋转 3 步: <code>[5,6,7,1,2,3,4]</code>
+向右轮转 1 步: <code>[7,1,2,3,4,5,6]</code>
+向右轮转 2 步: <code>[6,7,1,2,3,4,5]
+</code>向右轮转 3 步: <code>[5,6,7,1,2,3,4]</code>
 </pre>
 
-<p><strong>示例 2:</strong></p>
+<p><strong>示例&nbsp;2:</strong></p>
 
 <pre>
 <strong>输入：</strong>nums = [-1,-100,3,99], k = 2
 <strong>输出：</strong>[3,99,-1,-100]
-<strong>解释:</strong>
-向右旋转 1 步: [99,-1,-100,3]
-向右旋转 2 步: [3,99,-1,-100]</pre>
+<strong>解释:</strong> 
+向右轮转 1 步: [99,-1,-100,3]
+向右轮转 2 步: [3,99,-1,-100]</pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>1 <= nums.length <= 2 * 10<sup>4</sup></code></li>
-	<li><code>-2<sup>31</sup> <= nums[i] <= 2<sup>31</sup> - 1</code></li>
-	<li><code>0 <= k <= 10<sup>5</sup></code></li>
+	<li><code>1 &lt;= nums.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>-2<sup>31</sup> &lt;= nums[i] &lt;= 2<sup>31</sup> - 1</code></li>
+	<li><code>0 &lt;= k &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<p>&nbsp;</p>
+
+<p><strong>进阶：</strong></p>
+
 <ul>
+	<li>尽可能想出更多的解决方案，至少有 <strong>三种</strong> 不同的方法可以解决这个问题。</li>
+	<li>你可以使用空间复杂度为&nbsp;<code>O(1)</code> 的&nbsp;<strong>原地&nbsp;</strong>算法解决这个问题吗？</li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-若 `k=3`，`nums=[1,2,3,4,5,6,7]`。
+### 方法一：三次翻转
 
-先将 `nums` 整体翻转：`[1,2,3,4,5,6,7]` -> `[7,6,5,4,3,2,1]`
+我们不妨记数组长度为 $n$，然后将 $k$ 对 $n$ 取模，得到实际需要旋转的步数 $k$。
 
-再翻转 `0~k-1` 范围内的元素：`[7,6,5,4,3,2,1]` -> `[5,6,7,4,3,2,1]`
+接下来，我们进行三次翻转，即可得到最终结果：
 
-最后翻转 `k~n-1` 范围内的元素，即可得到最终结果：`[5,6,7,4,3,2,1]` -> `[5,6,7,1,2,3,4]`
+1. 将整个数组翻转
+2. 将前 $k$ 个元素翻转
+3. 将后 $n - k$ 个元素翻转
+
+举个例子，对于数组 $[1, 2, 3, 4, 5, 6, 7]$, $k = 3$, $n = 7$, $k \bmod n = 3$。
+
+1. 第一次翻转，将整个数组翻转，得到 $[7, 6, 5, 4, 3, 2, 1]$。
+2. 第二次翻转，将前 $k$ 个元素翻转，得到 $[5, 6, 7, 4, 3, 2, 1]$。
+3. 第三次翻转，将后 $n - k$ 个元素翻转，得到 $[5, 6, 7, 1, 2, 3, 4]$，即为最终结果。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def rotate(self, nums: List[int], k: int) -> None:
-        """
-        Do not return anything, modify nums in-place instead.
-        """
+        def reverse(i: int, j: int):
+            while i < j:
+                nums[i], nums[j] = nums[j], nums[i]
+                i, j = i + 1, j - 1
+
         n = len(nums)
         k %= n
-        if n < 2 or k == 0:
-            return
-        nums[:] = nums[::-1]
-        nums[:k] = nums[:k][::-1]
-        nums[k:] = nums[k:][::-1]
+        reverse(0, n - 1)
+        reverse(0, k - 1)
+        reverse(k, n - 1)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
+    private int[] nums;
+
     public void rotate(int[] nums, int k) {
-        if (nums == null) {
-            return;
-        }
+        this.nums = nums;
         int n = nums.length;
         k %= n;
-        if (n < 2 || k == 0) {
-            return;
-        }
-
-        rotate(nums, 0, n - 1);
-        rotate(nums, 0, k - 1);
-        rotate(nums, k, n - 1);
+        reverse(0, n - 1);
+        reverse(0, k - 1);
+        reverse(k, n - 1);
     }
 
-    private void rotate(int[] nums, int i, int j) {
-        while (i < j) {
+    private void reverse(int i, int j) {
+        for (; i < j; ++i, --j) {
             int t = nums[i];
             nums[i] = nums[j];
             nums[j] = t;
-            ++i;
-            --j;
         }
     }
 }
 ```
 
-### **JavaScript**
+#### C++
 
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-使用原生 API 将数组的 `k~n-1` 范围内的元素插入到前面
-
-```js
-/**
- * @param {number[]} nums
- * @param {number} k
- * @return {void} Do not return anything, modify nums in-place instead.
- */
-var rotate = function (nums, k) {
-    k %= nums.length;
-    nums.splice(0, 0, ...nums.splice(-k, k));
-};
-```
-
-使用三次数组翻转 + 双指针实现翻转
-
-```js
-/**
- * @param {number[]} nums
- * @param {number} k
- * @return {void} Do not return anything, modify nums in-place instead.
- */
-var rotate = function (nums, k) {
-    k %= nums.length;
-    // 使用三次数组翻转
-    reverse(nums, 0, nums.length - 1);
-    reverse(nums, 0, k - 1);
-    reverse(nums, k, nums.length - 1);
-};
-function reverse(nums, start, end) {
-    // 双指针实现翻转
-    while (start < end) {
-        const temp = nums[start];
-        nums[start] = nums[end];
-        nums[end] = temp;
-        start += 1;
-        end -= 1;
+```cpp
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        int n = nums.size();
+        k %= n;
+        reverse(nums.begin(), nums.end());
+        reverse(nums.begin(), nums.begin() + k);
+        reverse(nums.begin() + k, nums.end());
     }
-}
+};
 ```
 
-### **Go**
+#### Go
 
 ```go
 func rotate(nums []int, k int) {
 	n := len(nums)
 	k %= n
-
-	reverse(nums, 0, n-1)
-	reverse(nums, 0, k-1)
-	reverse(nums, k, n-1)
-}
-
-func reverse(nums []int, i, j int) {
-	for i < j {
-		nums[i], nums[j] = nums[j], nums[i]
-		i++
-		j--
+	reverse := func(i, j int) {
+		for ; i < j; i, j = i+1, j-1 {
+			nums[i], nums[j] = nums[j], nums[i]
+		}
 	}
+	reverse(0, n-1)
+	reverse(0, k-1)
+	reverse(k, n-1)
 }
 ```
 
-### **Rust**
+#### TypeScript
+
+```ts
+/**
+ Do not return anything, modify nums in-place instead.
+ */
+function rotate(nums: number[], k: number): void {
+    const n: number = nums.length;
+    k %= n;
+    const reverse = (i: number, j: number): void => {
+        for (; i < j; ++i, --j) {
+            const t: number = nums[i];
+            nums[i] = nums[j];
+            nums[j] = t;
+        }
+    };
+    reverse(0, n - 1);
+    reverse(0, k - 1);
+    reverse(k, n - 1);
+}
+```
+
+#### Rust
 
 ```rust
 impl Solution {
     pub fn rotate(nums: &mut Vec<i32>, k: i32) {
         let n = nums.len();
-        let k = k as usize % n;
-        if n == 1 || k == 0 {
-            return;
-        }
-
+        let k = (k as usize) % n;
         nums.reverse();
         nums[..k].reverse();
         nums[k..].reverse();
@@ -202,10 +197,55 @@ impl Solution {
 }
 ```
 
-### **...**
+#### JavaScript
 
+```js
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {void} Do not return anything, modify nums in-place instead.
+ */
+var rotate = function (nums, k) {
+    const n = nums.length;
+    k %= n;
+    const reverse = (i, j) => {
+        for (; i < j; ++i, --j) {
+            [nums[i], nums[j]] = [nums[j], nums[i]];
+        }
+    };
+    reverse(0, n - 1);
+    reverse(0, k - 1);
+    reverse(k, n - 1);
+};
 ```
 
+#### C#
+
+```cs
+public class Solution {
+    private int[] nums;
+
+    public void Rotate(int[] nums, int k) {
+        this.nums = nums;
+        int n = nums.Length;
+        k %= n;
+        reverse(0, n - 1);
+        reverse(0, k - 1);
+        reverse(k, n - 1);
+    }
+
+    private void reverse(int i, int j) {
+        for (; i < j; ++i, --j) {
+            int t = nums[i];
+            nums[i] = nums[j];
+            nums[j] = t;
+        }
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

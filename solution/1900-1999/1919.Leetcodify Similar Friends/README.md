@@ -1,12 +1,22 @@
-# [1919. Leetcodify Similar Friends](https://leetcode-cn.com/problems/leetcodify-similar-friends)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1919.Leetcodify%20Similar%20Friends/README.md
+tags:
+    - 数据库
+---
+
+<!-- problem:start -->
+
+# [1919. 兴趣相同的朋友 🔒](https://leetcode.cn/problems/leetcodify-similar-friends)
 
 [English Version](/solution/1900-1999/1919.Leetcodify%20Similar%20Friends/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>Table: <code>Listens</code></p>
+<p>表: <code>Listens</code></p>
 
 <pre>
 +-------------+---------+
@@ -16,13 +26,13 @@
 | song_id     | int     |
 | day         | date    |
 +-------------+---------+
-There is no primary key for this table. It may contain duplicates.
-Each row of this table indicates that the user user_id listened to the song song_id on the day day.
+该表没有主键，因此会存在重复的行。
+该表的每一行所代表的含义是：用户（user_id）在某天（day）听了某首歌曲（song_id）。
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Table: <code>Friendship</code></p>
+<p>表: <code>Friendship</code></p>
 
 <pre>
 +---------------+---------+
@@ -31,27 +41,30 @@ Each row of this table indicates that the user user_id listened to the song song
 | user1_id      | int     |
 | user2_id      | int     |
 +---------------+---------+
-(user1_id, user2_id) is the primary key for this table.
-Each row of this table indicates that the users user1_id and user2_id are friends.
-Note that user1_id &lt; user2_id.
+(user1_id, user2_id) 是该表的主键。
+该表的每一行所代表的含义是，用户（user1_id, user2_id）是朋友。
+注意：user1_id &lt; user2_id。
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query to report the similar friends of Leetcodify users. A user <code>x</code> and user <code>y</code> are&nbsp;similar friends if:</p>
+<p>请写一段SQL查询获取到兴趣相同的朋友。用户 <code>x</code>&nbsp;和 用户 <code>y</code>&nbsp;是兴趣相同的朋友，需满足下述条件：</p>
 
 <ul>
-	<li>Users <code>x</code> and <code>y</code> are friends, and</li>
-	<li>Users <code>x</code> and <code>y</code> listened to the same three or more different songs <strong>on the same day</strong>.</li>
+	<li>用户&nbsp;<code>x</code>&nbsp;和&nbsp;<code>y</code>&nbsp;是朋友，并且</li>
+	<li>用户&nbsp;<code>x</code> and <code>y</code>&nbsp;在同一天内听过相同的歌曲，且数量大于等于三首.</li>
 </ul>
 
-<p>Return the result table in <strong>any order</strong>. Note that you must return the similar pairs of friends the same way they were represented in the input (i.e., always <code>user1_id &lt; user2_id</code>).</p>
+<p>结果表&nbsp;<strong>无需排序&nbsp;</strong>。注意：返回的结果需要和源数据表的呈现方式相同&nbsp;（例如，&nbsp;需满足&nbsp;<code>user1_id &lt; user2_id</code>）。</p>
 
-<p>The query result format is in the following example:</p>
+<p>结果表的格式如下例。</p>
 
 <p>&nbsp;</p>
 
+<p><b>示例 1：</b></p>
+
 <pre>
+<strong>输入：</strong>
 Listens table:
 +---------+---------+------------+
 | user_id | song_id | day        |
@@ -72,7 +85,6 @@ Listens table:
 | 5       | 11      | 2021-03-16 |
 | 5       | 12      | 2021-03-16 |
 +---------+---------+------------+
-
 Friendship table:
 +----------+----------+
 | user1_id | user2_id |
@@ -81,32 +93,44 @@ Friendship table:
 | 2        | 4        |
 | 2        | 5        |
 +----------+----------+
-
-Result table:
+<b>输出：</b>
 +----------+----------+
 | user1_id | user2_id |
 +----------+----------+
 | 1        | 2        |
 +----------+----------+
+<strong>解释：</strong>
+用户 1 和 2 是朋友, 并且他们在同一天内都听了10、11、12的歌曲。所以，他们是兴趣相同的朋友。
+用户 1 和 3 在同一天内都听了10、11、12的歌曲，但他们不是朋友。
+用户 2 和 4 是朋友，但他们同一天内听过相同的歌曲的数量小于3。
+用户 2 和 5 是朋友，并且在都听了了10、11、12的歌曲，但不在同一天内。</pre>
 
-Users 1 and 2 are friends, and they listened to songs 10, 11, and 12 on the same day. They are similar friends.
-Users 1 and 3 listened to songs 10, 11, and 12 on the same day, but they are not friends.
-Users 2 and 4 are friends, but they did not listen to the same three different songs.
-Users 2 and 5 are friends and listened to songs 10, 11, and 12, but they did not listen to them on the same day.
-</pre>
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **SQL**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### MySQL
 
 ```sql
-
+# Write your MySQL query statement below
+SELECT DISTINCT user1_id, user2_id
+FROM
+    Friendship AS f
+    LEFT JOIN Listens AS l1 ON user1_id = l1.user_id
+    LEFT JOIN Listens AS l2 ON user2_id = l2.user_id
+WHERE l1.song_id = l2.song_id AND l1.day = l2.day
+GROUP BY 1, 2, l1.day
+HAVING COUNT(DISTINCT l1.song_id) >= 3;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

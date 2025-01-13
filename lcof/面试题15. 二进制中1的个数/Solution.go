@@ -1,8 +1,7 @@
-func hammingWeight(num uint32) int {
-	ans := 0
-	for num != 0 {
-		num &= num - 1
+func hammingWeight(n uint32) (ans int) {
+	for n != 0 {
+		n &= n - 1
 		ans++
 	}
-	return ans
+	return
 }

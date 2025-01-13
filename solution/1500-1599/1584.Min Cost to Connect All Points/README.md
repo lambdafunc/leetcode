@@ -1,10 +1,25 @@
-# [1584. 连接所有点的最小费用](https://leetcode-cn.com/problems/min-cost-to-connect-all-points)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1584.Min%20Cost%20to%20Connect%20All%20Points/README.md
+rating: 1857
+source: 第 206 场周赛 Q3
+tags:
+    - 并查集
+    - 图
+    - 数组
+    - 最小生成树
+---
+
+<!-- problem:start -->
+
+# [1584. 连接所有点的最小费用](https://leetcode.cn/problems/min-cost-to-connect-all-points)
 
 [English Version](/solution/1500-1599/1584.Min%20Cost%20to%20Connect%20All%20Points/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个<code>points</code>&nbsp;数组，表示 2D 平面上的一些点，其中&nbsp;<code>points[i] = [x<sub>i</sub>, y<sub>i</sub>]</code>&nbsp;。</p>
 
@@ -16,13 +31,13 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1584.Min%20Cost%20to%20Connect%20All%20Points/images/d.png" style="height:268px; width:214px" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1584.Min%20Cost%20to%20Connect%20All%20Points/images/d.png" style="height:268px; width:214px; background:#e5e5e5" /></p>
 
 <pre>
 <strong>输入：</strong>points = [[0,0],[2,2],[3,10],[5,2],[7,0]]
 <strong>输出：</strong>20
 <strong>解释：
-</strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1584.Min%20Cost%20to%20Connect%20All%20Points/images/c.png" style="height:268px; width:214px" />
+</strong><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1584.Min%20Cost%20to%20Connect%20All%20Points/images/c.png" style="height:268px; width:214px; background:#e5e5e5" />
 我们可以按照上图所示连接所有点得到最小总费用，总费用为 20 。
 注意到任意两个点之间只有唯一一条路径互相到达。
 </pre>
@@ -65,140 +80,303 @@
 	<li>所有点&nbsp;<code>(x<sub>i</sub>, y<sub>i</sub>)</code>&nbsp;两两不同。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-最小生成树 + 并查集。先将所有边按照长度由小到大进行排序，循环遍历每条边，逐个加入到图中，当所有点达到一个连通状态时，退出循环，返回此时的总费用即可。
+### 方法一：朴素 Prim 算法
 
-模板 1——朴素并查集：
+我们定义一个数组 $dist$，其中 $dist[i]$ 表示点 $i$ 到当前生成树的距离，初始时 $dist[0] = 0$，其余均为 $+\infty$，定义一个数组 $vis$，其中 $vis[i]$ 表示点 $i$ 是否在生成树中，初始时所有点均不在生成树中，定义一个二维数组 $g$，其中 $g[i][j]$ 表示点 $i$ 到点 $j$ 的距离，那么我们的目标是将所有点都加入到生成树中，且总费用最小。
 
-```python
-# 初始化，p存储每个点的父节点
-p = list(range(n))
+我们每次从不在生成树中的点中选取一个距离最小的点 $i$，将点 $i$ 加入到生成树中，并将 $i$ 到其它点的距离更新到 $dist$ 数组中，直到所有点都在生成树中为止。
 
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        # 路径压缩
-        p[x] = find(p[x])
-    return p[x]
-
-# 合并a和b所在的两个集合
-p[find(a)] = find(b)
-```
-
-模板 2——维护 size 的并查集：
-
-```python
-# 初始化，p存储每个点的父节点，size只有当节点是祖宗节点时才有意义，表示祖宗节点所在集合中，点的数量
-p = list(range(n))
-size = [1] * n
-
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        # 路径压缩
-        p[x] = find(p[x])
-    return p[x]
-
-# 合并a和b所在的两个集合
-if find(a) != find(b):
-    size[find(b)] += size[find(a)]
-    p[find(a)] = find(b)
-```
-
-模板 3——维护到祖宗节点距离的并查集：
-
-```python
-# 初始化，p存储每个点的父节点，d[x]存储x到p[x]的距离
-p = list(range(n))
-d = [0] * n
-
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        t = find(p[x])
-        d[x] += d[p[x]]
-        p[x] = t
-    return p[x]
-
-# 合并a和b所在的两个集合
-p[find(a)] = find(b)
-d[find(a)] = distance
-```
+该算法适用于稠密图，时间复杂度 $O(n^2)$，空间复杂度 $O(n^2)$。其中 $n$ 为点的数量。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def minCostConnectPoints(self, points: List[List[int]]) -> int:
         n = len(points)
-        p = list(range(n))
+        g = [[0] * n for _ in range(n)]
+        dist = [inf] * n
+        vis = [False] * n
+        for i, (x1, y1) in enumerate(points):
+            for j in range(i + 1, n):
+                x2, y2 = points[j]
+                t = abs(x1 - x2) + abs(y1 - y2)
+                g[i][j] = g[j][i] = t
+        dist[0] = 0
+        ans = 0
+        for _ in range(n):
+            i = -1
+            for j in range(n):
+                if not vis[j] and (i == -1 or dist[j] < dist[i]):
+                    i = j
+            vis[i] = True
+            ans += dist[i]
+            for j in range(n):
+                if not vis[j]:
+                    dist[j] = min(dist[j], g[i][j])
+        return ans
+```
 
-        def find(x):
+#### Java
+
+```java
+class Solution {
+    public int minCostConnectPoints(int[][] points) {
+        final int inf = 1 << 30;
+        int n = points.length;
+        int[][] g = new int[n][n];
+        for (int i = 0; i < n; ++i) {
+            int x1 = points[i][0], y1 = points[i][1];
+            for (int j = i + 1; j < n; ++j) {
+                int x2 = points[j][0], y2 = points[j][1];
+                int t = Math.abs(x1 - x2) + Math.abs(y1 - y2);
+                g[i][j] = t;
+                g[j][i] = t;
+            }
+        }
+        int[] dist = new int[n];
+        boolean[] vis = new boolean[n];
+        Arrays.fill(dist, inf);
+        dist[0] = 0;
+        int ans = 0;
+        for (int i = 0; i < n; ++i) {
+            int j = -1;
+            for (int k = 0; k < n; ++k) {
+                if (!vis[k] && (j == -1 || dist[k] < dist[j])) {
+                    j = k;
+                }
+            }
+            vis[j] = true;
+            ans += dist[j];
+            for (int k = 0; k < n; ++k) {
+                if (!vis[k]) {
+                    dist[k] = Math.min(dist[k], g[j][k]);
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int minCostConnectPoints(vector<vector<int>>& points) {
+        int n = points.size();
+        int g[n][n];
+        for (int i = 0; i < n; ++i) {
+            int x1 = points[i][0], y1 = points[i][1];
+            for (int j = i + 1; j < n; ++j) {
+                int x2 = points[j][0], y2 = points[j][1];
+                int t = abs(x1 - x2) + abs(y1 - y2);
+                g[i][j] = t;
+                g[j][i] = t;
+            }
+        }
+        int dist[n];
+        bool vis[n];
+        memset(dist, 0x3f, sizeof(dist));
+        memset(vis, false, sizeof(vis));
+        dist[0] = 0;
+        int ans = 0;
+        for (int i = 0; i < n; ++i) {
+            int j = -1;
+            for (int k = 0; k < n; ++k) {
+                if (!vis[k] && (j == -1 || dist[k] < dist[j])) {
+                    j = k;
+                }
+            }
+            vis[j] = true;
+            ans += dist[j];
+            for (int k = 0; k < n; ++k) {
+                if (!vis[k]) {
+                    dist[k] = min(dist[k], g[j][k]);
+                }
+            }
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func minCostConnectPoints(points [][]int) (ans int) {
+	n := len(points)
+	g := make([][]int, n)
+	vis := make([]bool, n)
+	dist := make([]int, n)
+	for i := range g {
+		g[i] = make([]int, n)
+		dist[i] = 1 << 30
+	}
+	for i := range g {
+		x1, y1 := points[i][0], points[i][1]
+		for j := i + 1; j < n; j++ {
+			x2, y2 := points[j][0], points[j][1]
+			t := abs(x1-x2) + abs(y1-y2)
+			g[i][j] = t
+			g[j][i] = t
+		}
+	}
+	dist[0] = 0
+	for i := 0; i < n; i++ {
+		j := -1
+		for k := 0; k < n; k++ {
+			if !vis[k] && (j == -1 || dist[k] < dist[j]) {
+				j = k
+			}
+		}
+		vis[j] = true
+		ans += dist[j]
+		for k := 0; k < n; k++ {
+			if !vis[k] {
+				dist[k] = min(dist[k], g[j][k])
+			}
+		}
+	}
+	return
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+```
+
+#### TypeScript
+
+```ts
+function minCostConnectPoints(points: number[][]): number {
+    const n = points.length;
+    const g: number[][] = Array(n)
+        .fill(0)
+        .map(() => Array(n).fill(0));
+    const dist: number[] = Array(n).fill(1 << 30);
+    const vis: boolean[] = Array(n).fill(false);
+    for (let i = 0; i < n; ++i) {
+        const [x1, y1] = points[i];
+        for (let j = i + 1; j < n; ++j) {
+            const [x2, y2] = points[j];
+            const t = Math.abs(x1 - x2) + Math.abs(y1 - y2);
+            g[i][j] = t;
+            g[j][i] = t;
+        }
+    }
+    let ans = 0;
+    dist[0] = 0;
+    for (let i = 0; i < n; ++i) {
+        let j = -1;
+        for (let k = 0; k < n; ++k) {
+            if (!vis[k] && (j === -1 || dist[k] < dist[j])) {
+                j = k;
+            }
+        }
+        vis[j] = true;
+        ans += dist[j];
+        for (let k = 0; k < n; ++k) {
+            if (!vis[k]) {
+                dist[k] = Math.min(dist[k], g[j][k]);
+            }
+        }
+    }
+    return ans;
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：Kruskal 算法
+
+我们先将所有边按照长度由小到大进行排序，循环遍历每条边，逐个加入到图中，当所有点达到一个连通状态时，退出循环，返回此时的总费用即可。
+
+时间复杂度 $O(m \times \log m)$，空间复杂度 $O(m)$。其中 $m$ 为边的数量，本题中 $m = n^2$。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def minCostConnectPoints(self, points: List[List[int]]) -> int:
+        def find(x: int) -> int:
             if p[x] != x:
                 p[x] = find(p[x])
             return p[x]
 
-        edges = []
-        for i in range(n):
-            x1, y1 = points[i]
+        n = len(points)
+        g = []
+        for i, (x1, y1) in enumerate(points):
             for j in range(i + 1, n):
                 x2, y2 = points[j]
-                edges.append([abs(x1 - x2) + abs(y1 - y2), i, j])
-        edges.sort()
-        res = 0
-        for cost, i, j in edges:
-            if find(i) == find(j):
+                t = abs(x1 - x2) + abs(y1 - y2)
+                g.append((t, i, j))
+        p = list(range(n))
+        ans = 0
+        for cost, i, j in sorted(g):
+            pa, pb = find(i), find(j)
+            if pa == pb:
                 continue
-            p[find(i)] = find(j)
+            p[pa] = pb
+            ans += cost
             n -= 1
-            res += cost
             if n == 1:
-                return res
-        return 0
+                break
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     private int[] p;
+
     public int minCostConnectPoints(int[][] points) {
         int n = points.length;
+        List<int[]> g = new ArrayList<>();
+        for (int i = 0; i < n; ++i) {
+            int x1 = points[i][0], y1 = points[i][1];
+            for (int j = i + 1; j < n; ++j) {
+                int x2 = points[j][0], y2 = points[j][1];
+                g.add(new int[] {Math.abs(x1 - x2) + Math.abs(y1 - y2), i, j});
+            }
+        }
+        g.sort(Comparator.comparingInt(a -> a[0]));
         p = new int[n];
         for (int i = 0; i < n; ++i) {
             p[i] = i;
         }
-        List<int[]> edges = new ArrayList<>();
-        for (int i = 0; i < n; ++i) {
-            int x1 = points[i][0], y1 = points[i][1];
-            for (int j =  i + 1; j < n; ++j) {
-                int x2 = points[j][0], y2 = points[j][1];
-                edges.add(new int[]{Math.abs(x1 - x2) + Math.abs(y1 - y2), i, j});
-            }
-        }
-        edges.sort(Comparator.comparingInt(a -> a[0]));
-        int res = 0;
-        for (int[] e : edges) {
-            if (find(e[1]) == find(e[2])) {
+        int ans = 0;
+        for (int[] e : g) {
+            int cost = e[0], i = e[1], j = e[2];
+            if (find(i) == find(j)) {
                 continue;
             }
-            p[find(e[1])] = find(e[2]);
-            --n;
-            res += e[0];
-            if (n == 1) {
-                break;
+            p[find(i)] = find(j);
+            ans += cost;
+            if (--n == 1) {
+                return ans;
             }
         }
-        return res;
+        return 0;
     }
 
     private int find(int x) {
@@ -210,7 +388,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -219,29 +397,26 @@ public:
 
     int minCostConnectPoints(vector<vector<int>>& points) {
         int n = points.size();
-        p.resize(n);
-        for (int i = 0; i < n; ++i) p[i] = i;
-        vector<vector<int>> edges;
-        for (int i = 0; i < n; ++i)
-        {
+        vector<vector<int>> g;
+        for (int i = 0; i < n; ++i) {
             int x1 = points[i][0], y1 = points[i][1];
-            for (int j = i + 1; j < n; ++j)
-            {
+            for (int j = i + 1; j < n; ++j) {
                 int x2 = points[j][0], y2 = points[j][1];
-                edges.push_back({abs(x1 - x2) + abs(y1 - y2), i, j});
+                g.push_back({abs(x1 - x2) + abs(y1 - y2), i, j});
             }
         }
-        sort(edges.begin(), edges.end());
-        int res = 0;
-        for (auto e : edges)
-        {
-            if (find(e[1]) == find(e[2])) continue;
-            p[find(e[1])] = find(e[2]);
-            --n;
-            res += e[0];
-            if (n == 1) break;
+        sort(g.begin(), g.end());
+        p.resize(n);
+        for (int i = 0; i < n; ++i) p[i] = i;
+        int ans = 0;
+        for (auto& e : g) {
+            int cost = e[0], i = e[1], j = e[2];
+            if (find(i) == find(j)) continue;
+            p[find(i)] = find(j);
+            ans += cost;
+            if (--n == 1) return ans;
         }
-        return res;
+        return 0;
     }
 
     int find(int x) {
@@ -251,62 +426,59 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-var p []int
-
 func minCostConnectPoints(points [][]int) int {
-    n := len(points)
-    p = make([]int, n)
-    for i := 0; i < n; i++ {
-        p[i] = i
-    }
-    var edges [][]int
-    for i := 0; i < n; i++ {
-        x1, y1 := points[i][0], points[i][1]
-        for j := i + 1; j < n; j++ {
-            x2, y2 := points[j][0], points[j][1]
-            edges = append(edges, []int{abs(x1 - x2) + abs(y1 - y2), i, j})
-        }
-    }
-    sort.Slice(edges, func(i, j int) bool {
-        return edges[i][0] < edges[j][0]
-    })
-    res := 0
-    for _, e := range edges {
-        if find(e[1]) == find(e[2]) {
-            continue
-        }
-        p[find(e[1])] = find(e[2])
-        n--
-        res += e[0]
-        if n == 1 {
-            break
-        }
-    }
-    return res
-}
-
-func find(x int) int {
-    if p[x] != x {
-        p[x] = find(p[x])
-    }
-    return p[x]
+	n := len(points)
+	var g [][]int
+	for i, p := range points {
+		x1, y1 := p[0], p[1]
+		for j := i + 1; j < n; j++ {
+			x2, y2 := points[j][0], points[j][1]
+			g = append(g, []int{abs(x1-x2) + abs(y1-y2), i, j})
+		}
+	}
+	sort.Slice(g, func(i, j int) bool {
+		return g[i][0] < g[j][0]
+	})
+	ans := 0
+	p := make([]int, n)
+	for i := range p {
+		p[i] = i
+	}
+	var find func(x int) int
+	find = func(x int) int {
+		if p[x] != x {
+			p[x] = find(p[x])
+		}
+		return p[x]
+	}
+	for _, e := range g {
+		cost, i, j := e[0], e[1], e[2]
+		if find(i) == find(j) {
+			continue
+		}
+		p[find(i)] = find(j)
+		ans += cost
+		n--
+		if n == 1 {
+			return ans
+		}
+	}
+	return 0
 }
 
 func abs(x int) int {
-    if x > 0 {
-        return x
-    }
-    return -x
+	if x < 0 {
+		return -x
+	}
+	return x
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

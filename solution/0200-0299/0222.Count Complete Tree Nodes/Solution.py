@@ -5,17 +5,7 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def countNodes(self, root: TreeNode) -> int:
-        def depth(root):
-            res = 0
-            while root:
-                res += 1
-                root = root.left
-            return res
-        
+    def countNodes(self, root: Optional[TreeNode]) -> int:
         if root is None:
             return 0
-        left, right = depth(root.left), depth(root.right)
-        if left == right:
-            return (1 << left) + self.countNodes(root.right)
-        return (1 << right) + self.countNodes(root.left)
+        return 1 + self.countNodes(root.left) + self.countNodes(root.right)

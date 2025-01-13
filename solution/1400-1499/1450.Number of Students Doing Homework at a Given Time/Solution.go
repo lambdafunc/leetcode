@@ -1,9 +1,8 @@
-func busyStudent(startTime []int, endTime []int, queryTime int) int {
-	count, n := 0, len(startTime)
-	for i := 0; i < n; i++ {
-		if startTime[i] <= queryTime && queryTime <= endTime[i] {
-			count++
+func busyStudent(startTime []int, endTime []int, queryTime int) (ans int) {
+	for i, x := range startTime {
+		if x <= queryTime && queryTime <= endTime[i] {
+			ans++
 		}
 	}
-	return count
+	return
 }

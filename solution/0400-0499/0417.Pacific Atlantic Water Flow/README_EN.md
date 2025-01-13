@@ -1,28 +1,62 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0417.Pacific%20Atlantic%20Water%20Flow/README_EN.md
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Array
+    - Matrix
+---
+
+<!-- problem:start -->
+
 # [417. Pacific Atlantic Water Flow](https://leetcode.com/problems/pacific-atlantic-water-flow)
 
 [中文文档](/solution/0400-0499/0417.Pacific%20Atlantic%20Water%20Flow/README.md)
 
 ## Description
 
-<p>You are given an <code>m x n</code> integer matrix <code>heights</code> representing the height of each unit cell in a continent. The <strong>Pacific ocean</strong> touches the continent&#39;s left and top edges, and the A<strong>tlantic ocean</strong> touches the continent&#39;s right and bottom edges.</p>
+<!-- description:start -->
 
-<p>Water can only flow in four directions: up, down, left, and right. Water flows from a cell to an adjacent one with an equal or lower height.</p>
+<p>There is an <code>m x n</code> rectangular island that borders both the <strong>Pacific Ocean</strong> and <strong>Atlantic Ocean</strong>. The <strong>Pacific Ocean</strong> touches the island&#39;s left and top edges, and the <strong>Atlantic Ocean</strong> touches the island&#39;s right and bottom edges.</p>
 
-<p>Return <em>a list of grid coordinates where water can flow to both the Pacific and Atlantic oceans</em>.</p>
+<p>The island is partitioned into a grid of square cells. You are given an <code>m x n</code> integer matrix <code>heights</code> where <code>heights[r][c]</code> represents the <strong>height above sea level</strong> of the cell at coordinate <code>(r, c)</code>.</p>
+
+<p>The island receives a lot of rain, and the rain water can flow to neighboring cells directly north, south, east, and west if the neighboring cell&#39;s height is <strong>less than or equal to</strong> the current cell&#39;s height. Water can flow from any cell adjacent to an ocean into the ocean.</p>
+
+<p>Return <em>a <strong>2D list</strong> of grid coordinates </em><code>result</code><em> where </em><code>result[i] = [r<sub>i</sub>, c<sub>i</sub>]</code><em> denotes that rain water can flow from cell </em><code>(r<sub>i</sub>, c<sub>i</sub>)</code><em> to <strong>both</strong> the Pacific and Atlantic oceans</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0417.Pacific%20Atlantic%20Water%20Flow/images/ocean-grid.jpg" style="width: 573px; height: 573px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0417.Pacific%20Atlantic%20Water%20Flow/images/waterflow-grid.jpg" style="width: 400px; height: 400px;" />
 <pre>
 <strong>Input:</strong> heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]
 <strong>Output:</strong> [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
+<strong>Explanation:</strong> The following cells can flow to the Pacific and Atlantic oceans, as shown below:
+[0,4]: [0,4] -&gt; Pacific Ocean 
+&nbsp;      [0,4] -&gt; Atlantic Ocean
+[1,3]: [1,3] -&gt; [0,3] -&gt; Pacific Ocean 
+&nbsp;      [1,3] -&gt; [1,4] -&gt; Atlantic Ocean
+[1,4]: [1,4] -&gt; [1,3] -&gt; [0,3] -&gt; Pacific Ocean 
+&nbsp;      [1,4] -&gt; Atlantic Ocean
+[2,2]: [2,2] -&gt; [1,2] -&gt; [0,2] -&gt; Pacific Ocean 
+&nbsp;      [2,2] -&gt; [2,3] -&gt; [2,4] -&gt; Atlantic Ocean
+[3,0]: [3,0] -&gt; Pacific Ocean 
+&nbsp;      [3,0] -&gt; [4,0] -&gt; Atlantic Ocean
+[3,1]: [3,1] -&gt; [3,0] -&gt; Pacific Ocean 
+&nbsp;      [3,1] -&gt; [4,1] -&gt; Atlantic Ocean
+[4,0]: [4,0] -&gt; Pacific Ocean 
+       [4,0] -&gt; Atlantic Ocean
+Note that there are other possible paths for these cells to flow to the Pacific and Atlantic oceans.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-<strong>Input:</strong> heights = [[2,1],[1,2]]
-<strong>Output:</strong> [[0,0],[0,1],[1,0],[1,1]]
+<strong>Input:</strong> heights = [[1]]
+<strong>Output:</strong> [[0,0]]
+<strong>Explanation:</strong> The water can flow from the only cell to the Pacific and Atlantic oceans.
 </pre>
 
 <p>&nbsp;</p>
@@ -30,27 +64,38 @@
 
 <ul>
 	<li><code>m == heights.length</code></li>
-	<li><code>n == heights[i].length</code></li>
+	<li><code>n == heights[r].length</code></li>
 	<li><code>1 &lt;= m, n &lt;= 200</code></li>
-	<li><code>1 &lt;= heights[i][j] &lt;= 10<sup>5</sup></code></li>
+	<li><code>0 &lt;= heights[r][c] &lt;= 10<sup>5</sup></code></li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
         def bfs(q, vis):
             while q:
-                for _ in range(len(q), 0, -1):
+                for _ in range(len(q)):
                     i, j = q.popleft()
                     for a, b in [[0, -1], [0, 1], [1, 0], [-1, 0]]:
                         x, y = i + a, j + b
-                        if 0 <= x < m and 0 <= y < n and (x, y) not in vis and heights[x][y] >= heights[i][j]:
+                        if (
+                            0 <= x < m
+                            and 0 <= y < n
+                            and (x, y) not in vis
+                            and heights[x][y] >= heights[i][j]
+                        ):
                             vis.add((x, y))
                             q.append((x, y))
 
@@ -68,15 +113,15 @@ class Solution:
                     q2.append((i, j))
         bfs(q1, vis1)
         bfs(q2, vis2)
-        ans = []
-        for i in range(m):
-            for j in range(n):
-                if (i, j) in vis1 and (i, j) in vis2:
-                    ans.append((i, j))
-        return ans
+        return [
+            (i, j)
+            for i in range(m)
+            for j in range(n)
+            if (i, j) in vis1 and (i, j) in vis2
+        ]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -96,11 +141,11 @@ class Solution {
             for (int j = 0; j < n; ++j) {
                 if (i == 0 || j == 0) {
                     vis1.add(i * n + j);
-                    q1.offer(new int[]{i, j});
+                    q1.offer(new int[] {i, j});
                 }
                 if (i == m - 1 || j == n - 1) {
                     vis2.add(i * n + j);
-                    q2.offer(new int[]{i, j});
+                    q2.offer(new int[] {i, j});
                 }
             }
         }
@@ -126,9 +171,10 @@ class Solution {
                 for (int i = 0; i < 4; ++i) {
                     int x = p[0] + dirs[i];
                     int y = p[1] + dirs[i + 1];
-                    if (x >= 0 && x < m && y >= 0 && y < n && !vis.contains(x * n + y) && heights[x][y] >= heights[p[0]][p[1]]) {
+                    if (x >= 0 && x < m && y >= 0 && y < n && !vis.contains(x * n + y)
+                        && heights[x][y] >= heights[p[0]][p[1]]) {
                         vis.add(x * n + y);
-                        q.offer(new int[]{x, y});
+                        q.offer(new int[] {x, y});
                     }
                 }
             }
@@ -137,7 +183,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 typedef pair<int, int> pii;
@@ -156,17 +202,13 @@ public:
         queue<pii> q2;
         unordered_set<int> vis1;
         unordered_set<int> vis2;
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (i == 0 || j == 0)
-                {
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (i == 0 || j == 0) {
                     vis1.insert(i * n + j);
                     q1.emplace(i, j);
                 }
-                if (i == m - 1 || j == n - 1)
-                {
+                if (i == m - 1 || j == n - 1) {
                     vis2.insert(i * n + j);
                     q2.emplace(i, j);
                 }
@@ -175,13 +217,10 @@ public:
         bfs(q1, vis1);
         bfs(q2, vis2);
         vector<vector<int>> ans;
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
                 int x = i * n + j;
-                if (vis1.count(x) && vis2.count(x))
-                {
+                if (vis1.count(x) && vis2.count(x)) {
                     ans.push_back({i, j});
                 }
             }
@@ -191,18 +230,14 @@ public:
 
     void bfs(queue<pii>& q, unordered_set<int>& vis) {
         vector<int> dirs = {-1, 0, 1, 0, -1};
-        while (!q.empty())
-        {
-            for (int k = q.size(); k > 0; --k)
-            {
+        while (!q.empty()) {
+            for (int k = q.size(); k > 0; --k) {
                 auto p = q.front();
                 q.pop();
-                for (int i = 0; i < 4; ++i)
-                {
+                for (int i = 0; i < 4; ++i) {
                     int x = p.first + dirs[i];
                     int y = p.second + dirs[i + 1];
-                    if (x >= 0 && x < m && y >= 0 && y < n && !vis.count(x * n + y) && heights[x][y] >= heights[p.first][p.second])
-                    {
+                    if (x >= 0 && x < m && y >= 0 && y < n && !vis.count(x * n + y) && heights[x][y] >= heights[p.first][p.second]) {
                         vis.insert(x * n + y);
                         q.emplace(x, y);
                     }
@@ -213,7 +248,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func pacificAtlantic(heights [][]int) [][]int {
@@ -265,10 +300,63 @@ func pacificAtlantic(heights [][]int) [][]int {
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+function pacificAtlantic(heights: number[][]): number[][] {
+    const m = heights.length;
+    const n = heights[0].length;
+    const dirs = [
+        [1, 0],
+        [0, 1],
+        [-1, 0],
+        [0, -1],
+    ];
+    const gird = new Array(m).fill(0).map(() => new Array(n).fill(0));
+    const isVis = new Array(m).fill(0).map(() => new Array(n).fill(false));
 
+    const dfs = (i: number, j: number) => {
+        if (isVis[i][j]) {
+            return;
+        }
+        gird[i][j]++;
+        isVis[i][j] = true;
+        const h = heights[i][j];
+        for (const [x, y] of dirs) {
+            if (h <= (heights[i + x] ?? [])[j + y]) {
+                dfs(i + x, j + y);
+            }
+        }
+    };
+
+    for (let i = 0; i < n; i++) {
+        dfs(0, i);
+    }
+    for (let i = 0; i < m; i++) {
+        dfs(i, 0);
+    }
+    isVis.forEach(v => v.fill(false));
+    for (let i = 0; i < n; i++) {
+        dfs(m - 1, i);
+    }
+    for (let i = 0; i < m; i++) {
+        dfs(i, n - 1);
+    }
+
+    const res = [];
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (gird[i][j] === 2) {
+                res.push([i, j]);
+            }
+        }
+    }
+    return res;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

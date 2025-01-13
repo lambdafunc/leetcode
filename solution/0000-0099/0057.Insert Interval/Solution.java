@@ -1,15 +1,25 @@
 class Solution {
     public int[][] insert(int[][] intervals, int[] newInterval) {
-        List<int[]> list = new LinkedList<>();
-        int i = 0;
-        while ((i < intervals.length) && (intervals[i][1] < newInterval[0])) list.add(intervals[i++]);
-        while ((i < intervals.length) && (intervals[i][0] <= newInterval[1])) {
-            newInterval[0] = Math.min(intervals[i][0], newInterval[0]);
-            newInterval[1] = Math.max(intervals[i][1], newInterval[1]);
-            i++;
+        int[][] newIntervals = new int[intervals.length + 1][2];
+        for (int i = 0; i < intervals.length; ++i) {
+            newIntervals[i] = intervals[i];
         }
-        list.add(newInterval);
-        while (i < intervals.length) list.add(intervals[i++]);
-        return list.toArray(new int[list.size()][]);
+        newIntervals[intervals.length] = newInterval;
+        return merge(newIntervals);
+    }
+
+    private int[][] merge(int[][] intervals) {
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        List<int[]> ans = new ArrayList<>();
+        ans.add(intervals[0]);
+        for (int i = 1; i < intervals.length; ++i) {
+            int s = intervals[i][0], e = intervals[i][1];
+            if (ans.get(ans.size() - 1)[1] < s) {
+                ans.add(intervals[i]);
+            } else {
+                ans.get(ans.size() - 1)[1] = Math.max(ans.get(ans.size() - 1)[1], e);
+            }
+        }
+        return ans.toArray(new int[ans.size()][]);
     }
 }

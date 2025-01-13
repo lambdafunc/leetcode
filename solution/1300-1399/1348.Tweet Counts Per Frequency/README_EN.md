@@ -1,8 +1,26 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1348.Tweet%20Counts%20Per%20Frequency/README_EN.md
+rating: 2036
+source: Weekly Contest 175 Q3
+tags:
+    - Design
+    - Hash Table
+    - Binary Search
+    - Ordered Set
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [1348. Tweet Counts Per Frequency](https://leetcode.com/problems/tweet-counts-per-frequency)
 
 [中文文档](/solution/1300-1399/1348.Tweet%20Counts%20Per%20Frequency/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A social media company is trying to monitor activity on their site by analyzing the number of tweets that occur in select periods of time. These periods can be partitioned into smaller <strong>time chunks</strong> based on a certain frequency (every <strong>minute</strong>, <strong>hour</strong>, or <strong>day</strong>).</p>
 
@@ -31,7 +49,7 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example:</strong></p>
+<p><strong class="example">Example:</strong></p>
 
 <pre>
 <strong>Input</strong>
@@ -61,26 +79,137 @@ tweetCounts.getTweetCountsPerFrequency(&quot;hour&quot;, &quot;tweet3&quot;, 0, 
 	<li>There will be at most <code>10<sup>4</sup></code> calls <strong>in total</strong> to <code>recordTweet</code> and <code>getTweetCountsPerFrequency</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
+from sortedcontainers import SortedList
 
+
+class TweetCounts:
+    def __init__(self):
+        self.d = {"minute": 60, "hour": 3600, "day": 86400}
+        self.data = defaultdict(SortedList)
+
+    def recordTweet(self, tweetName: str, time: int) -> None:
+        self.data[tweetName].add(time)
+
+    def getTweetCountsPerFrequency(
+        self, freq: str, tweetName: str, startTime: int, endTime: int
+    ) -> List[int]:
+        f = self.d[freq]
+        tweets = self.data[tweetName]
+        t = startTime
+        ans = []
+        while t <= endTime:
+            l = tweets.bisect_left(t)
+            r = tweets.bisect_left(min(t + f, endTime + 1))
+            ans.append(r - l)
+            t += f
+        return ans
+
+
+# Your TweetCounts object will be instantiated and called as such:
+# obj = TweetCounts()
+# obj.recordTweet(tweetName,time)
+# param_2 = obj.getTweetCountsPerFrequency(freq,tweetName,startTime,endTime)
 ```
 
-### **Java**
+#### Java
 
 ```java
+class TweetCounts {
+    private Map<String, TreeMap<Integer, Integer>> data = new HashMap<>();
 
+    public TweetCounts() {
+    }
+
+    public void recordTweet(String tweetName, int time) {
+        data.putIfAbsent(tweetName, new TreeMap<>());
+        var tm = data.get(tweetName);
+        tm.put(time, tm.getOrDefault(time, 0) + 1);
+    }
+
+    public List<Integer> getTweetCountsPerFrequency(
+        String freq, String tweetName, int startTime, int endTime) {
+        int f = 60;
+        if ("hour".equals(freq)) {
+            f = 3600;
+        } else if ("day".equals(freq)) {
+            f = 86400;
+        }
+        var tm = data.get(tweetName);
+        List<Integer> ans = new ArrayList<>();
+        for (int i = startTime; i <= endTime; i += f) {
+            int s = 0;
+            int end = Math.min(i + f, endTime + 1);
+            for (int v : tm.subMap(i, end).values()) {
+                s += v;
+            }
+            ans.add(s);
+        }
+        return ans;
+    }
+}
+
+/**
+ * Your TweetCounts object will be instantiated and called as such:
+ * TweetCounts obj = new TweetCounts();
+ * obj.recordTweet(tweetName,time);
+ * List<Integer> param_2 = obj.getTweetCountsPerFrequency(freq,tweetName,startTime,endTime);
+ */
 ```
 
-### **...**
+#### C++
 
-```
+```cpp
+class TweetCounts {
+public:
+    TweetCounts() {
+    }
 
+    void recordTweet(string tweetName, int time) {
+        data[tweetName].insert(time);
+    }
+
+    vector<int> getTweetCountsPerFrequency(string freq, string tweetName, int startTime, int endTime) {
+        int f = 60;
+        if (freq == "hour")
+            f = 3600;
+        else if (freq == "day")
+            f = 86400;
+        vector<int> ans((endTime - startTime) / f + 1);
+        auto l = data[tweetName].lower_bound(startTime);
+        auto r = data[tweetName].upper_bound(endTime);
+        for (; l != r; ++l) {
+            ++ans[(*l - startTime) / f];
+        }
+        return ans;
+    }
+
+private:
+    unordered_map<string, multiset<int>> data;
+};
+
+/**
+ * Your TweetCounts object will be instantiated and called as such:
+ * TweetCounts* obj = new TweetCounts();
+ * obj->recordTweet(tweetName,time);
+ * vector<int> param_2 = obj->getTweetCountsPerFrequency(freq,tweetName,startTime,endTime);
+ */
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

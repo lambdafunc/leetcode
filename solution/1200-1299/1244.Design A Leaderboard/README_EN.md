@@ -1,8 +1,24 @@
-# [1244. Design A Leaderboard](https://leetcode.com/problems/design-a-leaderboard)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1200-1299/1244.Design%20A%20Leaderboard/README_EN.md
+rating: 1354
+source: Biweekly Contest 12 Q1
+tags:
+    - Design
+    - Hash Table
+    - Sorting
+---
+
+<!-- problem:start -->
+
+# [1244. Design A Leaderboard 🔒](https://leetcode.com/problems/design-a-leaderboard)
 
 [中文文档](/solution/1200-1299/1244.Design%20A%20Leaderboard/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Design a Leaderboard class, which has 3 functions:</p>
 
@@ -15,7 +31,7 @@
 <p>Initially, the leaderboard is empty.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <b>Input: </b>
@@ -48,27 +64,51 @@ leaderboard.top(3);           // returns 141 = 51 + 51 + 39;
 	<li>There will be at most <code>1000</code>&nbsp;function calls.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Hash Table + Ordered List
+
+We use a hash table $d$ to record the scores of each player, and an ordered list $rank$ to record the scores of all players.
+
+When the `addScore` function is called, we first check if the player is in the hash table $d$. If not, we add their score to the ordered list $rank$. Otherwise, we first remove their score from the ordered list $rank$, then add their updated score to the ordered list $rank$, and finally update the score in the hash table $d$. The time complexity is $O(\log n)$.
+
+When the `top` function is called, we directly return the sum of the first $K$ elements in the ordered list $rank$. The time complexity is $O(K \times \log n)$.
+
+When the `reset` function is called, we first remove the player from the hash table $d$, then remove their score from the ordered list $rank$. The time complexity is $O(\log n)$.
+
+The space complexity is $O(n)$, where $n$ is the number of players.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-class Leaderboard:
+from sortedcontainers import SortedList
 
+
+class Leaderboard:
     def __init__(self):
-        self.player_scores = {}
+        self.d = defaultdict(int)
+        self.rank = SortedList()
 
     def addScore(self, playerId: int, score: int) -> None:
-        self.player_scores[playerId] = self.player_scores.get(playerId, 0) + score
+        if playerId not in self.d:
+            self.d[playerId] = score
+            self.rank.add(score)
+        else:
+            self.rank.remove(self.d[playerId])
+            self.d[playerId] += score
+            self.rank.add(self.d[playerId])
 
     def top(self, K: int) -> int:
-        scores = sorted(list(self.player_scores.values()), reverse=True)
-        return sum(scores[:K])
+        return sum(self.rank[-K:])
 
     def reset(self, playerId: int) -> None:
-        self.player_scores[playerId] = 0
+        self.rank.remove(self.d.pop(playerId))
 
 
 # Your Leaderboard object will be instantiated and called as such:
@@ -78,32 +118,44 @@ class Leaderboard:
 # obj.reset(playerId)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Leaderboard {
-    private Map<Integer, Integer> playerScores;
+    private Map<Integer, Integer> d = new HashMap<>();
+    private TreeMap<Integer, Integer> rank = new TreeMap<>((a, b) -> b - a);
 
     public Leaderboard() {
-        playerScores = new HashMap<>();
     }
 
     public void addScore(int playerId, int score) {
-        playerScores.put(playerId, playerScores.getOrDefault(playerId, 0) + score);
+        d.merge(playerId, score, Integer::sum);
+        int newScore = d.get(playerId);
+        if (newScore != score) {
+            rank.merge(newScore - score, -1, Integer::sum);
+        }
+        rank.merge(newScore, 1, Integer::sum);
     }
 
     public int top(int K) {
-        List<Integer> scores = new ArrayList<>(playerScores.values());
-        Collections.sort(scores, Collections.reverseOrder());
-        int res = 0;
-        for (int i = 0; i < K; ++i) {
-            res += scores.get(i);
+        int ans = 0;
+        for (var e : rank.entrySet()) {
+            int score = e.getKey(), cnt = e.getValue();
+            cnt = Math.min(cnt, K);
+            ans += score * cnt;
+            K -= cnt;
+            if (K == 0) {
+                break;
+            }
         }
-        return res;
+        return ans;
     }
 
     public void reset(int playerId) {
-        playerScores.put(playerId, 0);
+        int score = d.remove(playerId);
+        if (rank.merge(score, -1, Integer::sum) == 0) {
+            rank.remove(score);
+        }
     }
 }
 
@@ -116,10 +168,114 @@ class Leaderboard {
  */
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Leaderboard {
+public:
+    Leaderboard() {
+    }
+
+    void addScore(int playerId, int score) {
+        d[playerId] += score;
+        int newScore = d[playerId];
+        if (newScore != score) {
+            rank.erase(rank.find(newScore - score));
+        }
+        rank.insert(newScore);
+    }
+
+    int top(int K) {
+        int ans = 0;
+        for (auto& x : rank) {
+            ans += x;
+            if (--K == 0) {
+                break;
+            }
+        }
+        return ans;
+    }
+
+    void reset(int playerId) {
+        int score = d[playerId];
+        d.erase(playerId);
+        rank.erase(rank.find(score));
+    }
+
+private:
+    unordered_map<int, int> d;
+    multiset<int, greater<int>> rank;
+};
+
+/**
+ * Your Leaderboard object will be instantiated and called as such:
+ * Leaderboard* obj = new Leaderboard();
+ * obj->addScore(playerId,score);
+ * int param_2 = obj->top(K);
+ * obj->reset(playerId);
+ */
 ```
 
+#### Rust
+
+```rust
+use std::collections::BTreeMap;
+
+#[allow(dead_code)]
+struct Leaderboard {
+    /// This also keeps track of the top K players since it's implicitly sorted
+    record_map: BTreeMap<i32, i32>,
+}
+
+impl Leaderboard {
+    #[allow(dead_code)]
+    fn new() -> Self {
+        Self {
+            record_map: BTreeMap::new(),
+        }
+    }
+
+    #[allow(dead_code)]
+    fn add_score(&mut self, player_id: i32, score: i32) {
+        if self.record_map.contains_key(&player_id) {
+            // The player exists, just add the score
+            self.record_map
+                .insert(player_id, self.record_map.get(&player_id).unwrap() + score);
+        } else {
+            // Add the new player to the map
+            self.record_map.insert(player_id, score);
+        }
+    }
+
+    #[allow(dead_code)]
+    fn top(&self, k: i32) -> i32 {
+        let mut cur_vec: Vec<(i32, i32)> = self.record_map.iter().map(|(k, v)| (*k, *v)).collect();
+        cur_vec.sort_by(|lhs, rhs| rhs.1.cmp(&lhs.1));
+        // Iterate reversely for K
+        let mut sum = 0;
+        let mut i = 0;
+        for (_, value) in &cur_vec {
+            if i == k {
+                break;
+            }
+            sum += value;
+            i += 1;
+        }
+
+        sum
+    }
+
+    #[allow(dead_code)]
+    fn reset(&mut self, player_id: i32) {
+        // The player is ensured to exist in the board
+        // Just set the score to 0
+        self.record_map.insert(player_id, 0);
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

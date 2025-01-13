@@ -1,16 +1,21 @@
 class Solution {
+    private int[] nums;
+    private int[][] f;
+
     public boolean PredictTheWinner(int[] nums) {
+        this.nums = nums;
         int n = nums.length;
-        if ((n & 1) == 0) {
-            return true;
+        f = new int[n][n];
+        return dfs(0, n - 1) >= 0;
+    }
+
+    private int dfs(int i, int j) {
+        if (i > j) {
+            return 0;
         }
-        int[] f = new int[n];
-        for (int i = n - 1; i >= 0; --i) {
-            f[i] = nums[i];
-            for (int j = i + 1; j < n; ++j) {
-                f[j] = Math.max(nums[i] - f[j], nums[j] - f[j - 1]);
-            }
+        if (f[i][j] != 0) {
+            return f[i][j];
         }
-        return f[n - 1] >= 0;
+        return f[i][j] = Math.max(nums[i] - dfs(i + 1, j), nums[j] - dfs(i, j - 1));
     }
 }

@@ -1,54 +1,77 @@
-# [98. 验证二叉搜索树](https://leetcode-cn.com/problems/validate-binary-search-tree)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0000-0099/0098.Validate%20Binary%20Search%20Tree/README.md
+tags:
+    - 树
+    - 深度优先搜索
+    - 二叉搜索树
+    - 二叉树
+---
+
+<!-- problem:start -->
+
+# [98. 验证二叉搜索树](https://leetcode.cn/problems/validate-binary-search-tree)
 
 [English Version](/solution/0000-0099/0098.Validate%20Binary%20Search%20Tree/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个二叉树，判断其是否是一个有效的二叉搜索树。</p>
+<p>给你一个二叉树的根节点 <code>root</code> ，判断其是否是一个有效的二叉搜索树。</p>
 
-<p>假设一个二叉搜索树具有如下特征：</p>
+<p><strong>有效</strong> 二叉搜索树定义如下：</p>
 
 <ul>
-	<li>节点的左子树只包含<strong>小于</strong>当前节点的数。</li>
-	<li>节点的右子树只包含<strong>大于</strong>当前节点的数。</li>
+	<li>节点的左<span data-keyword="subtree">子树</span>只包含<strong> 小于 </strong>当前节点的数。</li>
+	<li>节点的右子树只包含 <strong>大于</strong> 当前节点的数。</li>
 	<li>所有左子树和右子树自身必须也是二叉搜索树。</li>
 </ul>
 
-<p><strong>示例&nbsp;1:</strong></p>
+<p>&nbsp;</p>
 
-<pre><strong>输入:</strong>
-    2
-   / \
-  1   3
-<strong>输出:</strong> true
+<p><strong>示例 1：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0098.Validate%20Binary%20Search%20Tree/images/tree1.jpg" style="width: 302px; height: 182px;" />
+<pre>
+<strong>输入：</strong>root = [2,1,3]
+<strong>输出：</strong>true
 </pre>
 
-<p><strong>示例&nbsp;2:</strong></p>
-
-<pre><strong>输入:
-</strong>    5
-   / \
-  1   4
-&nbsp;    / \
-&nbsp;   3   6
-<strong>输出:</strong> false
-<strong>解释:</strong> 输入为: [5,1,4,null,null,3,6]。
-&nbsp;    根节点的值为 5 ，但是其右子节点值为 4 。
+<p><strong>示例 2：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0098.Validate%20Binary%20Search%20Tree/images/tree2.jpg" style="width: 422px; height: 292px;" />
+<pre>
+<strong>输入：</strong>root = [5,1,4,null,null,3,6]
+<strong>输出：</strong>false
+<strong>解释：</strong>根节点的值是 5 ，但是右子节点的值是 4 。
 </pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li>树中节点数目范围在<code>[1, 10<sup>4</sup>]</code> 内</li>
+	<li><code>-2<sup>31</sup> &lt;= Node.val &lt;= 2<sup>31</sup> - 1</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-中序遍历，若是一个有效的二叉搜索树，那么遍历到的序列应该是单调递增的。所以只要比较判断遍历到的当前数是否 `>=` 上一个数即可。
+### 方法一：递归
+
+我们可以对二叉树进行递归中序遍历，如果遍历到的结果是严格升序的，那么这棵树就是一个二叉搜索树。
+
+因此，我们使用一个变量 $\textit{prev}$ 来保存上一个遍历到的节点，初始时 $\textit{prev} = -\infty$，然后我们递归遍历左子树，如果左子树不是二叉搜索树，直接返回 $\textit{False}$，否则判断当前节点的值是否大于 $\textit{prev}$，如果不是，返回 $\textit{False}$，否则更新 $\textit{prev}$ 为当前节点的值，然后递归遍历右子树。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 是二叉树的节点个数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -58,27 +81,23 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def isValidBST(self, root: TreeNode) -> bool:
-        def dfs(root):
-            nonlocal prev
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
+        def dfs(root: Optional[TreeNode]) -> bool:
             if root is None:
                 return True
             if not dfs(root.left):
                 return False
+            nonlocal prev
             if prev >= root.val:
                 return False
             prev = root.val
-            if not dfs(root.right):
-                return False
-            return True
+            return dfs(root.right)
 
-        prev = float('-inf')
+        prev = -inf
         return dfs(root)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -97,10 +116,9 @@ class Solution:
  * }
  */
 class Solution {
-    private Integer prev;
+    private TreeNode prev;
 
     public boolean isValidBST(TreeNode root) {
-        prev = null;
         return dfs(root);
     }
 
@@ -111,19 +129,16 @@ class Solution {
         if (!dfs(root.left)) {
             return false;
         }
-        if (prev != null && prev >= root.val) {
+        if (prev != null && prev.val >= root.val) {
             return false;
         }
-        prev = root.val;
-        if (!dfs(root.right)) {
-            return false;
-        }
-        return true;
+        prev = root;
+        return dfs(root.right);
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -139,25 +154,27 @@ class Solution {
  */
 class Solution {
 public:
-    TreeNode* prev;
-
     bool isValidBST(TreeNode* root) {
-        prev = nullptr;
+        TreeNode* prev = nullptr;
+        function<bool(TreeNode*)> dfs = [&](TreeNode* root) {
+            if (!root) {
+                return true;
+            }
+            if (!dfs(root->left)) {
+                return false;
+            }
+            if (prev && prev->val >= root->val) {
+                return false;
+            }
+            prev = root;
+            return dfs(root->right);
+        };
         return dfs(root);
-    }
-
-    bool dfs(TreeNode* root) {
-        if (!root) return true;
-        if (!dfs(root->left)) return false;
-        if (prev && prev->val >= root->val) return false;
-        prev = root;
-        if (!dfs(root->right)) return false;
-        return true;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -170,8 +187,7 @@ public:
  */
 func isValidBST(root *TreeNode) bool {
 	var prev *TreeNode
-
-	var dfs func(root *TreeNode) bool
+	var dfs func(*TreeNode) bool
 	dfs = func(root *TreeNode) bool {
 		if root == nil {
 			return true
@@ -183,17 +199,94 @@ func isValidBST(root *TreeNode) bool {
 			return false
 		}
 		prev = root
-		if !dfs(root.Right) {
-			return false
-		}
-		return true
+		return dfs(root.Right)
 	}
-
 	return dfs(root)
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function isValidBST(root: TreeNode | null): boolean {
+    let prev: TreeNode | null = null;
+    const dfs = (root: TreeNode | null): boolean => {
+        if (!root) {
+            return true;
+        }
+        if (!dfs(root.left)) {
+            return false;
+        }
+        if (prev && prev.val >= root.val) {
+            return false;
+        }
+        prev = root;
+        return dfs(root.right);
+    };
+    return dfs(root);
+}
+```
+
+#### Rust
+
+```rust
+// Definition for a binary tree node.
+// #[derive(Debug, PartialEq, Eq)]
+// pub struct TreeNode {
+//   pub val: i32,
+//   pub left: Option<Rc<RefCell<TreeNode>>>,
+//   pub right: Option<Rc<RefCell<TreeNode>>>,
+// }
+//
+// impl TreeNode {
+//   #[inline]
+//   pub fn new(val: i32) -> Self {
+//     TreeNode {
+//       val,
+//       left: None,
+//       right: None
+//     }
+//   }
+// }
+use std::cell::RefCell;
+use std::rc::Rc;
+impl Solution {
+    fn dfs(root: &Option<Rc<RefCell<TreeNode>>>, prev: &mut Option<i32>) -> bool {
+        if root.is_none() {
+            return true;
+        }
+        let root = root.as_ref().unwrap().borrow();
+        if !Self::dfs(&root.left, prev) {
+            return false;
+        }
+        if prev.is_some() && prev.unwrap() >= root.val {
+            return false;
+        }
+        *prev = Some(root.val);
+        Self::dfs(&root.right, prev)
+    }
+
+    pub fn is_valid_bst(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
+        Self::dfs(&root, &mut None)
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -210,8 +303,7 @@ func isValidBST(root *TreeNode) bool {
  */
 var isValidBST = function (root) {
     let prev = null;
-
-    let dfs = function (root) {
+    const dfs = root => {
         if (!root) {
             return true;
         }
@@ -222,17 +314,13 @@ var isValidBST = function (root) {
             return false;
         }
         prev = root;
-        if (!dfs(root.right)) {
-            return false;
-        }
-        return true;
+        return dfs(root.right);
     };
-
     return dfs(root);
 };
 ```
 
-### **C#**
+#### C#
 
 ```cs
 /**
@@ -252,37 +340,27 @@ public class Solution {
     private TreeNode prev;
 
     public bool IsValidBST(TreeNode root) {
-        prev = null;
         return dfs(root);
     }
 
     private bool dfs(TreeNode root) {
-        if (root == null)
-        {
+        if (root == null) {
             return true;
         }
-        if (!dfs(root.left))
-        {
+        if (!dfs(root.left)) {
             return false;
         }
-        if (prev != null && prev.val >= root.val)
-        {
+        if (prev != null && prev.val >= root.val) {
             return false;
         }
         prev = root;
-        if (!dfs(root.right))
-        {
-            return false;
-        }
-        return true;
+        return dfs(root.right);
     }
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

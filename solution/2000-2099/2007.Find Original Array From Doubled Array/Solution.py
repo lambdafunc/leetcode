@@ -1,19 +1,14 @@
 class Solution:
     def findOriginalArray(self, changed: List[int]) -> List[int]:
-        if len(changed) % 2 != 0:
-            return []
-        n = 100010
-        counter = [0] * n
+        changed.sort()
+        cnt = Counter(changed)
+        ans = []
         for x in changed:
-            counter[x] += 1
-        if counter[0] % 2 != 0:
-            return []
-        res = [0] * (counter[0] // 2)
-        for i in range(1, n):
-            if counter[i] == 0:
+            if cnt[x] == 0:
                 continue
-            if i * 2 > n or counter[i] > counter[i*2]:
+            cnt[x] -= 1
+            if cnt[x << 1] <= 0:
                 return []
-            res.extend([i] * counter[i])
-            counter[i*2] -= counter[i]
-        return res
+            cnt[x << 1] -= 1
+            ans.append(x)
+        return ans

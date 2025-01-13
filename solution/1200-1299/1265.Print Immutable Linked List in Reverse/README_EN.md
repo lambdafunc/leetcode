@@ -1,8 +1,23 @@
-# [1265. Print Immutable Linked List in Reverse](https://leetcode.com/problems/print-immutable-linked-list-in-reverse)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1200-1299/1265.Print%20Immutable%20Linked%20List%20in%20Reverse/README_EN.md
+tags:
+    - Stack
+    - Recursion
+    - Linked List
+    - Two Pointers
+---
+
+<!-- problem:start -->
+
+# [1265. Print Immutable Linked List in Reverse 🔒](https://leetcode.com/problems/print-immutable-linked-list-in-reverse)
 
 [中文文档](/solution/1200-1299/1265.Print%20Immutable%20Linked%20List%20in%20Reverse/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given an immutable linked list, print out all values of each node in reverse with the help of the following&nbsp;interface:</p>
 
@@ -20,21 +35,21 @@
 <p>The input is only given to initialize the linked list internally.&nbsp;You must solve this problem without modifying the linked list. In other words, you must operate&nbsp;the linked list using only the mentioned&nbsp;APIs.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> head = [1,2,3,4]
 <strong>Output:</strong> [4,3,2,1]
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> head = [0,-4,-1,3,-5]
 <strong>Output:</strong> [-5,3,-1,-4,0]
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> head = [-2,0,6,4,4,-6]
@@ -63,11 +78,21 @@
 	<li>Linear time complexity and less than linear space complexity?</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Recursion
+
+We can use recursion to implement reverse printing of a linked list. In the function, we check whether the current node is null. If it is not null, we get the next node, then recursively call the function itself, and finally print the value of the current node.
+
+The time complexity is $O(n)$, and the space complexity is $O(n)$. Where $n$ is the length of the linked list.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # """
@@ -78,6 +103,7 @@
 #     def printValue(self) -> None: # print the value of this node.
 #     def getNext(self) -> 'ImmutableListNode': # return the next node.
 
+
 class Solution:
     def printLinkedListInReverse(self, head: 'ImmutableListNode') -> None:
         if head:
@@ -85,7 +111,7 @@ class Solution:
             head.printValue()
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -107,7 +133,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -131,7 +157,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /*   Below is the interface for ImmutableListNode, which is already defined for you.
@@ -150,17 +176,58 @@ public:
  */
 
 func printLinkedListInReverse(head ImmutableListNode) {
-    if head != nil {
-        printLinkedListInReverse(head.getNext())
-        head.printValue()
+	if head != nil {
+		printLinkedListInReverse(head.getNext())
+		head.printValue()
+	}
+}
+```
+
+#### TypeScript
+
+```ts
+/**
+ * // This is the ImmutableListNode's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * class ImmutableListNode {
+ *      printValue() {}
+ *
+ *      getNext(): ImmutableListNode {}
+ * }
+ */
+
+function printLinkedListInReverse(head: ImmutableListNode) {
+    if (head) {
+        printLinkedListInReverse(head.next);
+        head.printValue();
     }
 }
 ```
 
-### **...**
+#### C#
 
-```
+```cs
+/**
+ * // This is the ImmutableListNode's API interface.
+ * // You should not implement it, or speculate about its implementation.
+ * class ImmutableListNode {
+ *     public void PrintValue(); // print the value of this node.
+ *     public ImmutableListNode GetNext(); // return the next node.
+ * }
+ */
 
+public class Solution {
+    public void PrintLinkedListInReverse(ImmutableListNode head) {
+        if (head != null) {
+            PrintLinkedListInReverse(head.GetNext());
+            head.PrintValue();
+        }
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

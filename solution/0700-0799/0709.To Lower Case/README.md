@@ -1,104 +1,188 @@
-# [709. 转换成小写字母](https://leetcode-cn.com/problems/to-lower-case)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0709.To%20Lower%20Case/README.md
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [709. 转换成小写字母](https://leetcode.cn/problems/to-lower-case)
 
 [English Version](/solution/0700-0799/0709.To%20Lower%20Case/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>实现函数 ToLowerCase()，该函数接收一个字符串参数 str，并将该字符串中的大写字母转换成小写字母，之后返回新的字符串。</p>
+<p>给你一个字符串 <code>s</code> ，将该字符串中的大写字母转换成相同的小写字母，返回新的字符串。</p>
 
-<p>&nbsp;</p>
+<p> </p>
 
 <p><strong>示例 1：</strong></p>
 
 <pre>
-<strong>输入: </strong>&quot;Hello&quot;
-<strong>输出: </strong>&quot;hello&quot;</pre>
+<strong>输入：</strong>s = "Hello"
+<strong>输出：</strong>"hello"
+</pre>
 
 <p><strong>示例 2：</strong></p>
 
 <pre>
-<strong>输入: </strong>&quot;here&quot;
-<strong>输出: </strong>&quot;here&quot;</pre>
+<strong>输入：</strong>s = "here"
+<strong>输出：</strong>"here"
+</pre>
 
-<p><strong>示例</strong><strong>&nbsp;3：</strong></p>
+<p><strong>示例 3：</strong></p>
 
 <pre>
-<strong>输入: </strong>&quot;LOVELY&quot;
-<strong>输出: </strong>&quot;lovely&quot;
+<strong>输入：</strong>s = "LOVELY"
+<strong>输出：</strong>"lovely"
 </pre>
+
+<p> </p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 <= s.length <= 100</code></li>
+	<li><code>s</code> 由 ASCII 字符集中的可打印字符组成</li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-遍历字符串，遇到大写的字符，转小写。
+### 方法一：模拟
+
+我们可以遍历字符串，对于每个大写字母，将其转换为小写字母。最后返回转换后的字符串即可。
+
+时间复杂度 $O(n)$，其中 $n$ 为字符串的长度。忽略答案的空间消耗，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def toLowerCase(self, s: str) -> str:
-        return ''.join([chr(ord(c) | 32) if ord('A') <= ord(c) <= ord('Z') else c for c in s])
+        return "".join([chr(ord(c) | 32) if c.isupper() else c for c in s])
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public String toLowerCase(String s) {
-        char[] chars = s.toCharArray();
-        for (int i = 0; i < chars.length; ++i) {
-            if (chars[i] >= 'A' && chars[i] <= 'Z') {
-                chars[i] |= 32;
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < cs.length; ++i) {
+            if (cs[i] >= 'A' && cs[i] <= 'Z') {
+                cs[i] |= 32;
             }
         }
-        return new String(chars);
+        return String.valueOf(cs);
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     string toLowerCase(string s) {
-        for (char& c : s)
-            if (c >= 'A' && c <= 'Z')
+        for (char& c : s) {
+            if (c >= 'A' && c <= 'Z') {
                 c |= 32;
+            }
+        }
         return s;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func toLowerCase(s string) string {
-	sb := &strings.Builder{}
-	sb.Grow(len(s))
-	for _, c := range s {
+	cs := []byte(s)
+	for i, c := range cs {
 		if c >= 'A' && c <= 'Z' {
-			c |= 32
+			cs[i] |= 32
 		}
-		sb.WriteRune(c)
 	}
-	return sb.String()
+	return string(cs)
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function toLowerCase(s: string): string {
+    return s.toLowerCase();
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn to_lower_case(s: String) -> String {
+        s.to_ascii_lowercase()
+    }
+}
+```
+
+#### C
+
+```c
+char* toLowerCase(char* s) {
+    int n = strlen(s);
+    for (int i = 0; i < n; i++) {
+        if (s[i] >= 'A' && s[i] <= 'Z') {
+            s[i] |= 32;
+        }
+    }
+    return s;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二
+
+<!-- tabs:start -->
+
+#### TypeScript
+
+```ts
+function toLowerCase(s: string): string {
+    return [...s].map(c => String.fromCharCode(c.charCodeAt(0) | 32)).join('');
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn to_lower_case(s: String) -> String {
+        s.as_bytes()
+            .iter()
+            .map(|&c| char::from(if c >= b'A' && c <= b'Z' { c | 32 } else { c }))
+            .collect()
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

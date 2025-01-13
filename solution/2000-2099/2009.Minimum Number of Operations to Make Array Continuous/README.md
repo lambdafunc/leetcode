@@ -1,10 +1,25 @@
-# [2009. 使数组连续的最少操作数](https://leetcode-cn.com/problems/minimum-number-of-operations-to-make-array-continuous)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2009.Minimum%20Number%20of%20Operations%20to%20Make%20Array%20Continuous/README.md
+rating: 2084
+source: 第 61 场双周赛 Q4
+tags:
+    - 数组
+    - 哈希表
+    - 二分查找
+    - 滑动窗口
+---
+
+<!-- problem:start -->
+
+# [2009. 使数组连续的最少操作数](https://leetcode.cn/problems/minimum-number-of-operations-to-make-array-continuous)
 
 [English Version](/solution/2000-2099/2009.Minimum%20Number%20of%20Operations%20to%20Make%20Array%20Continuous/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组&nbsp;<code>nums</code>&nbsp;。每一次操作中，你可以将&nbsp;<code>nums</code>&nbsp;中&nbsp;<strong>任意</strong>&nbsp;一个元素替换成 <strong>任意&nbsp;</strong>整数。</p>
 
@@ -56,83 +71,247 @@
 	<li><code>1 &lt;= nums[i] &lt;= 10<sup>9</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：排序 + 去重 + 二分查找
+
+我们先将数组排序，去重。
+
+然后遍历数组，枚举以当前元素 $nums[i]$ 作为连续数组的最小值，通过二分查找找到第一个大于 $nums[i] + n - 1$ 的位置 $j$，那么 $j-i$ 就是当前元素作为最小值时，连续数组的长度，更新答案，即 $ans = \min(ans, n - (j - i))$。
+
+最后返回 $ans$ 即可。
+
+时间复杂度 $O(n \times \log n)$，空间复杂度 $O(\log n)$。其中 $n$ 为数组长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def minOperations(self, nums: List[int]) -> int:
-        n = len(nums)
+        ans = n = len(nums)
         nums = sorted(set(nums))
-
-        ans = n
-        for i, start in enumerate(nums):
-            end = start + n - 1
-            j = bisect_right(nums, end)
-            remainLen = j - i
-            ans = min(ans, n - remainLen)
+        for i, v in enumerate(nums):
+            j = bisect_right(nums, v + n - 1)
+            ans = min(ans, n - (j - i))
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int minOperations(int[] nums) {
-        int N = nums.length;
-        if (N == 1) return 0;
+        int n = nums.length;
         Arrays.sort(nums);
-        int M = 1;
-        for (int i = 1; i < N; i++) {
-            if (nums[i] != nums[i - 1])
-                nums[M++] = nums[i];
+        int m = 1;
+        for (int i = 1; i < n; ++i) {
+            if (nums[i] != nums[i - 1]) {
+                nums[m++] = nums[i];
+            }
         }
-
-        int j = 0;
-        int ans = N;
-        for (int i = 0; i < M; i++) {
-            while (j < M && nums[j] <= N + nums[i] - 1) j++;
-            ans = Math.min(ans, N - j + i);
+        int ans = n;
+        for (int i = 0; i < m; ++i) {
+            int j = search(nums, nums[i] + n - 1, i, m);
+            ans = Math.min(ans, n - (j - i));
         }
-
         return ans;
+    }
+
+    private int search(int[] nums, int x, int left, int right) {
+        while (left < right) {
+            int mid = (left + right) >> 1;
+            if (nums[mid] > x) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int minOperations(vector<int>& nums) {
         sort(nums.begin(), nums.end());
-        int End = unique(nums.begin(), nums.end()) - nums.begin();
+        int m = unique(nums.begin(), nums.end()) - nums.begin();
         int n = nums.size();
-
-        int len = 0;
-        for (int i = 0; i < End; ++i) {
-            int temp = upper_bound(nums.begin(), nums.begin() + End, n + nums[i] - 1) - nums.begin() - i;
-            len = max(len, temp);
+        int ans = n;
+        for (int i = 0; i < m; ++i) {
+            int j = upper_bound(nums.begin() + i, nums.begin() + m, nums[i] + n - 1) - nums.begin();
+            ans = min(ans, n - (j - i));
         }
-        return n - len;
+        return ans;
     }
 };
 ```
 
-### **...**
+#### Go
 
+```go
+func minOperations(nums []int) int {
+	sort.Ints(nums)
+	n := len(nums)
+	m := 1
+	for i := 1; i < n; i++ {
+		if nums[i] != nums[i-1] {
+			nums[m] = nums[i]
+			m++
+		}
+	}
+	ans := n
+	for i := 0; i < m; i++ {
+		j := sort.Search(m, func(k int) bool { return nums[k] > nums[i]+n-1 })
+		ans = min(ans, n-(j-i))
+	}
+	return ans
+}
 ```
 
+#### Rust
+
+```rust
+use std::collections::BTreeSet;
+
+impl Solution {
+    #[allow(dead_code)]
+    pub fn min_operations(nums: Vec<i32>) -> i32 {
+        let n = nums.len();
+        let nums = nums.into_iter().collect::<BTreeSet<i32>>();
+
+        let m = nums.len();
+        let nums = nums.into_iter().collect::<Vec<i32>>();
+
+        let mut ans = n;
+
+        for i in 0..m {
+            let j = match nums.binary_search(&(nums[i] + (n as i32))) {
+                Ok(idx) => idx,
+                Err(idx) => idx,
+            };
+            ans = std::cmp::min(ans, n - (j - i));
+        }
+
+        ans as i32
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：排序 + 去重 + 双指针
+
+与方法一类似，我们先将数组排序，去重。
+
+然后遍历数组，枚举以当前元素 $nums[i]$ 作为连续数组的最小值，通过双指针找到第一个大于 $nums[i] + n - 1$ 的位置 $j$，那么 $j-i$ 就是当前元素作为最小值时，连续数组的长度，更新答案，即 $ans = \min(ans, n - (j - i))$。
+
+最后返回 $ans$ 即可。
+
+时间复杂度 $O(n \times \log n)$，空间复杂度 $O(\log n)$。其中 $n$ 为数组长度。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def minOperations(self, nums: List[int]) -> int:
+        n = len(nums)
+        nums = sorted(set(nums))
+        ans, j = n, 0
+        for i, v in enumerate(nums):
+            while j < len(nums) and nums[j] - v <= n - 1:
+                j += 1
+            ans = min(ans, n - (j - i))
+        return ans
+```
+
+#### Java
+
+```java
+class Solution {
+    public int minOperations(int[] nums) {
+        int n = nums.length;
+        Arrays.sort(nums);
+        int m = 1;
+        for (int i = 1; i < n; ++i) {
+            if (nums[i] != nums[i - 1]) {
+                nums[m++] = nums[i];
+            }
+        }
+        int ans = n;
+        for (int i = 0, j = 0; i < m; ++i) {
+            while (j < m && nums[j] - nums[i] <= n - 1) {
+                ++j;
+            }
+            ans = Math.min(ans, n - (j - i));
+        }
+        return ans;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int minOperations(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        int m = unique(nums.begin(), nums.end()) - nums.begin();
+        int n = nums.size();
+        int ans = n;
+        for (int i = 0, j = 0; i < m; ++i) {
+            while (j < m && nums[j] - nums[i] <= n - 1) {
+                ++j;
+            }
+            ans = min(ans, n - (j - i));
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func minOperations(nums []int) int {
+	sort.Ints(nums)
+	n := len(nums)
+	m := 1
+	for i := 1; i < n; i++ {
+		if nums[i] != nums[i-1] {
+			nums[m] = nums[i]
+			m++
+		}
+	}
+	ans := n
+	for i, j := 0, 0; i < m; i++ {
+		for j < m && nums[j]-nums[i] <= n-1 {
+			j++
+		}
+		ans = min(ans, n-(j-i))
+	}
+	return ans
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

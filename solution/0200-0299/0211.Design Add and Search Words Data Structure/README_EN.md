@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0211.Design%20Add%20and%20Search%20Words%20Data%20Structure/README_EN.md
+tags:
+    - Depth-First Search
+    - Design
+    - Trie
+    - String
+---
+
+<!-- problem:start -->
+
 # [211. Design Add and Search Words Data Structure](https://leetcode.com/problems/design-add-and-search-words-data-structure)
 
 [中文文档](/solution/0200-0299/0211.Design%20Add%20and%20Search%20Words%20Data%20Structure/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Design a data structure that supports adding new words and finding if a string matches any previously added string.</p>
 
@@ -15,7 +30,7 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example:</strong></p>
+<p><strong class="example">Example:</strong></p>
 
 <pre>
 <strong>Input</strong>
@@ -39,28 +54,33 @@ wordDictionary.search(&quot;b..&quot;); // return True
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>1 &lt;= word.length &lt;= 500</code></li>
-	<li><code>word</code> in <code>addWord</code> consists lower-case English letters.</li>
-	<li><code>word</code> in <code>search</code> consist of&nbsp; <code>&#39;.&#39;</code> or lower-case English letters.</li>
-	<li>At most <code>50000</code>&nbsp;calls will be made to <code>addWord</code>&nbsp;and <code>search</code>.</li>
+	<li><code>1 &lt;= word.length &lt;= 25</code></li>
+	<li><code>word</code> in <code>addWord</code> consists of lowercase English letters.</li>
+	<li><code>word</code> in <code>search</code> consist of <code>&#39;.&#39;</code> or lowercase English letters.</li>
+	<li>There will be at most <code>2</code> dots in <code>word</code> for <code>search</code> queries.</li>
+	<li>At most <code>10<sup>4</sup></code> calls will be made to <code>addWord</code> and <code>search</code>.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Trie:
-
     def __init__(self):
         self.children = [None] * 26
         self.is_end = False
 
 
 class WordDictionary:
-
     def __init__(self):
         self.trie = Trie()
 
@@ -82,7 +102,7 @@ class WordDictionary:
                     return False
                 if c == '.':
                     for child in node.children:
-                        if child is not None and search(word[i + 1:], child):
+                        if child is not None and search(word[i + 1 :], child):
                             return True
                     return False
                 node = node.children[idx]
@@ -90,13 +110,14 @@ class WordDictionary:
 
         return search(word, self.trie)
 
+
 # Your WordDictionary object will be instantiated and called as such:
 # obj = WordDictionary()
 # obj.addWord(word)
 # param_2 = obj.search(word)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Trie {
@@ -157,7 +178,79 @@ class WordDictionary {
  */
 ```
 
-### **Go**
+#### C++
+
+```cpp
+class trie {
+public:
+    vector<trie*> children;
+    bool is_end;
+
+    trie() {
+        children = vector<trie*>(26, nullptr);
+        is_end = false;
+    }
+
+    void insert(const string& word) {
+        trie* cur = this;
+        for (char c : word) {
+            c -= 'a';
+            if (cur->children[c] == nullptr) {
+                cur->children[c] = new trie;
+            }
+            cur = cur->children[c];
+        }
+        cur->is_end = true;
+    }
+};
+
+class WordDictionary {
+private:
+    trie* root;
+
+public:
+    WordDictionary()
+        : root(new trie) {}
+
+    void addWord(string word) {
+        root->insert(word);
+    }
+
+    bool search(string word) {
+        return dfs(word, 0, root);
+    }
+
+private:
+    bool dfs(const string& word, int i, trie* cur) {
+        if (i == word.size()) {
+            return cur->is_end;
+        }
+        char c = word[i];
+        if (c != '.') {
+            trie* child = cur->children[c - 'a'];
+            if (child != nullptr && dfs(word, i + 1, child)) {
+                return true;
+            }
+        } else {
+            for (trie* child : cur->children) {
+                if (child != nullptr && dfs(word, i + 1, child)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary* obj = new WordDictionary();
+ * obj->addWord(word);
+ * bool param_2 = obj->search(word);
+ */
+```
+
+#### Go
 
 ```go
 type WordDictionary struct {
@@ -224,81 +317,80 @@ func (t *trie) insert(word string) {
  */
 ```
 
-### **C++**
+#### C#
 
-```cpp
-class trie {
-public:
-    vector<trie*> children;
-    bool is_end;
+```cs
+using System.Collections.Generic;
+using System.Linq;
 
-    trie() {
-        children = vector<trie*>(26, nullptr);
-        is_end = false;
+class TrieNode {
+    public bool IsEnd { get; set; }
+    public TrieNode[] Children { get; set; }
+    public TrieNode() {
+        Children = new TrieNode[26];
+    }
+}
+
+public class WordDictionary {
+    private TrieNode root;
+
+    public WordDictionary() {
+        root = new TrieNode();
     }
 
-    void insert(const string& word) {
-        trie* cur = this;
-        for (char c : word) {
-            c -= 'a';
-            if (cur->children[c] == nullptr) {
-                cur->children[c] = new trie;
+    public void AddWord(string word) {
+        var node = root;
+        for (var i = 0; i < word.Length; ++i)
+        {
+            TrieNode nextNode;
+            var index = word[i] - 'a';
+            nextNode = node.Children[index];
+            if (nextNode == null)
+            {
+                nextNode = new TrieNode();
+                node.Children[index] = nextNode;
             }
-            cur = cur->children[c];
+            node = nextNode;
         }
-        cur->is_end = true;
-    }
-};
-
-class WordDictionary {
-private:
-    trie* root;
-
-public:
-    WordDictionary() : root(new trie) {}
-
-    void addWord(string word) {
-        root->insert(word);
+        node.IsEnd = true;
     }
 
-    bool search(string word) {
-        return dfs(word, 0, root);
-    }
-
-private:
-    bool dfs(const string& word, int i, trie* cur) {
-        if (i == word.size()) {
-            return cur->is_end;
-        }
-        char c = word[i];
-        if (c != '.') {
-            trie* child = cur->children[c - 'a'];
-            if (child != nullptr && dfs(word, i + 1, child)) {
-                return true;
-            }
-        } else {
-            for (trie* child : cur->children) {
-                if (child != nullptr && dfs(word, i + 1, child)) {
-                    return true;
+    public bool Search(string word) {
+        var queue = new Queue<TrieNode>();
+        queue.Enqueue(root);
+        for (var i = 0; i < word.Length; ++i)
+        {
+            var count = queue.Count;
+            while (count-- > 0)
+            {
+                var node = queue.Dequeue();
+                if (word[i] == '.')
+                {
+                    foreach (var nextNode in node.Children)
+                    {
+                        if (nextNode != null)
+                        {
+                            queue.Enqueue(nextNode);
+                        }
+                    }
+                }
+                else
+                {
+                    var nextNode = node.Children[word[i] - 'a'];
+                    if (nextNode != null)
+                    {
+                        queue.Enqueue(nextNode);
+                    }
                 }
             }
         }
-        return false;
+        return queue.Any(n => n.IsEnd);
     }
-};
-
-/**
- * Your WordDictionary object will be instantiated and called as such:
- * WordDictionary* obj = new WordDictionary();
- * obj->addWord(word);
- * bool param_2 = obj->search(word);
- */
-```
-
-### **...**
-
-```
-
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

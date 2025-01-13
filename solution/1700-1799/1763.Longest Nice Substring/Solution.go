@@ -1,16 +1,26 @@
-func longestNiceSubstring(s string) (ans string) {
-	for i := range s {
-		lower, upper := 0, 0
-		for j := i; j < len(s); j++ {
-			if unicode.IsLower(rune(s[j])) {
-				lower |= 1 << (s[j] - 'a')
-			} else {
-				upper |= 1 << (s[j] - 'A')
+func longestNiceSubstring(s string) string {
+	n := len(s)
+	k, mx := -1, 0
+	for i := 0; i < n; i++ {
+		ss := map[byte]bool{}
+		for j := i; j < n; j++ {
+			ss[s[j]] = true
+			ok := true
+			for a := range ss {
+				b := a ^ 32
+				if !(ss[a] && ss[b]) {
+					ok = false
+					break
+				}
 			}
-			if lower == upper && j-i+1 > len(ans) {
-				ans = s[i : j+1]
+			if ok && mx < j-i+1 {
+				mx = j - i + 1
+				k = i
 			}
 		}
 	}
-	return
+	if k < 0 {
+		return ""
+	}
+	return s[k : k+mx]
 }

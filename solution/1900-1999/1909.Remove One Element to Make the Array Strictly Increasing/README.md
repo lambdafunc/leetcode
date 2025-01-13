@@ -1,10 +1,22 @@
-# [1909. 删除一个元素使数组严格递增](https://leetcode-cn.com/problems/remove-one-element-to-make-the-array-strictly-increasing)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1909.Remove%20One%20Element%20to%20Make%20the%20Array%20Strictly%20Increasing/README.md
+rating: 1461
+source: 第 55 场双周赛 Q1
+tags:
+    - 数组
+---
+
+<!-- problem:start -->
+
+# [1909. 删除一个元素使数组严格递增](https://leetcode.cn/problems/remove-one-element-to-make-the-array-strictly-increasing)
 
 [English Version](/solution/1900-1999/1909.Remove%20One%20Element%20to%20Make%20the%20Array%20Strictly%20Increasing/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个下标从 <strong>0</strong> 开始的整数数组 <code>nums</code> ，如果 <strong>恰好</strong> 删除 <strong>一个</strong> 元素后，数组 <strong>严格递增</strong> ，那么请你返回 <code>true</code> ，否则返回 <code>false</code> 。如果数组本身已经是严格递增的，请你也返回 <code>true</code> 。</p>
 
@@ -55,21 +67,23 @@
 	<li><code>1 &lt;= nums[i] &lt;= 1000</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def canBeIncreasing(self, nums: List[int]) -> bool:
         def check(nums, i):
-            prev = float('-inf')
+            prev = -inf
             for j, num in enumerate(nums):
                 if i == j:
                     continue
@@ -84,15 +98,14 @@ class Solution:
         return check(nums, i - 1) or check(nums, i)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public boolean canBeIncreasing(int[] nums) {
         int i = 1, n = nums.length;
-        for (; i < n && nums[i - 1] < nums[i]; ++i);
+        for (; i < n && nums[i - 1] < nums[i]; ++i)
+            ;
         return check(nums, i - 1) || check(nums, i);
     }
 
@@ -112,14 +125,15 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool canBeIncreasing(vector<int>& nums) {
         int i = 1, n = nums.size();
-        for (; i < n && nums[i - 1] < nums[i]; ++i);
+        for (; i < n && nums[i - 1] < nums[i]; ++i)
+            ;
         return check(nums, i - 1) || check(nums, i);
     }
 
@@ -135,7 +149,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func canBeIncreasing(nums []int) bool {
@@ -161,10 +175,62 @@ func check(nums []int, i int) bool {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function canBeIncreasing(nums: number[]): boolean {
+    const check = (p: number) => {
+        let prev = undefined;
+        for (let j = 0; j < nums.length; j++) {
+            if (p != j) {
+                if (prev !== undefined && prev >= nums[j]) {
+                    return false;
+                }
+                prev = nums[j];
+            }
+        }
+        return true;
+    };
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i - 1] >= nums[i]) {
+            return check(i - 1) || check(i);
+        }
+    }
+    return true;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn can_be_increasing(nums: Vec<i32>) -> bool {
+        let check = |p: usize| -> bool {
+            let mut prev = None;
+            for j in 0..nums.len() {
+                if p != j {
+                    if let Some(value) = prev {
+                        if value >= nums[j] {
+                            return false;
+                        }
+                    }
+                    prev = Some(nums[j]);
+                }
+            }
+            true
+        };
+        for i in 1..nums.len() {
+            if nums[i - 1] >= nums[i] {
+                return check(i - 1) || check(i);
+            }
+        }
+        true
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

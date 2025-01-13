@@ -1,29 +1,23 @@
 function canFinish(numCourses: number, prerequisites: number[][]): boolean {
-    let edges: number[][] = Array.from({ length: numCourses }, () => ([]));
-    let indeg = new Array(numCourses).fill(0);
-
-    for (let [b, a] of prerequisites) {
-        edges[a].push(b);
-        indeg[b] += 1;
+    const g: number[][] = Array.from({ length: numCourses }, () => []);
+    const indeg: number[] = Array(numCourses).fill(0);
+    for (const [a, b] of prerequisites) {
+        g[b].push(a);
+        indeg[a]++;
     }
-
-    let queue = [];
-    for (let i = 0; i < numCourses; i++) {
-        if (!indeg[i]) {
-            queue.push(i);
+    const q: number[] = [];
+    for (let i = 0; i < numCourses; ++i) {
+        if (indeg[i] === 0) {
+            q.push(i);
         }
     }
-
-    let visited: number = 0;
-    while (queue.length) {
-        visited += 1;
-        const u = queue.shift();
-        for (let v of edges[u]) {
-            indeg[v] -= 1;
-            if (!indeg[v]) {
-                queue.push(v);
+    for (const i of q) {
+        --numCourses;
+        for (const j of g[i]) {
+            if (--indeg[j] === 0) {
+                q.push(j);
             }
         }
     }
-    return visited == numCourses;
-};
+    return numCourses === 0;
+}

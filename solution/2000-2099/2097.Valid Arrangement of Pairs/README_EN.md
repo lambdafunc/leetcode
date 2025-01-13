@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2097.Valid%20Arrangement%20of%20Pairs/README_EN.md
+rating: 2650
+source: Weekly Contest 270 Q4
+tags:
+    - Depth-First Search
+    - Graph
+    - Eulerian Circuit
+---
+
+<!-- problem:start -->
+
 # [2097. Valid Arrangement of Pairs](https://leetcode.com/problems/valid-arrangement-of-pairs)
 
 [中文文档](/solution/2000-2099/2097.Valid%20Arrangement%20of%20Pairs/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a <strong>0-indexed</strong> 2D integer array <code>pairs</code> where <code>pairs[i] = [start<sub>i</sub>, end<sub>i</sub>]</code>. An arrangement of <code>pairs</code> is <strong>valid</strong> if for every index <code>i</code> where <code>1 &lt;= i &lt; pairs.length</code>, we have <code>end<sub>i-1</sub> == start<sub>i</sub></code>.</p>
 
@@ -11,7 +27,7 @@
 <p><strong>Note:</strong> The inputs will be generated such that there exists a valid arrangement of <code>pairs</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> pairs = [[5,1],[4,5],[11,9],[9,4]]
@@ -23,7 +39,7 @@ end<sub>1</sub> = 4 == 4 = start<sub>2</sub>
 end<sub>2</sub> = 5 == 5 = start<sub>3</sub>
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> pairs = [[1,3],[3,2],[2,1]]
@@ -35,7 +51,7 @@ end<sub>1</sub> = 2 == 2 = start<sub>2</sub>
 The arrangements [[2,1],[1,3],[3,2]] and [[3,2],[2,1],[1,3]] are also valid.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> pairs = [[1,2],[1,3],[2,1]]
@@ -58,32 +74,42 @@ end<sub>1</sub> = 1 == 1 = start<sub>2</sub>
 	<li>There <strong>exists</strong> a valid arrangement of <code>pairs</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 
 ```
 
-### **Java**
+#### Java
 
 ```java
 
 ```
 
-### **TypeScript**
+#### C++
 
-```ts
-
-```
-
-### **...**
+```cpp
 
 ```
+
+#### Go
+
+```go
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

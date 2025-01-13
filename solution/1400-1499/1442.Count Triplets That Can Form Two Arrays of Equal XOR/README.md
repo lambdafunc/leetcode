@@ -1,10 +1,26 @@
-# [1442. 形成两个异或相等数组的三元组数目](https://leetcode-cn.com/problems/count-triplets-that-can-form-two-arrays-of-equal-xor)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1442.Count%20Triplets%20That%20Can%20Form%20Two%20Arrays%20of%20Equal%20XOR/README.md
+rating: 1524
+source: 第 188 场周赛 Q2
+tags:
+    - 位运算
+    - 数组
+    - 哈希表
+    - 数学
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [1442. 形成两个异或相等数组的三元组数目](https://leetcode.cn/problems/count-triplets-that-can-form-two-arrays-of-equal-xor)
 
 [English Version](/solution/1400-1499/1442.Count%20Triplets%20That%20Can%20Form%20Two%20Arrays%20of%20Equal%20XOR/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组 <code>arr</code> 。</p>
 
@@ -63,17 +79,17 @@
 	<li><code>1 &lt;= arr[i] &lt;= 10^8</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-前缀异或，然后暴力枚举即可。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -92,9 +108,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -121,7 +135,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -131,12 +145,9 @@ public:
         vector<int> pre(n + 1);
         for (int i = 0; i < n; ++i) pre[i + 1] = pre[i] ^ arr[i];
         int ans = 0;
-        for (int i = 0; i < n - 1; ++i)
-        {
-            for (int j = i + 1; j < n; ++j)
-            {
-                for (int k = j; k < n; ++k)
-                {
+        for (int i = 0; i < n - 1; ++i) {
+            for (int j = i + 1; j < n; ++j) {
+                for (int k = j; k < n; ++k) {
                     int a = pre[j] ^ pre[i], b = pre[k + 1] ^ pre[j];
                     if (a == b) ++ans;
                 }
@@ -147,7 +158,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func countTriplets(arr []int) int {
@@ -171,10 +182,8 @@ func countTriplets(arr []int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

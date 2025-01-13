@@ -1,127 +1,249 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0831.Masking%20Personal%20Information/README_EN.md
+tags:
+    - String
+---
+
+<!-- problem:start -->
+
 # [831. Masking Personal Information](https://leetcode.com/problems/masking-personal-information)
 
 [中文文档](/solution/0800-0899/0831.Masking%20Personal%20Information/README.md)
 
 ## Description
 
-<p>We are given a&nbsp;personal information string <code>S</code>, which may represent&nbsp;either <strong>an email address</strong> or <strong>a phone number.</strong></p>
+<!-- description:start -->
 
-<p>We would like to mask this&nbsp;personal information according to the&nbsp;following rules:</p>
+<p>You are given a personal information string <code>s</code>, representing either an <strong>email address</strong> or a <strong>phone number</strong>. Return <em>the <strong>masked</strong> personal information using the below rules</em>.</p>
 
-<p><br />
+<p><u><strong>Email address:</strong></u></p>
 
-<u><strong>1. Email address:</strong></u></p>
+<p>An email address is:</p>
 
-<p>We define a&nbsp;<strong>name</strong> to be a string of <code>length &ge; 2</code> consisting&nbsp;of only lowercase letters&nbsp;<code>a-z</code> or uppercase&nbsp;letters&nbsp;<code>A-Z</code>.</p>
+<ul>
+	<li>A <strong>name</strong> consisting of uppercase and lowercase English letters, followed by</li>
+	<li>The <code>&#39;@&#39;</code> symbol, followed by</li>
+	<li>The <strong>domain</strong> consisting of uppercase and lowercase English letters with a dot <code>&#39;.&#39;</code> somewhere in the middle (not the first or last character).</li>
+</ul>
 
-<p>An email address starts with a name, followed by the&nbsp;symbol <code>&#39;@&#39;</code>, followed by a name, followed by the&nbsp;dot&nbsp;<code>&#39;.&#39;</code>&nbsp;and&nbsp;followed by a name.&nbsp;</p>
+<p>To mask an email:</p>
 
-<p>All email addresses are&nbsp;guaranteed to be valid and in the format of&nbsp;<code>&quot;name1@name2.name3&quot;.</code></p>
+<ul>
+	<li>The uppercase letters in the <strong>name</strong> and <strong>domain</strong> must be converted to lowercase letters.</li>
+	<li>The middle letters of the <strong>name</strong> (i.e., all but the first and last letters) must be replaced by 5 asterisks <code>&quot;*****&quot;</code>.</li>
+</ul>
 
-<p>To mask an email, <strong>all names must be converted to lowercase</strong> and <strong>all letters between the first and last letter of the first name</strong> must be replaced by 5 asterisks <code>&#39;*&#39;</code>.</p>
+<p><u><strong>Phone number:</strong></u></p>
 
-<p><br />
+<p>A phone number is formatted as follows:</p>
 
-<u><strong>2. Phone number:</strong></u></p>
+<ul>
+	<li>The phone number contains 10-13 digits.</li>
+	<li>The last 10 digits make up the <strong>local number</strong>.</li>
+	<li>The remaining 0-3 digits, in the beginning, make up the <strong>country code</strong>.</li>
+	<li><strong>Separation characters</strong> from the set <code>{&#39;+&#39;, &#39;-&#39;, &#39;(&#39;, &#39;)&#39;, &#39; &#39;}</code> separate the above digits in some way.</li>
+</ul>
 
-<p>A phone number is a string consisting of&nbsp;only the digits <code>0-9</code> or the characters from the set <code>{&#39;+&#39;, &#39;-&#39;, &#39;(&#39;, &#39;)&#39;, &#39;&nbsp;&#39;}.</code>&nbsp;You may assume a phone&nbsp;number contains&nbsp;10 to 13 digits.</p>
+<p>To mask a phone number:</p>
 
-<p>The last 10 digits make up the local&nbsp;number, while the digits before those make up the country code. Note that&nbsp;the country code is optional. We want to expose only the last 4 digits&nbsp;and mask all other&nbsp;digits.</p>
-
-<p>The local&nbsp;number&nbsp;should be formatted and masked as <code>&quot;***-***-1111&quot;,&nbsp;</code>where <code>1</code> represents the exposed digits.</p>
-
-<p>To mask a phone number with country code like <code>&quot;+111 111 111 1111&quot;</code>, we write it in the form <code>&quot;+***-***-***-1111&quot;.</code>&nbsp; The <code>&#39;+&#39;</code>&nbsp;sign and the first <code>&#39;-&#39;</code>&nbsp;sign before the local number should only exist if there is a country code.&nbsp; For example, a 12 digit phone number mask&nbsp;should start&nbsp;with <code>&quot;+**-&quot;</code>.</p>
-
-<p>Note that extraneous characters like <code>&quot;(&quot;, &quot;)&quot;, &quot; &quot;</code>, as well as&nbsp;extra dashes or plus signs not part of the above formatting scheme should be removed.</p>
+<ul>
+	<li>Remove all <strong>separation characters</strong>.</li>
+	<li>The masked phone number should have the form:
+	<ul>
+		<li><code>&quot;***-***-XXXX&quot;</code> if the country code has 0 digits.</li>
+		<li><code>&quot;+*-***-***-XXXX&quot;</code> if the country code has 1 digit.</li>
+		<li><code>&quot;+**-***-***-XXXX&quot;</code> if the country code has 2 digits.</li>
+		<li><code>&quot;+***-***-***-XXXX&quot;</code> if the country code has 3 digits.</li>
+	</ul>
+	</li>
+	<li><code>&quot;XXXX&quot;</code> is the last 4 digits of the <strong>local number</strong>.</li>
+</ul>
 
 <p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
-<p>Return the correct &quot;mask&quot; of the information provided.</p>
+<pre>
+<strong>Input:</strong> s = &quot;LeetCode@LeetCode.com&quot;
+<strong>Output:</strong> &quot;l*****e@leetcode.com&quot;
+<strong>Explanation:</strong> s is an email address.
+The name and domain are converted to lowercase, and the middle of the name is replaced by 5 asterisks.
+</pre>
+
+<p><strong class="example">Example 2:</strong></p>
+
+<pre>
+<strong>Input:</strong> s = &quot;AB@qq.com&quot;
+<strong>Output:</strong> &quot;a*****b@qq.com&quot;
+<strong>Explanation:</strong> s is an email address.
+The name and domain are converted to lowercase, and the middle of the name is replaced by 5 asterisks.
+Note that even though &quot;ab&quot; is 2 characters, it still must have 5 asterisks in the middle.
+</pre>
+
+<p><strong class="example">Example 3:</strong></p>
+
+<pre>
+<strong>Input:</strong> s = &quot;1(234)567-890&quot;
+<strong>Output:</strong> &quot;***-***-7890&quot;
+<strong>Explanation:</strong> s is a phone number.
+There are 10 digits, so the local number is 10 digits and the country code is 0 digits.
+Thus, the resulting masked number is &quot;***-***-7890&quot;.
+</pre>
 
 <p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><strong>Example 1:</strong></p>
+<ul>
+	<li><code>s</code> is either a <strong>valid</strong> email or a phone number.</li>
+	<li>If <code>s</code> is an email:
+	<ul>
+		<li><code>8 &lt;= s.length &lt;= 40</code></li>
+		<li><code>s</code> consists of uppercase and lowercase English letters and exactly one <code>&#39;@&#39;</code> symbol and <code>&#39;.&#39;</code> symbol.</li>
+	</ul>
+	</li>
+	<li>If <code>s</code> is a phone number:
+	<ul>
+		<li><code>10 &lt;= s.length &lt;= 20</code></li>
+		<li><code>s</code> consists of digits, spaces, and the symbols <code>&#39;(&#39;</code>, <code>&#39;)&#39;</code>, <code>&#39;-&#39;</code>, and <code>&#39;+&#39;</code>.</li>
+	</ul>
+	</li>
+</ul>
 
-<pre>
-
-<strong>Input: </strong>&quot;LeetCode@LeetCode.com&quot;
-
-<strong>Output: </strong>&quot;l*****e@leetcode.com&quot;
-
-<strong>Explanation:&nbsp;</strong>All names are converted to lowercase, and the letters between the
-
-&nbsp;            first and last letter of the first name is replaced by 5 asterisks.
-
-&nbsp;            Therefore, &quot;leetcode&quot; -&gt; &quot;l*****e&quot;.
-
-</pre>
-
-<p><strong>Example 2:</strong></p>
-
-<pre>
-
-<strong>Input: </strong>&quot;AB@qq.com&quot;
-
-<strong>Output: </strong>&quot;a*****b@qq.com&quot;
-
-<strong>Explanation:&nbsp;</strong>There must be 5 asterisks between the first and last letter 
-
-&nbsp;            of the first name &quot;ab&quot;. Therefore, &quot;ab&quot; -&gt; &quot;a*****b&quot;.
-
-</pre>
-
-<p><strong>Example 3:</strong></p>
-
-<pre>
-
-<strong>Input: </strong>&quot;1(234)567-890&quot;
-
-<strong>Output: </strong>&quot;***-***-7890&quot;
-
-<strong>Explanation:</strong>&nbsp;10 digits in the phone number, which means all digits make up the local number.
-
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-
-<strong>Input: </strong>&quot;86-(10)12345678&quot;
-
-<strong>Output: </strong>&quot;+**-***-***-5678&quot;
-
-<strong>Explanation:</strong>&nbsp;12 digits, 2 digits for country code and 10 digits for local number. 
-
-</pre>
-
-<p><strong>Notes:</strong></p>
-
-<ol>
-	<li><code>S.length&nbsp;&lt;=&nbsp;40</code>.</li>
-	<li>Emails have length at least 8.</li>
-	<li>Phone numbers have length at least 10.</li>
-</ol>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Simulation
+
+According to the problem description, we can first determine whether the string $s$ is an email or a phone number, and then handle it accordingly.
+
+The time complexity is $O(n)$, and the space complexity is $O(n)$, where $n$ is the length of the string $s$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def maskPII(self, s: str) -> str:
+        if s[0].isalpha():
+            s = s.lower()
+            return s[0] + '*****' + s[s.find('@') - 1 :]
+        s = ''.join(c for c in s if c.isdigit())
+        cnt = len(s) - 10
+        suf = '***-***-' + s[-4:]
+        return suf if cnt == 0 else f'+{"*" * cnt}-{suf}'
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public String maskPII(String s) {
+        if (Character.isLetter(s.charAt(0))) {
+            s = s.toLowerCase();
+            int i = s.indexOf('@');
+            return s.substring(0, 1) + "*****" + s.substring(i - 1);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if (Character.isDigit(c)) {
+                sb.append(c);
+            }
+        }
+        s = sb.toString();
+        int cnt = s.length() - 10;
+        String suf = "***-***-" + s.substring(s.length() - 4);
+        return cnt == 0 ? suf
+                        : "+"
+                + "*".repeat(cnt) + "-" + suf;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    string maskPII(string s) {
+        int i = s.find('@');
+        if (i != -1) {
+            string ans;
+            ans += tolower(s[0]);
+            ans += "*****";
+            for (int j = i - 1; j < s.size(); ++j) {
+                ans += tolower(s[j]);
+            }
+            return ans;
+        }
+        string t;
+        for (char c : s) {
+            if (isdigit(c)) {
+                t += c;
+            }
+        }
+        int cnt = t.size() - 10;
+        string suf = "***-***-" + t.substr(t.size() - 4);
+        return cnt == 0 ? suf : "+" + string(cnt, '*') + "-" + suf;
+    }
+};
 ```
 
+#### Go
+
+```go
+func maskPII(s string) string {
+	i := strings.Index(s, "@")
+	if i != -1 {
+		s = strings.ToLower(s)
+		return s[0:1] + "*****" + s[i-1:]
+	}
+	t := []rune{}
+	for _, c := range s {
+		if c >= '0' && c <= '9' {
+			t = append(t, c)
+		}
+	}
+	s = string(t)
+	cnt := len(s) - 10
+	suf := "***-***-" + s[len(s)-4:]
+	if cnt == 0 {
+		return suf
+	}
+	return "+" + strings.Repeat("*", cnt) + "-" + suf
+}
+```
+
+#### TypeScript
+
+```ts
+function maskPII(s: string): string {
+    const i = s.indexOf('@');
+    if (i !== -1) {
+        let ans = s[0].toLowerCase() + '*****';
+        for (let j = i - 1; j < s.length; ++j) {
+            ans += s.charAt(j).toLowerCase();
+        }
+        return ans;
+    }
+    let t = '';
+    for (const c of s) {
+        if (/\d/.test(c)) {
+            t += c;
+        }
+    }
+    const cnt = t.length - 10;
+    const suf = `***-***-${t.substring(t.length - 4)}`;
+    return cnt === 0 ? suf : `+${'*'.repeat(cnt)}-${suf}`;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

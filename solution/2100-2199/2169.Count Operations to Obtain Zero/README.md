@@ -1,10 +1,23 @@
-# [2169. 得到 0 的操作数](https://leetcode-cn.com/problems/count-operations-to-obtain-zero)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2169.Count%20Operations%20to%20Obtain%20Zero/README.md
+rating: 1199
+source: 第 280 场周赛 Q1
+tags:
+    - 数学
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [2169. 得到 0 的操作数](https://leetcode.cn/problems/count-operations-to-obtain-zero)
 
 [English Version](/solution/2100-2199/2169.Count%20Operations%20to%20Obtain%20Zero/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你两个 <strong>非负</strong> 整数 <code>num1</code> 和 <code>num2</code> 。</p>
 
@@ -50,29 +63,83 @@
 	<li><code>0 &lt;= num1, num2 &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def countOperations(self, num1: int, num2: int) -> int:
+        ans = 0
+        while num1 and num2:
+            if num1 >= num2:
+                num1, num2 = num2, num1
+            num2 -= num1
+            ans += 1
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int countOperations(int num1, int num2) {
+        int ans = 0;
+        while (num1 != 0 && num2 != 0) {
+            if (num1 >= num2) {
+                num1 -= num2;
+            } else {
+                num2 -= num1;
+            }
+            ++ans;
+        }
+        return ans;
+    }
+}
 ```
 
-### **TypeScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int countOperations(int num1, int num2) {
+        int ans = 0;
+        while (num1 && num2) {
+            if (num1 > num2) swap(num1, num2);
+            num2 -= num1;
+            ++ans;
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func countOperations(num1 int, num2 int) int {
+	ans := 0
+	for num1 != 0 && num2 != 0 {
+		if num1 > num2 {
+			num1, num2 = num2, num1
+		}
+		num2 -= num1
+		ans++
+	}
+	return ans
+}
+```
+
+#### TypeScript
 
 ```ts
 function countOperations(num1: number, num2: number): number {
@@ -82,13 +149,11 @@ function countOperations(num1: number, num2: number): number {
         ans++;
     }
     return ans;
-};
-```
-
-### **...**
-
-```
-
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

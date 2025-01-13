@@ -1,8 +1,24 @@
-# [536. Construct Binary Tree from String](https://leetcode.com/problems/construct-binary-tree-from-string)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0536.Construct%20Binary%20Tree%20from%20String/README_EN.md
+tags:
+    - Stack
+    - Tree
+    - Depth-First Search
+    - String
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
+# [536. Construct Binary Tree from String 🔒](https://leetcode.com/problems/construct-binary-tree-from-string)
 
 [中文文档](/solution/0500-0599/0536.Construct%20Binary%20Tree%20from%20String/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You need to construct a binary tree from a string consisting of parenthesis and integers.</p>
 
@@ -11,21 +27,21 @@
 <p>You always start to construct the <b>left</b> child node of the parent first if it exists.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0500-0599/0536.Construct%20Binary%20Tree%20from%20String/images/butree.jpg" style="width: 382px; height: 322px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0500-0599/0536.Construct%20Binary%20Tree%20from%20String/images/butree.jpg" style="width: 382px; height: 322px;" />
 <pre>
 <strong>Input:</strong> s = &quot;4(2(3)(1))(6(5))&quot;
 <strong>Output:</strong> [4,2,6,3,1,5]
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;4(2(3)(1))(6(5)(7))&quot;
 <strong>Output:</strong> [4,2,6,3,1,5,7]
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;-4(2(3)(1))(6(5)(7))&quot;
@@ -38,15 +54,20 @@
 <ul>
 	<li><code>0 &lt;= s.length &lt;= 3 * 10<sup>4</sup></code></li>
 	<li><code>s</code> consists of digits, <code>&#39;(&#39;</code>, <code>&#39;)&#39;</code>, and <code>&#39;-&#39;</code> only.</li>
+	<li>All numbers in the tree have value <strong>at most</strong> than <code>2<sup>30</sup></code>.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
-DFS.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -73,16 +94,16 @@ class Solution:
                     cnt -= 1
                 if cnt == 0:
                     if start == p:
-                        root.left = dfs(s[start + 1: i])
+                        root.left = dfs(s[start + 1 : i])
                         start = i + 1
                     else:
-                        root.right = dfs(s[start + 1: i])
+                        root.right = dfs(s[start + 1 : i])
             return root
 
         return dfs(s)
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -136,7 +157,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -163,18 +184,17 @@ public:
         TreeNode* root = new TreeNode(stoi(s.substr(0, p)));
         int start = p;
         int cnt = 0;
-        for (int i = p; i < s.size(); ++i)
-        {
-            if (s[i] == '(') ++cnt;
-            else if (s[i] == ')') --cnt;
-            if (cnt == 0)
-            {
-                if (start == p)
-                {
+        for (int i = p; i < s.size(); ++i) {
+            if (s[i] == '(')
+                ++cnt;
+            else if (s[i] == ')')
+                --cnt;
+            if (cnt == 0) {
+                if (start == p) {
                     root->left = dfs(s.substr(start + 1, i - start - 1));
                     start = i + 1;
-                }
-                else root->right = dfs(s.substr(start + 1, i - start - 1));
+                } else
+                    root->right = dfs(s.substr(start + 1, i - start - 1));
             }
         }
         return root;
@@ -182,7 +202,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -229,10 +249,8 @@ func str2tree(s string) *TreeNode {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

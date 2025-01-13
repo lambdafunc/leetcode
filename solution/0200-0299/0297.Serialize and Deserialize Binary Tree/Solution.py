@@ -5,50 +5,53 @@
 #         self.left = None
 #         self.right = None
 
-class Codec:
 
+class Codec:
     def serialize(self, root):
         """Encodes a tree to a single string.
-        
+
         :type root: TreeNode
         :rtype: str
         """
-
         if root is None:
-            return ''
-        res = []
-
-        def preorder(root):
-            if root is None:
-                res.append("#,")
-                return
-            res.append(str(root.val) + ",")
-            preorder(root.left)
-            preorder(root.right)
-        
-        preorder(root)
-        return ''.join(res)
-        
+            return ""
+        q = deque([root])
+        ans = []
+        while q:
+            node = q.popleft()
+            if node:
+                ans.append(str(node.val))
+                q.append(node.left)
+                q.append(node.right)
+            else:
+                ans.append("#")
+        return ",".join(ans)
 
     def deserialize(self, data):
         """Decodes your encoded data to tree.
-        
+
         :type data: str
         :rtype: TreeNode
         """
         if not data:
             return None
-        vals = data.split(',')
+        vals = data.split(",")
+        root = TreeNode(int(vals[0]))
+        q = deque([root])
+        i = 1
+        while q:
+            node = q.popleft()
+            if vals[i] != "#":
+                node.left = TreeNode(int(vals[i]))
+                q.append(node.left)
+            i += 1
+            if vals[i] != "#":
+                node.right = TreeNode(int(vals[i]))
+                q.append(node.right)
+            i += 1
+        return root
 
-        def inner():
-            first = vals.pop(0)
-            if first == '#':
-                return None
-            return TreeNode(int(first), inner(), inner())
-        
-        return inner()
 
 # Your Codec object will be instantiated and called as such:
-# ser = Codec()
-# deser = Codec()
-# ans = deser.deserialize(ser.serialize(root))
+# codec = Codec()
+# codec.deserialize(codec.serialize(root))

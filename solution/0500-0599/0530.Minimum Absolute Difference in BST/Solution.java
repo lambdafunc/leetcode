@@ -4,24 +4,32 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-
-    private int minDiff = Integer.MAX_VALUE;
-    private Integer pre;
+    private final int inf = 1 << 30;
+    private int ans = inf;
+    private int pre = -inf;
 
     public int getMinimumDifference(TreeNode root) {
-        inorder(root);
-        return minDiff;
+        dfs(root);
+        return ans;
     }
 
-    private void inorder(TreeNode root) {
-        if (root == null) return;
-        inorder(root.left);
-        if (pre != null) minDiff = Math.min(minDiff, Math.abs(root.val - pre));
+    private void dfs(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        dfs(root.left);
+        ans = Math.min(ans, root.val - pre);
         pre = root.val;
-        inorder(root.right);
+        dfs(root.right);
     }
 }

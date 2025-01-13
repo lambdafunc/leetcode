@@ -1,12 +1,12 @@
 func validateStackSequences(pushed []int, popped []int) bool {
-	j, n := 0, len(popped)
-	var stk []int
+	stk := []int{}
+	i := 0
 	for _, x := range pushed {
 		stk = append(stk, x)
-		for len(stk) > 0 && j < n && stk[len(stk)-1] == popped[j] {
+		for len(stk) > 0 && stk[len(stk)-1] == popped[i] {
 			stk = stk[:len(stk)-1]
-			j++
+			i++
 		}
 	}
-	return j == n
+	return i == len(popped)
 }

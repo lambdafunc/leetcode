@@ -1,10 +1,24 @@
-# [1942. 最小未被占据椅子的编号](https://leetcode-cn.com/problems/the-number-of-the-smallest-unoccupied-chair)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1942.The%20Number%20of%20the%20Smallest%20Unoccupied%20Chair/README.md
+rating: 1695
+source: 第 57 场双周赛 Q2
+tags:
+    - 数组
+    - 哈希表
+    - 堆（优先队列）
+---
+
+<!-- problem:start -->
+
+# [1942. 最小未被占据椅子的编号](https://leetcode.cn/problems/the-number-of-the-smallest-unoccupied-chair)
 
 [English Version](/solution/1900-1999/1942.The%20Number%20of%20the%20Smallest%20Unoccupied%20Chair/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>有 <code>n</code> 个朋友在举办一个派对，这些朋友从 <code>0</code> 到 <code>n - 1</code> 编号。派对里有 <strong>无数</strong> 张椅子，编号为 <code>0</code> 到 <code>infinity</code> 。当一个朋友到达派对时，他会占据 <strong>编号最小</strong> 且未被占据的椅子。</p>
 
@@ -60,32 +74,102 @@
 	<li>每个 <code>arrival<sub>i</sub></code> 时刻 <strong>互不相同</strong> 。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：优先队列（最小堆）
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def smallestChair(self, times: List[List[int]], targetFriend: int) -> int:
+        n = len(times)
+        h = list(range(n))
+        heapify(h)
+        for i in range(n):
+            times[i].append(i)
+        times.sort()
+        busy = []
+        for a, b, i in times:
+            while busy and busy[0][0] <= a:
+                heappush(h, heappop(busy)[1])
+            c = heappop(h)
+            if i == targetFriend:
+                return c
+            heappush(busy, (b, c))
+        return -1
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int smallestChair(int[][] times, int targetFriend) {
+        int n = times.length;
+        int[][] ts = new int[n][3];
+        PriorityQueue<Integer> q = new PriorityQueue<>();
+        PriorityQueue<int[]> busy = new PriorityQueue<>((a, b) -> a[0] - b[0]);
+        for (int i = 0; i < n; ++i) {
+            ts[i] = new int[] {times[i][0], times[i][1], i};
+            q.offer(i);
+        }
+        Arrays.sort(ts, (a, b) -> a[0] - b[0]);
+        for (int[] t : ts) {
+            int a = t[0], b = t[1], i = t[2];
+            while (!busy.isEmpty() && busy.peek()[0] <= a) {
+                q.offer(busy.poll()[1]);
+            }
+            int c = q.poll();
+            if (i == targetFriend) {
+                return c;
+            }
+            busy.offer(new int[] {b, c});
+        }
+        return -1;
+    }
+}
 ```
 
-### **...**
+#### C++
 
-```
+```cpp
+using pii = pair<int, int>;
 
+class Solution {
+public:
+    int smallestChair(vector<vector<int>>& times, int targetFriend) {
+        priority_queue<int, vector<int>, greater<int>> q;
+        priority_queue<pii, vector<pii>, greater<pii>> busy;
+        int n = times.size();
+        for (int i = 0; i < n; ++i) {
+            times[i].push_back(i);
+            q.push(i);
+        }
+        sort(times.begin(), times.end());
+        for (auto& t : times) {
+            int a = t[0], b = t[1], i = t[2];
+            while (!busy.empty() && busy.top().first <= a) {
+                q.push(busy.top().second);
+                busy.pop();
+            }
+            int c = q.top();
+            q.pop();
+            if (i == targetFriend) return c;
+            busy.push({b, c});
+        }
+        return -1;
+    }
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

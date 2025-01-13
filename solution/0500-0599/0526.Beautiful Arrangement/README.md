@@ -1,53 +1,76 @@
-# [526. 优美的排列](https://leetcode-cn.com/problems/beautiful-arrangement)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0526.Beautiful%20Arrangement/README.md
+tags:
+    - 位运算
+    - 数组
+    - 动态规划
+    - 回溯
+    - 状态压缩
+---
+
+<!-- problem:start -->
+
+# [526. 优美的排列](https://leetcode.cn/problems/beautiful-arrangement)
 
 [English Version](/solution/0500-0599/0526.Beautiful%20Arrangement/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>假设有从 1 到 N 的&nbsp;<strong>N&nbsp;</strong>个整数，如果从这&nbsp;<strong>N&nbsp;</strong>个数字中成功构造出一个数组，使得数组的第 <strong>i</strong>&nbsp;位 (1 &lt;= i &lt;= N) 满足如下两个条件中的一个，我们就称这个数组为一个优美的排列。条件：</p>
+<p>假设有从 1 到 n 的 n 个整数。用这些整数构造一个数组 <code>perm</code>（<strong>下标从 1 开始</strong>），只要满足下述条件 <strong>之一</strong> ，该数组就是一个 <strong>优美的排列</strong> ：</p>
 
-<ol>
-	<li>第&nbsp;<strong>i&nbsp;</strong>位的数字能被&nbsp;<strong>i&nbsp;</strong>整除</li>
-	<li><strong>i</strong> 能被第 <strong>i</strong> 位上的数字整除</li>
-</ol>
+<ul>
+	<li><code>perm[i]</code> 能够被 <code>i</code> 整除</li>
+	<li><code>i</code> 能够被 <code>perm[i]</code> 整除</li>
+</ul>
 
-<p>现在给定一个整数 N，请问可以构造多少个优美的排列？</p>
+<p>给你一个整数 <code>n</code> ，返回可以构造的 <strong>优美排列 </strong>的 <strong>数量</strong> 。</p>
 
-<p><strong>示例1:</strong></p>
+<p>&nbsp;</p>
+
+<p><strong>示例 1：</strong></p>
 
 <pre>
-<strong>输入:</strong> 2
-<strong>输出:</strong> 2
-<strong>解释:</strong> 
-
-第 1 个优美的排列是 [1, 2]:
-  第 1 个位置（i=1）上的数字是1，1能被 i（i=1）整除
-  第 2 个位置（i=2）上的数字是2，2能被 i（i=2）整除
-
-第 2 个优美的排列是 [2, 1]:
-  第 1 个位置（i=1）上的数字是2，2能被 i（i=1）整除
-  第 2 个位置（i=2）上的数字是1，i（i=2）能被 1 整除
+<strong>输入：</strong>n = 2
+<strong>输出：</strong>2
+<b>解释：</b>
+第 1 个优美的排列是 [1,2]：
+    - perm[1] = 1 能被 i = 1 整除
+    - perm[2] = 2 能被 i = 2 整除
+第 2 个优美的排列是 [2,1]:
+    - perm[1] = 2 能被 i = 1 整除
+    - i = 2 能被 perm[2] = 1 整除
 </pre>
 
-<p><strong>说明:</strong></p>
+<p><strong>示例 2：</strong></p>
 
-<ol>
-	<li><strong>N</strong> 是一个正整数，并且不会超过15。</li>
-</ol>
+<pre>
+<strong>输入：</strong>n = 1
+<strong>输出：</strong>1
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 &lt;= n &lt;= 15</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-DFS 回溯，或者状态压缩。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -75,9 +98,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -121,29 +142,7 @@ class Solution {
 }
 ```
 
-```java
-class Solution {
-    public int countArrangement(int N) {
-        int maxn = 1 << N;
-        int[] f = new int[maxn];
-        f[0] = 1;
-        for (int i = 0; i < maxn; ++i) {
-            int s = 1;
-            for (int j = 0; j < N; ++j) {
-                s += (i >> j) & 1;
-            }
-            for (int j = 1; j <= N; ++j) {
-                if (((i >> (j - 1) & 1) == 0) && (s % j == 0 || j % s == 0)) {
-                    f[i | (1 << (j - 1))] += f[i];
-                }
-            }
-        }
-        return f[maxn - 1];
-    }
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -166,15 +165,12 @@ public:
     }
 
     void dfs(int i) {
-        if (i == n + 1)
-        {
+        if (i == n + 1) {
             ++ans;
             return;
         }
-        for (int j : match[i])
-        {
-            if (!vis[j])
-            {
+        for (int j : match[i]) {
+            if (!vis[j]) {
                 vis[j] = true;
                 dfs(i + 1);
                 vis[j] = false;
@@ -184,7 +180,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func countArrangement(n int) int {
@@ -219,10 +215,112 @@ func countArrangement(n int) int {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function countArrangement(n: number): number {
+    const vis = new Array(n + 1).fill(0);
+    const match = Array.from({ length: n + 1 }, () => []);
+    for (let i = 1; i <= n; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (i % j === 0 || j % i === 0) {
+                match[i].push(j);
+            }
+        }
+    }
+
+    let res = 0;
+    const dfs = (i: number, n: number) => {
+        if (i === n + 1) {
+            res++;
+            return;
+        }
+        for (const j of match[i]) {
+            if (!vis[j]) {
+                vis[j] = true;
+                dfs(i + 1, n);
+                vis[j] = false;
+            }
+        }
+    };
+    dfs(1, n);
+    return res;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    fn dfs(i: usize, n: usize, mat: &Vec<Vec<usize>>, vis: &mut Vec<bool>, res: &mut i32) {
+        if i == n + 1 {
+            *res += 1;
+            return;
+        }
+        for &j in mat[i].iter() {
+            if !vis[j] {
+                vis[j] = true;
+                Self::dfs(i + 1, n, mat, vis, res);
+                vis[j] = false;
+            }
+        }
+    }
+
+    pub fn count_arrangement(n: i32) -> i32 {
+        let n = n as usize;
+        let mut vis = vec![false; n + 1];
+        let mut mat = vec![Vec::new(); n + 1];
+        for i in 1..=n {
+            for j in 1..=n {
+                if i % j == 0 || j % i == 0 {
+                    mat[i].push(j);
+                }
+            }
+        }
+
+        let mut res = 0;
+        Self::dfs(1, n, &mat, &mut vis, &mut res);
+        res
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二
+
+<!-- tabs:start -->
+
+#### Java
+
+```java
+class Solution {
+    public int countArrangement(int N) {
+        int maxn = 1 << N;
+        int[] f = new int[maxn];
+        f[0] = 1;
+        for (int i = 0; i < maxn; ++i) {
+            int s = 1;
+            for (int j = 0; j < N; ++j) {
+                s += (i >> j) & 1;
+            }
+            for (int j = 1; j <= N; ++j) {
+                if (((i >> (j - 1) & 1) == 0) && (s % j == 0 || j % s == 0)) {
+                    f[i | (1 << (j - 1))] += f[i];
+                }
+            }
+        }
+        return f[maxn - 1];
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

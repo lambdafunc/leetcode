@@ -1,10 +1,23 @@
-# [1144. 递减元素使数组呈锯齿状](https://leetcode-cn.com/problems/decrease-elements-to-make-array-zigzag)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1144.Decrease%20Elements%20To%20Make%20Array%20Zigzag/README.md
+rating: 1558
+source: 第 148 场周赛 Q1
+tags:
+    - 贪心
+    - 数组
+---
+
+<!-- problem:start -->
+
+# [1144. 递减元素使数组呈锯齿状](https://leetcode.cn/problems/decrease-elements-to-make-array-zigzag)
 
 [English Version](/solution/1100-1199/1144.Decrease%20Elements%20To%20Make%20Array%20Zigzag/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组&nbsp;<code>nums</code>，每次 <strong>操作</strong>&nbsp;会从中选择一个元素并 <strong>将该元素的值减少&nbsp;1</strong>。</p>
 
@@ -41,32 +54,153 @@
 	<li><code>1 &lt;= nums[i] &lt;= 1000</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：枚举 + 贪心
+
+我们可以分别枚举偶数位和奇数位作为“比相邻元素小”的元素，然后计算需要的操作次数。取两者的最小值即可。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组 $nums$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def movesToMakeZigzag(self, nums: List[int]) -> int:
+        ans = [0, 0]
+        n = len(nums)
+        for i in range(2):
+            for j in range(i, n, 2):
+                d = 0
+                if j:
+                    d = max(d, nums[j] - nums[j - 1] + 1)
+                if j < n - 1:
+                    d = max(d, nums[j] - nums[j + 1] + 1)
+                ans[i] += d
+        return min(ans)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int movesToMakeZigzag(int[] nums) {
+        int[] ans = new int[2];
+        int n = nums.length;
+        for (int i = 0; i < 2; ++i) {
+            for (int j = i; j < n; j += 2) {
+                int d = 0;
+                if (j > 0) {
+                    d = Math.max(d, nums[j] - nums[j - 1] + 1);
+                }
+                if (j < n - 1) {
+                    d = Math.max(d, nums[j] - nums[j + 1] + 1);
+                }
+                ans[i] += d;
+            }
+        }
+        return Math.min(ans[0], ans[1]);
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int movesToMakeZigzag(vector<int>& nums) {
+        vector<int> ans(2);
+        int n = nums.size();
+        for (int i = 0; i < 2; ++i) {
+            for (int j = i; j < n; j += 2) {
+                int d = 0;
+                if (j) d = max(d, nums[j] - nums[j - 1] + 1);
+                if (j < n - 1) d = max(d, nums[j] - nums[j + 1] + 1);
+                ans[i] += d;
+            }
+        }
+        return min(ans[0], ans[1]);
+    }
+};
 ```
 
+#### Go
+
+```go
+func movesToMakeZigzag(nums []int) int {
+	ans := [2]int{}
+	n := len(nums)
+	for i := 0; i < 2; i++ {
+		for j := i; j < n; j += 2 {
+			d := 0
+			if j > 0 {
+				d = max(d, nums[j]-nums[j-1]+1)
+			}
+			if j < n-1 {
+				d = max(d, nums[j]-nums[j+1]+1)
+			}
+			ans[i] += d
+		}
+	}
+	return min(ans[0], ans[1])
+}
+```
+
+#### TypeScript
+
+```ts
+function movesToMakeZigzag(nums: number[]): number {
+    const ans: number[] = Array(2).fill(0);
+    const n = nums.length;
+    for (let i = 0; i < 2; ++i) {
+        for (let j = i; j < n; j += 2) {
+            let d = 0;
+            if (j > 0) {
+                d = Math.max(d, nums[j] - nums[j - 1] + 1);
+            }
+            if (j < n - 1) {
+                d = Math.max(d, nums[j] - nums[j + 1] + 1);
+            }
+            ans[i] += d;
+        }
+    }
+    return Math.min(...ans);
+}
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int MovesToMakeZigzag(int[] nums) {
+        int[] ans = new int[2];
+        int n = nums.Length;
+        for (int i = 0; i < 2; ++i) {
+            for (int j = i; j < n; j += 2) {
+                int d = 0;
+                if (j > 0) {
+                    d = Math.Max(d, nums[j] - nums[j - 1] + 1);
+                }
+                if (j < n - 1) {
+                    d = Math.Max(d, nums[j] - nums[j + 1] + 1);
+                }
+                ans[i] += d;
+            }
+        }
+        return Math.Min(ans[0], ans[1]);
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

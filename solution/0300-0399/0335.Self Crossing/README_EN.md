@@ -1,72 +1,73 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0335.Self%20Crossing/README_EN.md
+tags:
+    - Geometry
+    - Array
+    - Math
+---
+
+<!-- problem:start -->
+
 # [335. Self Crossing](https://leetcode.com/problems/self-crossing)
 
 [中文文档](/solution/0300-0399/0335.Self%20Crossing/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>You are given an array of integers <code>distance</code>.</p>
 
-<p>You start at point <code>(0,0)</code> on an <strong>X-Y</strong> plane and you move <code>distance[0]</code> meters to the north, then <code>distance[1]</code> meters to the west, <code>distance[2]</code> meters to the south, <code>distance[3]</code> meters to the east, and so on. In other words, after each move, your direction changes counter-clockwise.</p>
+<p>You start at the point <code>(0, 0)</code> on an <strong>X-Y plane,</strong> and you move <code>distance[0]</code> meters to the north, then <code>distance[1]</code> meters to the west, <code>distance[2]</code> meters to the south, <code>distance[3]</code> meters to the east, and so on. In other words, after each move, your direction changes counter-clockwise.</p>
 
-<p>Return <code>true</code> if your path crosses itself, and <code>false</code> if it does not.</p>
+<p>Return <code>true</code> <em>if your path crosses itself or </em><code>false</code><em> if it does not</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0335.Self%20Crossing/images/selfcross1-plane.jpg" style="width: 400px; height: 435px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0335.Self%20Crossing/images/11.jpg" style="width: 400px; height: 413px;" />
 <pre>
 <strong>Input:</strong> distance = [2,1,1,2]
 <strong>Output:</strong> true
+<strong>Explanation:</strong> The path crosses itself at the point (0, 1).
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0335.Self%20Crossing/images/selfcross2-plane.jpg" style="width: 400px; height: 435px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0335.Self%20Crossing/images/22.jpg" style="width: 400px; height: 413px;" />
 <pre>
 <strong>Input:</strong> distance = [1,2,3,4]
 <strong>Output:</strong> false
+<strong>Explanation:</strong> The path does not cross itself at any point.
 </pre>
 
-<p><strong>Example 3:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0335.Self%20Crossing/images/selfcross3-plane.jpg" style="width: 400px; height: 435px;" />
+<p><strong class="example">Example 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0335.Self%20Crossing/images/33.jpg" style="width: 400px; height: 413px;" />
 <pre>
-<strong>Input:</strong> distance = [1,1,1,1]
+<strong>Input:</strong> distance = [1,1,1,2,1]
 <strong>Output:</strong> true
+<strong>Explanation:</strong> The path crosses itself at the point (0, 0).
 </pre>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>1 &lt;=&nbsp;distance.length &lt;= 500</code></li>
-	<li><code>1 &lt;=&nbsp;distance[i] &lt;= 500</code></li>
+	<li><code>1 &lt;=&nbsp;distance.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>1 &lt;=&nbsp;distance[i] &lt;= 10<sup>5</sup></code></li>
 </ul>
 
-<p>&nbsp;</p>
-<p><strong>Follow up:</strong> Could you write a one-pass algorithm with <code>O(1)</code> extra space?</p>
+<!-- description:end -->
 
 ## Solutions
 
-```bash
-                i-2
-    case 1 : i-1┌─┐
-                └─┼─>i
-                 i-3
+<!-- solution:start -->
 
-                   i-2
-    case 2 : i-1 ┌────┐
-                 └─══>┘i-3
-                 i  i-4
-
-    case 3 :    i-4
-               ┌──┐
-               │i<┼─┐
-            i-3│ i-5│i-1
-               └────┘
-                i-2
-```
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -77,12 +78,18 @@ class Solution:
                 return True
             if i >= 4 and d[i - 1] == d[i - 3] and d[i] + d[i - 4] >= d[i - 2]:
                 return True
-            if i >= 5 and d[i - 2] >= d[i - 4] and d[i - 1] <= d[i - 3] and d[i] >= d[i - 2] - d[i - 4] and d[i - 1] + d[i - 5] >= d[i - 3]:
+            if (
+                i >= 5
+                and d[i - 2] >= d[i - 4]
+                and d[i - 1] <= d[i - 3]
+                and d[i] >= d[i - 2] - d[i - 4]
+                and d[i - 1] + d[i - 5] >= d[i - 3]
+            ):
                 return True
         return False
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -95,7 +102,8 @@ class Solution {
             if (i >= 4 && d[i - 1] == d[i - 3] && d[i] + d[i - 4] >= d[i - 2]) {
                 return true;
             }
-            if (i >= 5 && d[i - 2] >= d[i - 4] && d[i - 1] <= d[i - 3] && d[i] >= d[i - 2] - d[i - 4] && d[i - 1] + d[i - 5] >= d[i - 3]) {
+            if (i >= 5 && d[i - 2] >= d[i - 4] && d[i - 1] <= d[i - 3]
+                && d[i] >= d[i - 2] - d[i - 4] && d[i - 1] + d[i - 5] >= d[i - 3]) {
                 return true;
             }
         }
@@ -104,15 +112,14 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool isSelfCrossing(vector<int>& distance) {
         vector<int> d = distance;
-        for (int i = 3; i < d.size(); ++i)
-        {
+        for (int i = 3; i < d.size(); ++i) {
             if (d[i] >= d[i - 2] && d[i - 1] <= d[i - 3]) return true;
             if (i >= 4 && d[i - 1] == d[i - 3] && d[i] + d[i - 4] >= d[i - 2]) return true;
             if (i >= 5 && d[i - 2] >= d[i - 4] && d[i - 1] <= d[i - 3] && d[i] >= d[i - 2] - d[i - 4] && d[i - 1] + d[i - 5] >= d[i - 3]) return true;
@@ -122,7 +129,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func isSelfCrossing(distance []int) bool {
@@ -142,10 +149,27 @@ func isSelfCrossing(distance []int) bool {
 }
 ```
 
-### **...**
+#### C#
 
-```
-
+```cs
+public class Solution {
+    public bool IsSelfCrossing(int[] x) {
+        for (var i = 3; i < x.Length; ++i)
+        {
+            if (x[i] >= x[i - 2] && x[i - 1] <= x[i - 3]) return true;
+            if (i > 3 && x[i] + x[i - 4] >= x[i - 2])
+            {
+                if (x[i - 1] == x[i - 3]) return true;
+                if (i > 4 && x[i - 2] >= x[i - 4] && x[i - 1] <= x[i - 3] && x[i - 1] + x[i - 5] >= x[i - 3]) return true;
+            }
+        }
+        return false;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

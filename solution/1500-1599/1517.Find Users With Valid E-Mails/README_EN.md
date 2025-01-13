@@ -1,8 +1,20 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1517.Find%20Users%20With%20Valid%20E-Mails/README_EN.md
+tags:
+    - Database
+---
+
+<!-- problem:start -->
+
 # [1517. Find Users With Valid E-Mails](https://leetcode.com/problems/find-users-with-valid-e-mails)
 
 [中文文档](/solution/1500-1599/1517.Find%20Users%20With%20Valid%20E-Mails/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Table: <code>Users</code></p>
 
@@ -14,29 +26,31 @@
 | name          | varchar |
 | mail          | varchar |
 +---------------+---------+
-user_id is the primary key for this table.
+user_id is the primary key (column with unique values) for this table.
 This table contains information of the users signed up in a website. Some e-mails are invalid.
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query to&nbsp;find the&nbsp;users who have <strong>valid emails</strong>.</p>
+<p>Write a solution to find the users who have <strong>valid emails</strong>.</p>
 
-<p>A valid e-mail has a prefix name and a domain where:&nbsp;</p>
+<p>A valid e-mail has a prefix name and a domain where:</p>
 
 <ul>
-	<li><strong>The prefix name</strong> is a string that may contain letters (upper or lower case), digits, underscore <code>&#39;_&#39;</code>, period <code>&#39;.&#39;</code> and/or dash <code>&#39;-&#39;</code>. The prefix name <strong>must</strong> start with a letter.</li>
+	<li><strong>The prefix name</strong> is a string that may contain letters (upper or lower case), digits, underscore <code>&#39;_&#39;</code>, period <code>&#39;.&#39;</code>, and/or dash <code>&#39;-&#39;</code>. The prefix name <strong>must</strong> start with a letter.</li>
 	<li><strong>The domain</strong> is <code>&#39;@leetcode.com&#39;</code>.</li>
 </ul>
 
-<p>Return the result table in any order.</p>
+<p>Return the result table in <strong>any order</strong>.</p>
 
-<p>The query result format is in the following example.</p>
+<p>The result format is in the following example.</p>
 
 <p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-<code>Users</code>
+<strong>Input:</strong> 
+Users table:
 +---------+-----------+-------------------------+
 | user_id | name      | mail                    |
 +---------+-----------+-------------------------+
@@ -48,8 +62,7 @@ This table contains information of the users signed up in a website. Some e-mail
 | 6       | David     | david69@gmail.com       |
 | 7       | Shapiro   | .shapo@leetcode.com     |
 +---------+-----------+-------------------------+
-
-Result table:
+<strong>Output:</strong> 
 +---------+-----------+-------------------------+
 | user_id | name      | mail                    |
 +---------+-----------+-------------------------+
@@ -57,20 +70,34 @@ Result table:
 | 3       | Annabelle | bella-@leetcode.com     |
 | 4       | Sally     | sally.come@leetcode.com |
 +---------+-----------+-------------------------+
-The mail of user 2 doesn&#39;t have a domain.
-The mail of user 5 has # sign which is not allowed.
-The mail of user 6 doesn&#39;t have leetcode domain.
+<strong>Explanation:</strong> 
+The mail of user 2 does not have a domain.
+The mail of user 5 has the # sign which is not allowed.
+The mail of user 6 does not have the leetcode domain.
 The mail of user 7 starts with a period.
 </pre>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **SQL**
+#### MySQL
 
 ```sql
-
+# Write your MySQL query statement below
+SELECT *
+FROM Users
+WHERE mail REGEXP '^[a-zA-Z][a-zA-Z0-9_.-]*@leetcode[.]com$';
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

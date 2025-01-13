@@ -1,8 +1,26 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1776.Car%20Fleet%20II/README_EN.md
+rating: 2530
+source: Weekly Contest 230 Q4
+tags:
+    - Stack
+    - Array
+    - Math
+    - Monotonic Stack
+    - Heap (Priority Queue)
+---
+
+<!-- problem:start -->
+
 # [1776. Car Fleet II](https://leetcode.com/problems/car-fleet-ii)
 
 [中文文档](/solution/1700-1799/1776.Car%20Fleet%20II/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>There are <code>n</code> cars traveling at different speeds in the same direction along a one-lane road. You are given an array <code>cars</code> of length <code>n</code>, where <code>cars[i] = [position<sub>i</sub>, speed<sub>i</sub>]</code> represents:</p>
 
@@ -16,7 +34,7 @@
 <p>Return an array <code>answer</code>, where <code>answer[i]</code> is the time, in seconds, at which the <code>i<sup>th</sup></code> car collides with the next car, or <code>-1</code> if the car does not collide with the next car. Answers within <code>10<sup>-5</sup></code> of the actual answers are accepted.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> cars = [[1,2],[2,1],[4,3],[7,2]]
@@ -24,7 +42,7 @@
 <strong>Explanation:</strong> After exactly one second, the first car will collide with the second car, and form a car fleet with speed 1 m/s. After exactly 3 seconds, the third car will collide with the fourth car, and form a car fleet with speed 2 m/s.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> cars = [[3,4],[5,4],[6,3],[9,1]]
@@ -40,26 +58,123 @@
 	<li><code>position<sub>i</sub> &lt; position<sub>i+1</sub></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def getCollisionTimes(self, cars: List[List[int]]) -> List[float]:
+        stk = []
+        n = len(cars)
+        ans = [-1] * n
+        for i in range(n - 1, -1, -1):
+            while stk:
+                j = stk[-1]
+                if cars[i][1] > cars[j][1]:
+                    t = (cars[j][0] - cars[i][0]) / (cars[i][1] - cars[j][1])
+                    if ans[j] == -1 or t <= ans[j]:
+                        ans[i] = t
+                        break
+                stk.pop()
+            stk.append(i)
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public double[] getCollisionTimes(int[][] cars) {
+        int n = cars.length;
+        double[] ans = new double[n];
+        Arrays.fill(ans, -1.0);
+        Deque<Integer> stk = new ArrayDeque<>();
+        for (int i = n - 1; i >= 0; --i) {
+            while (!stk.isEmpty()) {
+                int j = stk.peek();
+                if (cars[i][1] > cars[j][1]) {
+                    double t = (cars[j][0] - cars[i][0]) * 1.0 / (cars[i][1] - cars[j][1]);
+                    if (ans[j] < 0 || t <= ans[j]) {
+                        ans[i] = t;
+                        break;
+                    }
+                }
+                stk.pop();
+            }
+            stk.push(i);
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<double> getCollisionTimes(vector<vector<int>>& cars) {
+        int n = cars.size();
+        vector<double> ans(n, -1.0);
+        stack<int> stk;
+        for (int i = n - 1; ~i; --i) {
+            while (stk.size()) {
+                int j = stk.top();
+                if (cars[i][1] > cars[j][1]) {
+                    double t = (cars[j][0] - cars[i][0]) * 1.0 / (cars[i][1] - cars[j][1]);
+                    if (ans[j] < 0 || t <= ans[j]) {
+                        ans[i] = t;
+                        break;
+                    }
+                }
+                stk.pop();
+            }
+            stk.push(i);
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func getCollisionTimes(cars [][]int) []float64 {
+	n := len(cars)
+	ans := make([]float64, n)
+	for i := range ans {
+		ans[i] = -1.0
+	}
+	stk := []int{}
+	for i := n - 1; i >= 0; i-- {
+		for len(stk) > 0 {
+			j := stk[len(stk)-1]
+			if cars[i][1] > cars[j][1] {
+				t := float64(cars[j][0]-cars[i][0]) / float64(cars[i][1]-cars[j][1])
+				if ans[j] < 0 || t <= ans[j] {
+					ans[i] = t
+					break
+				}
+			}
+			stk = stk[:len(stk)-1]
+		}
+		stk = append(stk, i)
+	}
+	return ans
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

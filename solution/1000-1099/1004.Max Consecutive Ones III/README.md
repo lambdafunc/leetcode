@@ -1,141 +1,161 @@
-# [1004. 最大连续 1 的个数 III](https://leetcode-cn.com/problems/max-consecutive-ones-iii)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1004.Max%20Consecutive%20Ones%20III/README.md
+rating: 1655
+source: 第 126 场周赛 Q3
+tags:
+    - 数组
+    - 二分查找
+    - 前缀和
+    - 滑动窗口
+---
+
+<!-- problem:start -->
+
+# [1004. 最大连续1的个数 III](https://leetcode.cn/problems/max-consecutive-ones-iii)
 
 [English Version](/solution/1000-1099/1004.Max%20Consecutive%20Ones%20III/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个由若干 <code>0</code> 和 <code>1</code> 组成的数组&nbsp;<code>A</code>，我们最多可以将&nbsp;<code>K</code>&nbsp;个值从 0 变成 1 。</p>
-
-<p>返回仅包含 1 的最长（连续）子数组的长度。</p>
+<p>给定一个二进制数组&nbsp;<code>nums</code>&nbsp;和一个整数 <code>k</code>，假设最多可以翻转 <code>k</code> 个 <code>0</code> ，则返回执行操作后 <em>数组中连续 <code>1</code> 的最大个数</em> 。</p>
 
 <p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入：</strong>A = [1,1,1,0,0,0,1,1,1,1,0], K = 2
+<pre>
+<strong>输入：</strong>nums = [1,1,1,0,0,0,1,1,1,1,0], K = 2
 <strong>输出：</strong>6
-<strong>解释： </strong>
-[1,1,1,0,0,<strong>1</strong>,1,1,1,1,<strong>1</strong>]
+<strong>解释：</strong>[1,1,1,0,0,<strong>1</strong>,1,1,1,1,<strong>1</strong>]
 粗体数字从 0 翻转到 1，最长的子数组长度为 6。</pre>
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入：</strong>A = [0,0,1,1,0,0,1,1,1,0,1,1,0,0,0,1,1,1,1], K = 3
+<pre>
+<strong>输入：</strong>nums = [0,0,1,1,0,0,1,1,1,0,1,1,0,0,0,1,1,1,1], K = 3
 <strong>输出：</strong>10
-<strong>解释：</strong>
-[0,0,1,1,<strong>1</strong>,<strong>1</strong>,1,1,1,<strong>1</strong>,1,1,0,0,0,1,1,1,1]
+<strong>解释：</strong>[0,0,1,1,<strong>1</strong>,<strong>1</strong>,1,1,1,<strong>1</strong>,1,1,0,0,0,1,1,1,1]
 粗体数字从 0 翻转到 1，最长的子数组长度为 10。</pre>
 
 <p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
-<ol>
-	<li><code>1 &lt;= A.length &lt;= 20000</code></li>
-	<li><code>0 &lt;= K &lt;= A.length</code></li>
-	<li><code>A[i]</code> 为&nbsp;<code>0</code>&nbsp;或&nbsp;<code>1</code>&nbsp;</li>
-</ol>
+<ul>
+	<li><code>1 &lt;= nums.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>nums[i]</code>&nbsp;不是&nbsp;<code>0</code>&nbsp;就是&nbsp;<code>1</code></li>
+	<li><code>0 &lt;= k &lt;= nums.length</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-思路同 [2024. 考试的最大困扰度](/solution/2000-2099/2024.Maximize%20the%20Confusion%20of%20an%20Exam/README.md)
+### 方法一：滑动窗口
 
-维护一个单调变长的窗口。这种窗口经常出现在寻求“最大窗口”的问题中：因为要求的是”最大“，所以我们没有必要缩短窗口，于是代码就少了缩短窗口的部分；从另一个角度讲，本题里的 K 是资源数，一旦透支，窗口就不能再增长了。
+我们可以遍历数组，用一个变量 $\textit{cnt}$ 记录当前窗口中 0 的个数，当 $\textit{cnt} > k$ 时，我们将窗口的左边界右移一位。
 
--   l 是窗口左端点，负责移动起始位置
--   r 是窗口右端点，负责扩展窗口
--   k 是资源数，每次要替换 0，k 减 1，同时 r 向右移动
--   `r++` 每次都会执行，`l++` 只有资源 `k < 0` 时才触发，因此 `r - l` 的值只会单调递增（或保持不变）
--   移动左端点时，如果当前元素是 0，说明可以释放一个资源，k 加 1
+遍历结束后，窗口的长度即为最大连续 1 的个数。
+
+注意，在上述过程中，我们不需要循环将窗口的左边界右移，而是直接将左边界右移一位，这是因为，题目求的是最大连续 1 的个数，因此，窗口的长度只会增加，不会减少，所以我们不需要循环右移左边界。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组的长度。空间复杂度 $O(1)$。
+
+相似题目：
+
+-   [487. 最大连续 1 的个数 II](https://github.com/doocs/leetcode/blob/main/solution/0400-0499/0487.Max%20Consecutive%20Ones%20II/README.md)
+-   [2024. 考试的最大困扰度](https://github.com/doocs/leetcode/blob/main/solution/2000-2099/2024.Maximize%20the%20Confusion%20of%20an%20Exam/README.md)
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def longestOnes(self, nums: List[int], k: int) -> int:
-        l = r = -1
-        while r < len(nums) - 1:
-            r += 1
-            if nums[r] == 0:
-                k -= 1
-            if k < 0:
+        l = cnt = 0
+        for x in nums:
+            cnt += x ^ 1
+            if cnt > k:
+                cnt -= nums[l] ^ 1
                 l += 1
-                if nums[l] == 0:
-                    k += 1
-        return r - l
+        return len(nums) - l
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int longestOnes(int[] nums, int k) {
-        int l = 0, r = 0;
-        while (r < nums.length) {
-            if (nums[r++] == 0) {
-                --k;
-            }
-            if (k < 0 && nums[l++] == 0) {
-                ++k;
+        int l = 0, cnt = 0;
+        for (int x : nums) {
+            cnt += x ^ 1;
+            if (cnt > k) {
+                cnt -= nums[l++] ^ 1;
             }
         }
-        return r - l;
+        return nums.length - l;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int longestOnes(vector<int>& nums, int k) {
-        int l = 0, r = 0;
-        while (r < nums.size())
-        {
-            if (nums[r++] == 0) --k;
-            if (k < 0 && nums[l++] == 0) ++k;
+        int l = 0, cnt = 0;
+        for (int x : nums) {
+            cnt += x ^ 1;
+            if (cnt > k) {
+                cnt -= nums[l++] ^ 1;
+            }
         }
-        return r - l;
+        return nums.size() - l;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func longestOnes(nums []int, k int) int {
-	l, r := -1, -1
-	for r < len(nums)-1 {
-		r++
-		if nums[r] == 0 {
-			k--
-		}
-		if k < 0 {
+	l, cnt := 0, 0
+	for _, x := range nums {
+		cnt += x ^ 1
+		if cnt > k {
+			cnt -= nums[l] ^ 1
 			l++
-			if nums[l] == 0 {
-				k++
-			}
 		}
 	}
-	return r - l
+	return len(nums) - l
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function longestOnes(nums: number[], k: number): number {
+    let [l, cnt] = [0, 0];
+    for (const x of nums) {
+        cnt += x ^ 1;
+        if (cnt > k) {
+            cnt -= nums[l++] ^ 1;
+        }
+    }
+    return nums.length - l;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

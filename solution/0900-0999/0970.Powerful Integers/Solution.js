@@ -5,15 +5,17 @@
  * @return {number[]}
  */
 var powerfulIntegers = function (x, y, bound) {
-    let res = new Set();
-    for (let i = 1; i < bound; i *= x) {
-        for (let j = 1; j < bound; j *= y) {
-            if (i + j <= bound) {
-                res.add(i + j);
+    const ans = new Set();
+    for (let a = 1; a <= bound; a *= x) {
+        for (let b = 1; a + b <= bound; b *= y) {
+            ans.add(a + b);
+            if (y === 1) {
+                break;
             }
-            if (y == 1) break;
         }
-        if (x == 1) break;
+        if (x === 1) {
+            break;
+        }
     }
-    return [...res];
+    return [...ans];
 };

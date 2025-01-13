@@ -1,10 +1,19 @@
-# [面试题 16.02. 单词频率](https://leetcode-cn.com/problems/words-frequency-lcci)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/lcci/16.02.Words%20Frequency/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 16.02. 单词频率](https://leetcode.cn/problems/words-frequency-lcci)
 
 [English Version](/lcci/16.02.Words%20Frequency/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
+
 <p>设计一个方法，找出任意指定单词在一本书中的出现频率。</p>
 <p>你的实现应该支持如下操作：</p>
 <ul>
@@ -27,49 +36,52 @@ wordsFrequency.get("pen"); //返回1
 <li><code>get</code>函数的调用次数不会超过100000</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-计数器实现。
+### 方法一：哈希表
+
+我们用哈希表 $cnt$ 统计 $book$ 中每个单词出现的次数。
+
+调用 `get` 函数时，我们只需要返回 $cnt$ 中对应的单词的出现次数即可。
+
+时间复杂度方面，初始化哈希表 $cnt$ 的时间复杂度为 $O(n)$，其中 $n$ 为 $book$ 的长度。`get` 函数的时间复杂度为 $O(1)$。空间复杂度为 $O(n)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class WordsFrequency:
-
     def __init__(self, book: List[str]):
-        self.counter = Counter(book)
+        self.cnt = Counter(book)
 
     def get(self, word: str) -> int:
-        return self.counter[word]
+        return self.cnt[word]
+
 
 # Your WordsFrequency object will be instantiated and called as such:
 # obj = WordsFrequency(book)
 # param_1 = obj.get(word)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class WordsFrequency {
-
-    private Map<String, Integer> counter = new HashMap<>();
+    private Map<String, Integer> cnt = new HashMap<>();
 
     public WordsFrequency(String[] book) {
-        for (String word : book) {
-            counter.put(word, counter.getOrDefault(word, 0) + 1);
+        for (String x : book) {
+            cnt.merge(x, 1, Integer::sum);
         }
     }
 
     public int get(String word) {
-        return counter.containsKey(word) ? counter.get(word) : 0;
+        return cnt.getOrDefault(word, 0);
     }
 }
 
@@ -80,16 +92,121 @@ class WordsFrequency {
  */
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class WordsFrequency {
+public:
+    WordsFrequency(vector<string>& book) {
+        for (auto& x : book) {
+            ++cnt[x];
+        }
+    }
+
+    int get(string word) {
+        return cnt[word];
+    }
+
+private:
+    unordered_map<string, int> cnt;
+};
+
+/**
+ * Your WordsFrequency object will be instantiated and called as such:
+ * WordsFrequency* obj = new WordsFrequency(book);
+ * int param_1 = obj->get(word);
+ */
+```
+
+#### Go
+
+```go
+type WordsFrequency struct {
+	cnt map[string]int
+}
+
+func Constructor(book []string) WordsFrequency {
+	cnt := map[string]int{}
+	for _, x := range book {
+		cnt[x]++
+	}
+	return WordsFrequency{cnt}
+}
+
+func (this *WordsFrequency) Get(word string) int {
+	return this.cnt[word]
+}
+
+/**
+ * Your WordsFrequency object will be instantiated and called as such:
+ * obj := Constructor(book);
+ * param_1 := obj.Get(word);
+ */
+```
+
+#### TypeScript
+
+```ts
+class WordsFrequency {
+    private cnt: Map<string, number>;
+
+    constructor(book: string[]) {
+        const cnt = new Map<string, number>();
+        for (const word of book) {
+            cnt.set(word, (cnt.get(word) ?? 0) + 1);
+        }
+        this.cnt = cnt;
+    }
+
+    get(word: string): number {
+        return this.cnt.get(word) ?? 0;
+    }
+}
+
+/**
+ * Your WordsFrequency object will be instantiated and called as such:
+ * var obj = new WordsFrequency(book)
+ * var param_1 = obj.get(word)
+ */
+```
+
+#### Rust
+
+```rust
+use std::collections::HashMap;
+struct WordsFrequency {
+    cnt: HashMap<String, i32>,
+}
+
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl WordsFrequency {
+    fn new(book: Vec<String>) -> Self {
+        let mut cnt = HashMap::new();
+        for word in book.into_iter() {
+            *cnt.entry(word).or_insert(0) += 1;
+        }
+        Self { cnt }
+    }
+
+    fn get(&self, word: String) -> i32 {
+        *self.cnt.get(&word).unwrap_or(&0)
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
  * @param {string[]} book
  */
 var WordsFrequency = function (book) {
-    this.counter = {};
-    for (const word of book) {
-        this.counter[word] = (this.counter[word] || 0) + 1;
+    this.cnt = new Map();
+    for (const x of book) {
+        this.cnt.set(x, (this.cnt.get(x) || 0) + 1);
     }
 };
 
@@ -98,7 +215,7 @@ var WordsFrequency = function (book) {
  * @return {number}
  */
 WordsFrequency.prototype.get = function (word) {
-    return this.counter[word] || 0;
+    return this.cnt.get(word) || 0;
 };
 
 /**
@@ -108,10 +225,26 @@ WordsFrequency.prototype.get = function (word) {
  */
 ```
 
-### **...**
+#### Swift
 
-```
+```swift
+class WordsFrequency {
+    private var cnt: [String: Int] = [:]
 
+    init(_ book: [String]) {
+        for word in book {
+            cnt[word, default: 0] += 1
+        }
+    }
+
+    func get(_ word: String) -> Int {
+        return cnt[word, default: 0]
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

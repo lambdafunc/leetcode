@@ -1,20 +1,38 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0303.Range%20Sum%20Query%20-%20Immutable/README_EN.md
+tags:
+    - Design
+    - Array
+    - Prefix Sum
+---
+
+<!-- problem:start -->
+
 # [303. Range Sum Query - Immutable](https://leetcode.com/problems/range-sum-query-immutable)
 
 [中文文档](/solution/0300-0399/0303.Range%20Sum%20Query%20-%20Immutable/README.md)
 
 ## Description
 
-<p>Given an integer array <code>nums</code>, find the sum of the elements between indices <code>left</code> and <code>right</code> inclusive, where <code>(left &lt;= right)</code>.</p>
+<!-- description:start -->
+
+<p>Given an integer array <code>nums</code>, handle multiple queries of the following type:</p>
+
+<ol>
+	<li>Calculate the <strong>sum</strong> of the elements of <code>nums</code> between indices <code>left</code> and <code>right</code> <strong>inclusive</strong> where <code>left &lt;= right</code>.</li>
+</ol>
 
 <p>Implement the <code>NumArray</code> class:</p>
 
 <ul>
-	<li><code>NumArray(int[] nums)</code> initializes the object with the integer array <code>nums</code>.</li>
-	<li><code>int sumRange(int left, int right)</code> returns the sum of the elements of the <code>nums</code> array in the range <code>[left, right]</code> inclusive (i.e., <code>sum(nums[left], nums[left + 1], ... , nums[right])</code>).</li>
+	<li><code>NumArray(int[] nums)</code> Initializes the object with the integer array <code>nums</code>.</li>
+	<li><code>int sumRange(int left, int right)</code> Returns the <strong>sum</strong> of the elements of <code>nums</code> between indices <code>left</code> and <code>right</code> <strong>inclusive</strong> (i.e. <code>nums[left] + nums[left + 1] + ... + nums[right]</code>).</li>
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input</strong>
@@ -25,9 +43,9 @@
 
 <strong>Explanation</strong>
 NumArray numArray = new NumArray([-2, 0, 3, -5, 2, -1]);
-numArray.sumRange(0, 2); // return 1 ((-2) + 0 + 3)
-numArray.sumRange(2, 5); // return -1 (3 + (-5) + 2 + (-1)) 
-numArray.sumRange(0, 5); // return -3 ((-2) + 0 + 3 + (-5) + 2 + (-1))
+numArray.sumRange(0, 2); // return (-2) + 0 + 3 = 1
+numArray.sumRange(2, 5); // return 3 + (-5) + 2 + (-1) = -1
+numArray.sumRange(0, 5); // return (-2) + 0 + 3 + (-5) + 2 + (-1) = -3
 </pre>
 
 <p>&nbsp;</p>
@@ -40,62 +58,292 @@ numArray.sumRange(0, 5); // return -3 ((-2) + 0 + 3 + (-5) + 2 + (-1))
 	<li>At most <code>10<sup>4</sup></code> calls will be made to <code>sumRange</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Prefix Sum
+
+We create a prefix sum array $s$ of length $n + 1$, where $s[i]$ represents the prefix sum of the first $i$ elements, that is, $s[i] = \sum_{j=0}^{i-1} nums[j]$. Therefore, the sum of the elements between the indices $[left, right]$ can be expressed as $s[right + 1] - s[left]$.
+
+The time complexity for initializing the prefix sum array $s$ is $O(n)$, and the time complexity for querying is $O(1)$. The space complexity is $O(n)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class NumArray:
-
     def __init__(self, nums: List[int]):
-        n = len(nums)
-        self.sums = [0] * (n + 1)
-        for i in range(n):
-            self.sums[i + 1] = nums[i] + self.sums[i]
+        self.s = list(accumulate(nums, initial=0))
 
-
-    def sumRange(self, i: int, j: int) -> int:
-        return self.sums[j + 1] - self.sums[i]
+    def sumRange(self, left: int, right: int) -> int:
+        return self.s[right + 1] - self.s[left]
 
 
 # Your NumArray object will be instantiated and called as such:
 # obj = NumArray(nums)
-# param_1 = obj.sumRange(i,j)
+# param_1 = obj.sumRange(left,right)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class NumArray {
-
-    private int[] sums;
+    private int[] s;
 
     public NumArray(int[] nums) {
         int n = nums.length;
-        sums = new int[n + 1];
+        s = new int[n + 1];
         for (int i = 0; i < n; ++i) {
-            sums[i + 1] = nums[i] + sums[i];
+            s[i + 1] = s[i] + nums[i];
         }
     }
 
-    public int sumRange(int i, int j) {
-        return sums[j + 1] - sums[i];
+    public int sumRange(int left, int right) {
+        return s[right + 1] - s[left];
     }
 }
 
 /**
  * Your NumArray object will be instantiated and called as such:
  * NumArray obj = new NumArray(nums);
- * int param_1 = obj.sumRange(i,j);
+ * int param_1 = obj.sumRange(left,right);
  */
 ```
 
-### **...**
+#### C++
 
+```cpp
+class NumArray {
+public:
+    NumArray(vector<int>& nums) {
+        int n = nums.size();
+        s.resize(n + 1);
+        for (int i = 0; i < n; ++i) {
+            s[i + 1] = s[i] + nums[i];
+        }
+    }
+
+    int sumRange(int left, int right) {
+        return s[right + 1] - s[left];
+    }
+
+private:
+    vector<int> s;
+};
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray* obj = new NumArray(nums);
+ * int param_1 = obj->sumRange(left,right);
+ */
 ```
 
+#### Go
+
+```go
+type NumArray struct {
+	s []int
+}
+
+func Constructor(nums []int) NumArray {
+	n := len(nums)
+	s := make([]int, n+1)
+	for i, v := range nums {
+		s[i+1] = s[i] + v
+	}
+	return NumArray{s}
+}
+
+func (this *NumArray) SumRange(left int, right int) int {
+	return this.s[right+1] - this.s[left]
+}
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * obj := Constructor(nums);
+ * param_1 := obj.SumRange(left,right);
+ */
+```
+
+#### TypeScript
+
+```ts
+class NumArray {
+    private s: number[];
+
+    constructor(nums: number[]) {
+        const n = nums.length;
+        this.s = Array(n + 1).fill(0);
+        for (let i = 0; i < n; ++i) {
+            this.s[i + 1] = this.s[i] + nums[i];
+        }
+    }
+
+    sumRange(left: number, right: number): number {
+        return this.s[right + 1] - this.s[left];
+    }
+}
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * var obj = new NumArray(nums)
+ * var param_1 = obj.sumRange(left,right)
+ */
+```
+
+#### Rust
+
+```rust
+struct NumArray {
+    s: Vec<i32>,
+}
+
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl NumArray {
+    fn new(mut nums: Vec<i32>) -> Self {
+        let n = nums.len();
+        let mut s = vec![0; n + 1];
+        for i in 0..n {
+            s[i + 1] = s[i] + nums[i];
+        }
+        Self { s }
+    }
+
+    fn sum_range(&self, left: i32, right: i32) -> i32 {
+        self.s[(right + 1) as usize] - self.s[left as usize]
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ */
+var NumArray = function (nums) {
+    const n = nums.length;
+    this.s = Array(n + 1).fill(0);
+    for (let i = 0; i < n; ++i) {
+        this.s[i + 1] = this.s[i] + nums[i];
+    }
+};
+
+/**
+ * @param {number} left
+ * @param {number} right
+ * @return {number}
+ */
+NumArray.prototype.sumRange = function (left, right) {
+    return this.s[right + 1] - this.s[left];
+};
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * var obj = new NumArray(nums)
+ * var param_1 = obj.sumRange(left,right)
+ */
+```
+
+#### PHP
+
+```php
+class NumArray {
+    /**
+     * @param Integer[] $nums
+     */
+    function __construct($nums) {
+        $this->s = [0];
+        foreach ($nums as $x) {
+            $this->s[] = $this->s[count($this->s) - 1] + $x;
+        }
+    }
+
+    /**
+     * @param Integer $left
+     * @param Integer $right
+     * @return Integer
+     */
+    function sumRange($left, $right) {
+        return $this->s[$right + 1] - $this->s[$left];
+    }
+}
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * $obj = NumArray($nums);
+ * $ret_1 = $obj->sumRange($left, $right);
+ */
+```
+
+#### C
+
+```c
+typedef struct {
+    int* s;
+} NumArray;
+
+NumArray* numArrayCreate(int* nums, int n) {
+    int* s = malloc(sizeof(int) * (n + 1));
+    s[0] = 0;
+    for (int i = 0; i < n; i++) {
+        s[i + 1] = s[i] + nums[i];
+    }
+    NumArray* obj = malloc(sizeof(NumArray));
+    obj->s = s;
+    return obj;
+}
+
+int numArraySumRange(NumArray* obj, int left, int right) {
+    return obj->s[right + 1] - obj->s[left];
+}
+
+void numArrayFree(NumArray* obj) {
+    free(obj->s);
+    free(obj);
+}
+
+/**
+ * Your NumArray struct will be instantiated and called as such:
+ * NumArray* obj = numArrayCreate(nums, numsSize);
+ * int param_1 = numArraySumRange(obj, left, right);
+
+ * numArrayFree(obj);
+*/
+```
+
+#### Kotlin
+
+```kotlin
+class NumArray(nums: IntArray) {
+    private val prefix_sums: IntArray
+
+    init {
+        val nums_size = nums.size
+        this.prefix_sums = IntArray(nums_size + 1)
+        for (i in 0..<nums_size) {
+            this.prefix_sums[i + 1] = this.prefix_sums[i] + nums[i]
+        }
+    }
+
+    fun sumRange(left: Int, right: Int): Int = this.prefix_sums[right + 1] - this.prefix_sums[left]
+}
+
+/**
+ * Your NumArray object will be instantiated and called as such: var obj = NumArray(nums) var
+ * param_1 = obj.sumRange(left,right)
+ */
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

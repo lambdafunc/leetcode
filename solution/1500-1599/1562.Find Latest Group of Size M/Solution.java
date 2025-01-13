@@ -1,21 +1,52 @@
 class Solution {
+    private int[] p;
+    private int[] size;
+
     public int findLatestStep(int[] arr, int m) {
-        // 倒序遍历 arr，转换为第一次出现 m 个的步骤
-        if (arr.length == m) {
-            return m;
+        int n = arr.length;
+        if (m == n) {
+            return n;
         }
-        TreeSet<Integer> set = new TreeSet<>();
-        set.add(0);
-        set.add(arr.length + 1);
-        for (int i = arr.length - 1; i >= 0; i--) {
-            int index = arr[i];
-            int l = set.lower(index);
-            int h = set.higher(index);
-            if (index - l - 1 == m || h - index - 1 == m) {
-                return i;
+        boolean[] vis = new boolean[n];
+        p = new int[n];
+        size = new int[n];
+        for (int i = 0; i < n; ++i) {
+            p[i] = i;
+            size[i] = 1;
+        }
+        int ans = -1;
+        for (int i = 0; i < n; ++i) {
+            int v = arr[i] - 1;
+            if (v > 0 && vis[v - 1]) {
+                if (size[find(v - 1)] == m) {
+                    ans = i;
+                }
+                union(v, v - 1);
             }
-            set.add(index);
+            if (v < n - 1 && vis[v + 1]) {
+                if (size[find(v + 1)] == m) {
+                    ans = i;
+                }
+                union(v, v + 1);
+            }
+            vis[v] = true;
         }
-        return -1;
+        return ans;
+    }
+
+    private int find(int x) {
+        if (p[x] != x) {
+            p[x] = find(p[x]);
+        }
+        return p[x];
+    }
+
+    private void union(int a, int b) {
+        int pa = find(a), pb = find(b);
+        if (pa == pb) {
+            return;
+        }
+        p[pa] = pb;
+        size[pb] += size[pa];
     }
 }

@@ -1,10 +1,23 @@
-# [1111. 有效括号的嵌套深度](https://leetcode-cn.com/problems/maximum-nesting-depth-of-two-valid-parentheses-strings)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1111.Maximum%20Nesting%20Depth%20of%20Two%20Valid%20Parentheses%20Strings/README.md
+rating: 1749
+source: 第 144 场周赛 Q4
+tags:
+    - 栈
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1111. 有效括号的嵌套深度](https://leetcode.cn/problems/maximum-nesting-depth-of-two-valid-parentheses-strings)
 
 [English Version](/solution/1100-1199/1111.Maximum%20Nesting%20Depth%20of%20Two%20Valid%20Parentheses%20Strings/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p><strong>有效括号字符串 </strong>定义：对于每个左括号，都能找到与之对应的右括号，反之亦然。详情参见题末「<strong>有效括号字符串</strong>」部分。</p>
 
@@ -12,7 +25,7 @@
 
 <p>有效括号字符串类型与对应的嵌套深度计算方法如下图所示：</p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1100-1199/1111.Maximum%20Nesting%20Depth%20of%20Two%20Valid%20Parentheses%20Strings/images/1111.png" style="height: 152px; width: 600px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1100-1199/1111.Maximum%20Nesting%20Depth%20of%20Two%20Valid%20Parentheses%20Strings/images/1111.png" style="height: 152px; width: 600px;"></p>
 
 <p>&nbsp;</p>
 
@@ -82,32 +95,116 @@
 例如：<code>&quot;&quot;</code>，<code>&quot;()()&quot;</code>，和&nbsp;<code>&quot;()(()())&quot;</code>&nbsp;都是有效括号字符串，嵌套深度分别为 0，1，2，而&nbsp;<code>&quot;)(&quot;</code> 和&nbsp;<code>&quot;(()&quot;</code>&nbsp;都不是有效括号字符串。
 </pre>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：贪心
+
+我们用一个变量 $x$ 维护当前括号的平衡度，也就是左括号的数量减去右括号的数量。
+
+遍历字符串 $seq$，更新 $x$ 的值。如果 $x$ 为奇数，我们将当前的左括号分给 $A$，否则分给 $B$。
+
+时间复杂度 $O(n)$，其中 $n$ 是字符串 $seq$ 的长度。忽略答案数组的空间消耗，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def maxDepthAfterSplit(self, seq: str) -> List[int]:
+        ans = [0] * len(seq)
+        x = 0
+        for i, c in enumerate(seq):
+            if c == "(":
+                ans[i] = x & 1
+                x += 1
+            else:
+                x -= 1
+                ans[i] = x & 1
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int[] maxDepthAfterSplit(String seq) {
+        int n = seq.length();
+        int[] ans = new int[n];
+        for (int i = 0, x = 0; i < n; ++i) {
+            if (seq.charAt(i) == '(') {
+                ans[i] = x++ & 1;
+            } else {
+                ans[i] = --x & 1;
+            }
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> maxDepthAfterSplit(string seq) {
+        int n = seq.size();
+        vector<int> ans(n);
+        for (int i = 0, x = 0; i < n; ++i) {
+            if (seq[i] == '(') {
+                ans[i] = x++ & 1;
+            } else {
+                ans[i] = --x & 1;
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func maxDepthAfterSplit(seq string) []int {
+	n := len(seq)
+	ans := make([]int, n)
+	for i, x := 0, 0; i < n; i++ {
+		if seq[i] == '(' {
+			ans[i] = x & 1
+			x++
+		} else {
+			x--
+			ans[i] = x & 1
+		}
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+function maxDepthAfterSplit(seq: string): number[] {
+    const n = seq.length;
+    const ans: number[] = new Array(n);
+    for (let i = 0, x = 0; i < n; ++i) {
+        if (seq[i] === '(') {
+            ans[i] = x++ & 1;
+        } else {
+            ans[i] = --x & 1;
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

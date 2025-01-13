@@ -1,38 +1,20 @@
 class Solution {
-   public:
+public:
     bool checkValidString(string s) {
-        int n    = s.size();
-        int left = 0, asterisk = 0;
+        int n = s.size();
+        vector<vector<bool>> dp(n, vector<bool>(n));
         for (int i = 0; i < n; ++i) {
-            if (s[i] == '(') {
-                ++left;
-            } else if (s[i] == ')') {
-                if (left > 0)
-                    --left;
-                else if (asterisk > 0)
-                    --asterisk;
-                else
-                    return false;
-            } else {
-                ++asterisk;
+            dp[i][i] = s[i] == '*';
+        }
+        for (int i = n - 2; i >= 0; --i) {
+            for (int j = i + 1; j < n; ++j) {
+                char a = s[i], b = s[j];
+                dp[i][j] = (a == '(' || a == '*') && (b == '*' || b == ')') && (i + 1 == j || dp[i + 1][j - 1]);
+                for (int k = i; k < j && !dp[i][j]; ++k) {
+                    dp[i][j] = dp[i][k] && dp[k + 1][j];
+                }
             }
         }
-        int right = 0;
-        asterisk  = 0;
-        for (int i = n - 1; i >= 0; --i) {
-            if (s[i] == ')') {
-                ++right;
-            } else if (s[i] == '(') {
-                if (right > 0)
-                    --right;
-                else if (asterisk > 0)
-                    --asterisk;
-                else
-                    return false;
-            } else {
-                ++asterisk;
-            }
-        }
-        return true;
+        return dp[0][n - 1];
     }
 };

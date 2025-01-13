@@ -1,10 +1,23 @@
-# [622. 设计循环队列](https://leetcode-cn.com/problems/design-circular-queue)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0622.Design%20Circular%20Queue/README.md
+tags:
+    - 设计
+    - 队列
+    - 数组
+    - 链表
+---
+
+<!-- problem:start -->
+
+# [622. 设计循环队列](https://leetcode.cn/problems/design-circular-queue)
 
 [English Version](/solution/0600-0699/0622.Design%20Circular%20Queue/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>设计你的循环队列实现。 循环队列是一种线性数据结构，其操作表现基于 FIFO（先进先出）原则并且队尾被连接在队首之后以形成一个循环。它也被称为&ldquo;环形缓冲器&rdquo;。</p>
 
@@ -47,21 +60,20 @@ circularQueue.Rear(); &nbsp;// 返回 4</pre>
 	<li>请不要使用内置的队列库。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-“循环数组”实现。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class MyCircularQueue:
-
     def __init__(self, k: int):
         self.q = [0] * k
         self.front = 0
@@ -84,9 +96,7 @@ class MyCircularQueue:
         return True
 
     def Front(self) -> int:
-        if self.isEmpty():
-            return -1
-        return self.q[self.front]
+        return -1 if self.isEmpty() else self.q[self.front]
 
     def Rear(self) -> int:
         if self.isEmpty():
@@ -111,9 +121,7 @@ class MyCircularQueue:
 # param_6 = obj.isFull()
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class MyCircularQueue {
@@ -182,10 +190,275 @@ class MyCircularQueue {
  */
 ```
 
-### **...**
+#### C++
 
+```cpp
+class MyCircularQueue {
+private:
+    int front;
+    int size;
+    int capacity;
+    vector<int> q;
+
+public:
+    MyCircularQueue(int k) {
+        capacity = k;
+        q = vector<int>(k);
+        front = size = 0;
+    }
+
+    bool enQueue(int value) {
+        if (isFull()) return false;
+        int idx = (front + size) % capacity;
+        q[idx] = value;
+        ++size;
+        return true;
+    }
+
+    bool deQueue() {
+        if (isEmpty()) return false;
+        front = (front + 1) % capacity;
+        --size;
+        return true;
+    }
+
+    int Front() {
+        if (isEmpty()) return -1;
+        return q[front];
+    }
+
+    int Rear() {
+        if (isEmpty()) return -1;
+        int idx = (front + size - 1) % capacity;
+        return q[idx];
+    }
+
+    bool isEmpty() {
+        return size == 0;
+    }
+
+    bool isFull() {
+        return size == capacity;
+    }
+};
+
+/**
+ * Your MyCircularQueue object will be instantiated and called as such:
+ * MyCircularQueue* obj = new MyCircularQueue(k);
+ * bool param_1 = obj->enQueue(value);
+ * bool param_2 = obj->deQueue();
+ * int param_3 = obj->Front();
+ * int param_4 = obj->Rear();
+ * bool param_5 = obj->isEmpty();
+ * bool param_6 = obj->isFull();
+ */
 ```
 
+#### Go
+
+```go
+type MyCircularQueue struct {
+	front    int
+	size     int
+	capacity int
+	q        []int
+}
+
+func Constructor(k int) MyCircularQueue {
+	q := make([]int, k)
+	return MyCircularQueue{0, 0, k, q}
+}
+
+func (this *MyCircularQueue) EnQueue(value int) bool {
+	if this.IsFull() {
+		return false
+	}
+	idx := (this.front + this.size) % this.capacity
+	this.q[idx] = value
+	this.size++
+	return true
+}
+
+func (this *MyCircularQueue) DeQueue() bool {
+	if this.IsEmpty() {
+		return false
+	}
+	this.front = (this.front + 1) % this.capacity
+	this.size--
+	return true
+}
+
+func (this *MyCircularQueue) Front() int {
+	if this.IsEmpty() {
+		return -1
+	}
+	return this.q[this.front]
+}
+
+func (this *MyCircularQueue) Rear() int {
+	if this.IsEmpty() {
+		return -1
+	}
+	idx := (this.front + this.size - 1) % this.capacity
+	return this.q[idx]
+}
+
+func (this *MyCircularQueue) IsEmpty() bool {
+	return this.size == 0
+}
+
+func (this *MyCircularQueue) IsFull() bool {
+	return this.size == this.capacity
+}
+
+/**
+ * Your MyCircularQueue object will be instantiated and called as such:
+ * obj := Constructor(k);
+ * param_1 := obj.EnQueue(value);
+ * param_2 := obj.DeQueue();
+ * param_3 := obj.Front();
+ * param_4 := obj.Rear();
+ * param_5 := obj.IsEmpty();
+ * param_6 := obj.IsFull();
+ */
+```
+
+#### TypeScript
+
+```ts
+class MyCircularQueue {
+    private queue: number[];
+    private left: number;
+    private right: number;
+    private capacity: number;
+
+    constructor(k: number) {
+        this.queue = new Array(k);
+        this.left = 0;
+        this.right = 0;
+        this.capacity = k;
+    }
+
+    enQueue(value: number): boolean {
+        if (this.isFull()) {
+            return false;
+        }
+        this.queue[this.right % this.capacity] = value;
+        this.right++;
+        return true;
+    }
+
+    deQueue(): boolean {
+        if (this.isEmpty()) {
+            return false;
+        }
+        this.left++;
+        return true;
+    }
+
+    Front(): number {
+        if (this.isEmpty()) {
+            return -1;
+        }
+        return this.queue[this.left % this.capacity];
+    }
+
+    Rear(): number {
+        if (this.isEmpty()) {
+            return -1;
+        }
+        return this.queue[(this.right - 1) % this.capacity];
+    }
+
+    isEmpty(): boolean {
+        return this.right - this.left === 0;
+    }
+
+    isFull(): boolean {
+        return this.right - this.left === this.capacity;
+    }
+}
+
+/**
+ * Your MyCircularQueue object will be instantiated and called as such:
+ * var obj = new MyCircularQueue(k)
+ * var param_1 = obj.enQueue(value)
+ * var param_2 = obj.deQueue()
+ * var param_3 = obj.Front()
+ * var param_4 = obj.Rear()
+ * var param_5 = obj.isEmpty()
+ * var param_6 = obj.isFull()
+ */
+```
+
+#### Rust
+
+```rust
+struct MyCircularQueue {
+    queue: Vec<i32>,
+    left: usize,
+    right: usize,
+    capacity: usize,
+}
+
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl MyCircularQueue {
+    fn new(k: i32) -> Self {
+        let k = k as usize;
+        Self {
+            queue: vec![0; k],
+            left: 0,
+            right: 0,
+            capacity: k,
+        }
+    }
+
+    fn en_queue(&mut self, value: i32) -> bool {
+        if self.is_full() {
+            return false;
+        }
+        self.queue[self.right % self.capacity] = value;
+        self.right += 1;
+        true
+    }
+
+    fn de_queue(&mut self) -> bool {
+        if self.is_empty() {
+            return false;
+        }
+        self.left += 1;
+        true
+    }
+
+    fn front(&self) -> i32 {
+        if self.is_empty() {
+            return -1;
+        }
+        self.queue[self.left % self.capacity]
+    }
+
+    fn rear(&self) -> i32 {
+        if self.is_empty() {
+            return -1;
+        }
+        self.queue[(self.right - 1) % self.capacity]
+    }
+
+    fn is_empty(&self) -> bool {
+        self.right - self.left == 0
+    }
+
+    fn is_full(&self) -> bool {
+        self.right - self.left == self.capacity
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

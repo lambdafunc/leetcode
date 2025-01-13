@@ -1,56 +1,79 @@
-# [783. 二叉搜索树节点最小距离](https://leetcode-cn.com/problems/minimum-distance-between-bst-nodes)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0783.Minimum%20Distance%20Between%20BST%20Nodes/README.md
+tags:
+    - 树
+    - 深度优先搜索
+    - 广度优先搜索
+    - 二叉搜索树
+    - 二叉树
+---
+
+<!-- problem:start -->
+
+# [783. 二叉搜索树节点最小距离](https://leetcode.cn/problems/minimum-distance-between-bst-nodes)
 
 [English Version](/solution/0700-0799/0783.Minimum%20Distance%20Between%20BST%20Nodes/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个二叉搜索树的根节点 <code>root</code> ，返回 <strong>树中任意两不同节点值之间的最小差值</strong> 。</p>
 
-<p><strong>注意：</strong>本题与 530：<a href="https://leetcode-cn.com/problems/minimum-absolute-difference-in-bst/">https://leetcode-cn.com/problems/minimum-absolute-difference-in-bst/</a> 相同</p>
+<p>差值是一个正数，其数值等于两值之差的绝对值。</p>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <div class="original__bRMd">
 <div>
 <p><strong>示例 1：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0783.Minimum%20Distance%20Between%20BST%20Nodes/images/bst1.jpg" style="width: 292px; height: 301px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0783.Minimum%20Distance%20Between%20BST%20Nodes/images/bst1.jpg" style="width: 292px; height: 301px;" />
 <pre>
 <strong>输入：</strong>root = [4,2,6,1,3]
 <strong>输出：</strong>1
 </pre>
 
 <p><strong>示例 2：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0783.Minimum%20Distance%20Between%20BST%20Nodes/images/bst2.jpg" style="width: 282px; height: 301px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0783.Minimum%20Distance%20Between%20BST%20Nodes/images/bst2.jpg" style="width: 282px; height: 301px;" />
 <pre>
 <strong>输入：</strong>root = [1,0,48,null,null,12,49]
 <strong>输出：</strong>1
 </pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li>树中节点数目在范围 <code>[2, 100]</code> 内</li>
-	<li><code>0 <= Node.val <= 10<sup>5</sup></code></li>
-	<li>差值是一个正数，其数值等于两值之差的绝对值</li>
+	<li>树中节点的数目范围是 <code>[2, 100]</code></li>
+	<li><code>0 &lt;= Node.val &lt;= 10<sup>5</sup></code></li>
 </ul>
+
+<p>&nbsp;</p>
+
+<p><strong>注意：</strong>本题与 530：<a href="https://leetcode.cn/problems/minimum-absolute-difference-in-bst/">https://leetcode.cn/problems/minimum-absolute-difference-in-bst/</a> 相同</p>
 </div>
 </div>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-中序遍历二叉搜索树，获取当前节点与上个节点的差值的最小值即可。
+### 方法一：中序遍历
+
+题目需要我们求任意两个节点值之间的最小差值，而二叉搜索树的中序遍历是一个递增序列，因此我们只需要求中序遍历中相邻两个节点值之间的最小差值即可。
+
+我们可以使用递归的方法来实现中序遍历，过程中用一个变量 $\textit{pre}$ 来保存前一个节点的值，这样我们就可以在遍历的过程中求出相邻两个节点值之间的最小差值。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为二叉搜索树的节点个数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -60,25 +83,23 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def minDiffInBST(self, root: TreeNode) -> int:
-        def inorder(root):
-            if not root:
+    def minDiffInBST(self, root: Optional[TreeNode]) -> int:
+        def dfs(root: Optional[TreeNode]):
+            if root is None:
                 return
-            inorder(root.left)
-            if self.pre is not None:
-                self.min_diff = min(self.min_diff, abs(root.val - self.pre))
-            self.pre = root.val
-            inorder(root.right)
+            dfs(root.left)
+            nonlocal pre, ans
+            ans = min(ans, root.val - pre)
+            pre = root.val
+            dfs(root.right)
 
-        self.pre = None
-        self.min_diff = 10 ** 5
-        inorder(root)
-        return self.min_diff
+        pre = -inf
+        ans = inf
+        dfs(root)
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -97,26 +118,62 @@ class Solution:
  * }
  */
 class Solution {
-
-    private int minDiff = Integer.MAX_VALUE;
-    private Integer pre;
+    private final int inf = 1 << 30;
+    private int ans = inf;
+    private int pre = -inf;
 
     public int minDiffInBST(TreeNode root) {
-        inorder(root);
-        return minDiff;
+        dfs(root);
+        return ans;
     }
 
-    private void inorder(TreeNode root) {
-        if (root == null) return;
-        inorder(root.left);
-        if (pre != null) minDiff = Math.min(minDiff, Math.abs(root.val - pre));
+    private void dfs(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        dfs(root.left);
+        ans = Math.min(ans, root.val - pre);
         pre = root.val;
-        inorder(root.right);
+        dfs(root.right);
     }
 }
 ```
 
-### **Go**
+#### C++
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int minDiffInBST(TreeNode* root) {
+        const int inf = 1 << 30;
+        int ans = inf, pre = -inf;
+        auto dfs = [&](this auto&& dfs, TreeNode* root) -> void {
+            if (!root) {
+                return;
+            }
+            dfs(root->left);
+            ans = min(ans, root->val - pre);
+            pre = root->val;
+            dfs(root->right);
+        };
+        dfs(root);
+        return ans;
+    }
+};
+```
+
+#### Go
 
 ```go
 /**
@@ -127,34 +184,135 @@ class Solution {
  *     Right *TreeNode
  * }
  */
-
-var res int
-var preNode *TreeNode
 func minDiffInBST(root *TreeNode) int {
-    res = int(^uint(0) >> 1)
-    preNode = nil
-    helper(root)
-    return res
-}
-
-func helper(root *TreeNode)  {
-    if root == nil {
-        return
-    }
-    helper(root.Left)
-    if preNode != nil {
-        res = getMinInt(res, root.Val - preNode.Val)
-    }
-    preNode = root
-    helper(root.Right)
-}
-
-func getMinInt(a,b int) int {
-    if a < b {
-        return a
-    }
-    return b
+	const inf int = 1 << 30
+	ans, pre := inf, -inf
+	var dfs func(*TreeNode)
+	dfs = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		dfs(root.Left)
+		ans = min(ans, root.Val-pre)
+		pre = root.Val
+		dfs(root.Right)
+	}
+	dfs(root)
+	return ans
 }
 ```
 
+#### TypeScript
+
+```ts
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function minDiffInBST(root: TreeNode | null): number {
+    let [ans, pre] = [Infinity, -Infinity];
+    const dfs = (root: TreeNode | null) => {
+        if (!root) {
+            return;
+        }
+        dfs(root.left);
+        ans = Math.min(ans, root.val - pre);
+        pre = root.val;
+        dfs(root.right);
+    };
+    dfs(root);
+    return ans;
+}
+```
+
+#### Rust
+
+```rust
+// Definition for a binary tree node.
+// #[derive(Debug, PartialEq, Eq)]
+// pub struct TreeNode {
+//   pub val: i32,
+//   pub left: Option<Rc<RefCell<TreeNode>>>,
+//   pub right: Option<Rc<RefCell<TreeNode>>>,
+// }
+//
+// impl TreeNode {
+//   #[inline]
+//   pub fn new(val: i32) -> Self {
+//     TreeNode {
+//       val,
+//       left: None,
+//       right: None
+//     }
+//   }
+// }
+use std::cell::RefCell;
+use std::rc::Rc;
+impl Solution {
+    pub fn min_diff_in_bst(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
+        const inf: i32 = 1 << 30;
+        let mut ans = inf;
+        let mut pre = -inf;
+
+        fn dfs(node: Option<Rc<RefCell<TreeNode>>>, ans: &mut i32, pre: &mut i32) {
+            if let Some(n) = node {
+                let n = n.borrow();
+                dfs(n.left.clone(), ans, pre);
+                *ans = (*ans).min(n.val - *pre);
+                *pre = n.val;
+                dfs(n.right.clone(), ans, pre);
+            }
+        }
+
+        dfs(root, &mut ans, &mut pre);
+        ans
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var minDiffInBST = function (root) {
+    let [ans, pre] = [Infinity, -Infinity];
+    const dfs = root => {
+        if (!root) {
+            return;
+        }
+        dfs(root.left);
+        ans = Math.min(ans, root.val - pre);
+        pre = root.val;
+        dfs(root.right);
+    };
+    dfs(root);
+    return ans;
+};
+```
+
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2157.Groups%20of%20Strings/README_EN.md
+rating: 2499
+source: Weekly Contest 278 Q4
+tags:
+    - Bit Manipulation
+    - Union Find
+    - String
+---
+
+<!-- problem:start -->
+
 # [2157. Groups of Strings](https://leetcode.com/problems/groups-of-strings)
 
 [中文文档](/solution/2100-2199/2157.Groups%20of%20Strings/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a <strong>0-indexed</strong> array of strings <code>words</code>. Each string consists of <strong>lowercase English letters</strong> only. No letter occurs more than once in any string of <code>words</code>.</p>
 
@@ -26,12 +42,12 @@
 <p>Return <em>an array</em> <code>ans</code> <em>of size</em> <code>2</code> <em>where:</em></p>
 
 <ul>
-	<li><code>ans[0]</code> <em>is the <strong>total number</strong> of groups</em> <code>words</code> <em>can be divided into, and</em></li>
+	<li><code>ans[0]</code> <em>is the <strong>maximum number</strong> of groups</em> <code>words</code> <em>can be divided into, and</em></li>
 	<li><code>ans[1]</code> <em>is the <strong>size of the largest</strong> group</em>.</li>
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> words = [&quot;a&quot;,&quot;b&quot;,&quot;ab&quot;,&quot;cde&quot;]
@@ -44,7 +60,7 @@
 Thus, words can be divided into 2 groups [&quot;a&quot;,&quot;b&quot;,&quot;ab&quot;] and [&quot;cde&quot;]. The size of the largest group is 3.  
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> words = [&quot;a&quot;,&quot;ab&quot;,&quot;abc&quot;]
@@ -67,32 +83,233 @@ Thus, the size of the largest group is 3.
 	<li>No letter occurs more than once in <code>words[i]</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
+class Solution:
+    def groupStrings(self, words: List[str]) -> List[int]:
+        def find(x):
+            if p[x] != x:
+                p[x] = find(p[x])
+            return p[x]
 
+        def union(a, b):
+            nonlocal mx, n
+            if b not in p:
+                return
+            pa, pb = find(a), find(b)
+            if pa == pb:
+                return
+            p[pa] = pb
+            size[pb] += size[pa]
+            mx = max(mx, size[pb])
+            n -= 1
+
+        p = {}
+        size = Counter()
+        n = len(words)
+        mx = 0
+        for word in words:
+            x = 0
+            for c in word:
+                x |= 1 << (ord(c) - ord('a'))
+            p[x] = x
+            size[x] += 1
+            mx = max(mx, size[x])
+            if size[x] > 1:
+                n -= 1
+        for x in p.keys():
+            for i in range(26):
+                union(x, x ^ (1 << i))
+                if (x >> i) & 1:
+                    for j in range(26):
+                        if ((x >> j) & 1) == 0:
+                            union(x, x ^ (1 << i) | (1 << j))
+        return [n, mx]
 ```
 
-### **Java**
+#### Java
 
 ```java
+class Solution {
+    private Map<Integer, Integer> p;
+    private Map<Integer, Integer> size;
+    private int mx;
+    private int n;
 
+    public int[] groupStrings(String[] words) {
+        p = new HashMap<>();
+        size = new HashMap<>();
+        n = words.length;
+        mx = 0;
+        for (String word : words) {
+            int x = 0;
+            for (char c : word.toCharArray()) {
+                x |= 1 << (c - 'a');
+            }
+            p.put(x, x);
+            size.put(x, size.getOrDefault(x, 0) + 1);
+            mx = Math.max(mx, size.get(x));
+            if (size.get(x) > 1) {
+                --n;
+            }
+        }
+        for (int x : p.keySet()) {
+            for (int i = 0; i < 26; ++i) {
+                union(x, x ^ (1 << i));
+                if (((x >> i) & 1) != 0) {
+                    for (int j = 0; j < 26; ++j) {
+                        if (((x >> j) & 1) == 0) {
+                            union(x, x ^ (1 << i) | (1 << j));
+                        }
+                    }
+                }
+            }
+        }
+        return new int[] {n, mx};
+    }
+
+    private int find(int x) {
+        if (p.get(x) != x) {
+            p.put(x, find(p.get(x)));
+        }
+        return p.get(x);
+    }
+
+    private void union(int a, int b) {
+        if (!p.containsKey(b)) {
+            return;
+        }
+        int pa = find(a), pb = find(b);
+        if (pa == pb) {
+            return;
+        }
+        p.put(pa, pb);
+        size.put(pb, size.get(pb) + size.get(pa));
+        mx = Math.max(mx, size.get(pb));
+        --n;
+    }
+}
 ```
 
-### **TypeScript**
+#### C++
 
-```ts
+```cpp
+class Solution {
+public:
+    int mx, n;
 
+    vector<int> groupStrings(vector<string>& words) {
+        unordered_map<int, int> p;
+        unordered_map<int, int> size;
+        mx = 0;
+        n = words.size();
+        for (auto& word : words) {
+            int x = 0;
+            for (auto& c : word) x |= 1 << (c - 'a');
+            p[x] = x;
+            ++size[x];
+            mx = max(mx, size[x]);
+            if (size[x] > 1) --n;
+        }
+        for (auto& [x, _] : p) {
+            for (int i = 0; i < 26; ++i) {
+                unite(x, x ^ (1 << i), p, size);
+                if ((x >> i) & 1) {
+                    for (int j = 0; j < 26; ++j) {
+                        if (((x >> j) & 1) == 0) unite(x, x ^ (1 << i) | (1 << j), p, size);
+                    }
+                }
+            }
+        }
+        return {n, mx};
+    }
+
+    int find(int x, unordered_map<int, int>& p) {
+        if (p[x] != x) p[x] = find(p[x], p);
+        return p[x];
+    }
+
+    void unite(int a, int b, unordered_map<int, int>& p, unordered_map<int, int>& size) {
+        if (!p.count(b)) return;
+        int pa = find(a, p), pb = find(b, p);
+        if (pa == pb) return;
+        p[pa] = pb;
+        size[pb] += size[pa];
+        mx = max(mx, size[pb]);
+        --n;
+    }
+};
 ```
 
-### **...**
+#### Go
 
-```
+```go
+func groupStrings(words []string) []int {
+	p := map[int]int{}
+	size := map[int]int{}
+	mx, n := 0, len(words)
+	var find func(int) int
+	find = func(x int) int {
+		if p[x] != x {
+			p[x] = find(p[x])
+		}
+		return p[x]
+	}
+	union := func(a, b int) {
+		if _, ok := p[b]; !ok {
+			return
+		}
+		pa, pb := find(a), find(b)
+		if pa == pb {
+			return
+		}
+		p[pa] = pb
+		size[pb] += size[pa]
+		mx = max(mx, size[pb])
+		n--
+	}
 
+	for _, word := range words {
+		x := 0
+		for _, c := range word {
+			x |= 1 << (c - 'a')
+		}
+		p[x] = x
+		size[x]++
+		mx = max(mx, size[x])
+		if size[x] > 1 {
+			n--
+		}
+	}
+	for x := range p {
+		for i := 0; i < 26; i++ {
+			union(x, x^(1<<i))
+			if ((x >> i) & 1) != 0 {
+				for j := 0; j < 26; j++ {
+					if ((x >> j) & 1) == 0 {
+						union(x, x^(1<<i)|(1<<j))
+					}
+				}
+			}
+		}
+	}
+	return []int{n, mx}
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,2 +1,5 @@
-select Name as Employee from Employee Curr where
-    Salary > (select Salary from Employee where Id = Curr.ManagerId)
+# Write your MySQL query statement below
+SELECT email
+FROM Person
+GROUP BY 1
+HAVING COUNT(1) > 1;

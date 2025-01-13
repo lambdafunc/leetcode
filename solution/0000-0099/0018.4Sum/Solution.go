@@ -1,7 +1,7 @@
-func fourSum(nums []int, target int) [][]int {
-	n, res := len(nums), make([][]int, 0)
+func fourSum(nums []int, target int) (ans [][]int) {
+	n := len(nums)
 	if n < 4 {
-		return res
+		return
 	}
 	sort.Ints(nums)
 	for i := 0; i < n-3; i++ {
@@ -14,23 +14,24 @@ func fourSum(nums []int, target int) [][]int {
 			}
 			k, l := j+1, n-1
 			for k < l {
-				if nums[i]+nums[j]+nums[k]+nums[l] == target {
-					res = append(res, []int{nums[i], nums[j], nums[k], nums[l]})
+				x := nums[i] + nums[j] + nums[k] + nums[l]
+				if x < target {
+					k++
+				} else if x > target {
+					l--
+				} else {
+					ans = append(ans, []int{nums[i], nums[j], nums[k], nums[l]})
 					k++
 					l--
-					for k < n && nums[k] == nums[k-1] {
+					for k < l && nums[k] == nums[k-1] {
 						k++
 					}
-					for l > j && nums[l] == nums[l+1] {
+					for k < l && nums[l] == nums[l+1] {
 						l--
 					}
-				} else if nums[i]+nums[j]+nums[k]+nums[l] < target {
-					k++
-				} else {
-					l--
 				}
 			}
 		}
 	}
-	return res
+	return
 }

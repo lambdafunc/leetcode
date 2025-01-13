@@ -6,20 +6,17 @@
  * }
  */
 
-func postorder(root *Node) []int {
-	if root == nil {
-		return []int{}
-	}
-	var stk []*Node
-	var ans []int
-	stk = append(stk, root)
-	for len(stk) > 0 {
-		node := stk[len(stk)-1]
-		stk = stk[:len(stk)-1]
-		ans = append([]int{node.Val}, ans...)
-		for _, child := range node.Children {
-			stk = append(stk, child)
+func postorder(root *Node) (ans []int) {
+	var dfs func(*Node)
+	dfs = func(root *Node) {
+		if root == nil {
+			return
 		}
+		for _, child := range root.Children {
+			dfs(child)
+		}
+		ans = append(ans, root.Val)
 	}
-	return ans
+	dfs(root)
+	return
 }

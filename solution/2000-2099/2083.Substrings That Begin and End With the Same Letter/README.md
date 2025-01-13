@@ -1,10 +1,24 @@
-# [2083. Substrings That Begin and End With the Same Letter](https://leetcode-cn.com/problems/substrings-that-begin-and-end-with-the-same-letter)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2083.Substrings%20That%20Begin%20and%20End%20With%20the%20Same%20Letter/README.md
+tags:
+    - 哈希表
+    - 数学
+    - 字符串
+    - 计数
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [2083. 求以相同字母开头和结尾的子串总数 🔒](https://leetcode.cn/problems/substrings-that-begin-and-end-with-the-same-letter)
 
 [English Version](/solution/2000-2099/2083.Substrings%20That%20Begin%20and%20End%20With%20the%20Same%20Letter/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个仅由小写英文字母组成的，&nbsp; 下标从 <code>0</code> 开始的字符串 <code>s</code> 。返回 <code>s</code> 中以相同字符开头和结尾的子字符串总数。</p>
 
@@ -52,91 +66,82 @@
 	<li><code>s</code> 仅包含小写英文字母。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-前缀和 + 计数器。
+### 方法一：数组或哈希表
 
-用 counter 累计以每个字符结尾的字符串的个数。
+我们可以用数组或哈希表统计字符串中每个字母出现的次数，然后遍历字符串，对于每个字母，其出现的次数即为以该字母开头和结尾的子串的个数，将所有字母的出现次数相加即为答案。
 
-遍历字符串 s 中每个字符 c，累加以 c 字符串结尾的字符串个数。
+时间复杂度 $O(n)$，空间复杂度 $O(C)$。其中 $n$ 为字符串的长度，而 $C$ 为字符集的大小。本题中 $C = 26$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def numberOfSubstrings(self, s: str) -> int:
-        counter = [0] * 26
+        cnt = Counter()
         ans = 0
         for c in s:
-            i = ord(c) - ord('a')
-            counter[i] += 1
-            ans += counter[i]
+            cnt[c] += 1
+            ans += cnt[c]
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public long numberOfSubstrings(String s) {
-        int[] counter = new int[26];
+        int[] cnt = new int[26];
         long ans = 0;
-        for (char c : s.toCharArray()) {
-            int i = c - 'a';
-            ++counter[i];
-            ans += counter[i];
+        for (int i = 0; i < s.length(); ++i) {
+            int j = s.charAt(i) - 'a';
+            ++cnt[j];
+            ans += cnt[j];
         }
         return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     long long numberOfSubstrings(string s) {
-        vector<int> counter(26);
+        int cnt[26]{};
         long long ans = 0;
-        for (char c : s)
-        {
-            int i = c - 'a';
-            ++counter[i];
-            ans += counter[i];
+        for (char& c : s) {
+            ans += ++cnt[c - 'a'];
         }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func numberOfSubstrings(s string) int64 {
-	var ans int64
-	counter := make([]int64, 26)
+func numberOfSubstrings(s string) (ans int64) {
+	cnt := [26]int{}
 	for _, c := range s {
-		i := c - 'a'
-		counter[i]++
-		ans += counter[i]
+		c -= 'a'
+		cnt[c]++
+		ans += int64(cnt[c])
 	}
 	return ans
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

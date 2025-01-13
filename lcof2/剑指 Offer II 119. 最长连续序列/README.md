@@ -1,8 +1,15 @@
-# [剑指 Offer II 119. 最长连续序列](https://leetcode-cn.com/problems/WhsWhI)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20119.%20%E6%9C%80%E9%95%BF%E8%BF%9E%E7%BB%AD%E5%BA%8F%E5%88%97/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 119. 最长连续序列](https://leetcode.cn/problems/WhsWhI)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给定一个未排序的整数数组 <code>nums</code> ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。</p>
 
@@ -37,39 +44,31 @@
 
 <p>&nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 128&nbsp;题相同：&nbsp;<a href="https://leetcode-cn.com/problems/longest-consecutive-sequence/">https://leetcode-cn.com/problems/longest-consecutive-sequence/</a></p>
+<p><meta charset="UTF-8" />注意：本题与主站 128&nbsp;题相同：&nbsp;<a href="https://leetcode.cn/problems/longest-consecutive-sequence/">https://leetcode.cn/problems/longest-consecutive-sequence/</a></p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-**方法 1：排序**
+### 方法一：排序
 
-设 res 表示连续序列的最大长度，t 表示当前合法连续序列的长度，初始时 `res = t = 1`。
+我们先将数组排序，然后用一个变量 $t$ 记录当前连续序列的长度，用一个变量 $ans$ 记录最长连续序列的长度。
 
-先排序数组，然后从下标 1 开始遍历数组，判断 `nums[i]` 与前一个数 `nums[i - 1]` 的大小关系：
+接下来，我们从下标 $i=1$ 开始遍历数组，对于当前遍历到的元素 $nums[i]$：
 
-- 若 `nums[i] == nums[i - 1]`，直接跳过；
-- 若 `nums[i] - nums[i - 1] == 1`，说明是连续序列，t 自增，利用 `res = max(res, t)` 更新最大长度；
-- 否则 t 重置为 1，继续往下遍历。
+-   如果 $nums[i]=nums[i-1]$，则说明当前元素重复，无需考虑；
+-   如果 $nums[i]=nums[i-1]+1$，则说明当前元素可以接在上一个连续序列后面以形成更长的连续序列，我们更新 $t = t + 1$，然后更新答案 $ans = \max(ans, t)$；
+-   否则，说明当前元素无法接在上一个连续序列后面，我们将 $t$ 重新置为 $1$。
 
-此方法时间复杂度 `O(nlogn)`，空间复杂度 `O(1)`。
+最终，我们返回答案 $ans$ 即可。
 
-**方法 2：哈希表**
-
-设 res 表示连续序列的最大长度，初始为 0。哈希表 s 存放数组出现的每个元素。
-
-遍历数组，以当前遍历到的元素 `nums[i]` 做为起点，循环判断 `nums[i] + 1`，`nums[i] + 2` ... 是否存在 s 中，并不断更新连续序列的最大长度。
-
-在这个过程中，如果 `nums[i]`, `nums[i] + 1`, `nums[i + 2]`, ... 是一个连续序列，遍历下个元素 `nums[i] + 1` 时，其实无需再重复循环。因此，只需要判断 `nums[i] - 1` 是否在 s 中，是则直接跳过。
-
-此方法时间复杂度 `O(n)`，空间复杂度 `O(n)`。
+时间复杂度 $O(n \times \log n)$，空间复杂度 $O(\log n)$。其中 $n$ 是数组的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -78,138 +77,72 @@ class Solution:
         if n < 2:
             return n
         nums.sort()
-        res = t = 1
-        for i in range(1, n):
-            if nums[i] == nums[i - 1]:
+        ans = t = 1
+        for a, b in pairwise(nums):
+            if a == b:
                 continue
-            if nums[i] - nums[i - 1] == 1:
+            if a + 1 == b:
                 t += 1
-                res = max(res, t)
+                ans = max(ans, t)
             else:
                 t = 1
-        return res
+        return ans
 ```
 
-```python
-class Solution:
-    def longestConsecutive(self, nums: List[int]) -> int:
-        s, res = set(nums), 0
-        for num in nums:
-            if num - 1 not in s:
-                t = 1
-                next = num + 1
-                while next in s:
-                    t += 1
-                    next += 1
-                res = max(res, t)
-        return res
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int longestConsecutive(int[] nums) {
         int n = nums.length;
-        if (n < 1) {
+        if (n < 2) {
             return n;
         }
         Arrays.sort(nums);
-        int res = 1, t = 1;
+        int ans = 1, t = 1;
         for (int i = 1; i < n; ++i) {
             if (nums[i] == nums[i - 1]) {
                 continue;
             }
-            if (nums[i] - nums[i - 1] == 1) {
-                t += 1;
-                res = Math.max(res, t);
+            if (nums[i] == nums[i - 1] + 1) {
+                ans = Math.max(ans, ++t);
             } else {
                 t = 1;
             }
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-```java
-class Solution {
-    public int longestConsecutive(int[] nums) {
-        Set<Integer> s = new HashSet<>();
-        for (int num : nums) {
-            s.add(num);
-        }
-        int res = 0;
-        for (int num : nums) {
-            if (!s.contains(num - 1)) {
-                int t = 1, next = num + 1;
-                while (s.contains(next++)) {
-                    ++t;
-                }
-                res = Math.max(res, t);
-            }
-        }
-        return res;
-    }
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    int longestConsecutive(vector<int> &nums) {
+    int longestConsecutive(vector<int>& nums) {
         int n = nums.size();
-        if (n < 2)
+        if (n < 2) {
             return n;
+        }
         sort(nums.begin(), nums.end());
-        int res = 1, t = 1;
-        for (int i = 1; i < n; ++i)
-        {
-            if (nums[i] == nums[i - 1])
+        int ans = 1, t = 1;
+        for (int i = 1; i < n; ++i) {
+            if (nums[i] == nums[i - 1]) {
                 continue;
-            if (nums[i] - nums[i - 1] == 1)
-            {
-                ++t;
-                res = max(res, t);
             }
-            else
-            {
+            if (nums[i] == nums[i - 1] + 1) {
+                ans = max(ans, ++t);
+            } else {
                 t = 1;
             }
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-```cpp
-class Solution {
-public:
-    int longestConsecutive(vector<int> &nums) {
-        unordered_set<int> s;
-        for (int num : nums)
-            s.insert(num);
-        int res = 0;
-        for (int num : nums)
-        {
-            if (!s.count(num - 1))
-            {
-                int t = 1, next = num + 1;
-                while (s.count(next++))
-                    ++t;
-                res = max(res, t);
-            }
-        }
-        return res;
-    }
-};
-```
-
-### **Go**
+#### Go
 
 ```go
 func longestConsecutive(nums []int) int {
@@ -218,59 +151,272 @@ func longestConsecutive(nums []int) int {
 		return n
 	}
 	sort.Ints(nums)
-	res, t := 1, 1
-	for i := 1; i < n; i++ {
-		if nums[i] == nums[i-1] {
+	ans, t := 1, 1
+	for i, x := range nums[1:] {
+		if x == nums[i] {
 			continue
 		}
-		if nums[i]-nums[i-1] == 1 {
+		if x == nums[i]+1 {
 			t++
-			res = max(res, t)
+			ans = max(ans, t)
+		} else {
+			t = 1
 		}
 	}
-	return res
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return ans
 }
 ```
 
-```go
-func longestConsecutive(nums []int) int {
-	s := make(map[int]bool)
-	for _, num := range nums {
-		s[num] = true
-	}
-	res := 0
-	for _, num := range nums {
-		if !s[num-1] {
-			t, next := 1, num+1
-			for s[next] {
-				next++
-				t++
-			}
-			res = max(res, t)
-		}
-	}
-	return res
-}
+#### TypeScript
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+```ts
+function longestConsecutive(nums: number[]): number {
+    const n = nums.length;
+    if (n < 2) {
+        return n;
+    }
+    let ans = 1;
+    let t = 1;
+    nums.sort((a, b) => a - b);
+    for (let i = 1; i < n; ++i) {
+        if (nums[i] === nums[i - 1]) {
+            continue;
+        }
+        if (nums[i] === nums[i - 1] + 1) {
+            ans = Math.max(ans, ++t);
+        } else {
+            t = 1;
+        }
+    }
+    return ans;
 }
 ```
 
-### **...**
+#### JavaScript
 
+```js
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var longestConsecutive = function (nums) {
+    const n = nums.length;
+    if (n < 2) {
+        return n;
+    }
+    nums.sort((a, b) => a - b);
+    let ans = 1;
+    let t = 1;
+    for (let i = 1; i < n; ++i) {
+        if (nums[i] === nums[i - 1]) {
+            continue;
+        }
+        if (nums[i] === nums[i - 1] + 1) {
+            ans = Math.max(ans, ++t);
+        } else {
+            t = 1;
+        }
+    }
+    return ans;
+};
 ```
 
+#### Swift
+
+```swift
+class Solution {
+    func longestConsecutive(_ nums: [Int]) -> Int {
+        let n = nums.count
+        if n < 2 {
+            return n
+        }
+
+        let sortedNums = Array(Set(nums)).sorted()
+        var ans = 1
+        var currentStreak = 1
+
+        for i in 1..<sortedNums.count {
+            if sortedNums[i] == sortedNums[i - 1] + 1 {
+                currentStreak += 1
+                ans = max(ans, currentStreak)
+            } else {
+                currentStreak = 1
+            }
+        }
+
+        return ans
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start-->
+
+### 方法二：哈希表
+
+我们用哈希表存储数组中的所有元素，然后遍历数组中的每个元素 $x$，如果当前元素的前驱 $x-1$ 不在哈希表中，那么我们以当前元素为起点，不断尝试匹配 $x+1, x+2, x+3, \dots$，直到匹配不到为止，此时的匹配长度即为以 $x$ 为起点的最长连续序列长度，我们更新答案即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 是数组的长度。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def longestConsecutive(self, nums: List[int]) -> int:
+        s = set(nums)
+        ans = 0
+        for x in nums:
+            if x - 1 not in s:
+                y = x + 1
+                while y in s:
+                    y += 1
+                ans = max(ans, y - x)
+        return ans
+```
+
+#### Java
+
+```java
+class Solution {
+    public int longestConsecutive(int[] nums) {
+        Set<Integer> s = new HashSet<>();
+        for (int x : nums) {
+            s.add(x);
+        }
+        int ans = 0;
+        for (int x : nums) {
+            if (!s.contains(x - 1)) {
+                int y = x + 1;
+                while (s.contains(y)) {
+                    ++y;
+                }
+                ans = Math.max(ans, y - x);
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        unordered_set<int> s(nums.begin(), nums.end());
+        int ans = 0;
+        for (int x : nums) {
+            if (!s.count(x - 1)) {
+                int y = x + 1;
+                while (s.count(y)) {
+                    y++;
+                }
+                ans = max(ans, y - x);
+            }
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func longestConsecutive(nums []int) (ans int) {
+	s := map[int]bool{}
+	for _, x := range nums {
+		s[x] = true
+	}
+	for _, x := range nums {
+		if !s[x-1] {
+			y := x + 1
+			for s[y] {
+				y++
+			}
+			ans = max(ans, y-x)
+		}
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function longestConsecutive(nums: number[]): number {
+    const s: Set<number> = new Set(nums);
+    let ans = 0;
+    for (const x of s) {
+        if (!s.has(x - 1)) {
+            let y = x + 1;
+            while (s.has(y)) {
+                y++;
+            }
+            ans = Math.max(ans, y - x);
+        }
+    }
+    return ans;
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var longestConsecutive = function (nums) {
+    const s = new Set(nums);
+    let ans = 0;
+    for (const x of nums) {
+        if (!s.has(x - 1)) {
+            let y = x + 1;
+            while (s.has(y)) {
+                y++;
+            }
+            ans = Math.max(ans, y - x);
+        }
+    }
+    return ans;
+};
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func longestConsecutive(_ nums: [Int]) -> Int {
+        let numSet: Set<Int> = Set(nums)
+        var longestStreak = 0
+
+        for num in nums {
+            if !numSet.contains(num - 1) {
+                var currentNum = num
+                var currentStreak = 1
+
+                while numSet.contains(currentNum + 1) {
+                    currentNum += 1
+                    currentStreak += 1
+                }
+
+                longestStreak = max(longestStreak, currentStreak)
+            }
+        }
+
+        return longestStreak
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

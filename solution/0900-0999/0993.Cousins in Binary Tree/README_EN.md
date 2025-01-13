@@ -1,65 +1,74 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0900-0999/0993.Cousins%20in%20Binary%20Tree/README_EN.md
+tags:
+    - Tree
+    - Depth-First Search
+    - Breadth-First Search
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
 # [993. Cousins in Binary Tree](https://leetcode.com/problems/cousins-in-binary-tree)
 
 [中文文档](/solution/0900-0999/0993.Cousins%20in%20Binary%20Tree/README.md)
 
 ## Description
 
-<p>In a binary tree, the root node is at depth <code>0</code>, and children of each depth <code>k</code> node are at depth <code>k+1</code>.</p>
+<!-- description:start -->
 
-<p>Two nodes of a binary tree are <em>cousins</em> if they have the same depth, but have <strong>different parents</strong>.</p>
+<p>Given the <code>root</code> of a binary tree with unique values and the values of two different nodes of the tree <code>x</code> and <code>y</code>, return <code>true</code> <em>if the nodes corresponding to the values </em><code>x</code><em> and </em><code>y</code><em> in the tree are <strong>cousins</strong>, or </em><code>false</code><em> otherwise.</em></p>
 
-<p>We are given the <code>root</code> of a binary tree with unique values, and the values <code>x</code>&nbsp;and <code>y</code>&nbsp;of two different nodes in the tree.</p>
+<p>Two nodes of a binary tree are <strong>cousins</strong> if they have the same depth with different parents.</p>
 
-<p>Return&nbsp;<code>true</code>&nbsp;if and only if the nodes corresponding to the values <code>x</code> and <code>y</code> are cousins.</p>
+<p>Note that in a binary tree, the root node is at the depth <code>0</code>, and children of each depth <code>k</code> node are at the depth <code>k + 1</code>.</p>
 
 <p>&nbsp;</p>
-
-<p><strong>Example 1:<br />
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0993.Cousins%20in%20Binary%20Tree/images/q1248-01.png" style="width: 180px; height: 160px;" /></strong></p>
-
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0993.Cousins%20in%20Binary%20Tree/images/q1248-01.png" style="width: 304px; height: 270px;" />
 <pre>
-<strong>Input: </strong>root = <span id="example-input-1-1">[1,2,3,4]</span>, x = <span id="example-input-1-2">4</span>, y = <span id="example-input-1-3">3</span>
-<strong>Output: </strong><span id="example-output-1">false</span>
+<strong>Input:</strong> root = [1,2,3,4], x = 4, y = 3
+<strong>Output:</strong> false
 </pre>
 
-<div>
-<p><strong>Example 2:<br />
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0993.Cousins%20in%20Binary%20Tree/images/q1248-02.png" style="width: 201px; height: 160px;" /></strong></p>
-
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0993.Cousins%20in%20Binary%20Tree/images/q1248-02.png" style="width: 334px; height: 266px;" />
 <pre>
-<strong>Input: </strong>root = <span id="example-input-2-1">[1,2,3,null,4,null,5]</span>, x = <span id="example-input-2-2">5</span>, y = <span id="example-input-2-3">4</span>
-<strong>Output: </strong><span id="example-output-2">true</span>
+<strong>Input:</strong> root = [1,2,3,null,4,null,5], x = 5, y = 4
+<strong>Output:</strong> true
 </pre>
 
-<div>
-<p><strong>Example 3:</strong></p>
-
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0993.Cousins%20in%20Binary%20Tree/images/q1248-03.png" style="width: 156px; height: 160px;" /></strong></p>
-
+<p><strong class="example">Example 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0993.Cousins%20in%20Binary%20Tree/images/q1248-03.png" style="width: 267px; height: 258px;" />
 <pre>
-<strong>Input: </strong>root = <span id="example-input-3-1">[1,2,3,null,4]</span>, x = 2, y = 3
-<strong>Output: </strong><span id="example-output-3">false</span>
+<strong>Input:</strong> root = [1,2,3,null,4], x = 2, y = 3
+<strong>Output:</strong> false
 </pre>
-</div>
-</div>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li>The number of nodes in the tree will be between <code>2</code> and <code>100</code>.</li>
-	<li>Each node has a unique integer value from <code>1</code> to <code>100</code>.</li>
+	<li>The number of nodes in the tree is in the range <code>[2, 100]</code>.</li>
+	<li><code>1 &lt;= Node.val &lt;= 100</code></li>
+	<li>Each node has a <strong>unique</strong> value.</li>
+	<li><code>x != y</code></li>
+	<li><code>x</code> and <code>y</code> are exist in the tree.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
-BFS or DFS.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
-
-BFS:
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -69,57 +78,27 @@ BFS:
 #         self.left = left
 #         self.right = right
 class Solution:
-    def isCousins(self, root: TreeNode, x: int, y: int) -> bool:
-        p = list(range(110))
-        d = list(range(110))
-        q = deque([root])
-        i = 0
+    def isCousins(self, root: Optional[TreeNode], x: int, y: int) -> bool:
+        q = deque([(root, None)])
+        depth = 0
+        p1 = p2 = None
+        d1 = d2 = None
         while q:
-            n = len(q)
-            for _ in range(n):
-                node = q.popleft()
-                d[node.val] = i
+            for _ in range(len(q)):
+                node, parent = q.popleft()
+                if node.val == x:
+                    p1, d1 = parent, depth
+                elif node.val == y:
+                    p2, d2 = parent, depth
                 if node.left:
-                    p[node.left.val] = node.val
-                    q.append(node.left)
+                    q.append((node.left, node))
                 if node.right:
-                    q.append(node.right)
-                    p[node.right.val] = node.val
-            i += 1
-        return p[x] != p[y] and d[x] == d[y]
-```
-
-DFS:
-
-```python
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
-class Solution:
-    def isCousins(self, root: TreeNode, x: int, y: int) -> bool:
-        p1 = p2 = d1 = d2 = None
-
-        def dfs(root, p, d):
-            if root is None:
-                return
-            nonlocal p1, p2, d1, d2, x, y
-            if root.val == x:
-                p1, d1 = p, d
-            if root.val == y:
-                p2, d2 = p, d
-            dfs(root.left, root, d + 1)
-            dfs(root.right, root, d + 1)
-
-        dfs(root, None, 0)
+                    q.append((node.right, node))
+            depth += 1
         return p1 != p2 and d1 == d2
 ```
 
-### **Java**
-
-BFS:
+#### Java
 
 ```java
 /**
@@ -139,33 +118,195 @@ BFS:
  */
 class Solution {
     public boolean isCousins(TreeNode root, int x, int y) {
-        int[] p = new int[110];
-        int[] d = new int[110];
-        Deque<TreeNode> q = new ArrayDeque<>();
-        q.offer(root);
-        int i = 0;
-        while (!q.isEmpty()) {
-            int n = q.size();
-            while (n-- > 0) {
-                TreeNode node = q.poll();
-                d[node.val] = i;
+        Deque<TreeNode[]> q = new ArrayDeque<>();
+        q.offer(new TreeNode[] {root, null});
+        int d1 = 0, d2 = 0;
+        TreeNode p1 = null, p2 = null;
+        for (int depth = 0; !q.isEmpty(); ++depth) {
+            for (int n = q.size(); n > 0; --n) {
+                TreeNode[] t = q.poll();
+                TreeNode node = t[0], parent = t[1];
+                if (node.val == x) {
+                    d1 = depth;
+                    p1 = parent;
+                } else if (node.val == y) {
+                    d2 = depth;
+                    p2 = parent;
+                }
                 if (node.left != null) {
-                    q.offer(node.left);
-                    p[node.left.val] = node.val;
+                    q.offer(new TreeNode[] {node.left, node});
                 }
                 if (node.right != null) {
-                    q.offer(node.right);
-                    p[node.right.val] = node.val;
+                    q.offer(new TreeNode[] {node.right, node});
                 }
             }
-            ++i;
         }
-        return p[x] != p[y] && d[x] == d[y];
+        return p1 != p2 && d1 == d2;
     }
 }
 ```
 
-DFS:
+#### C++
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    bool isCousins(TreeNode* root, int x, int y) {
+        queue<pair<TreeNode*, TreeNode*>> q;
+        q.push({root, nullptr});
+        int d1 = 0, d2 = 0;
+        TreeNode *p1 = nullptr, *p2 = nullptr;
+        for (int depth = 0; q.size(); ++depth) {
+            for (int n = q.size(); n; --n) {
+                auto [node, parent] = q.front();
+                q.pop();
+                if (node->val == x) {
+                    d1 = depth;
+                    p1 = parent;
+                } else if (node->val == y) {
+                    d2 = depth;
+                    p2 = parent;
+                }
+                if (node->left) {
+                    q.push({node->left, node});
+                }
+                if (node->right) {
+                    q.push({node->right, node});
+                }
+            }
+        }
+        return d1 == d2 && p1 != p2;
+    }
+};
+```
+
+#### Go
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func isCousins(root *TreeNode, x int, y int) bool {
+	type pair struct{ node, parent *TreeNode }
+	var d1, d2 int
+	var p1, p2 *TreeNode
+	q := []pair{{root, nil}}
+	for depth := 0; len(q) > 0; depth++ {
+		for n := len(q); n > 0; n-- {
+			node, parent := q[0].node, q[0].parent
+			q = q[1:]
+			if node.Val == x {
+				d1, p1 = depth, parent
+			} else if node.Val == y {
+				d2, p2 = depth, parent
+			}
+			if node.Left != nil {
+				q = append(q, pair{node.Left, node})
+			}
+			if node.Right != nil {
+				q = append(q, pair{node.Right, node})
+			}
+		}
+	}
+	return d1 == d2 && p1 != p2
+}
+```
+
+#### TypeScript
+
+```ts
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function isCousins(root: TreeNode | null, x: number, y: number): boolean {
+    let [d1, d2] = [0, 0];
+    let [p1, p2] = [null, null];
+    const q: [TreeNode, TreeNode][] = [[root, null]];
+    for (let depth = 0; q.length > 0; ++depth) {
+        const t: [TreeNode, TreeNode][] = [];
+        for (const [node, parent] of q) {
+            if (node.val === x) {
+                [d1, p1] = [depth, parent];
+            } else if (node.val === y) {
+                [d2, p2] = [depth, parent];
+            }
+            if (node.left) {
+                t.push([node.left, node]);
+            }
+            if (node.right) {
+                t.push([node.right, node]);
+            }
+        }
+        q.splice(0, q.length, ...t);
+    }
+    return d1 === d2 && p1 !== p2;
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def isCousins(self, root: Optional[TreeNode], x: int, y: int) -> bool:
+        def dfs(root, parent, depth):
+            if root is None:
+                return
+            if root.val == x:
+                st[0] = (parent, depth)
+            elif root.val == y:
+                st[1] = (parent, depth)
+            dfs(root.left, root, depth + 1)
+            dfs(root.right, root, depth + 1)
+
+        st = [None, None]
+        dfs(root, None, 0)
+        return st[0][0] != st[1][0] and st[0][1] == st[1][1]
+```
+
+#### Java
 
 ```java
 /**
@@ -185,8 +326,8 @@ DFS:
  */
 class Solution {
     private int x, y;
-    private TreeNode p1, p2;
     private int d1, d2;
+    private TreeNode p1, p2;
 
     public boolean isCousins(TreeNode root, int x, int y) {
         this.x = x;
@@ -195,75 +336,24 @@ class Solution {
         return p1 != p2 && d1 == d2;
     }
 
-    private void dfs(TreeNode root, TreeNode p, int d) {
+    private void dfs(TreeNode root, TreeNode parent, int depth) {
         if (root == null) {
             return;
         }
         if (root.val == x) {
-            p1 = p;
-            d1 = d;
+            d1 = depth;
+            p1 = parent;
+        } else if (root.val == y) {
+            d2 = depth;
+            p2 = parent;
         }
-        if (root.val == y) {
-            p2 = p;
-            d2 = d;
-        }
-        dfs(root.left, root, d + 1);
-        dfs(root.right, root, d + 1);
+        dfs(root.left, root, depth + 1);
+        dfs(root.right, root, depth + 1);
     }
 }
 ```
 
-### **C++**
-
-BFS:
-
-```cpp
-/**
- * Definition for a binary tree node->
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
-class Solution {
-public:
-    bool isCousins(TreeNode* root, int x, int y) {
-        vector<int> p(110);
-        vector<int> d(110);
-        queue<TreeNode*> q;
-        q.push(root);
-        int i = 0;
-        while (!q.empty())
-        {
-            int n = q.size();
-            while (n--)
-            {
-                auto node = q.front();
-                d[node->val] = i;
-                q.pop();
-                if (node->left)
-                {
-                    q.push(node->left);
-                    p[node->left->val] = node->val;
-                }
-                if (node->right)
-                {
-                    q.push(node->right);
-                    p[node->right->val] = node->val;
-                }
-            }
-            ++i;
-        }
-        return p[x] != p[y] && d[x] == d[y];
-    }
-};
-```
-
-DFS:
+#### C++
 
 ```cpp
 /**
@@ -279,39 +369,31 @@ DFS:
  */
 class Solution {
 public:
-    TreeNode* p1;
-    TreeNode* p2;
-    int d1, d2;
-    int x, y;
-
     bool isCousins(TreeNode* root, int x, int y) {
-        this->x = x;
-        this->y = y;
+        int d1, d2;
+        TreeNode* p1;
+        TreeNode* p2;
+        function<void(TreeNode*, TreeNode*, int)> dfs = [&](TreeNode* root, TreeNode* parent, int depth) {
+            if (!root) {
+                return;
+            }
+            if (root->val == x) {
+                d1 = depth;
+                p1 = parent;
+            } else if (root->val == y) {
+                d2 = depth;
+                p2 = parent;
+            }
+            dfs(root->left, root, depth + 1);
+            dfs(root->right, root, depth + 1);
+        };
         dfs(root, nullptr, 0);
         return p1 != p2 && d1 == d2;
     }
-
-    void dfs(TreeNode* root, TreeNode* p, int d) {
-        if (!root) return;
-        if (root->val == x)
-        {
-            p1 = p;
-            d1 = d;
-        }
-        if (root->val == y)
-        {
-            p2 = p;
-            d2 = d;
-        }
-        dfs(root->left, root, d + 1);
-        dfs(root->right, root, d + 1);
-    }
 };
 ```
 
-### **Go**
-
-BFS:
+#### Go
 
 ```go
 /**
@@ -323,75 +405,64 @@ BFS:
  * }
  */
 func isCousins(root *TreeNode, x int, y int) bool {
-	p := make([]int, 110)
-	d := make([]int, 110)
-	var q []*TreeNode
-	q = append(q, root)
-	i := 0
-	for len(q) > 0 {
-		n := len(q)
-		for n > 0 {
-			node := q[0]
-			q = q[1:]
-			n--
-			d[node.Val] = i
-			if node.Left != nil {
-				q = append(q, node.Left)
-				p[node.Left.Val] = node.Val
-			}
-			if node.Right != nil {
-				q = append(q, node.Right)
-				p[node.Right.Val] = node.Val
-			}
+	var d1, d2 int
+	var p1, p2 *TreeNode
+	var dfs func(root, parent *TreeNode, depth int)
+	dfs = func(root, parent *TreeNode, depth int) {
+		if root == nil {
+			return
 		}
-		i++
+		if root.Val == x {
+			d1, p1 = depth, parent
+		} else if root.Val == y {
+			d2, p2 = depth, parent
+		}
+		dfs(root.Left, root, depth+1)
+		dfs(root.Right, root, depth+1)
 	}
-	return p[x] != p[y] && d[x] == d[y]
+	dfs(root, nil, 0)
+	return d1 == d2 && p1 != p2
 }
 ```
 
-DFS:
+#### TypeScript
 
-```go
+```ts
 /**
  * Definition for a binary tree node.
- * type TreeNode struct {
- *     Val int
- *     Left *TreeNode
- *     Right *TreeNode
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
  * }
  */
-var p1 *TreeNode
-var p2 *TreeNode
-var d1 int
-var d2 int
 
-func isCousins(root *TreeNode, x int, y int) bool {
-	dfs(root, nil, x, y, 0)
-	return p1 != p2 && d1 == d2
+function isCousins(root: TreeNode | null, x: number, y: number): boolean {
+    let [d1, d2, p1, p2] = [0, 0, null, null];
+    const dfs = (root: TreeNode | null, parent: TreeNode | null, depth: number) => {
+        if (!root) {
+            return;
+        }
+        if (root.val === x) {
+            [d1, p1] = [depth, parent];
+        } else if (root.val === y) {
+            [d2, p2] = [depth, parent];
+        }
+        dfs(root.left, root, depth + 1);
+        dfs(root.right, root, depth + 1);
+    };
+    dfs(root, null, 0);
+    return d1 === d2 && p1 !== p2;
 }
-
-func dfs(root, p *TreeNode, x, y, d int) {
-	if root == nil {
-		return
-	}
-	if root.Val == x {
-		p1 = p
-		d1 = d
-	}
-	if root.Val == y {
-		p2 = p
-		d2 = d
-	}
-	dfs(root.Left, root, x, y, d+1)
-	dfs(root.Right, root, x, y, d+1)
-}
-```
-
-### **...**
-
-```
-
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

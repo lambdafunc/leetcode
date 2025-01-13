@@ -1,10 +1,25 @@
-# [1036. 逃离大迷宫](https://leetcode-cn.com/problems/escape-a-large-maze)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1036.Escape%20a%20Large%20Maze/README.md
+rating: 2164
+source: 第 134 场周赛 Q4
+tags:
+    - 深度优先搜索
+    - 广度优先搜索
+    - 数组
+    - 哈希表
+---
+
+<!-- problem:start -->
+
+# [1036. 逃离大迷宫](https://leetcode.cn/problems/escape-a-large-maze)
 
 [English Version](/solution/1000-1099/1036.Escape%20a%20Large%20Maze/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>在一个 10<sup>6</sup> x 10<sup>6</sup> 的网格中，每个网格上方格的坐标为 <code>(x, y)</code> 。</p>
 
@@ -49,22 +64,30 @@
 	<li>题目数据保证 <code>source</code> 和 <code>target</code> 不在封锁列表内</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-    def isEscapePossible(self, blocked: List[List[int]], source: List[int], target: List[int]) -> bool:
+    def isEscapePossible(
+        self, blocked: List[List[int]], source: List[int], target: List[int]
+    ) -> bool:
         def dfs(source, target, seen):
             x, y = source
-            if not (0 <= x < 10**6 and 0 <= y < 10**6) or (x, y) in blocked or (x, y) in seen:
+            if (
+                not (0 <= x < 10**6 and 0 <= y < 10**6)
+                or (x, y) in blocked
+                or (x, y) in seen
+            ):
                 return False
             seen.add((x, y))
             if len(seen) > 20000 or source == target:
@@ -79,13 +102,11 @@ class Solution:
         return dfs(source, target, set()) and dfs(target, source, set())
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
-    private int[][] dirs = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    private int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
     private static final int N = (int) 1e6;
     private Set<Integer> blocked;
 
@@ -100,7 +121,8 @@ class Solution {
     private boolean dfs(int[] source, int[] target, Set<Integer> seen) {
         int sx = source[0], sy = source[1];
         int tx = target[0], ty = target[1];
-        if (sx < 0 || sx >= N || sy < 0 || sy >= N || tx < 0 || tx >= N || ty < 0 || ty >= N || blocked.contains(sx * N + sy) || seen.contains(sx * N + sy)) {
+        if (sx < 0 || sx >= N || sy < 0 || sy >= N || tx < 0 || tx >= N || ty < 0 || ty >= N
+            || blocked.contains(sx * N + sy) || seen.contains(sx * N + sy)) {
             return false;
         }
         seen.add(sx * N + sy);
@@ -108,7 +130,7 @@ class Solution {
             return true;
         }
         for (int[] dir : dirs) {
-            if (dfs(new int[]{sx + dir[0], sy + dir[1]}, target, seen)) {
+            if (dfs(new int[] {sx + dir[0], sy + dir[1]}, target, seen)) {
                 return true;
             }
         }
@@ -117,7 +139,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 typedef unsigned long long ULL;
@@ -142,8 +164,7 @@ public:
         if (sx < 0 || sx >= N || sy < 0 || sy >= N || tx < 0 || tx >= N || ty < 0 || ty >= N || blocked.count((ULL) sx * N + sy) || seen.count((ULL) sx * N + sy)) return 0;
         seen.insert((ULL) sx * N + sy);
         if (seen.size() > 20000 || (sx == target[0] && sy == target[1])) return 1;
-        for (auto& dir : dirs)
-        {
+        for (auto& dir : dirs) {
             vector<int> next = {sx + dir[0], sy + dir[1]};
             if (dfs(next, target, seen)) return 1;
         }
@@ -152,7 +173,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func isEscapePossible(blocked [][]int, source []int, target []int) bool {
@@ -186,7 +207,7 @@ func isEscapePossible(blocked [][]int, source []int, target []int) bool {
 }
 ```
 
-### **Rust**
+#### Rust
 
 ```rust
 use std::collections::{HashSet, VecDeque};
@@ -237,10 +258,8 @@ fn bfs(block: &HashSet<(i32, i32)>, source: &Vec<i32>, target: &Vec<i32>) -> boo
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

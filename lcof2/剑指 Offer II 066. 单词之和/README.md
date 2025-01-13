@@ -1,8 +1,15 @@
-# [剑指 Offer II 066. 单词之和](https://leetcode-cn.com/problems/z1R5dt)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20066.%20%E5%8D%95%E8%AF%8D%E4%B9%8B%E5%92%8C/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 066. 单词之和](https://leetcode.cn/problems/z1R5dt)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>实现一个 <code>MapSum</code> 类，支持两个方法，<code>insert</code>&nbsp;和&nbsp;<code>sum</code>：</p>
 
@@ -44,23 +51,22 @@ mapSum.sum(&quot;ap&quot;);           // return 5 (<u>ap</u>ple + <u>ap</u>p = 3
 
 <p>&nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 677&nbsp;题相同：&nbsp;<a href="https://leetcode-cn.com/problems/map-sum-pairs/">https://leetcode-cn.com/problems/map-sum-pairs/</a></p>
+<p><meta charset="UTF-8" />注意：本题与主站 677&nbsp;题相同：&nbsp;<a href="https://leetcode.cn/problems/map-sum-pairs/">https://leetcode.cn/problems/map-sum-pairs/</a></p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-利用哈希表存储每个键的所有前缀子串。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class MapSum:
-
     def __init__(self):
         """
         Initialize your data structure here.
@@ -84,9 +90,7 @@ class MapSum:
 # param_2 = obj.sum(prefix)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class MapSum {
@@ -121,7 +125,7 @@ class MapSum {
  */
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class MapSum {
@@ -131,14 +135,12 @@ public:
 
     /** Initialize your data structure here. */
     MapSum() {
-
     }
 
     void insert(string key, int val) {
         int old = t[key];
         t[key] = val;
-        for (int i = 1; i < key.size() + 1; ++i)
-        {
+        for (int i = 1; i < key.size() + 1; ++i) {
             string k = key.substr(0, i);
             data[k] += (val - old);
         }
@@ -157,7 +159,7 @@ public:
  */
 ```
 
-### **Go**
+#### Go
 
 ```go
 type MapSum struct {
@@ -194,10 +196,36 @@ func (this *MapSum) Sum(prefix string) int {
  */
 ```
 
-### **...**
+#### Swift
 
-```
+```swift
+class MapSum {
+    private var data: [String: Int]
+    private var t: [String: Int]
 
+    init() {
+        data = [String: Int]()
+        t = [String: Int]()
+    }
+
+    func insert(_ key: String, _ val: Int) {
+        let old = t[key] ?? 0
+        t[key] = val
+        for i in 1...key.count {
+            let endIndex = key.index(key.startIndex, offsetBy: i)
+            let k = String(key[key.startIndex..<endIndex])
+            data[k, default: 0] += (val - old)
+        }
+    }
+
+    func sum(_ prefix: String) -> Int {
+        return data[prefix] ?? 0
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

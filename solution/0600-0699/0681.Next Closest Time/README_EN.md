@@ -1,15 +1,30 @@
-# [681. Next Closest Time](https://leetcode.com/problems/next-closest-time)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0681.Next%20Closest%20Time/README_EN.md
+tags:
+    - Hash Table
+    - String
+    - Backtracking
+    - Enumeration
+---
+
+<!-- problem:start -->
+
+# [681. Next Closest Time 🔒](https://leetcode.com/problems/next-closest-time)
 
 [中文文档](/solution/0600-0699/0681.Next%20Closest%20Time/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given a <code>time</code> represented in the format <code>&quot;HH:MM&quot;</code>, form the next closest time by reusing the current digits. There is no limit on how many times a digit can be reused.</p>
 
 <p>You may assume the given input string is always valid. For example, <code>&quot;01:34&quot;</code>, <code>&quot;12:09&quot;</code> are all valid. <code>&quot;1:34&quot;</code>, <code>&quot;12:9&quot;</code> are all invalid.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> time = &quot;19:34&quot;
@@ -18,7 +33,7 @@
 It is not <strong>19:33</strong>, because this occurs 23 hours and 59 minutes later.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> time = &quot;23:59&quot;
@@ -37,26 +52,107 @@ It may be assumed that the returned time is next day&#39;s time since it is smal
 	<li><code>0 &lt;= MM &lt; 60</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
+class Solution:
+    def nextClosestTime(self, time: str) -> str:
+        def check(t):
+            h, m = int(t[:2]), int(t[2:])
+            return 0 <= h < 24 and 0 <= m < 60
 
+        def dfs(curr):
+            if len(curr) == 4:
+                if not check(curr):
+                    return
+                nonlocal ans, d
+                p = int(curr[:2]) * 60 + int(curr[2:])
+                if t < p < t + d:
+                    d = p - t
+                    ans = curr[:2] + ':' + curr[2:]
+                return
+            for c in s:
+                dfs(curr + c)
+
+        s = {c for c in time if c != ':'}
+        t = int(time[:2]) * 60 + int(time[3:])
+        d = inf
+        ans = None
+        dfs('')
+        if ans is None:
+            mi = min(int(c) for c in s)
+            ans = f'{mi}{mi}:{mi}{mi}'
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
+class Solution {
+    private int t;
+    private int d;
+    private String ans;
+    private Set<Character> s;
 
-```
+    public String nextClosestTime(String time) {
+        t = Integer.parseInt(time.substring(0, 2)) * 60 + Integer.parseInt(time.substring(3));
+        d = Integer.MAX_VALUE;
+        s = new HashSet<>();
+        char mi = 'z';
+        for (char c : time.toCharArray()) {
+            if (c != ':') {
+                s.add(c);
+                if (c < mi) {
+                    mi = c;
+                }
+            }
+        }
+        ans = null;
+        dfs("");
+        if (ans == null) {
+            ans = "" + mi + mi + ":" + mi + mi;
+        }
+        return ans;
+    }
 
-### **...**
+    private void dfs(String curr) {
+        if (curr.length() == 4) {
+            if (!check(curr)) {
+                return;
+            }
+            int p
+                = Integer.parseInt(curr.substring(0, 2)) * 60 + Integer.parseInt(curr.substring(2));
+            if (p > t && p - t < d) {
+                d = p - t;
+                ans = curr.substring(0, 2) + ":" + curr.substring(2);
+            }
+            return;
+        }
+        for (char c : s) {
+            dfs(curr + c);
+        }
+    }
 
-```
-
+    private boolean check(String t) {
+        int h = Integer.parseInt(t.substring(0, 2));
+        int m = Integer.parseInt(t.substring(2));
+        return 0 <= h && h < 24 && 0 <= m && m < 60;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

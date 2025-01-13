@@ -1,14 +1,21 @@
-# [LCP 20. 快速公交](https://leetcode-cn.com/problems/meChtZ)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcp/LCP%2020.%20%E5%BF%AB%E9%80%9F%E5%85%AC%E4%BA%A4/README.md
+---
+
+<!-- problem:start -->
+
+# [LCP 20. 快速公交](https://leetcode.cn/problems/meChtZ)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 小扣打算去秋日市集，由于游客较多，小扣的移动速度受到了人流影响：
 
-- 小扣从 `x` 号站点移动至 `x + 1` 号站点需要花费的时间为 `inc`；
+-   小扣从 `x` 号站点移动至 `x + 1` 号站点需要花费的时间为 `inc`；
 
-- 小扣从 `x` 号站点移动至 `x - 1` 号站点需要花费的时间为 `dec`。
+-   小扣从 `x` 号站点移动至 `x - 1` 号站点需要花费的时间为 `dec`。
 
 现有 `m` 辆公交车，编号为 `0` 到 `m-1`。小扣也可以通过搭乘编号为 `i` 的公交车，从 `x` 号站点移动至 `jump[i]*x` 号站点，耗时仅为 `cost[i]`。小扣可以搭乘任意编号的公交车且搭乘公交次数不限。
 
@@ -68,40 +75,18 @@
 
 **提示：**
 
-- `1 <= target <= 10^9`
+-   `1 <= target <= 10^9`
 
-- `1 <= jump.length, cost.length <= 10`
+-   `1 <= jump.length, cost.length <= 10`
 
-- `2 <= jump[i] <= 10^6`
+-   `2 <= jump[i] <= 10^6`
 
-- `1 <= inc, dec, cost[i] <= 10^6`
+-   `1 <= inc, dec, cost[i] <= 10^6`
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-<!-- tabs:start -->
-
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```python
-
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```java
-
-```
-
-### **...**
-
-```
-
-```
-
-<!-- tabs:end -->
+<!-- problem:end -->

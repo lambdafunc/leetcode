@@ -1,10 +1,25 @@
-# [1524. 和为奇数的子数组数目](https://leetcode-cn.com/problems/number-of-sub-arrays-with-odd-sum)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1524.Number%20of%20Sub-arrays%20With%20Odd%20Sum/README.md
+rating: 1610
+source: 第 31 场双周赛 Q2
+tags:
+    - 数组
+    - 数学
+    - 动态规划
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [1524. 和为奇数的子数组数目](https://leetcode.cn/problems/number-of-sub-arrays-with-odd-sum)
 
 [English Version](/solution/1500-1599/1524.Number%20of%20Sub-arrays%20With%20Odd%20Sum/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组&nbsp;<code>arr</code>&nbsp;。请你返回和为 <strong>奇数</strong>&nbsp;的子数组数目。</p>
 
@@ -57,104 +72,113 @@
 	<li><code>1 &lt;= arr[i] &lt;= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-前缀和 + 计数器。
+<!-- solution:start -->
 
-<!-- 这里可写通用的实现逻辑 -->
+### 方法一：前缀和 + 计数器
+
+我们定义一个长度为 $2$ 的数组 $cnt$ 作为计数器，其中 $cnt[0]$ 和 $cnt[1]$ 分别表示前缀和为偶数和奇数的子数组的个数。初始时 $cnt[0] = 1$，而 $cnt[1] = 0$。
+
+接下来，我们维护当前的前缀和 $s$，初始时 $s = 0$。
+
+遍历数组 $arr$，对于遍历到的每个元素 $x$，我们将 $s$ 的值加上 $x$，然后根据 $s$ 的奇偶性，将 $cnt[s \mod 2 \oplus 1]$ 的值累加到答案中，然后我们将 $cnt[s \mod 2]$ 的值加 $1$。
+
+遍历结束后，我们即可得到答案。注意答案的取模运算。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 为数组 $arr$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def numOfSubarrays(self, arr: List[int]) -> int:
-        MOD = int(1e9) + 7
-        counter = [0] * 2
-        s = ans = 0
-        for v in arr:
-            s += v
-            counter[s % 2] += 1
-            if s % 2 == 1:
-                ans += 1 + counter[0]
-            else:
-                ans += counter[1]
-        return ans % MOD
+        mod = 10**9 + 7
+        cnt = [1, 0]
+        ans = s = 0
+        for x in arr:
+            s += x
+            ans = (ans + cnt[s & 1 ^ 1]) % mod
+            cnt[s & 1] += 1
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
-    private static final int MOD = (int) 1e9 + 7;
-
     public int numOfSubarrays(int[] arr) {
-        int[] counter = new int[2];
-        int s = 0, ans = 0;
-        for (int v : arr) {
-            s += v;
-            ++counter[s % 2];
-            if (s % 2 == 1) {
-                ans = (ans + 1 + counter[0]) % MOD;
-            } else {
-                ans = (ans + counter[1]) % MOD;
-            }
+        final int mod = (int) 1e9 + 7;
+        int[] cnt = {1, 0};
+        int ans = 0, s = 0;
+        for (int x : arr) {
+            s += x;
+            ans = (ans + cnt[s & 1 ^ 1]) % mod;
+            ++cnt[s & 1];
         }
         return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int numOfSubarrays(vector<int>& arr) {
-        const int MOD = 1e9 + 7;
-        vector<int> counter(2);
-        int s = 0, ans = 0;
-        for (int& v : arr)
-        {
-            s += v;
-            ++counter[s % 2];
-            if (s % 2 == 1) ans = (ans + 1 + counter[0]) % MOD;
-            else ans = (ans + counter[1]) % MOD;
+        const int mod = 1e9 + 7;
+        int cnt[2] = {1, 0};
+        int ans = 0, s = 0;
+        for (int x : arr) {
+            s += x;
+            ans = (ans + cnt[s & 1 ^ 1]) % mod;
+            ++cnt[s & 1];
         }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func numOfSubarrays(arr []int) int {
-	const MOD = 1e9 + 7
-	counter := make([]int, 2)
-	s, ans := 0, 0
-	for _, v := range arr {
-		s += v
-		counter[s%2]++
-		if s%2 == 1 {
-			ans = (ans + 1 + counter[0]) % MOD
-		} else {
-			ans = (ans + counter[1]) % MOD
-		}
+func numOfSubarrays(arr []int) (ans int) {
+	const mod int = 1e9 + 7
+	cnt := [2]int{1, 0}
+	s := 0
+	for _, x := range arr {
+		s += x
+		ans = (ans + cnt[s&1^1]) % mod
+		cnt[s&1]++
 	}
-	return ans
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function numOfSubarrays(arr: number[]): number {
+    let ans = 0;
+    let s = 0;
+    const cnt: number[] = [1, 0];
+    const mod = 1e9 + 7;
+    for (const x of arr) {
+        s += x;
+        ans = (ans + cnt[(s & 1) ^ 1]) % mod;
+        cnt[s & 1]++;
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

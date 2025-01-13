@@ -6,32 +6,27 @@ func minOperations(nums1 []int, nums2 []int) int {
 	if s1 > s2 {
 		return minOperations(nums2, nums1)
 	}
-	freq := make([]int, 6)
-	for _, x := range nums1 {
-		freq[6-x]++
+	d := s2 - s1
+	arr := []int{}
+	for _, v := range nums1 {
+		arr = append(arr, 6-v)
 	}
-	for _, x := range nums2 {
-		freq[x-1]++
+	for _, v := range nums2 {
+		arr = append(arr, v-1)
 	}
-	diff := s2 - s1
-	ans := 0
-	for i := 5; i > 0 && diff > 0; i-- {
-		for freq[i] > 0 && diff > 0 {
-			diff -= i
-			freq[i]--
-			ans++
+	sort.Sort(sort.Reverse(sort.IntSlice(arr)))
+	for i, v := range arr {
+		d -= v
+		if d <= 0 {
+			return i + 1
 		}
 	}
-	if diff > 0 {
-		return -1
-	}
-	return ans
+	return -1
 }
 
-func sum(nums []int) int {
-	s := 0
-	for _, x := range nums {
-		s += x
+func sum(nums []int) (s int) {
+	for _, v := range nums {
+		s += v
 	}
-	return s
+	return
 }

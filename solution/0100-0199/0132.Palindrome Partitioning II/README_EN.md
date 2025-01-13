@@ -1,15 +1,28 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0132.Palindrome%20Partitioning%20II/README_EN.md
+tags:
+    - String
+    - Dynamic Programming
+---
+
+<!-- problem:start -->
+
 # [132. Palindrome Partitioning II](https://leetcode.com/problems/palindrome-partitioning-ii)
 
 [中文文档](/solution/0100-0199/0132.Palindrome%20Partitioning%20II/README.md)
 
 ## Description
 
-<p>Given a string <code>s</code>, partition <code>s</code> such that every substring of the partition is a palindrome.</p>
+<!-- description:start -->
 
-<p>Return <em>the minimum cuts needed</em> for a palindrome partitioning of <code>s</code>.</p>
+<p>Given a string <code>s</code>, partition <code>s</code> such that every <span data-keyword="substring-nonempty">substring</span> of the partition is a <span data-keyword="palindrome-string">palindrome</span>.</p>
+
+<p>Return <em>the <strong>minimum</strong> cuts needed for a palindrome partitioning of</em> <code>s</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;aab&quot;
@@ -17,14 +30,14 @@
 <strong>Explanation:</strong> The palindrome partitioning [&quot;aa&quot;,&quot;b&quot;] could be produced using 1 cut.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;a&quot;
 <strong>Output:</strong> 0
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;ab&quot;
@@ -36,130 +49,190 @@
 
 <ul>
 	<li><code>1 &lt;= s.length &lt;= 2000</code></li>
-	<li><code>s</code> consists of lower-case English letters only.</li>
+	<li><code>s</code> consists of lowercase English letters only.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def minCut(self, s: str) -> int:
         n = len(s)
-        dp1 = [[False] * n for _ in range(n)]
+        g = [[True] * n for _ in range(n)]
         for i in range(n - 1, -1, -1):
-            for j in range(i, n):
-                dp1[i][j] = s[i] == s[j] and (j - i < 3 or dp1[i + 1][j - 1])
-        dp2 = [0] * n
-        for i in range(n):
-            if not dp1[0][i]:
-                dp2[i] = i
-                for j in range(1, i + 1):
-                    if dp1[j][i]:
-                        dp2[i] = min(dp2[i], dp2[j - 1] + 1)
-        return dp2[-1]
+            for j in range(i + 1, n):
+                g[i][j] = s[i] == s[j] and g[i + 1][j - 1]
+        f = list(range(n))
+        for i in range(1, n):
+            for j in range(i + 1):
+                if g[j][i]:
+                    f[i] = min(f[i], 1 + f[j - 1] if j else 0)
+        return f[-1]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int minCut(String s) {
         int n = s.length();
-        boolean[][] dp1 = new boolean[n][n];
-        for (int i = n - 1; i >= 0; i--) {
-            for (int j = i; j < n; j++) {
-                dp1[i][j] = s.charAt(i) == s.charAt(j) && (j - i < 3 || dp1[i + 1][j - 1]);
+        boolean[][] g = new boolean[n][n];
+        for (var row : g) {
+            Arrays.fill(row, true);
+        }
+        for (int i = n - 1; i >= 0; --i) {
+            for (int j = i + 1; j < n; ++j) {
+                g[i][j] = s.charAt(i) == s.charAt(j) && g[i + 1][j - 1];
             }
         }
-        int[] dp2 = new int[n];
-        for (int i = 0; i < n; i++) {
-            if (!dp1[0][i]) {
-                dp2[i] = i;
-                for (int j = 1; j <= i; j++) {
-                    if (dp1[j][i]) {
-                        dp2[i] = Math.min(dp2[i], dp2[j - 1] + 1);
-                    }
+        int[] f = new int[n];
+        for (int i = 0; i < n; ++i) {
+            f[i] = i;
+        }
+        for (int i = 1; i < n; ++i) {
+            for (int j = 0; j <= i; ++j) {
+                if (g[j][i]) {
+                    f[i] = Math.min(f[i], j > 0 ? 1 + f[j - 1] : 0);
                 }
             }
         }
-        return dp2[n - 1];
+        return f[n - 1];
     }
 }
 ```
 
-### **Go**
-
-```go
-func minCut(s string) int {
-	n := len(s)
-	dp1 := make([][]bool, n)
-	for i := 0; i < n; i++ {
-		dp1[i] = make([]bool, n)
-	}
-	for i := n - 1; i >= 0; i-- {
-		for j := i; j < n; j++ {
-			dp1[i][j] = s[i] == s[j] && (j-i < 3 || dp1[i+1][j-1])
-		}
-	}
-	dp2 := make([]int, n)
-	for i := 0; i < n; i++ {
-		if !dp1[0][i] {
-			dp2[i] = i
-			for j := 1; j <= i; j++ {
-				if dp1[j][i] {
-					dp2[i] = min(dp2[i], dp2[j-1]+1)
-				}
-			}
-		}
-	}
-	return dp2[n-1]
-}
-
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int minCut(string s) {
         int n = s.size();
-        vector<vector<bool>> dp1(n, vector<bool>(n));
-        for (int i = n - 1; i >= 0; --i) {
-            for (int j = i; j < n; ++j) {
-                dp1[i][j] = s[i] == s[j] && (j - i < 3 || dp1[i + 1][j - 1]);
+        bool g[n][n];
+        memset(g, true, sizeof(g));
+        for (int i = n - 1; ~i; --i) {
+            for (int j = i + 1; j < n; ++j) {
+                g[i][j] = s[i] == s[j] && g[i + 1][j - 1];
             }
         }
-        vector<int> dp2(n);
-        for (int i = 0; i < n; ++i) {
-            if (!dp1[0][i]) {
-                dp2[i] = i;
-                for (int j = 1; j <= i; ++j) {
-                    if (dp1[j][i]) {
-                        dp2[i] = min(dp2[i], dp2[j - 1] + 1);
-                    }
+        int f[n];
+        iota(f, f + n, 0);
+        for (int i = 1; i < n; ++i) {
+            for (int j = 0; j <= i; ++j) {
+                if (g[j][i]) {
+                    f[i] = min(f[i], j ? 1 + f[j - 1] : 0);
                 }
             }
         }
-        return dp2[n - 1];
+        return f[n - 1];
     }
 };
 ```
 
-### **...**
+#### Go
 
+```go
+func minCut(s string) int {
+	n := len(s)
+	g := make([][]bool, n)
+	f := make([]int, n)
+	for i := range g {
+		g[i] = make([]bool, n)
+		f[i] = i
+		for j := range g[i] {
+			g[i][j] = true
+		}
+	}
+	for i := n - 1; i >= 0; i-- {
+		for j := i + 1; j < n; j++ {
+			g[i][j] = s[i] == s[j] && g[i+1][j-1]
+		}
+	}
+	for i := 1; i < n; i++ {
+		for j := 0; j <= i; j++ {
+			if g[j][i] {
+				if j == 0 {
+					f[i] = 0
+				} else {
+					f[i] = min(f[i], f[j-1]+1)
+				}
+			}
+		}
+	}
+	return f[n-1]
+}
 ```
 
+#### TypeScript
+
+```ts
+function minCut(s: string): number {
+    const n = s.length;
+    const g: boolean[][] = Array(n)
+        .fill(0)
+        .map(() => Array(n).fill(true));
+    for (let i = n - 1; ~i; --i) {
+        for (let j = i + 1; j < n; ++j) {
+            g[i][j] = s[i] === s[j] && g[i + 1][j - 1];
+        }
+    }
+    const f: number[] = Array(n)
+        .fill(0)
+        .map((_, i) => i);
+    for (let i = 1; i < n; ++i) {
+        for (let j = 0; j <= i; ++j) {
+            if (g[j][i]) {
+                f[i] = Math.min(f[i], j ? 1 + f[j - 1] : 0);
+            }
+        }
+    }
+    return f[n - 1];
+}
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int MinCut(string s) {
+        int n = s.Length;
+        bool[,] g = new bool[n,n];
+        int[] f = new int[n];
+        for (int i = 0; i < n; ++i) {
+            f[i] = i;
+            for (int j = 0; j < n; ++j) {
+                g[i,j] = true;
+            }
+        }
+        for (int i = n - 1; i >= 0; --i) {
+            for (int j = i + 1; j < n; ++j) {
+                g[i,j] = s[i] == s[j] && g[i + 1,j - 1];
+            }
+        }
+        for (int i = 1; i < n; ++i) {
+            for (int j = 0; j <= i; ++j) {
+                if (g[j,i]) {
+                    f[i] = Math.Min(f[i], j > 0 ? 1 + f[j - 1] : 0);
+                }
+            }
+        }
+        return f[n - 1];
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,25 @@
-# [2055. 蜡烛之间的盘子](https://leetcode-cn.com/problems/plates-between-candles)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2055.Plates%20Between%20Candles/README.md
+rating: 1819
+source: 第 64 场双周赛 Q3
+tags:
+    - 数组
+    - 字符串
+    - 二分查找
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [2055. 蜡烛之间的盘子](https://leetcode.cn/problems/plates-between-candles)
 
 [English Version](/solution/2000-2099/2055.Plates%20Between%20Candles/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个长桌子，桌子上盘子和蜡烛排成一列。给你一个下标从 <strong>0</strong>&nbsp;开始的字符串&nbsp;<code>s</code>&nbsp;，它只包含字符&nbsp;<code>'*'</code> 和&nbsp;<code>'|'</code>&nbsp;，其中&nbsp;<code>'*'</code>&nbsp;表示一个 <strong>盘子</strong>&nbsp;，<code>'|'</code>&nbsp;表示一支&nbsp;<strong>蜡烛</strong>&nbsp;。</p>
 
@@ -20,7 +35,7 @@
 
 <p><strong>示例 1:</strong></p>
 
-<p><img alt="ex-1" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2055.Plates%20Between%20Candles/images/ex-1.png" style="width: 400px; height: 134px;"></p>
+<p><img alt="ex-1" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2055.Plates%20Between%20Candles/images/ex-1.png" style="width: 400px; height: 134px;"></p>
 
 <pre><b>输入：</b>s = "**|**|***|", queries = [[2,5],[5,9]]
 <b>输出：</b>[2,3]
@@ -31,7 +46,7 @@
 
 <p><strong>示例 2:</strong></p>
 
-<p><img alt="ex-2" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2055.Plates%20Between%20Candles/images/ex-2.png" style="width: 600px; height: 193px;"></p>
+<p><img alt="ex-2" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2055.Plates%20Between%20Candles/images/ex-2.png" style="width: 600px; height: 193px;"></p>
 
 <pre><b>输入：</b>s = "***|**|*****|**||**|*", queries = [[1,17],[4,5],[14,17],[5,11],[15,16]]
 <b>输出：</b>[9,0,0,0,0]
@@ -52,32 +67,150 @@
 	<li><code>0 &lt;= left<sub>i</sub> &lt;= right<sub>i</sub> &lt; s.length</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
+class Solution:
+    def platesBetweenCandles(self, s: str, queries: List[List[int]]) -> List[int]:
+        n = len(s)
+        presum = [0] * (n + 1)
+        for i, c in enumerate(s):
+            presum[i + 1] = presum[i] + (c == '*')
 
+        left, right = [0] * n, [0] * n
+        l = r = -1
+        for i, c in enumerate(s):
+            if c == '|':
+                l = i
+            left[i] = l
+        for i in range(n - 1, -1, -1):
+            if s[i] == '|':
+                r = i
+            right[i] = r
+
+        ans = [0] * len(queries)
+        for k, (l, r) in enumerate(queries):
+            i, j = right[l], left[r]
+            if i >= 0 and j >= 0 and i < j:
+                ans[k] = presum[j] - presum[i + 1]
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int[] platesBetweenCandles(String s, int[][] queries) {
+        int n = s.length();
+        int[] presum = new int[n + 1];
+        for (int i = 0; i < n; ++i) {
+            presum[i + 1] = presum[i] + (s.charAt(i) == '*' ? 1 : 0);
+        }
+        int[] left = new int[n];
+        int[] right = new int[n];
+        for (int i = 0, l = -1; i < n; ++i) {
+            if (s.charAt(i) == '|') {
+                l = i;
+            }
+            left[i] = l;
+        }
+        for (int i = n - 1, r = -1; i >= 0; --i) {
+            if (s.charAt(i) == '|') {
+                r = i;
+            }
+            right[i] = r;
+        }
+        int[] ans = new int[queries.length];
+        for (int k = 0; k < queries.length; ++k) {
+            int i = right[queries[k][0]];
+            int j = left[queries[k][1]];
+            if (i >= 0 && j >= 0 && i < j) {
+                ans[k] = presum[j] - presum[i + 1];
+            }
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> platesBetweenCandles(string s, vector<vector<int>>& queries) {
+        int n = s.size();
+        vector<int> presum(n + 1);
+        for (int i = 0; i < n; ++i) presum[i + 1] = presum[i] + (s[i] == '*');
+        vector<int> left(n);
+        vector<int> right(n);
+        for (int i = 0, l = -1; i < n; ++i) {
+            if (s[i] == '|') l = i;
+            left[i] = l;
+        }
+        for (int i = n - 1, r = -1; i >= 0; --i) {
+            if (s[i] == '|') r = i;
+            right[i] = r;
+        }
+        vector<int> ans(queries.size());
+        for (int k = 0; k < queries.size(); ++k) {
+            int i = right[queries[k][0]];
+            int j = left[queries[k][1]];
+            if (i >= 0 && j >= 0 && i < j) ans[k] = presum[j] - presum[i + 1];
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func platesBetweenCandles(s string, queries [][]int) []int {
+	n := len(s)
+	presum := make([]int, n+1)
+	for i := range s {
+		if s[i] == '*' {
+			presum[i+1] = 1
+		}
+		presum[i+1] += presum[i]
+	}
+	left, right := make([]int, n), make([]int, n)
+	for i, l := 0, -1; i < n; i++ {
+		if s[i] == '|' {
+			l = i
+		}
+		left[i] = l
+	}
+	for i, r := n-1, -1; i >= 0; i-- {
+		if s[i] == '|' {
+			r = i
+		}
+		right[i] = r
+	}
+	ans := make([]int, len(queries))
+	for k, q := range queries {
+		i, j := right[q[0]], left[q[1]]
+		if i >= 0 && j >= 0 && i < j {
+			ans[k] = presum[j] - presum[i+1]
+		}
+	}
+	return ans
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

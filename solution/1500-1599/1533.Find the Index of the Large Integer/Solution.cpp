@@ -3,7 +3,7 @@
  * // You should not implement it, or speculate about its implementation
  * class ArrayReader {
  *   public:
- *     // Compares the sum of arr[l..r] with the sum of arr[x..y] 
+ *     // Compares the sum of arr[l..r] with the sum of arr[x..y]
  *     // return 1 if sum(arr[l..r]) > sum(arr[x..y])
  *     // return 0 if sum(arr[l..r]) == sum(arr[x..y])
  *     // return -1 if sum(arr[l..r]) < sum(arr[x..y])
@@ -16,7 +16,7 @@
 
 class Solution {
 public:
-    int getIndex(ArrayReader &reader) {
+    int getIndex(ArrayReader& reader) {
         int left = 0, right = reader.length() - 1;
         while (left < right) {
             int t1 = left, t2 = left + (right - left) / 3, t3 = left + (right - left) / 3 * 2 + 1;

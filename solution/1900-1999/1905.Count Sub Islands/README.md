@@ -1,10 +1,26 @@
-# [1905. 统计子岛屿](https://leetcode-cn.com/problems/count-sub-islands)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1905.Count%20Sub%20Islands/README.md
+rating: 1678
+source: 第 246 场周赛 Q3
+tags:
+    - 深度优先搜索
+    - 广度优先搜索
+    - 并查集
+    - 数组
+    - 矩阵
+---
+
+<!-- problem:start -->
+
+# [1905. 统计子岛屿](https://leetcode.cn/problems/count-sub-islands)
 
 [English Version](/solution/1900-1999/1905.Count%20Sub%20Islands/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你两个 <code>m x n</code> 的二进制矩阵 <code>grid1</code> 和 <code>grid2</code> ，它们只包含 <code>0</code> （表示水域）和 <code>1</code> （表示陆地）。一个 <strong>岛屿</strong> 是由 <strong>四个方向</strong> （水平或者竖直）上相邻的 <code>1</code> 组成的区域。任何矩阵以外的区域都视为水域。</p>
 
@@ -15,7 +31,7 @@
 <p> </p>
 
 <p><strong>示例 1：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1905.Count%20Sub%20Islands/images/test1.png" style="width: 493px; height: 205px;">
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1905.Count%20Sub%20Islands/images/test1.png" style="width: 493px; height: 205px;">
 <pre><b>输入：</b>grid1 = [[1,1,1,0,0],[0,1,1,1,1],[0,0,0,0,0],[1,0,0,0,0],[1,1,0,1,1]], grid2 = [[1,1,1,0,0],[0,0,1,1,1],[0,1,0,0,0],[1,0,1,1,0],[0,1,0,1,0]]
 <b>输出：</b>3
 <strong>解释：</strong>如上图所示，左边为 grid1 ，右边为 grid2 。
@@ -23,7 +39,7 @@ grid2 中标红的 1 区域是子岛屿，总共有 3 个子岛屿。
 </pre>
 
 <p><strong>示例 2：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1905.Count%20Sub%20Islands/images/testcasex2.png" style="width: 491px; height: 201px;">
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1905.Count%20Sub%20Islands/images/testcasex2.png" style="width: 491px; height: 201px;">
 <pre><b>输入：</b>grid1 = [[1,0,1,0,1],[1,1,1,1,1],[0,0,0,0,0],[1,1,1,1,1],[1,0,1,0,1]], grid2 = [[0,0,0,0,0],[1,1,1,1,1],[0,1,0,1,0],[0,1,0,1,0],[1,0,0,0,1]]
 <b>输出：</b>2 
 <strong>解释：</strong>如上图所示，左边为 grid1 ，右边为 grid2 。
@@ -41,304 +57,200 @@ grid2 中标红的 1 区域是子岛屿，总共有 2 个子岛屿。
 	<li><code>grid1[i][j]</code> 和 <code>grid2[i][j]</code> 都要么是 <code>0</code> 要么是 <code>1</code> 。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-深度优先搜索，或者并查集。
+### 方法一：DFS
+
+我们可以遍历矩阵 `grid2` 中的每一个格子 $(i, j)$，如果该格子为 $1$，则从该格子开始进行深度优先搜索，将与该格子相连的所有格子的值都置为 $0$，并记录与该格子相连的所有格子中，`grid1` 中对应格子的值是否为 $1$，如果为 $1$，则说明该格子在 `grid1` 中也是一个岛屿，否则不是。最后统计 `grid2` 中子岛屿的数量即可。
+
+时间复杂度 $O(m \times n)$，空间复杂度 $O(m \times n)$。其中 $m$ 和 $n$ 分别是矩阵 `grid1` 和 `grid2` 的行数和列数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-DFS：
+#### Python3
 
 ```python
 class Solution:
     def countSubIslands(self, grid1: List[List[int]], grid2: List[List[int]]) -> int:
-        def dfs(grid1, grid2, i, j, m, n) -> bool:
-            res = grid1[i][j] == 1
+        def dfs(i: int, j: int) -> int:
+            ok = grid1[i][j]
             grid2[i][j] = 0
-            for x, y in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
-                a, b = i + x, j + y
-                if a >= 0 and a < m and b >= 0 and b < n and grid2[a][b] == 1:
-                    if not dfs(grid1, grid2, a, b, m, n):
-                        res = False
-            return res
+            for a, b in pairwise(dirs):
+                x, y = i + a, j + b
+                if 0 <= x < m and 0 <= y < n and grid2[x][y] and not dfs(x, y):
+                    ok = 0
+            return ok
 
         m, n = len(grid1), len(grid1[0])
-        count = 0
-        for i in range(m):
-            for j in range(n):
-                if grid2[i][j] == 1 and dfs(grid1, grid2, i, j, m, n):
-                    count += 1
-        return count
+        dirs = (-1, 0, 1, 0, -1)
+        return sum(dfs(i, j) for i in range(m) for j in range(n) if grid2[i][j])
 ```
 
-并查集：
-
-```python
-class Solution:
-    def countSubIslands(self, grid1: List[List[int]], grid2: List[List[int]]) -> int:
-        m, n = len(grid1), len(grid1[0])
-        p = list(range(m * n))
-
-        def find(x):
-            if p[x] != x:
-                p[x] = find(p[x])
-            return p[x]
-
-        for i in range(m):
-            for j in range(n):
-                if grid2[i][j] == 1:
-                    idx = i * n + j
-                    if i < m - 1 and grid2[i + 1][j] == 1:
-                        p[find(idx)] = find((i + 1) * n + j)
-                    if j < n - 1 and grid2[i][j + 1] == 1:
-                        p[find(idx)] = find(i * n + j + 1)
-
-        s = [0] * (m * n)
-        for i in range(m):
-            for j in range(n):
-                if grid2[i][j] == 1:
-                    s[find(i * n + j)] = 1
-        for i in range(m):
-            for j in range(n):
-                root = find(i * n + j)
-                if s[root] and grid1[i][j] == 0:
-                    s[root] = 0
-        return sum(s)
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-DFS：
+#### Java
 
 ```java
 class Solution {
-    private int[][] directions = {{0, 1}, {0, - 1}, {1, 0}, {-1, 0}};
+    private final int[] dirs = {-1, 0, 1, 0, -1};
+    private int[][] grid1;
+    private int[][] grid2;
+    private int m;
+    private int n;
 
     public int countSubIslands(int[][] grid1, int[][] grid2) {
-        int m = grid1.length, n = grid1[0].length;
-        int count = 0;
+        m = grid1.length;
+        n = grid1[0].length;
+        this.grid1 = grid1;
+        this.grid2 = grid2;
+        int ans = 0;
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                if (grid2[i][j] == 1 && dfs(grid1, grid2, i, j, m, n)) {
-                    ++count;
+                if (grid2[i][j] == 1) {
+                    ans += dfs(i, j);
                 }
             }
         }
-        return count;
+        return ans;
     }
 
-    private boolean dfs(int[][] grid1, int[][] grid2, int i, int j, int m, int n) {
-        boolean res = grid1[i][j] == 1;
+    private int dfs(int i, int j) {
+        int ok = grid1[i][j];
         grid2[i][j] = 0;
-
-        for (int[] direction : directions) {
-            int a = i + direction[0], b = j + direction[1];
-            if (a >= 0 && a < m && b >= 0 && b < n && grid2[a][b] == 1) {
-                if (!dfs(grid1, grid2, a, b, m, n)) {
-                    res = false;
-                }
+        for (int k = 0; k < 4; ++k) {
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x >= 0 && x < m && y >= 0 && y < n && grid2[x][y] == 1) {
+                ok &= dfs(x, y);
             }
         }
-        return res;
+        return ok;
     }
 }
 ```
 
-并查集：
-
-```java
-class Solution {
-    private int[] p;
-
-    public int countSubIslands(int[][] grid1, int[][] grid2) {
-        int m = grid2.length, n = grid2[0].length;
-        p = new int[m * n];
-        for (int i = 0; i < p.length; ++i) {
-            p[i] = i;
-        }
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (grid2[i][j] == 1) {
-                    int idx = i * n + j;
-                    if (i < m - 1 && grid2[i + 1][j] == 1) {
-                        p[find(idx)] = find((i + 1) * n + j);
-                    }
-                    if (j < n - 1 && grid2[i][j + 1] == 1) {
-                        p[find(idx)] = find(i * n + j + 1);
-                    }
-                }
-            }
-        }
-        boolean[] s = new boolean[m * n];
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (grid2[i][j] == 1) {
-                    s[find(i * n + j)] = true;
-                }
-            }
-        }
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < n; ++j) {
-                int root = find(i * n + j);
-                if (s[root] && grid1[i][j] == 0) {
-                    s[root] = false;
-                }
-            }
-        }
-        int res = 0;
-        for (boolean e : s) {
-            if (e) {
-                ++res;
-            }
-        }
-        return res;
-    }
-
-    private int find(int x) {
-        if (p[x] != x) {
-            p[x] = find(p[x]);
-        }
-        return p[x];
-    }
-}
-```
-
-### **TypeScript**
-
-```ts
-function countSubIslands(grid1: number[][], grid2: number[][]): number {
-    let m = grid1.length,
-        n = grid1[0].length;
-    let ans = 0;
-    for (let i = 0; i < m; ++i) {
-        for (let j = 0; j < n; ++j) {
-            if (grid2[i][j] == 1 && dfs(grid1, grid2, i, j)) {
-                ++ans;
-            }
-        }
-    }
-    return ans;
-}
-
-function dfs(
-    grid1: number[][],
-    grid2: number[][],
-    i: number,
-    j: number
-): boolean {
-    let m = grid1.length,
-        n = grid1[0].length;
-    let ans = true;
-    if (grid1[i][j] == 0) {
-        ans = false;
-    }
-    grid2[i][j] = 0;
-    for (let [dx, dy] of [
-        [0, 1],
-        [0, -1],
-        [1, 0],
-        [-1, 0],
-    ]) {
-        let x = i + dx,
-            y = j + dy;
-        if (x < 0 || x > m - 1 || y < 0 || y > n - 1 || grid2[x][y] == 0) {
-            continue;
-        }
-        if (!dfs(grid1, grid2, x, y)) {
-            ans = false;
-        }
-    }
-    return ans;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    int countSubIslands(vector<vector<int>> &grid1, vector<vector<int>> &grid2) {
+    int countSubIslands(vector<vector<int>>& grid1, vector<vector<int>>& grid2) {
         int m = grid1.size(), n = grid1[0].size();
-        int count = 0;
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (grid2[i][j] == 1 && dfs(grid1, grid2, i, j, m, n))
-                {
-                    ++count;
+        int ans = 0;
+        int dirs[5] = {-1, 0, 1, 0, -1};
+        function<int(int, int)> dfs = [&](int i, int j) {
+            int ok = grid1[i][j];
+            grid2[i][j] = 0;
+            for (int k = 0; k < 4; ++k) {
+                int x = i + dirs[k], y = j + dirs[k + 1];
+                if (x >= 0 && x < m && y >= 0 && y < n && grid2[x][y]) {
+                    ok &= dfs(x, y);
+                }
+            }
+            return ok;
+        };
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid2[i][j]) {
+                    ans += dfs(i, j);
                 }
             }
         }
-        return count;
-    }
-
-private:
-    vector<vector<int>> directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-    bool dfs(vector<vector<int>> &grid1, vector<vector<int>> &grid2, int i, int j, int m, int n) {
-        bool res = grid1[i][j] == 1;
-        grid2[i][j] = 0;
-
-        for (auto direction : directions)
-        {
-            int a = i + direction[0], b = j + direction[1];
-            if (a >= 0 && a < m && b >= 0 && b < n && grid2[a][b] == 1)
-            {
-                if (!dfs(grid1, grid2, a, b, m, n))
-                {
-                    res = false;
-                }
-            }
-        }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func countSubIslands(grid1 [][]int, grid2 [][]int) int {
+func countSubIslands(grid1 [][]int, grid2 [][]int) (ans int) {
 	m, n := len(grid1), len(grid1[0])
-	count := 0
+	dirs := [5]int{-1, 0, 1, 0, -1}
+	var dfs func(i, j int) int
+	dfs = func(i, j int) int {
+		ok := grid1[i][j]
+		grid2[i][j] = 0
+		for k := 0; k < 4; k++ {
+			x, y := i+dirs[k], j+dirs[k+1]
+			if x >= 0 && x < m && y >= 0 && y < n && grid2[x][y] == 1 && dfs(x, y) == 0 {
+				ok = 0
+			}
+		}
+		return ok
+	}
 	for i := 0; i < m; i++ {
 		for j := 0; j < n; j++ {
-			if grid2[i][j] == 1 && dfs(grid1, grid2, i, j, m, n) {
-				count++
+			if grid2[i][j] == 1 {
+				ans += dfs(i, j)
 			}
 		}
 	}
-	return count
-}
-
-func dfs(grid1 [][]int, grid2 [][]int, i, j, m, n int) bool {
-	res := grid1[i][j] == 1
-	grid2[i][j] = 0
-	directions := [4][2]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}}
-	for _, direction := range directions {
-		a, b := i+direction[0], j+direction[1]
-		if a >= 0 && a < m && b >= 0 && b < n && grid2[a][b] == 1 {
-			if !dfs(grid1, grid2, a, b, m, n) {
-				res = false
-			}
-		}
-	}
-	return res
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function countSubIslands(grid1: number[][], grid2: number[][]): number {
+    const [m, n] = [grid1.length, grid1[0].length];
+    let ans = 0;
+    const dirs: number[] = [-1, 0, 1, 0, -1];
+    const dfs = (i: number, j: number): number => {
+        let ok = grid1[i][j];
+        grid2[i][j] = 0;
+        for (let k = 0; k < 4; ++k) {
+            const [x, y] = [i + dirs[k], j + dirs[k + 1]];
+            if (x >= 0 && x < m && y >= 0 && y < n && grid2[x][y]) {
+                ok &= dfs(x, y);
+            }
+        }
+        return ok;
+    };
+    for (let i = 0; i < m; ++i) {
+        for (let j = 0; j < n; j++) {
+            if (grid2[i][j]) {
+                ans += dfs(i, j);
+            }
+        }
+    }
+    return ans;
+}
 ```
 
+#### JavaScript
+
+```js
+function countSubIslands(grid1, grid2) {
+    const [m, n] = [grid1.length, grid1[0].length];
+    let ans = 0;
+    const dirs = [-1, 0, 1, 0, -1];
+    const dfs = (i, j) => {
+        let ok = grid1[i][j];
+        grid2[i][j] = 0;
+        for (let k = 0; k < 4; ++k) {
+            const [x, y] = [i + dirs[k], j + dirs[k + 1]];
+            if (x >= 0 && x < m && y >= 0 && y < n && grid2[x][y]) {
+                ok &= dfs(x, y);
+            }
+        }
+        return ok;
+    };
+    for (let i = 0; i < m; ++i) {
+        for (let j = 0; j < n; j++) {
+            if (grid2[i][j]) {
+                ans += dfs(i, j);
+            }
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

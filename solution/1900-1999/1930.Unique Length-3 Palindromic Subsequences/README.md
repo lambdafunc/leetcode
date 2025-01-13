@@ -1,10 +1,25 @@
-# [1930. 长度为 3 的不同回文子序列](https://leetcode-cn.com/problems/unique-length-3-palindromic-subsequences)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1930.Unique%20Length-3%20Palindromic%20Subsequences/README.md
+rating: 1533
+source: 第 249 场周赛 Q2
+tags:
+    - 位运算
+    - 哈希表
+    - 字符串
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [1930. 长度为 3 的不同回文子序列](https://leetcode.cn/problems/unique-length-3-palindromic-subsequences)
 
 [English Version](/solution/1900-1999/1930.Unique%20Length-3%20Palindromic%20Subsequences/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个字符串 <code>s</code> ，返回 <code>s</code> 中 <strong>长度为 3 </strong>的<strong>不同回文子序列</strong> 的个数。</p>
 
@@ -60,91 +75,157 @@
 	<li><code>s</code> 仅由小写英文字母组成</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：枚举两端字符 + 哈希表
+
+由于字符串中只包含小写字母，因此我们可以直接枚举所有的两端字符。对于每一对两端字符 $c$，我们找出它们在字符串中第一次和最后一次出现的位置 $l$ 和 $r$，如果 $r - l > 1$，说明找到了满足条件的回文序列，我们将 $[l+1,..r-1]$ 之间的字符去重后统计个数，即为以 $c$ 为两端字符的回文序列个数，加入答案中。
+
+枚举结束后，即可得到答案。
+
+时间复杂度 $O(n \times C)$，空间复杂度 $O(C)$，其中 $n$ 为字符串长度，而 $C$ 为字符集大小。本题中 $C = 26$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def countPalindromicSubsequence(self, s: str) -> int:
-        res = 0
-        for i in range(26):
-            c = chr(ord('a') + i)
-            if c in s:
-                l, r = s.index(c), s.rindex(c)
-                chars = {s[j] for j in range(l + 1, r)}
-                res += len(chars)
-        return res
+        ans = 0
+        for c in ascii_lowercase:
+            l, r = s.find(c), s.rfind(c)
+            if r - l > 1:
+                ans += len(set(s[l + 1 : r]))
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int countPalindromicSubsequence(String s) {
-        int res = 0;
+        int ans = 0;
         for (char c = 'a'; c <= 'z'; ++c) {
             int l = s.indexOf(c), r = s.lastIndexOf(c);
-            Set<Character> chars = new HashSet<>();
+            Set<Character> cs = new HashSet<>();
             for (int i = l + 1; i < r; ++i) {
-                chars.add(s.charAt(i));
+                cs.add(s.charAt(i));
             }
-            res += chars.size();
+            ans += cs.size();
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int countPalindromicSubsequence(string s) {
-        int res = 0;
+        int ans = 0;
         for (char c = 'a'; c <= 'z'; ++c) {
             int l = s.find_first_of(c), r = s.find_last_of(c);
-            unordered_set<char> chars;
-            for (int i = l + 1; i < r; ++i) {
-                chars.insert(s[i]);
-            }
-            res += chars.size();
+            unordered_set<char> cs;
+            for (int i = l + 1; i < r; ++i) cs.insert(s[i]);
+            ans += cs.size();
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func countPalindromicSubsequence(s string) int {
-	res := 0
+func countPalindromicSubsequence(s string) (ans int) {
 	for c := 'a'; c <= 'z'; c++ {
 		l, r := strings.Index(s, string(c)), strings.LastIndex(s, string(c))
-		chars := make(map[byte]bool)
+		cs := map[byte]struct{}{}
 		for i := l + 1; i < r; i++ {
-			chars[s[i]] = true
+			cs[s[i]] = struct{}{}
 		}
-		res += len(chars)
+		ans += len(cs)
 	}
-	return res
+	return
 }
 ```
 
-### **...**
+#### C#
 
+```cs
+public class Solution {
+    public int CountPalindromicSubsequence(string s) {
+        int ans = 0;
+        for (char c = 'a'; c <= 'z'; ++c) {
+            int l = s.IndexOf(c), r = s.LastIndexOf(c);
+            HashSet<char> cs = new HashSet<char>();
+            for (int i = l + 1; i < r; ++i) {
+                cs.Add(s[i]);
+            }
+            ans += cs.Count;
+        }
+        return ans;
+    }
+}
 ```
 
+#### TypeScript
+
+```ts
+export function countPalindromicSubsequence(s: string): number {
+    const cnt = new Map<string, [number, number]>();
+    const n = s.length;
+    let ans = 0;
+
+    for (let i = 0; i < n; i++) {
+        const ch = s[i];
+        if (cnt.has(ch)) cnt.get(ch)![1] = i;
+        else cnt.set(ch, [i, i]);
+    }
+
+    for (const [_, [i, j]] of cnt) {
+        if (i !== j) {
+            ans += new Set(s.slice(i + 1, j)).size;
+        }
+    }
+
+    return ans;
+}
+```
+
+#### JavaScript
+
+```js
+export function countPalindromicSubsequence(s) {
+    const cnt = new Map();
+    const n = s.length;
+    let ans = 0;
+
+    for (let i = 0; i < n; i++) {
+        const ch = s[i];
+        if (cnt.has(ch)) cnt.get(ch)[1] = i;
+        else cnt.set(ch, [i, i]);
+    }
+
+    for (const [_, [i, j]] of cnt) {
+        if (i !== j) {
+            ans += new Set(s.slice(i + 1, j)).size;
+        }
+    }
+
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

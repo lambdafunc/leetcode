@@ -1,13 +1,12 @@
 func generate(numRows int) [][]int {
-	res := make([][]int, numRows)
-	for i := 0; i < numRows; i++ {
-		t := make([]int, i+1)
-		t[0] = 1
-		t[i] = 1
-		for j := 1; j < i; j++ {
-			t[j] = res[i-1][j-1] + res[i-1][j]
+	f := [][]int{[]int{1}}
+	for i := 0; i < numRows-1; i++ {
+		g := []int{1}
+		for j := 0; j < len(f[i])-1; j++ {
+			g = append(g, f[i][j]+f[i][j+1])
 		}
-		res[i] = t
+		g = append(g, 1)
+		f = append(f, g)
 	}
-	return res
+	return f
 }

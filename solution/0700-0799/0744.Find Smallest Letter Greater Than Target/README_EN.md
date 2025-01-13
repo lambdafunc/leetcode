@@ -1,197 +1,186 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0744.Find%20Smallest%20Letter%20Greater%20Than%20Target/README_EN.md
+tags:
+    - Array
+    - Binary Search
+---
+
+<!-- problem:start -->
+
 # [744. Find Smallest Letter Greater Than Target](https://leetcode.com/problems/find-smallest-letter-greater-than-target)
 
 [中文文档](/solution/0700-0799/0744.Find%20Smallest%20Letter%20Greater%20Than%20Target/README.md)
 
 ## Description
 
-<p>
+<!-- description:start -->
 
-Given a list of sorted characters <code>letters</code> containing only lowercase letters, and given a target letter <code>target</code>, find the smallest element in the list that is larger than the given target.
+<p>You are given an array of characters <code>letters</code> that is sorted in <strong>non-decreasing order</strong>, and a character <code>target</code>. There are <strong>at least two different</strong> characters in <code>letters</code>.</p>
 
-</p><p>
+<p>Return <em>the smallest character in </em><code>letters</code><em> that is lexicographically greater than </em><code>target</code>. If such a character does not exist, return the first character in <code>letters</code>.</p>
 
-Letters also wrap around. For example, if the target is <code>target = 'z'</code> and <code>letters = ['a', 'b']</code>, the answer is <code>'a'</code>.
-
-</p>
-
-<p><b>Examples:</b><br />
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
-<b>Input:</b>
-
-letters = ["c", "f", "j"]
-
-target = "a"
-
-<b>Output:</b> "c"
-
-
-
-<b>Input:</b>
-
-letters = ["c", "f", "j"]
-
-target = "c"
-
-<b>Output:</b> "f"
-
-
-
-<b>Input:</b>
-
-letters = ["c", "f", "j"]
-
-target = "d"
-
-<b>Output:</b> "f"
-
-
-
-<b>Input:</b>
-
-letters = ["c", "f", "j"]
-
-target = "g"
-
-<b>Output:</b> "j"
-
-
-
-<b>Input:</b>
-
-letters = ["c", "f", "j"]
-
-target = "j"
-
-<b>Output:</b> "c"
-
-
-
-<b>Input:</b>
-
-letters = ["c", "f", "j"]
-
-target = "k"
-
-<b>Output:</b> "c"
-
+<strong>Input:</strong> letters = [&quot;c&quot;,&quot;f&quot;,&quot;j&quot;], target = &quot;a&quot;
+<strong>Output:</strong> &quot;c&quot;
+<strong>Explanation:</strong> The smallest character that is lexicographically greater than &#39;a&#39; in letters is &#39;c&#39;.
 </pre>
 
-</p>
+<p><strong class="example">Example 2:</strong></p>
 
-<p><b>Note:</b><br>
+<pre>
+<strong>Input:</strong> letters = [&quot;c&quot;,&quot;f&quot;,&quot;j&quot;], target = &quot;c&quot;
+<strong>Output:</strong> &quot;f&quot;
+<strong>Explanation:</strong> The smallest character that is lexicographically greater than &#39;c&#39; in letters is &#39;f&#39;.
+</pre>
 
-<ol>
+<p><strong class="example">Example 3:</strong></p>
 
-<li><code>letters</code> has a length in range <code>[2, 10000]</code>.</li>
+<pre>
+<strong>Input:</strong> letters = [&quot;x&quot;,&quot;x&quot;,&quot;y&quot;,&quot;y&quot;], target = &quot;z&quot;
+<strong>Output:</strong> &quot;x&quot;
+<strong>Explanation:</strong> There are no characters in letters that is lexicographically greater than &#39;z&#39; so we return letters[0].
+</pre>
 
-<li><code>letters</code> consists of lowercase letters, and contains at least 2 unique letters.</li>
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<li><code>target</code> is a lowercase letter.</li>
+<ul>
+	<li><code>2 &lt;= letters.length &lt;= 10<sup>4</sup></code></li>
+	<li><code>letters[i]</code> is a lowercase English letter.</li>
+	<li><code>letters</code> is sorted in <strong>non-decreasing</strong> order.</li>
+	<li><code>letters</code> contains at least two different characters.</li>
+	<li><code>target</code> is a lowercase English letter.</li>
+</ul>
 
-</ol>
-
-</p>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Binary Search
+
+Since `letters` is sorted in non-decreasing order, we can use binary search to find the smallest character that is larger than `target`.
+
+We define the left boundary of the binary search as $l = 0$, and the right boundary as $r = n$. For each binary search, we calculate the middle position $mid = (l + r) / 2$. If $letters[mid] > \textit{target}$, it means we need to continue searching in the left half, so we set $r = mid$. Otherwise, we need to continue searching in the right half, so we set $l = mid + 1$.
+
+Finally, we return $letters[l \mod n]$.
+
+The time complexity is $O(\log n)$, where $n$ is the length of `letters`. The space complexity is $O(1)$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def nextGreatestLetter(self, letters: List[str], target: str) -> str:
-        left, right = 0, len(letters)
-        while left < right:
-            mid = (left + right) >> 1
-            if ord(letters[mid]) > ord(target):
-                right = mid
-            else:
-                left = mid + 1
-        return letters[left % len(letters)]
+        i = bisect_right(letters, ord(target), key=lambda c: ord(c))
+        return letters[i % len(letters)]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public char nextGreatestLetter(char[] letters, char target) {
-        int left = 0, right = letters.length;
-        while (left < right) {
-            int mid = (left + right) >> 1;
-            if (letters[mid] > target) {
-                right = mid;
-            } else {
-                left = mid + 1;
-            }
-        }
-        return letters[left % letters.length];
+        int i = Arrays.binarySearch(letters, (char) (target + 1));
+        i = i < 0 ? -i - 1 : i;
+        return letters[i % letters.length];
     }
 }
 ```
 
-### **TypeScript**
-
-```ts
-function nextGreatestLetter(letters: string[], target: string): string {
-    let left = 0,
-        right = letters.length;
-    let x = target.charCodeAt(0);
-    while (left < right) {
-        let mid = (left + right) >> 1;
-        if (x < letters[mid].charCodeAt(0)) {
-            right = mid;
-        } else {
-            left = mid + 1;
-        }
-    }
-    return letters[left % letters.length];
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     char nextGreatestLetter(vector<char>& letters, char target) {
-        int left = 0, right = letters.size();
-        while (left < right) {
-            int mid = left + right >> 1;
-            if (letters[mid] > target) {
-                right = mid;
-            } else {
-                left = mid + 1;
-            }
-        }
-        return letters[left % letters.size()];
+        int i = upper_bound(letters.begin(), letters.end(), target) - letters.begin();
+        return letters[i % letters.size()];
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func nextGreatestLetter(letters []byte, target byte) byte {
-	left, right := 0, len(letters)
-	for left < right {
-		mid := (left + right) >> 1
-		if letters[mid] > target {
-			right = mid
-		} else {
-			left = mid + 1
-		}
-	}
-	return letters[left%len(letters)]
+	i := sort.Search(len(letters), func(i int) bool { return letters[i] > target })
+	return letters[i%len(letters)]
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function nextGreatestLetter(letters: string[], target: string): string {
+    let [l, r] = [0, letters.length];
+    while (l < r) {
+        const mid = (l + r) >> 1;
+        if (letters[mid] > target) {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
+    }
+    return letters[l % letters.length];
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn next_greatest_letter(letters: Vec<char>, target: char) -> char {
+        let mut l = 0;
+        let mut r = letters.len();
+        while l < r {
+            let mid = l + (r - l) / 2;
+            if letters[mid] > target {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+        letters[l % letters.len()]
+    }
+}
+```
+
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param String[] $letters
+     * @param String $target
+     * @return String
+     */
+    function nextGreatestLetter($letters, $target) {
+        $l = 0;
+        $r = count($letters);
+        while ($l < $r) {
+            $mid = $l + $r >> 1;
+            if ($letters[$mid] > $target) {
+                $r = $mid;
+            } else {
+                $l = $mid + 1;
+            }
+        }
+        return $letters[$l % count($letters)];
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

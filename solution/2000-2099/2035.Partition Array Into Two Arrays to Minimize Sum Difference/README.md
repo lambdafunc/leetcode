@@ -1,10 +1,28 @@
-# [2035. 将数组分成两个数组并最小化数组和的差](https://leetcode-cn.com/problems/partition-array-into-two-arrays-to-minimize-sum-difference)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2035.Partition%20Array%20Into%20Two%20Arrays%20to%20Minimize%20Sum%20Difference/README.md
+rating: 2489
+source: 第 262 场周赛 Q4
+tags:
+    - 位运算
+    - 数组
+    - 双指针
+    - 二分查找
+    - 动态规划
+    - 状态压缩
+    - 有序集合
+---
+
+<!-- problem:start -->
+
+# [2035. 将数组分成两个数组并最小化数组和的差](https://leetcode.cn/problems/partition-array-into-two-arrays-to-minimize-sum-difference)
 
 [English Version](/solution/2000-2099/2035.Partition%20Array%20Into%20Two%20Arrays%20to%20Minimize%20Sum%20Difference/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个长度为 <code>2 * n</code>&nbsp;的整数数组。你需要将&nbsp;<code>nums</code>&nbsp;分成&nbsp;<strong>两个</strong>&nbsp;长度为&nbsp;<code>n</code>&nbsp;的数组，分别求出两个数组的和，并 <strong>最小化</strong>&nbsp;两个数组和之&nbsp;<b>差的绝对值</b>&nbsp;。<code>nums</code>&nbsp;中每个元素都需要放入两个数组之一。</p>
 
@@ -14,7 +32,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="example-1" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2035.Partition%20Array%20Into%20Two%20Arrays%20to%20Minimize%20Sum%20Difference/images/ex1.png" style="width: 240px; height: 106px;"></p>
+<p><img alt="example-1" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2035.Partition%20Array%20Into%20Two%20Arrays%20to%20Minimize%20Sum%20Difference/images/ex1.png" style="width: 240px; height: 106px;"></p>
 
 <pre><b>输入：</b>nums = [3,9,7,3]
 <b>输出：</b>2
@@ -32,7 +50,7 @@
 
 <p><strong>示例 3：</strong></p>
 
-<p><img alt="example-3" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2035.Partition%20Array%20Into%20Two%20Arrays%20to%20Minimize%20Sum%20Difference/images/ex3.png" style="width: 316px; height: 106px;"></p>
+<p><img alt="example-3" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2035.Partition%20Array%20Into%20Two%20Arrays%20to%20Minimize%20Sum%20Difference/images/ex3.png" style="width: 316px; height: 106px;"></p>
 
 <pre><b>输入：</b>nums = [2,-1,0,4,-2,-9]
 <b>输出：</b>0
@@ -50,15 +68,17 @@
 	<li><code>-10<sup>7</sup> &lt;= nums[i] &lt;= 10<sup>7</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -81,7 +101,7 @@ class Solution:
             f[cnt].add(s)
             g[cnt1].add(s1)
 
-        ans = float('inf')
+        ans = inf
         for i in range(n + 1):
             fi, gi = sorted(list(f[i])), sorted(list(g[n - i]))
             # min(abs(f[i] + g[n - i]))
@@ -100,9 +120,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -155,7 +173,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -163,21 +181,16 @@ public:
     int minimumDifference(vector<int>& nums) {
         int n = nums.size() >> 1;
         vector<vector<int>> f(n + 1), g(n + 1);
-        for (int i = 0; i < (1 << n); ++i)
-        {
+        for (int i = 0; i < (1 << n); ++i) {
             int s = 0, cnt = 0;
             int s1 = 0, cnt1 = 0;
-            for (int j = 0; j < n; ++j)
-            {
-                if (i & (1 << j))
-                {
+            for (int j = 0; j < n; ++j) {
+                if (i & (1 << j)) {
                     s += nums[j];
                     ++cnt;
                     s1 += nums[n + j];
                     ++cnt1;
-                }
-                else
-                {
+                } else {
                     s -= nums[j];
                     s1 -= nums[n + j];
                 }
@@ -185,23 +198,21 @@ public:
             f[cnt].push_back(s);
             g[cnt1].push_back(s1);
         }
-        for (int i = 0; i <= n; ++i)
-        {
+        for (int i = 0; i <= n; ++i) {
             sort(f[i].begin(), f[i].end());
             sort(g[i].begin(), g[i].end());
         }
         int ans = INT_MAX;
-        for (int i = 0; i <= n; ++i)
-        {
-            for (int a : f[i])
-            {
+        for (int i = 0; i <= n; ++i) {
+            for (int a : f[i]) {
                 int left = 0, right = g[n - i].size() - 1;
                 int b = -a;
-                while (left < right)
-                {
+                while (left < right) {
                     int mid = (left + right) >> 1;
-                    if (g[n - i][mid] >= b) right = mid;
-                    else left = mid + 1;
+                    if (g[n - i][mid] >= b)
+                        right = mid;
+                    else
+                        left = mid + 1;
                 }
                 ans = min(ans, abs(a + g[n - i][left]));
                 if (left > 0) ans = min(ans, abs(a + g[n - i][left - 1]));
@@ -212,7 +223,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func minimumDifference(nums []int) int {
@@ -263,13 +274,6 @@ func minimumDifference(nums []int) int {
 	return ans
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 func abs(x int) int {
 	if x > 0 {
 		return x
@@ -278,10 +282,8 @@ func abs(x int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

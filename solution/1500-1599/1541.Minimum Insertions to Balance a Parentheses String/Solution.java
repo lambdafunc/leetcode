@@ -1,36 +1,24 @@
 class Solution {
-     public int minInsertions(String s) {
-        int left = 0;
-        int res = 0;
-        char[] chars = s.toCharArray();
-        for (int i = 0; i < chars.length;) {
-            if (chars[i] == '(') {
-                left++;
-                i++;
+    public int minInsertions(String s) {
+        int ans = 0, x = 0;
+        int n = s.length();
+        for (int i = 0; i < n; ++i) {
+            if (s.charAt(i) == '(') {
+                ++x;
             } else {
-                // 连续2个 )
-                if (i < chars.length - 1 && chars[i + 1] == ')') {
-                    if (left > 0) {
-                        left--;
-                    } else {
-                        res++;
-                    }
-                    i += 2;
+                if (i < n - 1 && s.charAt(i + 1) == ')') {
+                    ++i;
                 } else {
-                    if (left > 0) {
-                        left--;
-                        res++;
-                    } else {
-                        res += 2;
-                    }
-                    i++;
+                    ++ans;
+                }
+                if (x == 0) {
+                    ++ans;
+                } else {
+                    --x;
                 }
             }
-
         }
-        if (left > 0) {
-            res += 2 * left;
-        }
-        return res;
+        ans += x << 1;
+        return ans;
     }
 }

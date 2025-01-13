@@ -1,62 +1,74 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0859.Buddy%20Strings/README_EN.md
+tags:
+    - Hash Table
+    - String
+---
+
+<!-- problem:start -->
+
 # [859. Buddy Strings](https://leetcode.com/problems/buddy-strings)
 
 [中文文档](/solution/0800-0899/0859.Buddy%20Strings/README.md)
 
 ## Description
 
-<p>Given two strings <code>a</code> and <code>b</code>, return <code>true</code><em> if you can swap two letters in </em><code>a</code><em> so the result is equal to </em><code>b</code><em>, otherwise, return </em><code>false</code><em>.</em></p>
+<!-- description:start -->
 
-<p>Swapping letters is defined as taking two indices <code>i</code> and <code>j</code> (0-indexed) such that <code>i != j</code> and swapping the characters at <code>a[i]</code> and <code>a[j]</code>.</p>
+<p>Given two strings <code>s</code> and <code>goal</code>, return <code>true</code><em> if you can swap two letters in </em><code>s</code><em> so the result is equal to </em><code>goal</code><em>, otherwise, return </em><code>false</code><em>.</em></p>
+
+<p>Swapping letters is defined as taking two indices <code>i</code> and <code>j</code> (0-indexed) such that <code>i != j</code> and swapping the characters at <code>s[i]</code> and <code>s[j]</code>.</p>
 
 <ul>
 	<li>For example, swapping at indices <code>0</code> and <code>2</code> in <code>&quot;abcd&quot;</code> results in <code>&quot;cbad&quot;</code>.</li>
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-<strong>Input:</strong> a = &quot;ab&quot;, b = &quot;ba&quot;
+<strong>Input:</strong> s = &quot;ab&quot;, goal = &quot;ba&quot;
 <strong>Output:</strong> true
-<strong>Explanation:</strong> You can swap a[0] = &#39;a&#39; and a[1] = &#39;b&#39; to get &quot;ba&quot;, which is equal to b.
+<strong>Explanation:</strong> You can swap s[0] = &#39;a&#39; and s[1] = &#39;b&#39; to get &quot;ba&quot;, which is equal to goal.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-<strong>Input:</strong> a = &quot;ab&quot;, b = &quot;ab&quot;
+<strong>Input:</strong> s = &quot;ab&quot;, goal = &quot;ab&quot;
 <strong>Output:</strong> false
-<strong>Explanation:</strong> The only letters you can swap are a[0] = &#39;a&#39; and a[1] = &#39;b&#39;, which results in &quot;ba&quot; != b.
+<strong>Explanation:</strong> The only letters you can swap are s[0] = &#39;a&#39; and s[1] = &#39;b&#39;, which results in &quot;ba&quot; != goal.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
-<strong>Input:</strong> a = &quot;aa&quot;, b = &quot;aa&quot;
+<strong>Input:</strong> s = &quot;aa&quot;, goal = &quot;aa&quot;
 <strong>Output:</strong> true
-<strong>Explanation:</strong> You can swap a[0] = &#39;a&#39; and a[1] = &#39;a&#39; to get &quot;aa&quot;, which is equal to b.
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> a = &quot;aaaaaaabc&quot;, b = &quot;aaaaaaacb&quot;
-<strong>Output:</strong> true
+<strong>Explanation:</strong> You can swap s[0] = &#39;a&#39; and s[1] = &#39;a&#39; to get &quot;aa&quot;, which is equal to goal.
 </pre>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>1 &lt;= a.length, b.length &lt;= 2 * 10<sup>4</sup></code></li>
-	<li><code>a</code> and <code>b</code> consist of lowercase letters.</li>
+	<li><code>1 &lt;= s.length, goal.length &lt;= 2 * 10<sup>4</sup></code></li>
+	<li><code>s</code> and <code>goal</code> consist of lowercase letters.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -64,14 +76,14 @@ class Solution:
         m, n = len(s), len(goal)
         if m != n:
             return False
-        diff = sum(1 for i in range(n) if s[i] != goal[i])
         cnt1, cnt2 = Counter(s), Counter(goal)
         if cnt1 != cnt2:
             return False
-        return diff == 2 or (diff == 0 and any(e > 1 for e in cnt1.values()))
+        diff = sum(s[i] != goal[i] for i in range(n))
+        return diff == 2 or (diff == 0 and any(v > 1 for v in cnt1.values()))
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -105,7 +117,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -116,15 +128,13 @@ public:
         int diff = 0;
         vector<int> cnt1(26);
         vector<int> cnt2(26);
-        for (int i = 0; i < n; ++i)
-        {
+        for (int i = 0; i < n; ++i) {
             ++cnt1[s[i] - 'a'];
             ++cnt2[goal[i] - 'a'];
             if (s[i] != goal[i]) ++diff;
         }
         bool f = false;
-        for (int i = 0; i < 26; ++i)
-        {
+        for (int i = 0; i < 26; ++i) {
             if (cnt1[i] != cnt2[i]) return false;
             if (cnt1[i] > 1) f = true;
         }
@@ -133,7 +143,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func buddyStrings(s string, goal string) bool {
@@ -164,10 +174,36 @@ func buddyStrings(s string, goal string) bool {
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function buddyStrings(s: string, goal: string): boolean {
+    const m = s.length;
+    const n = goal.length;
+    if (m != n) {
+        return false;
+    }
+    const cnt1 = new Array(26).fill(0);
+    const cnt2 = new Array(26).fill(0);
+    let diff = 0;
+    for (let i = 0; i < n; ++i) {
+        cnt1[s.charCodeAt(i) - 'a'.charCodeAt(0)]++;
+        cnt2[goal.charCodeAt(i) - 'a'.charCodeAt(0)]++;
+        if (s[i] != goal[i]) {
+            ++diff;
+        }
+    }
+    for (let i = 0; i < 26; ++i) {
+        if (cnt1[i] != cnt2[i]) {
+            return false;
+        }
+    }
+    return diff == 2 || (diff == 0 && cnt1.some(v => v > 1));
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

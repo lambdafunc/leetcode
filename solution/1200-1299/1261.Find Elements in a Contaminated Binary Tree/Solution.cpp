@@ -11,34 +11,29 @@
  */
 class FindElements {
 public:
-    unordered_set<int> nodes;
-
     FindElements(TreeNode* root) {
         root->val = 0;
-        nodes.clear();
-        nodes.insert(0);
         dfs(root);
     }
-    
+
     bool find(int target) {
-        return nodes.count(target);
+        return s.contains(target);
     }
 
+private:
+    unordered_set<int> s;
+
     void dfs(TreeNode* root) {
-        if (!root) return;
-        if (root->left)
-        {
+        s.insert(root->val);
+        if (root->left) {
             root->left->val = root->val * 2 + 1;
-            nodes.insert(root->left->val);
+            dfs(root->left);
         }
-        if (root->right)
-        {
+        if (root->right) {
             root->right->val = root->val * 2 + 2;
-            nodes.insert(root->right->val);
+            dfs(root->right);
         }
-        dfs(root->left);
-        dfs(root->right);
-    }
+    };
 };
 
 /**

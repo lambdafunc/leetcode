@@ -4,8 +4,8 @@ class Solution:
         q = deque([beginWord])
         ans = 1
         while q:
-            n = len(q)
-            for _ in range(n):
+            ans += 1
+            for _ in range(len(q)):
                 s = q.popleft()
                 s = list(s)
                 for i in range(len(s)):
@@ -16,9 +16,8 @@ class Solution:
                         if t not in words:
                             continue
                         if t == endWord:
-                            return ans + 1
+                            return ans
                         q.append(t)
                         words.remove(t)
                     s[i] = ch
-            ans += 1
         return 0

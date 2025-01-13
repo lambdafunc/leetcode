@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1744.Can%20You%20Eat%20Your%20Favorite%20Candy%20on%20Your%20Favorite%20Day/README_EN.md
+rating: 1858
+source: Weekly Contest 226 Q3
+tags:
+    - Array
+    - Prefix Sum
+---
+
+<!-- problem:start -->
+
 # [1744. Can You Eat Your Favorite Candy on Your Favorite Day](https://leetcode.com/problems/can-you-eat-your-favorite-candy-on-your-favorite-day)
 
 [中文文档](/solution/1700-1799/1744.Can%20You%20Eat%20Your%20Favorite%20Candy%20on%20Your%20Favorite%20Day/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a <strong>(0-indexed)</strong> array of positive integers <code>candiesCount</code> where <code>candiesCount[i]</code> represents the number of candies of the&nbsp;<code>i<sup>th</sup></code>&nbsp;type you have. You are also given a 2D array <code>queries</code> where <code>queries[i] = [favoriteType<sub>i</sub>, favoriteDay<sub>i</sub>, dailyCap<sub>i</sub>]</code>.</p>
 
@@ -19,7 +34,7 @@
 <p>Return <em>the constructed array </em><code>answer</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> candiesCount = [7,4,5,3,8], queries = [[0,2,2],[4,2,4],[2,13,1000000000]]
@@ -32,7 +47,7 @@
 3- If you eat 1 candy each day, you will eat a candy of type 2 on day 13.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> candiesCount = [5,2,6,4,1], queries = [[3,1,2],[4,10,3],[3,10,100],[4,100,30],[1,3,1]]
@@ -52,26 +67,93 @@
 	<li><code>1 &lt;= dailyCap<sub>i</sub> &lt;= 10<sup>9</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def canEat(self, candiesCount: List[int], queries: List[List[int]]) -> List[bool]:
+        s = list(accumulate(candiesCount, initial=0))
+        ans = []
+        for t, day, mx in queries:
+            least, most = day, (day + 1) * mx
+            ans.append(least < s[t + 1] and most > s[t])
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public boolean[] canEat(int[] candiesCount, int[][] queries) {
+        int n = candiesCount.length;
+        long[] s = new long[n + 1];
+        for (int i = 0; i < n; ++i) {
+            s[i + 1] = s[i] + candiesCount[i];
+        }
+        int m = queries.length;
+        boolean[] ans = new boolean[m];
+        for (int i = 0; i < m; ++i) {
+            int t = queries[i][0], day = queries[i][1], mx = queries[i][2];
+            long least = day, most = (long) (day + 1) * mx;
+            ans[i] = least < s[t + 1] && most > s[t];
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+using ll = long long;
+
+class Solution {
+public:
+    vector<bool> canEat(vector<int>& candiesCount, vector<vector<int>>& queries) {
+        int n = candiesCount.size();
+        vector<ll> s(n + 1);
+        for (int i = 0; i < n; ++i) s[i + 1] = s[i] + candiesCount[i];
+        vector<bool> ans;
+        for (auto& q : queries) {
+            int t = q[0], day = q[1], mx = q[2];
+            ll least = day, most = 1ll * (day + 1) * mx;
+            ans.emplace_back(least < s[t + 1] && most > s[t]);
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func canEat(candiesCount []int, queries [][]int) (ans []bool) {
+	n := len(candiesCount)
+	s := make([]int, n+1)
+	for i, v := range candiesCount {
+		s[i+1] = s[i] + v
+	}
+	for _, q := range queries {
+		t, day, mx := q[0], q[1], q[2]
+		least, most := day, (day+1)*mx
+		ans = append(ans, least < s[t+1] && most > s[t])
+	}
+	return
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

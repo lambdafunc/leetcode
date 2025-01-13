@@ -1,15 +1,29 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1909.Remove%20One%20Element%20to%20Make%20the%20Array%20Strictly%20Increasing/README_EN.md
+rating: 1461
+source: Biweekly Contest 55 Q1
+tags:
+    - Array
+---
+
+<!-- problem:start -->
+
 # [1909. Remove One Element to Make the Array Strictly Increasing](https://leetcode.com/problems/remove-one-element-to-make-the-array-strictly-increasing)
 
 [中文文档](/solution/1900-1999/1909.Remove%20One%20Element%20to%20Make%20the%20Array%20Strictly%20Increasing/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given a <strong>0-indexed</strong> integer array <code>nums</code>, return <code>true</code> <em>if it can be made <strong>strictly increasing</strong> after removing <strong>exactly one</strong> element, or </em><code>false</code><em> otherwise. If the array is already strictly increasing, return </em><code>true</code>.</p>
 
 <p>The array <code>nums</code> is <strong>strictly increasing</strong> if <code>nums[i - 1] &lt; nums[i]</code> for each index <code>(1 &lt;= i &lt; nums.length).</code></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,2,<u>10</u>,5,7]
@@ -18,7 +32,7 @@
 [1,2,5,7] is strictly increasing, so return true.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [2,3,1,2]
@@ -30,21 +44,13 @@
 [2,3,1] is the result of removing the element at index 3.
 No resulting array is strictly increasing, so return false.</pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,1,1]
 <strong>Output:</strong> false
 <strong>Explanation:</strong> The result of removing any element is [1,1].
 [1,1] is not strictly increasing, so return false.
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> nums = [1,2,3]
-<strong>Output:</strong> true
-<strong>Explanation:</strong> [1,2,3] is already strictly increasing, so return true.
 </pre>
 
 <p>&nbsp;</p>
@@ -55,17 +61,23 @@ No resulting array is strictly increasing, so return false.</pre>
 	<li><code>1 &lt;= nums[i] &lt;= 1000</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def canBeIncreasing(self, nums: List[int]) -> bool:
         def check(nums, i):
-            prev = float('-inf')
+            prev = -inf
             for j, num in enumerate(nums):
                 if i == j:
                     continue
@@ -80,13 +92,14 @@ class Solution:
         return check(nums, i - 1) or check(nums, i)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public boolean canBeIncreasing(int[] nums) {
         int i = 1, n = nums.length;
-        for (; i < n && nums[i - 1] < nums[i]; ++i);
+        for (; i < n && nums[i - 1] < nums[i]; ++i)
+            ;
         return check(nums, i - 1) || check(nums, i);
     }
 
@@ -106,14 +119,15 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool canBeIncreasing(vector<int>& nums) {
         int i = 1, n = nums.size();
-        for (; i < n && nums[i - 1] < nums[i]; ++i);
+        for (; i < n && nums[i - 1] < nums[i]; ++i)
+            ;
         return check(nums, i - 1) || check(nums, i);
     }
 
@@ -129,7 +143,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func canBeIncreasing(nums []int) bool {
@@ -155,10 +169,62 @@ func check(nums []int, i int) bool {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function canBeIncreasing(nums: number[]): boolean {
+    const check = (p: number) => {
+        let prev = undefined;
+        for (let j = 0; j < nums.length; j++) {
+            if (p != j) {
+                if (prev !== undefined && prev >= nums[j]) {
+                    return false;
+                }
+                prev = nums[j];
+            }
+        }
+        return true;
+    };
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i - 1] >= nums[i]) {
+            return check(i - 1) || check(i);
+        }
+    }
+    return true;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn can_be_increasing(nums: Vec<i32>) -> bool {
+        let check = |p: usize| -> bool {
+            let mut prev = None;
+            for j in 0..nums.len() {
+                if p != j {
+                    if let Some(value) = prev {
+                        if value >= nums[j] {
+                            return false;
+                        }
+                    }
+                    prev = Some(nums[j]);
+                }
+            }
+            true
+        };
+        for i in 1..nums.len() {
+            if nums[i - 1] >= nums[i] {
+                return check(i - 1) || check(i);
+            }
+        }
+        true
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

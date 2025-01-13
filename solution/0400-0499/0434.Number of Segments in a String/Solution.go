@@ -1,9 +1,9 @@
 func countSegments(s string) int {
-	res := 0
-	for i, c := range s {
-		if c != ' ' && (i == 0 || s[i-1] == ' ') {
-			res++
+	ans := 0
+	for _, t := range strings.Split(s, " ") {
+		if len(t) > 0 {
+			ans++
 		}
 	}
-	return res
+	return ans
 }

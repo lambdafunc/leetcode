@@ -1,10 +1,23 @@
-# [1929. 数组串联](https://leetcode-cn.com/problems/concatenation-of-array)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1929.Concatenation%20of%20Array/README.md
+rating: 1132
+source: 第 249 场周赛 Q1
+tags:
+    - 数组
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [1929. 数组串联](https://leetcode.cn/problems/concatenation-of-array)
 
 [English Version](/solution/1900-1999/1929.Concatenation%20of%20Array/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个长度为 <code>n</code> 的整数数组 <code>nums</code> 。请你构建一个长度为 <code>2n</code> 的答案数组 <code>ans</code> ，数组下标<strong> 从 0 开始计数 </strong>，对于所有 <code>0 <= i < n</code> 的 <code>i</code> ，满足下述所有要求：</p>
 
@@ -48,15 +61,21 @@
 	<li><code>1 <= nums[i] <= 1000</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：模拟
+
+我们直接根据题目描述模拟，将 $\textit{nums}$ 中的元素依次添加到答案数组中，然后再将 $\textit{nums}$ 中的元素再次添加到答案数组中。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为数组 $\textit{nums}$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -64,9 +83,7 @@ class Solution:
         return nums + nums
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -81,21 +98,7 @@ class Solution {
 }
 ```
 
-### **JavaScript**
-
-```js
-/**
- * @param {number[]} nums
- * @return {number[]}
- */
-var getConcatenation = function (nums) {
-    let ans = nums.slice();
-    ans.splice(nums.length, 0, ...nums);
-    return ans;
-};
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -109,7 +112,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func getConcatenation(nums []int) []int {
@@ -117,10 +120,54 @@ func getConcatenation(nums []int) []int {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function getConcatenation(nums: number[]): number[] {
+    return [...nums, ...nums];
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn get_concatenation(nums: Vec<i32>) -> Vec<i32> {
+        nums.repeat(2)
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var getConcatenation = function (nums) {
+    return [...nums, ...nums];
+};
+```
+
+#### C
+
+```c
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* getConcatenation(int* nums, int numsSize, int* returnSize) {
+    int* ans = malloc(sizeof(int) * numsSize * 2);
+    for (int i = 0; i < numsSize; i++) {
+        ans[i] = ans[i + numsSize] = nums[i];
+    }
+    *returnSize = numsSize * 2;
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

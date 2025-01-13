@@ -1,48 +1,20 @@
-using System;
-using System.Collections.Generic;
-
 public class Solution {
     public IList<int> SpiralOrder(int[][] matrix) {
-        var lenI = matrix.Length;
-        var lenJ = lenI == 0 ? 0 : matrix[0].Length;
-        var result = new List<int>(lenI * lenJ);
-        var rounds = (Math.Min(lenI, lenJ) + 1) / 2;
-        for (var r = 0; r < rounds; ++r)
-        {
-            if (lenI - r * 2 == 1)
-            {
-                for (var j = r; j < lenJ - r; ++j)
-                {
-                    result.Add(matrix[r][j]);
-                }
+        int m = matrix.Length, n = matrix[0].Length;
+        int[] dirs = { 0, 1, 0, -1, 0 };
+        int i = 0, j = 0, k = 0;
+        IList<int> ans = new List<int>();
+        bool[,] vis = new bool[m, n];
+        for (int h = m * n; h > 0; --h) {
+            ans.Add(matrix[i][j]);
+            vis[i, j] = true;
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x < 0 || x >= m || y < 0 || y >= n || vis[x, y]) {
+                k = (k + 1) % 4;
             }
-            else if (lenJ - r * 2 == 1)
-            {
-                for (var i = r; i < lenI - r; ++i)
-                {
-                    result.Add(matrix[i][r]);
-                }
-            }
-            else
-            {
-                for (var j = r; j < lenJ - r - 1; ++j)
-                {
-                    result.Add(matrix[r][j]);
-                }
-                for (var i = r; i < lenI - r - 1; ++i)
-                {
-                    result.Add(matrix[i][lenJ - r - 1]);
-                }
-                for (var j = lenJ - r - 1; j > r; --j)
-                {
-                    result.Add(matrix[lenI - r - 1][j]);
-                }
-                for (var i = lenI - r - 1; i > r; --i)
-                {
-                    result.Add(matrix[i][r]);
-                }
-            }
+            i += dirs[k];
+            j += dirs[k + 1];
         }
-        return result;
+        return ans;
     }
 }

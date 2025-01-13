@@ -2,21 +2,18 @@ class Solution {
     private int[] p;
 
     public int earliestAcq(int[][] logs, int n) {
+        Arrays.sort(logs, (a, b) -> a[0] - b[0]);
         p = new int[n];
         for (int i = 0; i < n; ++i) {
             p[i] = i;
         }
-        Arrays.sort(logs, Comparator.comparingInt(a -> a[0]));
         for (int[] log : logs) {
-            int t = log[0];
-            int a = log[1], b = log[2];
-            int pa = find(a), pb = find(b);
-            if (pa == pb) {
+            int t = log[0], x = log[1], y = log[2];
+            if (find(x) == find(y)) {
                 continue;
             }
-            p[pa] = pb;
-            --n;
-            if (n == 1) {
+            p[find(x)] = find(y);
+            if (--n == 1) {
                 return t;
             }
         }

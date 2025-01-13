@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1910.Remove%20All%20Occurrences%20of%20a%20Substring/README_EN.md
+rating: 1460
+source: Biweekly Contest 55 Q2
+tags:
+    - Stack
+    - String
+    - Simulation
+---
+
+<!-- problem:start -->
+
 # [1910. Remove All Occurrences of a Substring](https://leetcode.com/problems/remove-all-occurrences-of-a-substring)
 
 [中文文档](/solution/1900-1999/1910.Remove%20All%20Occurrences%20of%20a%20Substring/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given two strings <code>s</code> and <code>part</code>, perform the following operation on <code>s</code> until <strong>all</strong> occurrences of the substring <code>part</code> are removed:</p>
 
@@ -15,7 +31,7 @@
 <p>A <strong>substring</strong> is a contiguous sequence of characters in a string.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;daabcbaabcbc&quot;, part = &quot;abc&quot;
@@ -27,7 +43,7 @@
 Now s has no occurrences of &quot;abc&quot;.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;axxxxyyyyb&quot;, part = &quot;xy&quot;
@@ -49,26 +65,78 @@ Now s has no occurrences of &quot;xy&quot;.
 	<li><code>s</code>​​​​​​ and <code>part</code> consists of lowercase English letters.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def removeOccurrences(self, s: str, part: str) -> str:
+        while part in s:
+            s = s.replace(part, '', 1)
+        return s
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public String removeOccurrences(String s, String part) {
+        while (s.contains(part)) {
+            s = s.replaceFirst(part, "");
+        }
+        return s;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    string removeOccurrences(string s, string part) {
+        int m = part.size();
+        while (s.find(part) != -1) {
+            s = s.erase(s.find(part), m);
+        }
+        return s;
+    }
+};
 ```
 
+#### Go
+
+```go
+func removeOccurrences(s string, part string) string {
+	for strings.Contains(s, part) {
+		s = strings.Replace(s, part, "", 1)
+	}
+	return s
+}
+```
+
+#### TypeScript
+
+```ts
+function removeOccurrences(s: string, part: string): string {
+    while (s.includes(part)) {
+        s = s.replace(part, '');
+    }
+    return s;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

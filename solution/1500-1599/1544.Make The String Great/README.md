@@ -1,10 +1,23 @@
-# [1544. 整理字符串](https://leetcode-cn.com/problems/make-the-string-great)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1544.Make%20The%20String%20Great/README.md
+rating: 1344
+source: 第 201 场周赛 Q1
+tags:
+    - 栈
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1544. 整理字符串](https://leetcode.cn/problems/make-the-string-great)
 
 [English Version](/solution/1500-1599/1544.Make%20The%20String%20Great/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个由大小写英文字母组成的字符串 <code>s</code> 。</p>
 
@@ -57,32 +70,94 @@
 	<li><code>s</code> 只包含小写和大写英文字母</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：栈模拟
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$，其中 $n$ 是字符串 `s` 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def makeGood(self, s: str) -> str:
+        stk = []
+        for c in s:
+            if not stk or abs(ord(stk[-1]) - ord(c)) != 32:
+                stk.append(c)
+            else:
+                stk.pop()
+        return "".join(stk)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public String makeGood(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if (sb.length() == 0 || Math.abs(sb.charAt(sb.length() - 1) - c) != 32) {
+                sb.append(c);
+            } else {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+        }
+        return sb.toString();
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    string makeGood(string s) {
+        string stk;
+        for (char c : s) {
+            if (stk.empty() || abs(stk.back() - c) != 32) {
+                stk += c;
+            } else {
+                stk.pop_back();
+            }
+        }
+        return stk;
+    }
+};
 ```
 
+#### Go
+
+```go
+func makeGood(s string) string {
+	stk := []rune{}
+	for _, c := range s {
+		if len(stk) == 0 || abs(int(stk[len(stk)-1]-c)) != 32 {
+			stk = append(stk, c)
+		} else {
+			stk = stk[:len(stk)-1]
+		}
+	}
+	return string(stk)
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

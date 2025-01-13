@@ -1,79 +1,112 @@
-# [702. 搜索长度未知的有序数组](https://leetcode-cn.com/problems/search-in-a-sorted-array-of-unknown-size)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0702.Search%20in%20a%20Sorted%20Array%20of%20Unknown%20Size/README.md
+tags:
+    - 数组
+    - 二分查找
+    - 交互
+---
+
+<!-- problem:start -->
+
+# [702. 搜索长度未知的有序数组 🔒](https://leetcode.cn/problems/search-in-a-sorted-array-of-unknown-size)
 
 [English Version](/solution/0700-0799/0702.Search%20in%20a%20Sorted%20Array%20of%20Unknown%20Size/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个升序整数数组，写一个函数搜索 <code>nums</code> 中数字&nbsp;<code>target</code>。如果 <code>target</code> 存在，返回它的下标，否则返回 <code>-1</code>。<strong>注意，这个数组的大小是未知的。</strong>你只可以通过 <code>ArrayReader</code> 接口访问这个数组，<code>ArrayReader.get(k)</code> 返回数组中第 <code>k</code> 个元素（下标从 0 开始）。</p>
+<p>这是一个<strong>交互问题</strong>。</p>
 
-<p>你可以认为数组中所有的整数都小于 <code>10000</code>。如果你访问数组越界，<code>ArrayReader.get</code> 会返回 <code>2147483647</code>。</p>
+<p>您有一个<strong>升序</strong>整数数组，其<strong>长度未知</strong>。您没有访问数组的权限，但是可以使用&nbsp;<code>ArrayReader</code>&nbsp;接口访问它。你可以调用&nbsp;<code>ArrayReader.get(i)</code>:</p>
+
+<ul>
+	<li>
+	<p>返回数组第<code>i<sup>th</sup></code>个索引(<strong>0-indexed</strong>)处的值(即&nbsp;<code>secret[i]</code>)，或者</p>
+	</li>
+	<li>
+	<p>如果&nbsp;<code>i</code>&nbsp; 超出了数组的边界，则返回&nbsp;<code>2<sup>31</sup>&nbsp;- 1</code></p>
+	</li>
+</ul>
+
+<p>你也会得到一个整数 <code>target</code>。</p>
+
+<p>如果存在<code>secret[k] == target</code>，请返回索引&nbsp;<code>k</code>&nbsp;的值；否则返回&nbsp;<code>-1</code></p>
+
+<p>你必须写一个时间复杂度为&nbsp;<code>O(log n)</code>&nbsp;的算法。</p>
 
 <p>&nbsp;</p>
 
-<p><strong>样例 1：</strong></p>
+<p><strong>示例 1：</strong></p>
 
-<pre><strong>输入:</strong> <code>array</code> = [-1,0,3,5,9,12], <code>target</code> = 9
+<pre>
+<strong>输入:</strong> <code>secret</code> = [-1,0,3,5,9,12], <code>target</code> = 9
 <strong>输出:</strong> 4
 <strong>解释:</strong> 9 存在在 nums 中，下标为 4
 </pre>
 
-<p><strong>样例 2：</strong></p>
+<p><strong>示例 2：</strong></p>
 
-<pre><strong>输入:</strong> <code>array</code> = [-1,0,3,5,9,12], <code>target</code> = 2
+<pre>
+<strong>输入:</strong> <code>secret</code> = [-1,0,3,5,9,12], <code>target</code> = 2
 <strong>输出:</strong> -1
 <strong>解释:</strong> 2 不在数组中所以返回 -1</pre>
 
 <p>&nbsp;</p>
 
-<p><strong>注释 ：</strong></p>
+<p><strong>提示：</strong></p>
 
-<ol>
-	<li>你可以认为数组中所有元素的值互不相同。</li>
-	<li>数组元素的值域是&nbsp;<code>[-9999, 9999]</code>。</li>
-</ol>
+<ul>
+	<li><code>1 &lt;= secret.length &lt;= 10<sup>4</sup></code></li>
+	<li><code>-10<sup>4</sup>&nbsp;&lt;= secret[i], target &lt;= 10<sup>4</sup></code></li>
+	<li><code>secret</code>&nbsp;严格递增</li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-二分法。
+### 方法一：二分查找
+
+我们先定义一个指针 $r = 1$，每一次判断 $r$ 处的值是否小于目标值，如果小于目标值，我们将 $r$ 乘以 $2$，即左移一位，直到 $r$ 处的值大于等于目标值。此时，我们可以确定目标值在 $[r / 2, r]$ 的区间内。
+
+接下来，我们定义一个指针 $l = r / 2$，然后我们可以使用二分查找的方法在 $[l, r]$ 的区间内查找目标值的位置。
+
+时间复杂度 $O(\log M)$，其中 $M$ 为目标值的位置。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # """
 # This is ArrayReader's API interface.
 # You should not implement it, or speculate about its implementation
 # """
-#class ArrayReader:
+# class ArrayReader:
 #    def get(self, index: int) -> int:
 
+
 class Solution:
-    def search(self, reader, target):
-        """
-        :type reader: ArrayReader
-        :type target: int
-        :rtype: int
-        """
-        left, right = 0, 20000
-        while left < right:
-            mid = (left + right) >> 1
+    def search(self, reader: "ArrayReader", target: int) -> int:
+        r = 1
+        while reader.get(r) < target:
+            r <<= 1
+        l = r >> 1
+        while l < r:
+            mid = (l + r) >> 1
             if reader.get(mid) >= target:
-                right = mid
+                r = mid
             else:
-                left = mid + 1
-        return left if reader.get(left) == target else -1
+                l = mid + 1
+        return l if reader.get(l) == target else -1
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -86,21 +119,25 @@ class Solution:
 
 class Solution {
     public int search(ArrayReader reader, int target) {
-        int left = 0, right = 20000;
-        while (left < right) {
-            int mid = left + right >> 1;
+        int r = 1;
+        while (reader.get(r) < target) {
+            r <<= 1;
+        }
+        int l = r >> 1;
+        while (l < r) {
+            int mid = (l + r) >> 1;
             if (reader.get(mid) >= target) {
-                right = mid;
+                r = mid;
             } else {
-                left = mid + 1;
+                l = mid + 1;
             }
         }
-        return reader.get(left) == target ? left : -1;
+        return reader.get(l) == target ? l : -1;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -115,21 +152,25 @@ class Solution {
 class Solution {
 public:
     int search(const ArrayReader& reader, int target) {
-        int left = 0, right = 20000;
-        while (left < right) {
-            int mid = left + right >> 1;
+        int r = 1;
+        while (reader.get(r) < target) {
+            r <<= 1;
+        }
+        int l = r >> 1;
+        while (l < r) {
+            int mid = (l + r) >> 1;
             if (reader.get(mid) >= target) {
-                right = mid;
+                r = mid;
             } else {
-                left = mid + 1;
+                l = mid + 1;
             }
         }
-        return reader.get(left) == target ? left : -1;
+        return reader.get(l) == target ? l : -1;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -142,26 +183,57 @@ public:
  */
 
 func search(reader ArrayReader, target int) int {
-	left, right := 0, 20000
-	for left < right {
-		mid := (left + right) >> 1
+	r := 1
+	for reader.get(r) < target {
+		r <<= 1
+	}
+	l := r >> 1
+	for l < r {
+		mid := (l + r) >> 1
 		if reader.get(mid) >= target {
-			right = mid
+			r = mid
 		} else {
-			left = mid + 1
+			l = mid + 1
 		}
 	}
-	if reader.get(left) == target {
-		return left
+	if reader.get(l) == target {
+		return l
 	}
 	return -1
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+/**
+ * class ArrayReader {
+ *		// This is the ArrayReader's API interface.
+ *		// You should not implement it, or speculate about its implementation
+ *		get(index: number): number {};
+ *  };
+ */
 
+function search(reader: ArrayReader, target: number): number {
+    let r = 1;
+    while (reader.get(r) < target) {
+        r <<= 1;
+    }
+    let l = r >> 1;
+    while (l < r) {
+        const mid = (l + r) >> 1;
+        if (reader.get(mid) >= target) {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
+    }
+    return reader.get(l) === target ? l : -1;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

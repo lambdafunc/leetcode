@@ -1,8 +1,25 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1927.Sum%20Game/README_EN.md
+rating: 2004
+source: Biweekly Contest 56 Q3
+tags:
+    - Greedy
+    - Math
+    - String
+    - Game Theory
+---
+
+<!-- problem:start -->
+
 # [1927. Sum Game](https://leetcode.com/problems/sum-game)
 
 [中文文档](/solution/1900-1999/1927.Sum%20Game/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Alice and Bob take turns playing a game, with <strong>Alice</strong><strong>&nbsp;starting first</strong>.</p>
 
@@ -24,7 +41,7 @@
 <p>Assuming Alice and Bob play <strong>optimally</strong>, return <code>true</code> <em>if Alice will win and </em><code>false</code> <em>if Bob will win</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> num = &quot;5023&quot;
@@ -33,7 +50,7 @@
 The sum of the first half is equal to the sum of the second half: 5 + 0 = 2 + 3.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> num = &quot;25??&quot;
@@ -41,7 +58,7 @@ The sum of the first half is equal to the sum of the second half: 5 + 0 = 2 + 3.
 <strong>Explanation: </strong>Alice can replace one of the &#39;?&#39;s with &#39;9&#39; and it will be impossible for Bob to make the sums equal.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> num = &quot;?3295???&quot;
@@ -63,26 +80,134 @@ Bob wins because 9 + 3 + 2 + 9 = 5 + 9 + 2 + 7.
 	<li><code>num</code> consists of only digits and <code>&#39;?&#39;</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def sumGame(self, num: str) -> bool:
+        n = len(num)
+        cnt1 = num[: n // 2].count("?")
+        cnt2 = num[n // 2 :].count("?")
+        s1 = sum(int(x) for x in num[: n // 2] if x != "?")
+        s2 = sum(int(x) for x in num[n // 2 :] if x != "?")
+        return (cnt1 + cnt2) % 2 == 1 or s1 - s2 != 9 * (cnt2 - cnt1) // 2
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public boolean sumGame(String num) {
+        int n = num.length();
+        int cnt1 = 0, cnt2 = 0;
+        int s1 = 0, s2 = 0;
+        for (int i = 0; i < n / 2; ++i) {
+            if (num.charAt(i) == '?') {
+                cnt1++;
+            } else {
+                s1 += num.charAt(i) - '0';
+            }
+        }
+        for (int i = n / 2; i < n; ++i) {
+            if (num.charAt(i) == '?') {
+                cnt2++;
+            } else {
+                s2 += num.charAt(i) - '0';
+            }
+        }
+        return (cnt1 + cnt2) % 2 == 1 || s1 - s2 != 9 * (cnt2 - cnt1) / 2;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    bool sumGame(string num) {
+        int n = num.size();
+        int cnt1 = 0, cnt2 = 0;
+        int s1 = 0, s2 = 0;
+        for (int i = 0; i < n / 2; ++i) {
+            if (num[i] == '?') {
+                cnt1++;
+            } else {
+                s1 += num[i] - '0';
+            }
+        }
+        for (int i = n / 2; i < n; ++i) {
+            if (num[i] == '?') {
+                cnt2++;
+            } else {
+                s2 += num[i] - '0';
+            }
+        }
+        return (cnt1 + cnt2) % 2 == 1 || (s1 - s2) != 9 * (cnt2 - cnt1) / 2;
+    }
+};
 ```
 
+#### Go
+
+```go
+func sumGame(num string) bool {
+	n := len(num)
+	var cnt1, cnt2, s1, s2 int
+	for i := 0; i < n/2; i++ {
+		if num[i] == '?' {
+			cnt1++
+		} else {
+			s1 += int(num[i] - '0')
+		}
+	}
+	for i := n / 2; i < n; i++ {
+		if num[i] == '?' {
+			cnt2++
+		} else {
+			s2 += int(num[i] - '0')
+		}
+	}
+	return (cnt1+cnt2)%2 == 1 || s1-s2 != (cnt2-cnt1)*9/2
+}
+```
+
+#### TypeScript
+
+```ts
+function sumGame(num: string): boolean {
+    const n = num.length;
+    let [cnt1, cnt2, s1, s2] = [0, 0, 0, 0];
+    for (let i = 0; i < n >> 1; ++i) {
+        if (num[i] === '?') {
+            ++cnt1;
+        } else {
+            s1 += num[i].charCodeAt(0) - '0'.charCodeAt(0);
+        }
+    }
+    for (let i = n >> 1; i < n; ++i) {
+        if (num[i] === '?') {
+            ++cnt2;
+        } else {
+            s2 += num[i].charCodeAt(0) - '0'.charCodeAt(0);
+        }
+    }
+    return (cnt1 + cnt2) % 2 === 1 || 2 * (s1 - s2) !== 9 * (cnt2 - cnt1);
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

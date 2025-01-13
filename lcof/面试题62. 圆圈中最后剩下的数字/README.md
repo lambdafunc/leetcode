@@ -1,53 +1,69 @@
-# [面试题 62. 圆圈中最后剩下的数字](https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9862.%20%E5%9C%86%E5%9C%88%E4%B8%AD%E6%9C%80%E5%90%8E%E5%89%A9%E4%B8%8B%E7%9A%84%E6%95%B0%E5%AD%97/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 62. 圆圈中最后剩下的数字](https://leetcode.cn/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-0,1,,n-1 这 n 个数字排成一个圆圈，从数字 0 开始，每次从这个圆圈里删除第 m 个数字。求出这个圆圈里剩下的最后一个数字。
+<p>0,1,···,n-1这n个数字排成一个圆圈，从数字0开始，每次从这个圆圈里删除第m个数字（删除后从下一个数字开始计数）。求出这个圆圈里剩下的最后一个数字。</p>
 
-例如，0、1、2、3、4 这 5 个数字组成一个圆圈，从数字 0 开始每次删除第 3 个数字，则删除的前 4 个数字依次是 2、0、4、1，因此最后剩下的数字是 3。
+<p>例如，0、1、2、3、4这5个数字组成一个圆圈，从数字0开始每次删除第3个数字，则删除的前4个数字依次是2、0、4、1，因此最后剩下的数字是3。</p>
 
-**示例 1：**
+<p> </p>
 
-```
-输入: n = 5, m = 3
-输出: 3
-```
+<p><strong>示例 1：</strong></p>
 
-**示例 2：**
+<pre>
+<strong>输入:</strong> n = 5, m = 3
+<strong>输出: </strong>3
+</pre>
 
-```
-输入: n = 10, m = 17
-输出: 2
-```
+<p><strong>示例 2：</strong></p>
 
-**限制：**
+<pre>
+<strong>输入:</strong> n = 10, m = 17
+<strong>输出: </strong>2
+</pre>
 
-- `1 <= n <= 10^5`
-- `1 <= m <= 10^6`
+<p> </p>
+
+<p><strong>限制：</strong></p>
+
+<ul>
+	<li><code>1 <= n <= 10^5</code></li>
+	<li><code>1 <= m <= 10^6</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-设 `f(n, m)` 表示从 n 个数中每次删除第 m 个，最后剩下的数字。
+### 方法一：数学 + 递归（迭代）
 
-第一次删除第 m 个，剩下 `n-1` 个数，那么 `x = f(n - 1, m)` 就表示从 n-1 个数中每次删除第 m 个，最后剩下的数字。
+我们不妨设 $f(n, m)$ 表示从 $n$ 个数中每次删除第 $m$ 个，最后剩下的是第几个数字。
 
-我们求得 x 之后，便可以知道，`f(n, m)` 应该是从 `m % n` 开始数的第 x 个元素，即 `f(n, m) = ((m % n) + x) % n`。
+我们第一次删除了第 $m$ 个数字，剩下 $n-1$ 个数，那么 $x=f(n - 1, m)$ 就表示从剩下的 $n-1$ 个数中，每次删除第 $m$ 个，最后剩下的是第几个数字。
 
-当 n 为 1 时，最后留下的数字序号一定为 0。
+我们求得 $x$ 之后，便可以知道 $f(n, m)$ 应该是从 $m \% n$ 开始数的第 $x$ 个元素，即 $f(n, m) = (m \% n + x) \% n$。
+
+当 $n$ 为 $1$ 时，最后留下的数字序号一定为 $0$。
 
 递归求解即可，也可以改成迭代。
 
+时间复杂度 $O(n)$，递归的空间复杂度 $O(n)$，迭代的空间复杂度 $O(1)$。
+
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-递归版本：
+#### Python3
 
 ```python
 class Solution:
@@ -57,10 +73,123 @@ class Solution:
                 return 0
             x = f(n - 1, m)
             return (m + x) % n
+
         return f(n, m)
 ```
 
-迭代版本：
+#### Java
+
+```java
+class Solution {
+    public int lastRemaining(int n, int m) {
+        return f(n, m);
+    }
+
+    private int f(int n, int m) {
+        if (n == 1) {
+            return 0;
+        }
+        int x = f(n - 1, m);
+        return (m + x) % n;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int lastRemaining(int n, int m) {
+        return f(n, m);
+    }
+
+    int f(int n, int m) {
+        if (n == 1) {
+            return 0;
+        }
+        int x = f(n - 1, m);
+        return (m + x) % n;
+    }
+};
+```
+
+#### Go
+
+```go
+func lastRemaining(n int, m int) int {
+	var f func(n, m int) int
+	f = func(n, m int) int {
+		if n == 1 {
+			return 0
+		}
+		x := f(n-1, m)
+		return (m + x) % n
+	}
+	return f(n, m)
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number} n
+ * @param {number} m
+ * @return {number}
+ */
+var lastRemaining = function (n, m) {
+    let f = 0;
+    for (let i = 2; i <= n; ++i) {
+        f = (f + m) % i;
+    }
+    return f;
+};
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int LastRemaining(int n, int m) {
+        int f = 0;
+        for (int i = 2; i < n + 1; i++) {
+            f = (f + m) % i;
+        }
+        return f;
+    }
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func lastRemaining(_ n: Int, _ m: Int) -> Int {
+        return f(n, m)
+    }
+
+    private func f(_ n: Int, _ m: Int) -> Int {
+        if n == 1 {
+            return 0
+        }
+        let x = f(n - 1, m)
+        return (m + x) % n
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start-->
+
+### 方法二
+
+<!-- tabs:start -->
+
+#### Python3
 
 ```python
 class Solution:
@@ -71,9 +200,7 @@ class Solution:
         return f
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -87,25 +214,22 @@ class Solution {
 }
 ```
 
-### **JavaScript**
+#### C++
 
-```js
-/**
- * @param {number} n
- * @param {number} m
- * @return {number}
- */
-var lastRemaining = function (n, m) {
-    // 约瑟夫环
-    let res = 0;
-    for (let i = 1; i <= n; i++) {
-        res = (res + m) % i;
+```cpp
+class Solution {
+public:
+    int lastRemaining(int n, int m) {
+        int f = 0;
+        for (int i = 2; i <= n; ++i) {
+            f = (f + m) % i;
+        }
+        return f;
     }
-    return res;
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func lastRemaining(n int, m int) int {
@@ -117,10 +241,8 @@ func lastRemaining(n int, m int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

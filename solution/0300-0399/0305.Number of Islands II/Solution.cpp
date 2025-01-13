@@ -1,42 +1,62 @@
-class Solution {
+class UnionFind {
 public:
-    vector<int> p;
-    int dirs[4][2] = {{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
-    
-    vector<int> numIslands2(int m, int n, vector<vector<int>>& positions) {
-        p.resize(m * n);
-        for (int i = 0; i < p.size(); ++i) p[i] = i;
-        vector<vector<int>> grid(m, vector<int>(n, 0));
-        vector<int> res;
-        int cur = 0;
-        for (auto position : positions)
-        {
-            int i = position[0], j = position[1];
-            if (grid[i][j] == 1)
-            {
-                res.push_back(cur);
-                continue;
-            }
-            grid[i][j] = 1;
-            ++cur;
-            for (auto e : dirs) {
-                if (check(i + e[0], j + e[1], grid) && find(i * n + j) != find((i + e[0]) * n + j + e[1]))
-                {
-                    p[find(i * n + j)] = find((i + e[0]) * n + j + e[1]);
-                    --cur;
-                }
-            }
-            res.push_back(cur);
-        }
-        return res;
+    UnionFind(int n) {
+        p = vector<int>(n);
+        size = vector<int>(n, 1);
+        iota(p.begin(), p.end(), 0);
     }
 
-    bool check(int i, int j, vector<vector<int>>& grid) {
-        return i >= 0 && i < grid.size() && j >= 0 && j < grid[0].size() && grid[i][j] == 1;
+    bool unite(int a, int b) {
+        int pa = find(a), pb = find(b);
+        if (pa == pb) {
+            return false;
+        }
+        if (size[pa] > size[pb]) {
+            p[pb] = pa;
+            size[pa] += size[pb];
+        } else {
+            p[pa] = pb;
+            size[pb] += size[pa];
+        }
+        return true;
     }
 
     int find(int x) {
-        if (p[x] != x) p[x] = find(p[x]);
+        if (p[x] != x) {
+            p[x] = find(p[x]);
+        }
         return p[x];
+    }
+
+private:
+    vector<int> p, size;
+};
+
+class Solution {
+public:
+    vector<int> numIslands2(int m, int n, vector<vector<int>>& positions) {
+        int grid[m][n];
+        memset(grid, 0, sizeof(grid));
+        UnionFind uf(m * n);
+        int dirs[5] = {-1, 0, 1, 0, -1};
+        int cnt = 0;
+        vector<int> ans;
+        for (auto& p : positions) {
+            int i = p[0], j = p[1];
+            if (grid[i][j]) {
+                ans.push_back(cnt);
+                continue;
+            }
+            grid[i][j] = 1;
+            ++cnt;
+            for (int k = 0; k < 4; ++k) {
+                int x = i + dirs[k], y = j + dirs[k + 1];
+                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] && uf.unite(i * n + j, x * n + y)) {
+                    --cnt;
+                }
+            }
+            ans.push_back(cnt);
+        }
+        return ans;
     }
 };

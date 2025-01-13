@@ -1,81 +1,161 @@
-# [面试题 56 - I. 数组中数字出现的次数](https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9856%20-%20I.%20%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 56 - I. 数组中数字出现的次数](https://leetcode.cn/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/)
 
 ## 题目描述
 
-一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是 O(n)，空间复杂度是 O(1)。
+<!-- description:start -->
 
-**示例 1：**
+<p>一个整型数组 <code>nums</code> 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。</p>
 
-```
-输入：nums = [4,1,4,6]
-输出：[1,6] 或 [6,1]
-```
+<p>&nbsp;</p>
 
-**示例 2：**
+<p><strong>示例 1：</strong></p>
 
-```
-输入：nums = [1,2,10,4,1,4,3,3]
-输出：[2,10] 或 [10,2]
-```
+<pre><strong>输入：</strong>nums = [4,1,4,6]
+<strong>输出：</strong>[1,6] 或 [6,1]
+</pre>
 
-**限制：**
+<p><strong>示例 2：</strong></p>
 
-- `2 <= nums <= 10000`
+<pre><strong>输入：</strong>nums = [1,2,10,4,1,4,3,3]
+<strong>输出：</strong>[2,10] 或 [10,2]</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>限制：</strong></p>
+
+<ul>
+	<li><code>2 &lt;= nums.length &lt;= 10000</code></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<!-- description:end -->
 
 ## 解法
 
-异或运算求解。
+<!-- solution:start -->
 
-首先明确，两个相同的数异或之后的结果为 0。对该数组所有元素进行异或运算，结果就是**两个只出现一次的数字异或的结果**，即 `eor = a ^ b`
+### 方法一：位运算
 
-找出这个结果 eor 中最后一个二进制位为 1 而其余位为 0 的数，即 `eor & (~eor + 1)`，之后遍历数组所有元素，二进制位为 0 的元素异或到 a。
+由于数组中除了两个数字之外，其他数字都出现了两次，因此对数组中的所有数字进行异或运算，得到的结果即为两个只出现一次的数字的异或结果。
 
-遍历结束后 `b = eor ^ a`，返回结果即可。
+由于这两个数字不相等，因此异或结果中至少存在一位为 $1$。我们通过 `lowbit` 运算找到异或结果中最低位的 $1$，并将数组中的所有数字按照该位是否为 $1$ 分为两组，这样两个只出现一次的数字就被分到了不同的组中。
+
+对两个组分别进行异或运算，即可得到两个只出现一次的数字。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def singleNumbers(self, nums: List[int]) -> List[int]:
-        eor = 0
-        for num in nums:
-            eor ^= num
-        # 找出最右边的 1
-        diff = eor & (~eor + 1)
+        xs = reduce(xor, nums)
         a = 0
-        for num in nums:
-            if (num & diff) == 0:
-                a ^= num
-        b = eor ^ a
+        lb = xs & -xs
+        for x in nums:
+            if x & lb:
+                a ^= x
+        b = xs ^ a
         return [a, b]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int[] singleNumbers(int[] nums) {
-        int eor = 0;
-        for (int num : nums) {
-            eor ^= num;
+        int xs = 0;
+        for (int x : nums) {
+            xs ^= x;
         }
-        // # 找出最右边的 1
-        int diff = eor & (~eor + 1);
+        int lb = xs & -xs;
         int a = 0;
-        for (int num : nums) {
-            if ((num & diff) == 0) {
-                a ^= num;
+        for (int x : nums) {
+            if ((x & lb) != 0) {
+                a ^= x;
             }
         }
-        int b = eor ^ a;
-        return new int[]{a, b};
+        int b = xs ^ a;
+        return new int[] {a, b};
     }
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    vector<int> singleNumbers(vector<int>& nums) {
+        int xs = 0;
+        for (int& x : nums) {
+            xs ^= x;
+        }
+        int lb = xs & -xs;
+        int a = 0;
+        for (int& x : nums) {
+            if (x & lb) {
+                a ^= x;
+            }
+        }
+        int b = xs ^ a;
+        return {a, b};
+    }
+};
+```
+
+#### Go
+
+```go
+func singleNumbers(nums []int) []int {
+	xs := 0
+	for _, x := range nums {
+		xs ^= x
+	}
+	lb := xs & -xs
+	a := 0
+	for _, x := range nums {
+		if x&lb != 0 {
+			a ^= x
+		}
+	}
+	b := xs ^ a
+	return []int{a, b}
+}
+```
+
+#### TypeScript
+
+```ts
+function singleNumbers(nums: number[]): number[] {
+    let xs = 0;
+    for (const x of nums) {
+        xs ^= x;
+    }
+    const lb = xs & -xs;
+    let a = 0;
+    for (const x of nums) {
+        if (x & lb) {
+            a ^= x;
+        }
+    }
+    const b = xs ^ a;
+    return [a, b];
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -83,26 +163,70 @@ class Solution {
  * @return {number[]}
  */
 var singleNumbers = function (nums) {
-    let eor = 0;
-    for (let num of nums) {
-        eor ^= num;
+    let xs = 0;
+    for (const x of nums) {
+        xs ^= x;
     }
-    const diff = eor & (~eor + 1);
+    const lb = xs & -xs;
     let a = 0;
-    for (let num of nums) {
-        if ((num & diff) == 0) {
-            a ^= num;
+    for (const x of nums) {
+        if (x & lb) {
+            a ^= x;
         }
     }
-    let b = eor ^ a;
+    const b = xs ^ a;
     return [a, b];
 };
 ```
 
-### **...**
+#### C#
 
+```cs
+public class Solution {
+    public int[] SingleNumbers(int[] nums) {
+        int xs = 0;
+        foreach(int x in nums) {
+            xs ^= x;
+        }
+        int lb = xs & - xs;
+        int a = 0;
+        foreach(int x in nums) {
+            if ((x & lb) != 0) {
+                a ^= x;
+            }
+        }
+        int b = xs ^ a;
+        return new int[] {a, b};
+    }
+}
 ```
 
+#### Swift
+
+```swift
+class Solution {
+    func singleNumbers(_ nums: [Int]) -> [Int] {
+        var xorSum = 0
+        for num in nums {
+            xorSum ^= num
+        }
+
+        let lowBit = xorSum & -xorSum
+        var a = 0
+        for num in nums {
+            if (num & lowBit) != 0 {
+                a ^= num
+            }
+        }
+
+        let b = xorSum ^ a
+        return [a, b]
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

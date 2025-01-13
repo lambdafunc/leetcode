@@ -4,18 +4,18 @@
  * @return {boolean}
  */
 var carPooling = function (trips, capacity) {
-    let delta = new Array();
-    for (let trip of trips) {
-        let [num, start, end] = trip;
-        delta[start] = (delta[start] || 0) + num;
-        delta[end] = (delta[end] || 0) - num;
+    const mx = Math.max(...trips.map(([, , t]) => t));
+    const d = Array(mx + 1).fill(0);
+    for (const [x, f, t] of trips) {
+        d[f] += x;
+        d[t] -= x;
     }
-    let total = 0;
-    for (let i = 0; i < delta.length; i++) {
-        let cur = delta[i];
-        if (cur == undefined) continue;
-        total += cur;
-        if (total > capacity) return false;
+    let s = 0;
+    for (const x of d) {
+        s += x;
+        if (s > capacity) {
+            return false;
+        }
     }
     return true;
 };

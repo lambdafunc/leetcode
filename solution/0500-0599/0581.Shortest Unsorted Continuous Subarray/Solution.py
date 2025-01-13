@@ -1,10 +1,9 @@
 class Solution:
     def findUnsortedSubarray(self, nums: List[int]) -> int:
-        n = len(nums)
-        numsSorted = sorted(nums)
-        left, right = 0, n - 1
-        while left < n and nums[left] == numsSorted[left]:
-            left += 1
-        while right >= 0 and nums[right] == numsSorted[right]:
-            right -= 1
-        return 0 if right == -1 else right - left + 1
+        arr = sorted(nums)
+        l, r = 0, len(nums) - 1
+        while l <= r and nums[l] == arr[l]:
+            l += 1
+        while l <= r and nums[r] == arr[r]:
+            r -= 1
+        return r - l + 1

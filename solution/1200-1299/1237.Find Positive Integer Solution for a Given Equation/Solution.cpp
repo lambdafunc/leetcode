@@ -13,21 +13,21 @@
 class Solution {
 public:
     vector<vector<int>> findSolution(CustomFunction& customfunction, int z) {
-        vector<vector<int>> res;
-        for (int i = 1; i <= 1000; ++i) {
-            int left = 1, right = 1000;
-            while (left < right) {
-                int mid = left + right >> 1;
-                if (customfunction.f(i, mid) >= z) {
-                    right = mid;
+        vector<vector<int>> ans;
+        for (int x = 1; x <= 1000; ++x) {
+            int l = 1, r = 1000;
+            while (l < r) {
+                int mid = (l + r) >> 1;
+                if (customfunction.f(x, mid) >= z) {
+                    r = mid;
                 } else {
-                    left = mid + 1;
+                    l = mid + 1;
                 }
             }
-            if (customfunction.f(i, left) == z) {
-                res.push_back({i, left});
+            if (customfunction.f(x, l) == z) {
+                ans.push_back({x, l});
             }
         }
-        return res;
+        return ans;
     }
 };

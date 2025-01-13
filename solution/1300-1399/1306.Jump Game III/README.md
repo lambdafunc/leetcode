@@ -1,10 +1,24 @@
-# [1306. 跳跃游戏 III](https://leetcode-cn.com/problems/jump-game-iii)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1306.Jump%20Game%20III/README.md
+rating: 1396
+source: 第 169 场周赛 Q3
+tags:
+    - 深度优先搜索
+    - 广度优先搜索
+    - 数组
+---
+
+<!-- problem:start -->
+
+# [1306. 跳跃游戏 III](https://leetcode.cn/problems/jump-game-iii)
 
 [English Version](/solution/1300-1399/1306.Jump%20Game%20III/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>这里有一个非负整数数组&nbsp;<code>arr</code>，你最开始位于该数组的起始下标&nbsp;<code>start</code>&nbsp;处。当你位于下标&nbsp;<code>i</code>&nbsp;处时，你可以跳到&nbsp;<code>i + arr[i]</code> 或者 <code>i - arr[i]</code>。</p>
 
@@ -50,32 +64,139 @@
 	<li><code>0 &lt;= start &lt; arr.length</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：BFS
+
+我们可以使用 BFS 来判断是否能够到达值为 $0$ 的下标。
+
+定义一个队列 $q$，用于存储当前能够到达的下标。初始时，将 $start$ 下标入队。
+
+当队列不为空时，取出队首下标 $i$，如果 $arr[i] = 0$，则返回 `true`。否则，我们将下标 $i$ 标记为已访问，如果 $i + arr[i]$ 和 $i - arr[i]$ 在数组范围内且未被访问过，则将其入队，继续搜索。
+
+最后，如果队列为空，说明无法到达值为 $0$ 的下标，返回 `false`。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为数组长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def canReach(self, arr: List[int], start: int) -> bool:
+        q = deque([start])
+        while q:
+            i = q.popleft()
+            if arr[i] == 0:
+                return True
+            x = arr[i]
+            arr[i] = -1
+            for j in (i + x, i - x):
+                if 0 <= j < len(arr) and arr[j] >= 0:
+                    q.append(j)
+        return False
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public boolean canReach(int[] arr, int start) {
+        Deque<Integer> q = new ArrayDeque<>();
+        q.offer(start);
+        while (!q.isEmpty()) {
+            int i = q.poll();
+            if (arr[i] == 0) {
+                return true;
+            }
+            int x = arr[i];
+            arr[i] = -1;
+            for (int j : List.of(i + x, i - x)) {
+                if (j >= 0 && j < arr.length && arr[j] >= 0) {
+                    q.offer(j);
+                }
+            }
+        }
+        return false;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    bool canReach(vector<int>& arr, int start) {
+        queue<int> q{{start}};
+        while (!q.empty()) {
+            int i = q.front();
+            q.pop();
+            if (arr[i] == 0) {
+                return true;
+            }
+            int x = arr[i];
+            arr[i] = -1;
+            for (int j : {i + x, i - x}) {
+                if (j >= 0 && j < arr.size() && ~arr[j]) {
+                    q.push(j);
+                }
+            }
+        }
+        return false;
+    }
+};
 ```
 
+#### Go
+
+```go
+func canReach(arr []int, start int) bool {
+	q := []int{start}
+	for len(q) > 0 {
+		i := q[0]
+		q = q[1:]
+		if arr[i] == 0 {
+			return true
+		}
+		x := arr[i]
+		arr[i] = -1
+		for _, j := range []int{i + x, i - x} {
+			if j >= 0 && j < len(arr) && arr[j] >= 0 {
+				q = append(q, j)
+			}
+		}
+	}
+	return false
+}
+```
+
+#### TypeScript
+
+```ts
+function canReach(arr: number[], start: number): boolean {
+    const q = [start];
+    for (const i of q) {
+        if (arr[i] === 0) {
+            return true;
+        }
+        if (arr[i] === -1 || arr[i] === undefined) {
+            continue;
+        }
+        q.push(i + arr[i], i - arr[i]);
+        arr[i] = -1;
+    }
+    return false;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -5,19 +5,18 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def verticalOrder(self, root: TreeNode) -> List[List[int]]:
-        if root is None:
-            return []
-        q = deque([(root, 0)])
-        offset_vals = defaultdict(list)
-        while q:
-            node, offset = q.popleft()
-            offset_vals[offset].append(node.val)
-            if node.left:
-                q.append((node.left, offset - 1))
-            if node.right:
-                q.append((node.right, offset + 1))
-        res = []
-        for _, vals in sorted(offset_vals.items(), key=lambda x: x[0]):
-            res.append(vals)
-        return res
+    def verticalOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        def dfs(root, depth, offset):
+            if root is None:
+                return
+            d[offset].append((depth, root.val))
+            dfs(root.left, depth + 1, offset - 1)
+            dfs(root.right, depth + 1, offset + 1)
+
+        d = defaultdict(list)
+        dfs(root, 0, 0)
+        ans = []
+        for _, v in sorted(d.items()):
+            v.sort(key=lambda x: x[0])
+            ans.append([x[1] for x in v])
+        return ans

@@ -1,13 +1,12 @@
-func getSumAbsoluteDifferences(nums []int) []int {
-	n := len(nums)
-	presum := make([]int, n+1)
-	for i := 0; i < n; i++ {
-		presum[i+1] = presum[i] + nums[i]
+func getSumAbsoluteDifferences(nums []int) (ans []int) {
+	var s, t int
+	for _, x := range nums {
+		s += x
 	}
-	var res []int
-	for i := 0; i < n; i++ {
-		t := nums[i]*i - presum[i] + presum[n] - presum[i+1] - nums[i]*(n-i-1)
-		res = append(res, t)
+	for i, x := range nums {
+		v := x*i - t + s - t - x*(len(nums)-i)
+		ans = append(ans, v)
+		t += x
 	}
-	return res
+	return
 }

@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1807.Evaluate%20the%20Bracket%20Pairs%20of%20a%20String/README_EN.md
+rating: 1481
+source: Weekly Contest 234 Q3
+tags:
+    - Array
+    - Hash Table
+    - String
+---
+
+<!-- problem:start -->
+
 # [1807. Evaluate the Bracket Pairs of a String](https://leetcode.com/problems/evaluate-the-bracket-pairs-of-a-string)
 
 [中文文档](/solution/1800-1899/1807.Evaluate%20the%20Bracket%20Pairs%20of%20a%20String/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a string <code>s</code> that contains some bracket pairs, with each pair containing a <strong>non-empty</strong> key.</p>
 
@@ -24,7 +40,7 @@
 <p>Return <em>the resulting string after evaluating <strong>all</strong> of the bracket pairs.</em></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;(name)is(age)yearsold&quot;, knowledge = [[&quot;name&quot;,&quot;bob&quot;],[&quot;age&quot;,&quot;two&quot;]]
@@ -34,7 +50,7 @@ The key &quot;name&quot; has a value of &quot;bob&quot;, so replace &quot;(name)
 The key &quot;age&quot; has a value of &quot;two&quot;, so replace &quot;(age)&quot; with &quot;two&quot;.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;hi(name)&quot;, knowledge = [[&quot;a&quot;,&quot;b&quot;]]
@@ -42,7 +58,7 @@ The key &quot;age&quot; has a value of &quot;two&quot;, so replace &quot;(age)&q
 <strong>Explanation:</strong> As you do not know the value of the key &quot;name&quot;, replace &quot;(name)&quot; with &quot;?&quot;.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;(a)(a)(a)aaa&quot;, knowledge = [[&quot;a&quot;,&quot;yes&quot;]]
@@ -51,12 +67,6 @@ The key &quot;age&quot; has a value of &quot;two&quot;, so replace &quot;(age)&q
 The key &quot;a&quot; has a value of &quot;yes&quot;, so replace all occurrences of &quot;(a)&quot; with &quot;yes&quot;.
 Notice that the &quot;a&quot;s not in a bracket pair are not evaluated.
 </pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> s = &quot;(a)(b)&quot;, knowledge = [[&quot;a&quot;,&quot;b&quot;],[&quot;b&quot;,&quot;a&quot;]]
-<strong>Output:</strong> &quot;ba&quot;</pre>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
@@ -74,74 +84,182 @@ Notice that the &quot;a&quot;s not in a bracket pair are not evaluated.
 	<li>Each <code>key<sub>i</sub></code> in <code>knowledge</code> is unique.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Hash Table + Simulation
+
+First, we use a hash table $d$ to record the key-value pairs in `knowledge`.
+
+Then we traverse the string $s$. If the current character is an open parenthesis `'('`, we start traversing from the current position until we encounter a close parenthesis `')'`. At this point, the string within the parentheses is the key. We look for the corresponding value of this key in the hash table $d$. If found, we replace the value within the parentheses with it, otherwise, we replace it with `'?'`.
+
+The time complexity is $O(n + m)$, and the space complexity is $O(L)$. Here, $n$ and $m$ are the lengths of the string $s$ and the list `knowledge` respectively, and $L$ is the sum of the lengths of all strings in `knowledge`.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def evaluate(self, s: str, knowledge: List[List[str]]) -> str:
-        def find_right_bracket(s, start, end):
-            for i in range(start, end):
-                if s[i] == ')':
-                    return i
-        knowledge_dict = {item[0]: item[1] for item in knowledge}
-        res, n = [], len(s)
-        i = 0
+        d = {a: b for a, b in knowledge}
+        i, n = 0, len(s)
+        ans = []
         while i < n:
             if s[i] == '(':
-                right_bracket_pos = find_right_bracket(s, i + 1, n)
-                key = s[i + 1: right_bracket_pos]
-                res.append(knowledge_dict.get(key, '?'))
-                i = right_bracket_pos + 1
+                j = s.find(')', i + 1)
+                ans.append(d.get(s[i + 1 : j], '?'))
+                i = j
             else:
-                res.append(s[i])
-                i += 1
-        return ''.join(res)
+                ans.append(s[i])
+            i += 1
+        return ''.join(ans)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public String evaluate(String s, List<List<String>> knowledge) {
-        Map<String, String> knowledgeDict = new HashMap<>();
-        for (List<String> item : knowledge) {
-            knowledgeDict.put(item.get(0), item.get(1));
+        Map<String, String> d = new HashMap<>(knowledge.size());
+        for (var e : knowledge) {
+            d.put(e.get(0), e.get(1));
         }
-        StringBuilder res = new StringBuilder();
-        int i = 0, n = s.length();
-        while (i < n) {
+        StringBuilder ans = new StringBuilder();
+        for (int i = 0; i < s.length(); ++i) {
             if (s.charAt(i) == '(') {
-                int rightBracketPos = findRightBracket(s, i + 1, n);
-                String key = s.substring(i + 1, rightBracketPos);
-                res.append(knowledgeDict.getOrDefault(key, "?"));
-                i = rightBracketPos + 1;
+                int j = s.indexOf(')', i + 1);
+                ans.append(d.getOrDefault(s.substring(i + 1, j), "?"));
+                i = j;
             } else {
-                res.append(s.charAt(i));
-                i += 1;
+                ans.append(s.charAt(i));
             }
         }
-        return res.toString();
-    }
-
-    private int findRightBracket(String s, int start, int end) {
-        for (int i =  start; i < end; ++i) {
-            if (s.charAt(i) == ')') {
-                return i;
-            }
-        }
-        return -1;
+        return ans.toString();
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    string evaluate(string s, vector<vector<string>>& knowledge) {
+        unordered_map<string, string> d;
+        for (auto& e : knowledge) {
+            d[e[0]] = e[1];
+        }
+        string ans;
+        for (int i = 0; i < s.size(); ++i) {
+            if (s[i] == '(') {
+                int j = s.find(")", i + 1);
+                auto t = s.substr(i + 1, j - i - 1);
+                ans += d.count(t) ? d[t] : "?";
+                i = j;
+            } else {
+                ans += s[i];
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func evaluate(s string, knowledge [][]string) string {
+	d := map[string]string{}
+	for _, v := range knowledge {
+		d[v[0]] = v[1]
+	}
+	var ans strings.Builder
+	for i := 0; i < len(s); i++ {
+		if s[i] == '(' {
+			j := i + 1
+			for s[j] != ')' {
+				j++
+			}
+			if v, ok := d[s[i+1:j]]; ok {
+				ans.WriteString(v)
+			} else {
+				ans.WriteByte('?')
+			}
+			i = j
+		} else {
+			ans.WriteByte(s[i])
+		}
+	}
+	return ans.String()
+}
+```
+
+#### TypeScript
+
+```ts
+function evaluate(s: string, knowledge: string[][]): string {
+    const n = s.length;
+    const map = new Map();
+    for (const [k, v] of knowledge) {
+        map.set(k, v);
+    }
+    const ans = [];
+    let i = 0;
+    while (i < n) {
+        if (s[i] === '(') {
+            const j = s.indexOf(')', i + 1);
+            ans.push(map.get(s.slice(i + 1, j)) ?? '?');
+            i = j;
+        } else {
+            ans.push(s[i]);
+        }
+        i++;
+    }
+    return ans.join('');
+}
+```
+
+#### Rust
+
+```rust
+use std::collections::HashMap;
+impl Solution {
+    pub fn evaluate(s: String, knowledge: Vec<Vec<String>>) -> String {
+        let s = s.as_bytes();
+        let n = s.len();
+        let mut map = HashMap::new();
+        for v in knowledge.iter() {
+            map.insert(&v[0], &v[1]);
+        }
+        let mut ans = String::new();
+        let mut i = 0;
+        while i < n {
+            if s[i] == b'(' {
+                i += 1;
+                let mut j = i;
+                let mut key = String::new();
+                while s[j] != b')' {
+                    key.push(s[j] as char);
+                    j += 1;
+                }
+                ans.push_str(map.get(&key).unwrap_or(&&'?'.to_string()));
+                i = j;
+            } else {
+                ans.push(s[i] as char);
+            }
+            i += 1;
+        }
+        ans
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

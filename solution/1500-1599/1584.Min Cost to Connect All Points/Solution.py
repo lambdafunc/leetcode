@@ -1,27 +1,24 @@
 class Solution:
     def minCostConnectPoints(self, points: List[List[int]]) -> int:
         n = len(points)
-        p = list(range(n))
-
-        def find(x):
-            if p[x] != x:
-                p[x] = find(p[x])
-            return p[x]
-
-        edges = []
-        for i in range(n):
-            x1, y1 = points[i]
+        g = [[0] * n for _ in range(n)]
+        dist = [inf] * n
+        vis = [False] * n
+        for i, (x1, y1) in enumerate(points):
             for j in range(i + 1, n):
                 x2, y2 = points[j]
-                edges.append([abs(x1 - x2) + abs(y1 - y2), i, j])
-        edges.sort()
-        res = 0
-        for cost, i, j in edges:
-            if find(i) == find(j):
-                continue
-            p[find(i)] = find(j)
-            n -= 1
-            res += cost
-            if n == 1:
-                return res
-        return 0
+                t = abs(x1 - x2) + abs(y1 - y2)
+                g[i][j] = g[j][i] = t
+        dist[0] = 0
+        ans = 0
+        for _ in range(n):
+            i = -1
+            for j in range(n):
+                if not vis[j] and (i == -1 or dist[j] < dist[i]):
+                    i = j
+            vis[i] = True
+            ans += dist[i]
+            for j in range(n):
+                if not vis[j]:
+                    dist[j] = min(dist[j], g[i][j])
+        return ans

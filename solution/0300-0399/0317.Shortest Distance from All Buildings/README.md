@@ -1,65 +1,90 @@
-# [317. 离建筑物最近的距离](https://leetcode-cn.com/problems/shortest-distance-from-all-buildings)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0317.Shortest%20Distance%20from%20All%20Buildings/README.md
+tags:
+    - 广度优先搜索
+    - 数组
+    - 矩阵
+---
+
+<!-- problem:start -->
+
+# [317. 离建筑物最近的距离 🔒](https://leetcode.cn/problems/shortest-distance-from-all-buildings)
 
 [English Version](/solution/0300-0399/0317.Shortest%20Distance%20from%20All%20Buildings/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>你是个房地产开发商，想要选择一片<em>空地 </em>建一栋大楼。你想把这栋大楼够造在一个距离周边设施都比较方便的地方，通过调研，你希望从它出发能在&nbsp;<strong>最短的距离和&nbsp;</strong>内抵达周边全部的建筑物。请你计算出这个最佳的选址到周边全部建筑物的&nbsp;<strong>最短距离和</strong>。</p>
-
-<p>&nbsp;</p>
-
-<p><strong>提示：</strong></p>
-
-<p>你只能通过向上、下、左、右四个方向上移动。</p>
-
-<p>给你一个由 0、1 和 2 组成的二维网格，其中：</p>
+<p>给你一个 <code>m × n</code> 的网格，值为 <code>0</code> 、 <code>1</code> 或 <code>2</code> ，其中:</p>
 
 <ul>
-	<li><strong>0</strong>&nbsp;代表你可以自由通过和选择建造的空地</li>
-	<li><strong>1</strong> 代表你无法通行的建筑物</li>
-	<li><strong>2</strong>&nbsp;代表你无法通行的障碍物</li>
+	<li>每一个 <code>0</code> 代表一块你可以自由通过的 <strong>空地</strong>&nbsp;</li>
+	<li>每一个 <code>1</code> 代表一个你不能通过的 <strong>建筑</strong></li>
+	<li>每个 <code>2</code> 标记一个你不能通过的 <strong>障碍</strong>&nbsp;</li>
 </ul>
+
+<p>你想要在一块空地上建造一所房子，在 <strong>最短的总旅行距离</strong> 内到达所有的建筑。你只能上下左右移动。</p>
+
+<p>返回到该房子的 <strong>最短旅行距离</strong> 。如果根据上述规则无法建造这样的房子，则返回 <code>-1</code> 。</p>
+
+<p><strong>总旅行距离&nbsp;</strong>是朋友们家到聚会地点的距离之和。</p>
+
+<p>使用 <strong>曼哈顿距离</strong>&nbsp;计算距离，其中距离 <code>(p1, p2) = |p2.x - p1.x | + | p2.y - p1.y |</code> 。</p>
 
 <p>&nbsp;</p>
 
-<p><strong>示例：</strong></p>
+<p><strong>示例&nbsp; 1：</strong></p>
 
-<pre><strong>输入：</strong>[[1,0,2,0,1],[0,0,0,0,0],[0,0,1,0,0]]
+<p><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0317.Shortest%20Distance%20from%20All%20Buildings/images/buildings-grid.jpg" /></p>
 
-1 - 0 - 2 - 0 - 1
-|   |   |   |   |
-0 - 0 - 0 - 0 - 0
-|   |   |   |   |
-0 - 0 - 1 - 0 - 0
+<pre>
+<strong>输入：</strong>grid = [[1,0,2,0,1],[0,0,0,0,0],[0,0,1,0,0]]
 <strong>输出：</strong>7 
-<strong>解析：
-</strong>给定<code>三个建筑物 (0,0)、</code><code>(0,4) 和</code> <code>(2,2) 以及一个</code>位于 <code>(0,2) 的障碍物。
-由于总距离之和 3+3+1=7 最优，所以位置</code> <code>(1,2)</code> 是符合要求的最优地点，故返回7。
+<strong>解析：</strong>给定<code>三个建筑物 (0,0)、</code><code>(0,4) 和</code> <code>(2,2) 以及一个</code>位于 <code>(0,2) 的障碍物。
+由于总距离之和 3+3+1=7 最优，所以位置</code> <code>(1,2)</code> 是符合要求的最优地点。
+故返回7。
+</pre>
+
+<p><strong>示例&nbsp;2:</strong></p>
+
+<pre>
+<strong>输入:</strong> grid = [[1,0]]
+<strong>输出:</strong> 1
+</pre>
+
+<p><strong>示例 3:</strong></p>
+
+<pre>
+<strong>输入:</strong> grid = [[1]]
+<strong>输出:</strong> -1
 </pre>
 
 <p>&nbsp;</p>
 
-<p><strong>注意：</strong></p>
+<p><strong>提示:</strong></p>
 
 <ul>
-	<li>题目数据保证至少存在一栋建筑物，如果无法按照上述规则返回建房地点，则请你返回&nbsp;-1。</li>
+	<li><code>m == grid.length</code></li>
+	<li><code>n == grid[i].length</code></li>
+	<li><code>1 &lt;= m, n &lt;= 50</code></li>
+	<li><code>grid[i][j]</code>&nbsp;是&nbsp;<code>0</code>,&nbsp;<code>1</code>&nbsp;或&nbsp;<code>2</code></li>
+	<li><code>grid</code>&nbsp;中 <strong>至少</strong>&nbsp;有 <strong>一幢</strong> 建筑</li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-BFS。
-
-记 total 变量表示建筑物（`grid[i][j] = 1`）的个数，`cnt[i][j]` 表示空地 `(i, j)` 上能到达的建筑物数量；`dist[i][j]` 表示空地 `(i, j)` 到每个建筑物的距离之和。求解的是满足 `cnt[i][j] == total` 的空地距离和的最小值。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -78,26 +103,29 @@ class Solution:
                     vis = set()
                     while q:
                         d += 1
-                        for _ in range(len(q), 0, -1):
+                        for _ in range(len(q)):
                             r, c = q.popleft()
                             for a, b in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
                                 x, y = r + a, c + b
-                                if 0 <= x < m and 0 <= y < n and grid[x][y] == 0 and (x, y) not in vis:
+                                if (
+                                    0 <= x < m
+                                    and 0 <= y < n
+                                    and grid[x][y] == 0
+                                    and (x, y) not in vis
+                                ):
                                     cnt[x][y] += 1
                                     dist[x][y] += d
                                     q.append((x, y))
                                     vis.add((x, y))
-        ans = float('inf')
+        ans = inf
         for i in range(m):
             for j in range(n):
                 if grid[i][j] == 0 and cnt[i][j] == total:
                     ans = min(ans, dist[i][j])
-        return -1 if ans == float('inf') else ans
+        return -1 if ans == inf else ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -113,7 +141,7 @@ class Solution {
             for (int j = 0; j < n; ++j) {
                 if (grid[i][j] == 1) {
                     ++total;
-                    q.offer(new int[]{i, j});
+                    q.offer(new int[] {i, j});
                     int d = 0;
                     boolean[][] vis = new boolean[m][n];
                     while (!q.isEmpty()) {
@@ -123,10 +151,11 @@ class Solution {
                             for (int l = 0; l < 4; ++l) {
                                 int x = p[0] + dirs[l];
                                 int y = p[1] + dirs[l + 1];
-                                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 0 && !vis[x][y]) {
+                                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 0
+                                    && !vis[x][y]) {
                                     ++cnt[x][y];
                                     dist[x][y] += d;
-                                    q.offer(new int[]{x, y});
+                                    q.offer(new int[] {x, y});
                                     vis[x][y] = true;
                                 }
                             }
@@ -148,7 +177,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -162,29 +191,22 @@ public:
         vector<vector<int>> cnt(m, vector<int>(n));
         vector<vector<int>> dist(m, vector<int>(n));
         vector<int> dirs = {-1, 0, 1, 0, -1};
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (grid[i][j] == 1)
-                {
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j] == 1) {
                     ++total;
                     q.push({i, j});
                     vector<vector<bool>> vis(m, vector<bool>(n));
                     int d = 0;
-                    while (!q.empty())
-                    {
+                    while (!q.empty()) {
                         ++d;
-                        for (int k = q.size(); k > 0; --k)
-                        {
+                        for (int k = q.size(); k > 0; --k) {
                             auto p = q.front();
                             q.pop();
-                            for (int l = 0; l < 4; ++l)
-                            {
+                            for (int l = 0; l < 4; ++l) {
                                 int x = p.first + dirs[l];
                                 int y = p.second + dirs[l + 1];
-                                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 0 && !vis[x][y])
-                                {
+                                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 0 && !vis[x][y]) {
                                     ++cnt[x][y];
                                     dist[x][y] += d;
                                     q.push({x, y});
@@ -206,7 +228,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func shortestDistance(grid [][]int) int {
@@ -264,10 +286,8 @@ func shortestDistance(grid [][]int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

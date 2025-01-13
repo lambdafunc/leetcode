@@ -1,8 +1,29 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1728.Cat%20and%20Mouse%20II/README_EN.md
+rating: 2849
+source: Weekly Contest 224 Q4
+tags:
+    - Graph
+    - Topological Sort
+    - Memoization
+    - Array
+    - Math
+    - Dynamic Programming
+    - Game Theory
+    - Matrix
+---
+
+<!-- problem:start -->
+
 # [1728. Cat and Mouse II](https://leetcode.com/problems/cat-and-mouse-ii)
 
 [中文文档](/solution/1700-1799/1728.Cat%20and%20Mouse%20II/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A game is played by a cat and a mouse named Cat and Mouse.</p>
 
@@ -38,44 +59,26 @@
 <p>Given a <code>rows x cols</code> matrix <code>grid</code> and two integers <code>catJump</code> and <code>mouseJump</code>, return <code>true</code><em> if Mouse can win the game if both Cat and Mouse play optimally, otherwise return </em><code>false</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1700-1799/1728.Cat%20and%20Mouse%20II/images/sample_111_1955.png" style="width: 580px; height: 239px;" /></strong></p>
-
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1700-1799/1728.Cat%20and%20Mouse%20II/images/sample_111_1955.png" style="width: 580px; height: 239px;" />
 <pre>
 <strong>Input:</strong> grid = [&quot;####F&quot;,&quot;#C...&quot;,&quot;M....&quot;], catJump = 1, mouseJump = 2
 <strong>Output:</strong> true
 <strong>Explanation:</strong> Cat cannot catch Mouse on its turn nor can it get the food before Mouse.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1700-1799/1728.Cat%20and%20Mouse%20II/images/sample_2_1955.png" style="width: 580px; height: 175px;" /></p>
-
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1700-1799/1728.Cat%20and%20Mouse%20II/images/sample_2_1955.png" style="width: 580px; height: 175px;" />
 <pre>
 <strong>Input:</strong> grid = [&quot;M.C...F&quot;], catJump = 1, mouseJump = 4
 <strong>Output:</strong> true
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> grid = [&quot;M.C...F&quot;], catJump = 1, mouseJump = 3
 <strong>Output:</strong> false
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> grid = [&quot;C...#&quot;,&quot;...#F&quot;,&quot;....#&quot;,&quot;M....&quot;], catJump = 2, mouseJump = 5
-<strong>Output:</strong> false
-</pre>
-
-<p><strong>Example 5:</strong></p>
-
-<pre>
-<strong>Input:</strong> grid = [&quot;.M...&quot;,&quot;..#..&quot;,&quot;#..#.&quot;,&quot;C#.#.&quot;,&quot;...#F&quot;], catJump = 3, mouseJump = 1
-<strong>Output:</strong> true
 </pre>
 
 <p>&nbsp;</p>
@@ -90,26 +93,93 @@
 	<li><code>1 &lt;= catJump, mouseJump &lt;= 8</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
+class Solution:
+    def canMouseWin(self, grid: List[str], catJump: int, mouseJump: int) -> bool:
+        dirs = [0, 1, 0, -1, 0]
+        m = len(grid)
+        n = len(grid[0])
+        nFloors = 0
+        cat = 0  # cat's position
+        mouse = 0  # mouse's position
 
-```
+        def hash(i: int, j: int) -> int:
+            return i * n + j
 
-### **Java**
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] != "#":
+                    nFloors += 1
+                if grid[i][j] == "C":
+                    cat = hash(i, j)
+                elif grid[i][j] == "M":
+                    mouse = hash(i, j)
 
-```java
+        # dp(i, j, k) := True if mouse can win w//
+        # Cat on (i // 8, i % 8), mouse on (j // 8, j % 8), and turns = k
+        @functools.lru_cache(None)
+        def dp(cat: int, mouse: int, turn: int) -> bool:
+            # We already search whole touchable grid
+            if turn == nFloors * 2:
+                return False
 
-```
+            if turn % 2 == 0:
+                # mouse's turn
+                i = mouse // n
+                j = mouse % n
+                for k in range(4):
+                    for jump in range(mouseJump + 1):
+                        x = i + dirs[k] * jump
+                        y = j + dirs[k + 1] * jump
+                        if x < 0 or x == m or y < 0 or y == n:
+                            break
+                        if grid[x][y] == "#":
+                            break
+                        if grid[x][y] == "F":  # Mouse eats the food, so mouse win
+                            return True
+                        if dp(cat, hash(x, y), turn + 1):
+                            return True
+                # Mouse can't win, so mouse lose
+                return False
+            else:
+                # cat's turn
+                i = cat // n
+                j = cat % n
+                for k in range(4):
+                    for jump in range(catJump + 1):
+                        x = i + dirs[k] * jump
+                        y = j + dirs[k + 1] * jump
+                        if x < 0 or x == m or y < 0 or y == n:
+                            break
+                        if grid[x][y] == "#":
+                            break
+                        if grid[x][y] == "F":  # Cat eats the food, so mouse lose
+                            return False
+                        nextCat = hash(x, y)
+                        if nextCat == mouse:  # Cat catches mouse, so mouse lose
+                            return False
+                        if not dp(nextCat, mouse, turn + 1):
+                            return False
+                # Cat can't win, so mouse win
+                return True
 
-### **...**
-
-```
-
+        return dp(cat, mouse, 0)
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

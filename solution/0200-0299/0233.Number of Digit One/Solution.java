@@ -1,17 +1,30 @@
 class Solution {
+    private int m;
+    private char[] s;
+    private Integer[][] f;
+
     public int countDigitOne(int n) {
-        int index = 1;
-        int count = 0;
-        int high = n,cur = 0,low = 0;
-        while(high > 0){
-            high /= 10;
-            cur = (n / index) % 10;
-            low = n - (n / index) * index;
-            if(cur == 0) count += high * index;
-            if(cur == 1) count += high * index + low + 1;
-            if(cur > 1) count += (high+1) * index;
-            index *= 10;
+        s = String.valueOf(n).toCharArray();
+        m = s.length;
+        f = new Integer[m][m];
+        return dfs(0, 0, true);
+    }
+
+    private int dfs(int i, int cnt, boolean limit) {
+        if (i >= m) {
+            return cnt;
         }
-        return count;
+        if (!limit && f[i][cnt] != null) {
+            return f[i][cnt];
+        }
+        int up = limit ? s[i] - '0' : 9;
+        int ans = 0;
+        for (int j = 0; j <= up; ++j) {
+            ans += dfs(i + 1, cnt + (j == 1 ? 1 : 0), limit && j == up);
+        }
+        if (!limit) {
+            f[i][cnt] = ans;
+        }
+        return ans;
     }
 }

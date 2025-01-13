@@ -1,9 +1,10 @@
 class Solution:
     def validateStackSequences(self, pushed: List[int], popped: List[int]) -> bool:
-        stk, j, n = [], 0, len(popped)
+        stk = []
+        i = 0
         for x in pushed:
             stk.append(x)
-            while stk and j < n and stk[-1] == popped[j]:
+            while stk and stk[-1] == popped[i]:
                 stk.pop()
-                j += 1
-        return j == n
+                i += 1
+        return i == len(popped)

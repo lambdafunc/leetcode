@@ -1,10 +1,23 @@
-# [1629. 按键持续时间最长的键](https://leetcode-cn.com/problems/slowest-key)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1629.Slowest%20Key/README.md
+rating: 1315
+source: 第 212 场周赛 Q1
+tags:
+    - 数组
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1629. 按键持续时间最长的键](https://leetcode.cn/problems/slowest-key)
 
 [English Version](/solution/1600-1699/1629.Slowest%20Key/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>LeetCode 设计了一款新式键盘，正在测试其可用性。测试人员将会点击一系列键（总计 <code>n</code> 个），每次一个。</p>
 
@@ -14,9 +27,9 @@
 
 <p>注意，测试期间，同一个键可以在不同时刻被多次按下，而每次的持续时间都可能不同。</p>
 
-<p>请返回按键 <strong>持续时间最长</strong> 的键，如果有多个这样的键，则返回 <strong>按字母顺序排列最大</strong> 的那个键。</p>
+<p>请返回单次按键 <strong>持续时间最长</strong> 的键，如果有多个这样的键，则返回 <strong>按字母顺序排列最大</strong> 的那个键。</p>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
@@ -45,28 +58,30 @@
 按下 'a' ，持续时间 62 - 46 = 16
 按键持续时间最长的键是 'a' ，持续时间 16</pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
 	<li><code>releaseTimes.length == n</code></li>
 	<li><code>keysPressed.length == n</code></li>
-	<li><code>2 <= n <= 1000</code></li>
-	<li><code>1 <= releaseTimes[i] <= 10<sup>9</sup></code></li>
-	<li><code>releaseTimes[i] < releaseTimes[i+1]</code></li>
+	<li><code>2 &lt;= n &lt;= 1000</code></li>
+	<li><code>1 &lt;= releaseTimes[i] &lt;= 10<sup>9</sup></code></li>
+	<li><code>releaseTimes[i] &lt; releaseTimes[i+1]</code></li>
 	<li><code>keysPressed</code> 仅由小写英文字母组成</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -81,9 +96,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -102,7 +115,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -110,11 +123,9 @@ public:
     char slowestKey(vector<int>& releaseTimes, string keysPressed) {
         char ans = keysPressed[0];
         int mx = releaseTimes[0];
-        for (int i = 1, n = releaseTimes.size(); i < n; ++i)
-        {
+        for (int i = 1, n = releaseTimes.size(); i < n; ++i) {
             int d = releaseTimes[i] - releaseTimes[i - 1];
-            if (d > mx || (d == mx && keysPressed[i] > ans))
-            {
+            if (d > mx || (d == mx && keysPressed[i] > ans)) {
                 mx = d;
                 ans = keysPressed[i];
             }
@@ -124,7 +135,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func slowestKey(releaseTimes []int, keysPressed string) byte {
@@ -141,10 +152,8 @@ func slowestKey(releaseTimes []int, keysPressed string) byte {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

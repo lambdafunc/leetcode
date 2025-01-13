@@ -1,62 +1,68 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0717.1-bit%20and%202-bit%20Characters/README_EN.md
+tags:
+    - Array
+---
+
+<!-- problem:start -->
+
 # [717. 1-bit and 2-bit Characters](https://leetcode.com/problems/1-bit-and-2-bit-characters)
 
 [中文文档](/solution/0700-0799/0717.1-bit%20and%202-bit%20Characters/README.md)
 
 ## Description
 
-<p>We have two special characters. The first character can be represented by one bit <code>0</code>. The second character can be represented by two bits (<code>10</code> or <code>11</code>).  </p>
+<!-- description:start -->
 
-<p>Now given a string represented by several bits. Return whether the last character must be a one-bit character or not. The given string will always end with a zero.</p>
+<p>We have two special characters:</p>
 
-<p><b>Example 1:</b><br />
+<ul>
+	<li>The first character can be represented by one bit <code>0</code>.</li>
+	<li>The second character can be represented by two bits (<code>10</code> or <code>11</code>).</li>
+</ul>
 
-<pre>
+<p>Given a binary array <code>bits</code> that ends with <code>0</code>, return <code>true</code> if the last character must be a one-bit character.</p>
 
-<b>Input:</b> 
-
-bits = [1, 0, 0]
-
-<b>Output:</b> True
-
-<b>Explanation:</b> 
-
-The only way to decode it is two-bit character and one-bit character. So the last character is one-bit character.
-
-</pre>
-
-</p>
-
-<p><b>Example 2:</b><br />
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
-<b>Input:</b> 
-
-bits = [1, 1, 1, 0]
-
-<b>Output:</b> False
-
-<b>Explanation:</b> 
-
-The only way to decode it is two-bit character and two-bit character. So the last character is NOT one-bit character.
-
+<strong>Input:</strong> bits = [1,0,0]
+<strong>Output:</strong> true
+<strong>Explanation:</strong> The only way to decode it is two-bit character and one-bit character.
+So the last character is one-bit character.
 </pre>
 
-</p>
+<p><strong class="example">Example 2:</strong></p>
 
-<p><b>Note:</b>
+<pre>
+<strong>Input:</strong> bits = [1,1,1,0]
+<strong>Output:</strong> false
+<strong>Explanation:</strong> The only way to decode it is two-bit character and two-bit character.
+So the last character is not one-bit character.
+</pre>
 
-<li><code>1 <= len(bits) <= 1000</code>.</li>
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<li><code>bits[i]</code> is always <code>0</code> or <code>1</code>.</li>
+<ul>
+	<li><code>1 &lt;= bits.length &lt;= 1000</code></li>
+	<li><code>bits[i]</code> is either <code>0</code> or <code>1</code>.</li>
+</ul>
 
-</p>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -67,7 +73,7 @@ class Solution:
         return i == n - 1
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -81,7 +87,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -94,7 +100,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func isOneBitCharacter(bits []int) bool {
@@ -106,7 +112,7 @@ func isOneBitCharacter(bits []int) bool {
 }
 ```
 
-### **JavaScript**
+#### JavaScript
 
 ```js
 /**
@@ -123,10 +129,8 @@ var isOneBitCharacter = function (bits) {
 };
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

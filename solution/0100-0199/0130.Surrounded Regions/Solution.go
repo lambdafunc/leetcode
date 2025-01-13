@@ -1,40 +1,31 @@
-var p []int
-
 func solve(board [][]byte) {
 	m, n := len(board), len(board[0])
-	p = make([]int, m*n+1)
-	for i := 0; i < len(p); i++ {
-		p[i] = i
-	}
-	dirs := [4][2]int{{0, -1}, {0, 1}, {1, 0}, {-1, 0}}
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if board[i][j] == 'O' {
-				if i == 0 || j == 0 || i == m-1 || j == n-1 {
-					p[find(i*n+j)] = find(m * n)
-				} else {
-					for _, e := range dirs {
-						if board[i+e[0]][j+e[1]] == 'O' {
-							p[find(i*n+j)] = find((i+e[0])*n + j + e[1])
-						}
-					}
-				}
-			}
-
+	dirs := [5]int{-1, 0, 1, 0, -1}
+	var dfs func(i, j int)
+	dfs = func(i, j int) {
+		if i < 0 || i >= m || j < 0 || j >= n || board[i][j] != 'O' {
+			return
+		}
+		board[i][j] = '.'
+		for k := 0; k < 4; k++ {
+			dfs(i+dirs[k], j+dirs[k+1])
 		}
 	}
 	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if board[i][j] == 'O' && find(i*n+j) != find(m*n) {
+		dfs(i, 0)
+		dfs(i, n-1)
+	}
+	for j := 0; j < n; j++ {
+		dfs(0, j)
+		dfs(m-1, j)
+	}
+	for i, row := range board {
+		for j, c := range row {
+			if c == '.' {
+				board[i][j] = 'O'
+			} else if c == 'O' {
 				board[i][j] = 'X'
 			}
 		}
 	}
-}
-
-func find(x int) int {
-	if p[x] != x {
-		p[x] = find(p[x])
-	}
-	return p[x]
 }

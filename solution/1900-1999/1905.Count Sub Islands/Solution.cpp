@@ -1,38 +1,27 @@
 class Solution {
 public:
-    int countSubIslands(vector<vector<int>> &grid1, vector<vector<int>> &grid2) {
+    int countSubIslands(vector<vector<int>>& grid1, vector<vector<int>>& grid2) {
         int m = grid1.size(), n = grid1[0].size();
-        int count = 0;
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (grid2[i][j] == 1 && dfs(grid1, grid2, i, j, m, n))
-                {
-                    ++count;
+        int ans = 0;
+        int dirs[5] = {-1, 0, 1, 0, -1};
+        function<int(int, int)> dfs = [&](int i, int j) {
+            int ok = grid1[i][j];
+            grid2[i][j] = 0;
+            for (int k = 0; k < 4; ++k) {
+                int x = i + dirs[k], y = j + dirs[k + 1];
+                if (x >= 0 && x < m && y >= 0 && y < n && grid2[x][y]) {
+                    ok &= dfs(x, y);
+                }
+            }
+            return ok;
+        };
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid2[i][j]) {
+                    ans += dfs(i, j);
                 }
             }
         }
-        return count;
-    }
-
-private:
-    vector<vector<int>> directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-    bool dfs(vector<vector<int>> &grid1, vector<vector<int>> &grid2, int i, int j, int m, int n) {
-        bool res = grid1[i][j] == 1;
-        grid2[i][j] = 0;
-
-        for (auto direction : directions)
-        {
-            int a = i + direction[0], b = j + direction[1];
-            if (a >= 0 && a < m && b >= 0 && b < n && grid2[a][b] == 1)
-            {
-                if (!dfs(grid1, grid2, a, b, m, n))
-                {
-                    res = false;
-                }
-            }
-        }
-        return res;
+        return ans;
     }
 };

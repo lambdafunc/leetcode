@@ -1,21 +1,17 @@
 class Solution {
     public int[] topKFrequent(int[] nums, int k) {
-        Map<Integer, Long> frequency = Arrays.stream(nums).boxed()
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-
-        Queue<Map.Entry<Integer, Long>> queue = new PriorityQueue<>(Map.Entry.comparingByValue());
-        for (Map.Entry<Integer, Long> entry : frequency.entrySet()) {
-            long count = entry.getValue();
-            if (queue.size() == k) {
-                if (count > queue.peek().getValue()) {
-                    queue.poll();
-                    queue.offer(entry);
-                }
-            } else {
-                queue.offer(entry);
+        Map<Integer, Integer> cnt = new HashMap<>();
+        for (int x : nums) {
+            cnt.merge(x, 1, Integer::sum);
+        }
+        PriorityQueue<Map.Entry<Integer, Integer>> pq
+            = new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getValue));
+        for (var e : cnt.entrySet()) {
+            pq.offer(e);
+            if (pq.size() > k) {
+                pq.poll();
             }
         }
-
-        return queue.stream().mapToInt(Map.Entry::getKey).toArray();
+        return pq.stream().mapToInt(Map.Entry::getKey).toArray();
     }
 }

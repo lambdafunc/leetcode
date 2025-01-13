@@ -1,89 +1,137 @@
-# [651. 4 Keys Keyboard](https://leetcode.com/problems/4-keys-keyboard)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0651.4%20Keys%20Keyboard/README_EN.md
+tags:
+    - Math
+    - Dynamic Programming
+---
+
+<!-- problem:start -->
+
+# [651. 4 Keys Keyboard 🔒](https://leetcode.com/problems/4-keys-keyboard)
 
 [中文文档](/solution/0600-0699/0651.4%20Keys%20Keyboard/README.md)
 
 ## Description
 
-<p>Imagine you have a special keyboard with the following keys: </p>
+<!-- description:start -->
 
-<p><code>Key 1: (A)</code>:  Print one 'A' on screen.</p>
+<p>Imagine you have a special keyboard with the following keys:</p>
 
-<p><code>Key 2: (Ctrl-A)</code>: Select the whole screen.</p>
+<ul>
+	<li>A: Print one <code>&#39;A&#39;</code> on the screen.</li>
+	<li>Ctrl-A: Select the whole screen.</li>
+	<li>Ctrl-C: Copy selection to buffer.</li>
+	<li>Ctrl-V: Print buffer on screen appending it after what has already been printed.</li>
+</ul>
 
-<p><code>Key 3: (Ctrl-C)</code>: Copy selection to buffer.</p>
+<p>Given an integer n, return <em>the maximum number of </em><code>&#39;A&#39;</code><em> you can print on the screen with <strong>at most</strong> </em><code>n</code><em> presses on the keys</em>.</p>
 
-<p><code>Key 4: (Ctrl-V)</code>: Print buffer on screen appending it after what has already been printed. </p>
-
-<p>Now, you can only press the keyboard for <b>N</b> times (with the above four keys), find out the maximum numbers of 'A' you can print on screen.</p>
-
-<p><b>Example 1:</b><br />
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
-<b>Input:</b> N = 3
-
-<b>Output:</b> 3
-
-<b>Explanation:</b> 
-
-We can at most get 3 A's on screen by pressing following key sequence:
-
+<strong>Input:</strong> n = 3
+<strong>Output:</strong> 3
+<strong>Explanation:</strong> We can at most get 3 A&#39;s on screen by pressing the following key sequence:
 A, A, A
-
 </pre>
 
-</p>
-
-<p><b>Example 2:</b><br />
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
-<b>Input:</b> N = 7
-
-<b>Output:</b> 9
-
-<b>Explanation:</b> 
-
-We can at most get 9 A's on screen by pressing following key sequence:
-
+<strong>Input:</strong> n = 7
+<strong>Output:</strong> 9
+<strong>Explanation:</strong> We can at most get 9 A&#39;s on screen by pressing following key sequence:
 A, A, A, Ctrl A, Ctrl C, Ctrl V, Ctrl V
-
 </pre>
 
-</p>
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><b>Note:</b><br>
+<ul>
+	<li><code>1 &lt;= n &lt;= 50</code></li>
+</ul>
 
-<ol>
-
-<li>1 <= N <= 50 </li>
-
-<li>Answers will be in the range of 32-bit signed integer.</li>
-
-</ol>
-
-</p>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def maxA(self, n: int) -> int:
+        dp = list(range(n + 1))
+        for i in range(3, n + 1):
+            for j in range(2, i - 1):
+                dp[i] = max(dp[i], dp[j - 1] * (i - j))
+        return dp[-1]
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public int maxA(int n) {
+        int[] dp = new int[n + 1];
+        for (int i = 0; i < n + 1; ++i) {
+            dp[i] = i;
+        }
+        for (int i = 3; i < n + 1; ++i) {
+            for (int j = 2; j < i - 1; ++j) {
+                dp[i] = Math.max(dp[i], dp[j - 1] * (i - j));
+            }
+        }
+        return dp[n];
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int maxA(int n) {
+        vector<int> dp(n + 1);
+        iota(dp.begin(), dp.end(), 0);
+        for (int i = 3; i < n + 1; ++i) {
+            for (int j = 2; j < i - 1; ++j) {
+                dp[i] = max(dp[i], dp[j - 1] * (i - j));
+            }
+        }
+        return dp[n];
+    }
+};
 ```
 
+#### Go
+
+```go
+func maxA(n int) int {
+	dp := make([]int, n+1)
+	for i := range dp {
+		dp[i] = i
+	}
+	for i := 3; i < n+1; i++ {
+		for j := 2; j < i-1; j++ {
+			dp[i] = max(dp[i], dp[j-1]*(i-j))
+		}
+	}
+	return dp[n]
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

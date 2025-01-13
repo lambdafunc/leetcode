@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1987.Number%20of%20Unique%20Good%20Subsequences/README_EN.md
+rating: 2422
+source: Weekly Contest 256 Q4
+tags:
+    - String
+    - Dynamic Programming
+---
+
+<!-- problem:start -->
+
 # [1987. Number of Unique Good Subsequences](https://leetcode.com/problems/number-of-unique-good-subsequences)
 
 [中文文档](/solution/1900-1999/1987.Number%20of%20Unique%20Good%20Subsequences/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a binary string <code>binary</code>. A <strong>subsequence</strong> of <code>binary</code> is considered <strong>good</strong> if it is <strong>not empty</strong> and has <strong>no leading zeros</strong> (with the exception of <code>&quot;0&quot;</code>).</p>
 
@@ -17,7 +32,7 @@
 <p>A <strong>subsequence</strong> is a sequence that can be derived from another sequence by deleting some or no elements without changing the order of the remaining elements.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> binary = &quot;001&quot;
@@ -26,7 +41,7 @@
 The unique good subsequences are &quot;0&quot; and &quot;1&quot;.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> binary = &quot;11&quot;
@@ -34,7 +49,7 @@ The unique good subsequences are &quot;0&quot; and &quot;1&quot;.
 <strong>Explanation:</strong> The good subsequences of binary are [&quot;1&quot;, &quot;1&quot;, &quot;11&quot;].
 The unique good subsequences are &quot;1&quot; and &quot;11&quot;.</pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> binary = &quot;101&quot;
@@ -51,26 +66,120 @@ The unique good subsequences are &quot;0&quot;, &quot;1&quot;, &quot;10&quot;, &
 	<li><code>binary</code> consists of only <code>&#39;0&#39;</code>s and <code>&#39;1&#39;</code>s.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def numberOfUniqueGoodSubsequences(self, binary: str) -> int:
+        f = g = 0
+        ans = 0
+        mod = 10**9 + 7
+        for c in binary:
+            if c == "0":
+                g = (g + f) % mod
+                ans = 1
+            else:
+                f = (f + g + 1) % mod
+        ans = (ans + f + g) % mod
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public int numberOfUniqueGoodSubsequences(String binary) {
+        final int mod = (int) 1e9 + 7;
+        int f = 0, g = 0;
+        int ans = 0;
+        for (int i = 0; i < binary.length(); ++i) {
+            if (binary.charAt(i) == '0') {
+                g = (g + f) % mod;
+                ans = 1;
+            } else {
+                f = (f + g + 1) % mod;
+            }
+        }
+        ans = (ans + f + g) % mod;
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int numberOfUniqueGoodSubsequences(string binary) {
+        const int mod = 1e9 + 7;
+        int f = 0, g = 0;
+        int ans = 0;
+        for (char& c : binary) {
+            if (c == '0') {
+                g = (g + f) % mod;
+                ans = 1;
+            } else {
+                f = (f + g + 1) % mod;
+            }
+        }
+        ans = (ans + f + g) % mod;
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func numberOfUniqueGoodSubsequences(binary string) (ans int) {
+	const mod int = 1e9 + 7
+	f, g := 0, 0
+	for _, c := range binary {
+		if c == '0' {
+			g = (g + f) % mod
+			ans = 1
+		} else {
+			f = (f + g + 1) % mod
+		}
+	}
+	ans = (ans + f + g) % mod
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function numberOfUniqueGoodSubsequences(binary: string): number {
+    let [f, g] = [0, 0];
+    let ans = 0;
+    const mod = 1e9 + 7;
+    for (const c of binary) {
+        if (c === '0') {
+            g = (g + f) % mod;
+            ans = 1;
+        } else {
+            f = (f + g + 1) % mod;
+        }
+    }
+    ans = (ans + f + g) % mod;
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

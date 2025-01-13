@@ -1,30 +1,27 @@
 class MinStack {
-    private Deque<Integer> s;
-    private Deque<Integer> mins;
+    private Deque<Integer> stk1 = new ArrayDeque<>();
+    private Deque<Integer> stk2 = new ArrayDeque<>();
 
-    /** initialize your data structure here. */
     public MinStack() {
-        s = new ArrayDeque<>();
-        mins = new ArrayDeque<>();
-        mins.push(Integer.MAX_VALUE);
+        stk2.push(Integer.MAX_VALUE);
     }
-    
+
     public void push(int val) {
-        s.push(val);
-        mins.push(Math.min(mins.peek(), val));
+        stk1.push(val);
+        stk2.push(Math.min(val, stk2.peek()));
     }
-    
+
     public void pop() {
-        s.pop();
-        mins.pop();
+        stk1.pop();
+        stk2.pop();
     }
-    
+
     public int top() {
-        return s.peek();
+        return stk1.peek();
     }
-    
+
     public int getMin() {
-        return mins.peek();
+        return stk2.peek();
     }
 }
 

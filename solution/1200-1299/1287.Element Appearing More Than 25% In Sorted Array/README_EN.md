@@ -1,20 +1,34 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1200-1299/1287.Element%20Appearing%20More%20Than%2025%25%20In%20Sorted%20Array/README_EN.md
+rating: 1179
+source: Biweekly Contest 15 Q1
+tags:
+    - Array
+---
+
+<!-- problem:start -->
+
 # [1287. Element Appearing More Than 25% In Sorted Array](https://leetcode.com/problems/element-appearing-more-than-25-in-sorted-array)
 
 [中文文档](/solution/1200-1299/1287.Element%20Appearing%20More%20Than%2025%25%20In%20Sorted%20Array/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given an integer array <strong>sorted</strong> in non-decreasing order, there is exactly one integer in the array that occurs more than 25% of the time, return that integer.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> arr = [1,2,2,6,6,6,6,7,10]
 <strong>Output:</strong> 6
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> arr = [1,1]
@@ -29,11 +43,17 @@
 	<li><code>0 &lt;= arr[i] &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -45,7 +65,7 @@ class Solution:
         return 0
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -61,7 +81,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -75,7 +95,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func findSpecialInteger(arr []int) int {
@@ -89,7 +109,7 @@ func findSpecialInteger(arr []int) int {
 }
 ```
 
-### **JavaScript**
+#### JavaScript
 
 ```js
 /**
@@ -107,10 +127,28 @@ var findSpecialInteger = function (arr) {
 };
 ```
 
-### **...**
+#### PHP
 
-```
-
+```php
+class Solution {
+    /**
+     * @param Integer[] $arr
+     * @return Integer
+     */
+    function findSpecialInteger($arr) {
+        $len = count($arr);
+        for ($i = 0; $i < $len; $i++) {
+            if ($arr[$i] == $arr[$i + ($len >> 2)]) {
+                return $arr[$i];
+            }
+        }
+        return -1;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

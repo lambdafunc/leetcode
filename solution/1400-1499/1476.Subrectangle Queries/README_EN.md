@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1476.Subrectangle%20Queries/README_EN.md
+rating: 1326
+source: Biweekly Contest 28 Q2
+tags:
+    - Design
+    - Array
+    - Matrix
+---
+
+<!-- problem:start -->
+
 # [1476. Subrectangle Queries](https://leetcode.com/problems/subrectangle-queries)
 
 [中文文档](/solution/1400-1499/1476.Subrectangle%20Queries/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Implement the class <code>SubrectangleQueries</code>&nbsp;which receives a <code>rows x cols</code> rectangle as a matrix of integers in the constructor and supports two methods:</p>
 
@@ -19,105 +35,59 @@
 </ul>
 
 <p>&nbsp;</p>
-
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
 <strong>Input</strong>
-
 [&quot;SubrectangleQueries&quot;,&quot;getValue&quot;,&quot;updateSubrectangle&quot;,&quot;getValue&quot;,&quot;getValue&quot;,&quot;updateSubrectangle&quot;,&quot;getValue&quot;,&quot;getValue&quot;]
-
 [[[[1,2,1],[4,3,4],[3,2,1],[1,1,1]]],[0,2],[0,0,3,2,5],[0,2],[3,1],[3,0,3,2,10],[3,1],[0,2]]
-
 <strong>Output</strong>
-
 [null,1,null,5,5,null,10,5]
-
 <strong>Explanation</strong>
-
 SubrectangleQueries subrectangleQueries = new SubrectangleQueries([[1,2,1],[4,3,4],[3,2,1],[1,1,1]]);  
-
 // The initial rectangle (4x3) looks like:
-
 // 1 2 1
-
 // 4 3 4
-
 // 3 2 1
-
 // 1 1 1
-
 subrectangleQueries.getValue(0, 2); // return 1
-
 subrectangleQueries.updateSubrectangle(0, 0, 3, 2, 5);
-
 // After this update the rectangle looks like:
-
 // 5 5 5
-
 // 5 5 5
-
 // 5 5 5
-
 // 5 5 5 
-
 subrectangleQueries.getValue(0, 2); // return 5
-
 subrectangleQueries.getValue(3, 1); // return 5
-
 subrectangleQueries.updateSubrectangle(3, 0, 3, 2, 10);
-
 // After this update the rectangle looks like:
-
 // 5   5   5
-
 // 5   5   5
-
 // 5   5   5
-
 // 10  10  10 
-
 subrectangleQueries.getValue(3, 1); // return 10
-
 subrectangleQueries.getValue(0, 2); // return 5
-
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
 <strong>Input</strong>
-
 [&quot;SubrectangleQueries&quot;,&quot;getValue&quot;,&quot;updateSubrectangle&quot;,&quot;getValue&quot;,&quot;getValue&quot;,&quot;updateSubrectangle&quot;,&quot;getValue&quot;]
-
 [[[[1,1,1],[2,2,2],[3,3,3]]],[0,0],[0,0,2,2,100],[0,0],[2,2],[1,1,2,2,20],[2,2]]
-
 <strong>Output</strong>
-
 [null,1,null,100,100,null,20]
-
 <strong>Explanation</strong>
-
 SubrectangleQueries subrectangleQueries = new SubrectangleQueries([[1,1,1],[2,2,2],[3,3,3]]);
-
 subrectangleQueries.getValue(0, 0); // return 1
-
 subrectangleQueries.updateSubrectangle(0, 0, 2, 2, 100);
-
 subrectangleQueries.getValue(0, 0); // return 100
-
 subrectangleQueries.getValue(2, 2); // return 100
-
 subrectangleQueries.updateSubrectangle(1, 1, 2, 2, 20);
-
 subrectangleQueries.getValue(2, 2); // return 20
-
 </pre>
 
 <p>&nbsp;</p>
-
 <p><strong>Constraints:</strong></p>
 
 <ul>
@@ -132,29 +102,34 @@ subrectangleQueries.getValue(2, 2); // return 20
 	<li><code>0 &lt;= col &lt; cols</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-Use history list to save the updated record.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class SubrectangleQueries:
-
     def __init__(self, rectangle: List[List[int]]):
-        self.rec = rectangle
-        self.history = []
+        self.g = rectangle
+        self.ops = []
 
-    def updateSubrectangle(self, row1: int, col1: int, row2: int, col2: int, newValue: int) -> None:
-        self.history.append((row1, col1, row2, col2, newValue))
+    def updateSubrectangle(
+        self, row1: int, col1: int, row2: int, col2: int, newValue: int
+    ) -> None:
+        self.ops.append((row1, col1, row2, col2, newValue))
 
     def getValue(self, row: int, col: int) -> int:
-        for row1, col1, row2, col2, newValue in self.history[::-1]:
-            if row >= row1 and row <= row2 and col >= col1 and col <= col2:
-                return newValue
-        return self.rec[row][col]
+        for r1, c1, r2, c2, v in self.ops[::-1]:
+            if r1 <= row <= r2 and c1 <= col <= c2:
+                return v
+        return self.g[row][col]
 
 
 # Your SubrectangleQueries object will be instantiated and called as such:
@@ -163,30 +138,28 @@ class SubrectangleQueries:
 # param_2 = obj.getValue(row,col)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class SubrectangleQueries {
-    private int[][] rec;
-    private List<int[]> history;
+    private int[][] g;
+    private LinkedList<int[]> ops = new LinkedList<>();
 
     public SubrectangleQueries(int[][] rectangle) {
-        rec = rectangle;
-        history = new ArrayList<>();
+        g = rectangle;
     }
 
     public void updateSubrectangle(int row1, int col1, int row2, int col2, int newValue) {
-        history.add(new int[]{row1, col1, row2, col2, newValue});
+        ops.addFirst(new int[] {row1, col1, row2, col2, newValue});
     }
 
     public int getValue(int row, int col) {
-        for (int i = history.size() - 1; i >= 0; --i) {
-            int[] record = history.get(i);
-            if (row >= record[0] && row <= record[2] && col >= record[1] && col <= record[3]) {
-                return record[4];
+        for (var op : ops) {
+            if (op[0] <= row && row <= op[2] && op[1] <= col && col <= op[3]) {
+                return op[4];
             }
         }
-        return rec[row][col];
+        return g[row][col];
     }
 }
 
@@ -198,15 +171,84 @@ class SubrectangleQueries {
  */
 ```
 
-### **TypeScript**
+#### C++
+
+```cpp
+class SubrectangleQueries {
+public:
+    vector<vector<int>> g;
+    vector<vector<int>> ops;
+
+    SubrectangleQueries(vector<vector<int>>& rectangle) {
+        g = rectangle;
+    }
+
+    void updateSubrectangle(int row1, int col1, int row2, int col2, int newValue) {
+        ops.push_back({row1, col1, row2, col2, newValue});
+    }
+
+    int getValue(int row, int col) {
+        for (int i = ops.size() - 1; ~i; --i) {
+            auto op = ops[i];
+            if (op[0] <= row && row <= op[2] && op[1] <= col && col <= op[3]) {
+                return op[4];
+            }
+        }
+        return g[row][col];
+    }
+};
+
+/**
+ * Your SubrectangleQueries object will be instantiated and called as such:
+ * SubrectangleQueries* obj = new SubrectangleQueries(rectangle);
+ * obj->updateSubrectangle(row1,col1,row2,col2,newValue);
+ * int param_2 = obj->getValue(row,col);
+ */
+```
+
+#### Go
+
+```go
+type SubrectangleQueries struct {
+	g   [][]int
+	ops [][]int
+}
+
+func Constructor(rectangle [][]int) SubrectangleQueries {
+	return SubrectangleQueries{rectangle, [][]int{}}
+}
+
+func (this *SubrectangleQueries) UpdateSubrectangle(row1 int, col1 int, row2 int, col2 int, newValue int) {
+	this.ops = append(this.ops, []int{row1, col1, row2, col2, newValue})
+}
+
+func (this *SubrectangleQueries) GetValue(row int, col int) int {
+	for i := len(this.ops) - 1; i >= 0; i-- {
+		op := this.ops[i]
+		if op[0] <= row && row <= op[2] && op[1] <= col && col <= op[3] {
+			return op[4]
+		}
+	}
+	return this.g[row][col]
+}
+
+/**
+ * Your SubrectangleQueries object will be instantiated and called as such:
+ * obj := Constructor(rectangle);
+ * obj.UpdateSubrectangle(row1,col1,row2,col2,newValue);
+ * param_2 := obj.GetValue(row,col);
+ */
+```
+
+#### TypeScript
 
 ```ts
 class SubrectangleQueries {
-    grid: number[][];
-    history: number[][];
+    g: number[][];
+    ops: number[][];
     constructor(rectangle: number[][]) {
-        this.grid = rectangle;
-        this.history = [];
+        this.g = rectangle;
+        this.ops = [];
     }
 
     updateSubrectangle(
@@ -214,19 +256,19 @@ class SubrectangleQueries {
         col1: number,
         row2: number,
         col2: number,
-        newValue: number
+        newValue: number,
     ): void {
-        this.history.push([row1, col1, row2, col2, newValue]);
+        this.ops.push([row1, col1, row2, col2, newValue]);
     }
 
     getValue(row: number, col: number): number {
-        for (let i = this.history.length - 1; i >= 0; --i) {
-            let [row1, col1, row2, col2, newValue] = this.history[i];
-            if (row >= row1 && row <= row2 && col >= col1 && col <= col2) {
-                return newValue;
+        for (let i = this.ops.length - 1; ~i; --i) {
+            const [r1, c1, r2, c2, v] = this.ops[i];
+            if (r1 <= row && row <= r2 && c1 <= col && col <= c2) {
+                return v;
             }
         }
-        return this.grid[row][col];
+        return this.g[row][col];
     }
 }
 
@@ -238,10 +280,8 @@ class SubrectangleQueries {
  */
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

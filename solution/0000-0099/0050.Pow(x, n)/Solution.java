@@ -1,14 +1,16 @@
 class Solution {
     public double myPow(double x, int n) {
-        long N = n;
-        return N >= 0 ? pow(x, N) : 1.0 / pow(x, -N);
+        return n >= 0 ? qpow(x, n) : 1 / qpow(x, -(long) n);
     }
 
-    public double pow(double x, long N) {
-        if (N == 0) {
-            return 1.0;
+    private double qpow(double a, long n) {
+        double ans = 1;
+        for (; n > 0; n >>= 1) {
+            if ((n & 1) == 1) {
+                ans = ans * a;
+            }
+            a = a * a;
         }
-        double y = pow(x, N >> 1);
-        return (N & 1) == 0 ? y * y : y * y * x;
+        return ans;
     }
 }

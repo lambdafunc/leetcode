@@ -1,27 +1,15 @@
 class Solution {
     public int numPairsDivisibleBy60(int[] time) {
-        Arrays.sort(time);
-        int ans = 0;
-        for (int i = 0; i < time.length - 1; i++) {
-            int num = (time[i] + time[time.length - 1]) / 60;
-
-            while (num > 0) {
-                int key = num * 60;
-                int index = Arrays.binarySearch(time, i + 1, time.length, key - time[i]);
-                if (index >= 0) {
-                    int temp = index;
-                    ans++;
-                    while (++temp < time.length && time[temp] == time[index]) {
-                        ans++;
-                    }
-                    temp = index;
-                    while (--temp > i && time[temp] == time[index]) {
-                        ans++;
-                    }
-                }
-                num--;
-            }
+        int[] cnt = new int[60];
+        for (int t : time) {
+            ++cnt[t % 60];
         }
+        int ans = 0;
+        for (int x = 1; x < 30; ++x) {
+            ans += cnt[x] * cnt[60 - x];
+        }
+        ans += (long) cnt[0] * (cnt[0] - 1) / 2;
+        ans += (long) cnt[30] * (cnt[30] - 1) / 2;
         return ans;
     }
 }

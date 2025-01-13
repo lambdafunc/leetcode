@@ -1,10 +1,25 @@
-# [1512. 好数对的数目](https://leetcode-cn.com/problems/number-of-good-pairs)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1512.Number%20of%20Good%20Pairs/README.md
+rating: 1160
+source: 第 197 场周赛 Q1
+tags:
+    - 数组
+    - 哈希表
+    - 数学
+    - 计数
+---
+
+<!-- problem:start -->
+
+# [1512. 好数对的数目](https://leetcode.cn/problems/number-of-good-pairs)
 
 [English Version](/solution/1500-1599/1512.Number%20of%20Good%20Pairs/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组 <code>nums</code> 。</p>
 
@@ -42,82 +57,157 @@
 	<li><code>1 &lt;= nums[i] &lt;= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：计数
+
+遍历数组，对于每个元素 $x$，计算 $x$ 之前有多少个元素与其相等，即为 $x$ 与之前元素组成的好数对的数目。遍历完数组后，即可得到答案。
+
+时间复杂度 $O(n)$，空间复杂度 $O(C)$。其中 $n$ 为数组长度，而 $C$ 为数组中元素的取值范围。本题中 $C = 101$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def numIdenticalPairs(self, nums: List[int]) -> int:
-        counter = Counter(nums)
-        return sum([x * (x - 1) for x in counter.values()]) >> 1
+        ans = 0
+        cnt = Counter()
+        for x in nums:
+            ans += cnt[x]
+            cnt[x] += 1
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int numIdenticalPairs(int[] nums) {
-        Map<Integer, Integer> counter = new HashMap<>();
-        for (int num : nums) {
-            counter.put(num, counter.getOrDefault(num, 0) + 1);
+        int ans = 0;
+        int[] cnt = new int[101];
+        for (int x : nums) {
+            ans += cnt[x]++;
         }
-        int res = 0;
-        for (int n : counter.values()) {
-            res += n * (n - 1);
-        }
-        return res >> 1;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int numIdenticalPairs(vector<int>& nums) {
-        unordered_map <int, int> counter;
-        for (int num : nums) {
-            ++counter[num];
+        int ans = 0;
+        int cnt[101]{};
+        for (int& x : nums) {
+            ans += cnt[x]++;
         }
-        int res = 0;
-        for (auto &[num, n] : counter) {
-            res += n * (n - 1);
-        }
-        return res >> 1;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func numIdenticalPairs(nums []int) int {
-	counter := make(map[int]int)
-	for _, num := range nums {
-		counter[num]++
+func numIdenticalPairs(nums []int) (ans int) {
+	cnt := [101]int{}
+	for _, x := range nums {
+		ans += cnt[x]
+		cnt[x]++
 	}
-	res := 0
-	for _, n := range counter {
-		res += n * (n - 1)
-	}
-	return res >> 1
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function numIdenticalPairs(nums: number[]): number {
+    const cnt: number[] = Array(101).fill(0);
+    let ans = 0;
+    for (const x of nums) {
+        ans += cnt[x]++;
+    }
+    return ans;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn num_identical_pairs(nums: Vec<i32>) -> i32 {
+        let mut ans = 0;
+        let mut cnt = [0; 101];
+        for &x in nums.iter() {
+            ans += cnt[x as usize];
+            cnt[x as usize] += 1;
+        }
+        ans
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var numIdenticalPairs = function (nums) {
+    const cnt = Array(101).fill(0);
+    let ans = 0;
+    for (const x of nums) {
+        ans += cnt[x]++;
+    }
+    return ans;
+};
+```
+
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param Integer[] $nums
+     * @return Integer
+     */
+    function numIdenticalPairs($nums) {
+        $ans = 0;
+        $cnt = array_fill(0, 101, 0);
+        foreach ($nums as $x) {
+            $ans += $cnt[$x]++;
+        }
+        return $ans;
+    }
+}
+```
+
+#### C
+
+```c
+int numIdenticalPairs(int* nums, int numsSize) {
+    int cnt[101] = {0};
+    int ans = 0;
+    for (int i = 0; i < numsSize; i++) {
+        ans += cnt[nums[i]]++;
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

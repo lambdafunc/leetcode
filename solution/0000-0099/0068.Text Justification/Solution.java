@@ -1,38 +1,32 @@
 class Solution {
     public List<String> fullJustify(String[] words, int maxWidth) {
-        ArrayList<String> res = new ArrayList<>();
-        if (words == null || words.length == 0) return res;
-        int count = 0, last = 0;
-        for (int i = 0; i < words.length; i++) {
-            if (count + words[i].length() + (i - last) > maxWidth) {
-                int spaceNum = 0, extraNum = 0;
-                if (i - last - 1 > 0) {
-                    spaceNum = (maxWidth - count) / (i - last - 1);
-                    extraNum = (maxWidth - count) % (i - last - 1);
-                }
-                StringBuilder str = new StringBuilder();
-                for (int j = last; j < i; j++) {
-                    str.append(words[j]);
-                    if (j < i - 1) {
-                        for (int k = 0; k < spaceNum; k++) str.append(" ");
-                        if (extraNum > 0) str.append(" ");
-                        extraNum--;
-                    }
-                }
-                for (int j = str.length(); j < maxWidth; j++) str.append(" ");
-                res.add(str.toString());
-                count = 0;
-                last = i;
+        List<String> ans = new ArrayList<>();
+        for (int i = 0, n = words.length; i < n;) {
+            List<String> t = new ArrayList<>();
+            t.add(words[i]);
+            int cnt = words[i].length();
+            ++i;
+            while (i < n && cnt + 1 + words[i].length() <= maxWidth) {
+                cnt += 1 + words[i].length();
+                t.add(words[i++]);
             }
-            count += words[i].length();
+            if (i == n || t.size() == 1) {
+                String left = String.join(" ", t);
+                String right = " ".repeat(maxWidth - left.length());
+                ans.add(left + right);
+                continue;
+            }
+            int spaceWidth = maxWidth - (cnt - t.size() + 1);
+            int w = spaceWidth / (t.size() - 1);
+            int m = spaceWidth % (t.size() - 1);
+            StringBuilder row = new StringBuilder();
+            for (int j = 0; j < t.size() - 1; ++j) {
+                row.append(t.get(j));
+                row.append(" ".repeat(w + (j < m ? 1 : 0)));
+            }
+            row.append(t.get(t.size() - 1));
+            ans.add(row.toString());
         }
-        StringBuilder str = new StringBuilder();
-        for (int i = last; i < words.length; i++) {
-            str.append(words[i]);
-            if (str.length() < maxWidth) str.append(" ");
-        }
-        for (int i = str.length(); i < maxWidth; i++) str.append(" ");
-        res.add(str.toString());
-        return res;
+        return ans;
     }
 }

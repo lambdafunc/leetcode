@@ -1,22 +1,17 @@
-func minSetSize(arr []int) int {
-	counter := make(map[int]int)
-	for _, v := range arr {
-		counter[v]++
+func minSetSize(arr []int) (ans int) {
+	mx := slices.Max(arr)
+	cnt := make([]int, mx+1)
+	for _, x := range arr {
+		cnt[x]++
 	}
-	var t []int
-	for _, v := range counter {
-		t = append(t, v)
-	}
-	sort.Slice(t, func(i, j int) bool {
-		return t[i] > t[j]
-	})
-	ans, n := 0, 0
-	for _, cnt := range t {
-		n += cnt
-		ans++
-		if n*2 >= len(arr) {
-			break
+	sort.Ints(cnt)
+	for i, m := mx, 0; ; i-- {
+		if cnt[i] > 0 {
+			m += cnt[i]
+			ans++
+			if m >= len(arr)/2 {
+				return
+			}
 		}
 	}
-	return ans
 }

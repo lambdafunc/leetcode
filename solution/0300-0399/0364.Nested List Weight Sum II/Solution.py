@@ -2,7 +2,7 @@
 # This is the interface that allows for creating nested lists.
 # You should not implement it, or speculate about its implementation
 # """
-#class NestedInteger:
+# class NestedInteger:
 #    def __init__(self, value=None):
 #        """
 #        If value is not specified, initializes an empty list.
@@ -42,22 +42,17 @@
 #        """
 class Solution:
     def depthSumInverse(self, nestedList: List[NestedInteger]) -> int:
-        def max_depth(nestedList):
-            depth = 1
-            for item in nestedList:
-                if item.isInteger():
-                    continue
-                depth = max(depth, max_depth(item.getList()) + 1)
-            return depth
-        
-        def dfs(nestedList, max_depth):
-            depth_sum = 0
-            for item in nestedList:
-                if item.isInteger():
-                    depth_sum += item.getInteger() * max_depth
-                else:
-                    depth_sum += dfs(item.getList(), max_depth - 1)
-            return depth_sum
+        def dfs(x, d):
+            nonlocal maxDepth, s, ws
+            maxDepth = max(maxDepth, d)
+            if x.isInteger():
+                s += x.getInteger()
+                ws += x.getInteger() * d
+            else:
+                for y in x.getList():
+                    dfs(y, d + 1)
 
-        depth = max_depth(nestedList)
-        return dfs(nestedList, depth)
+        maxDepth = s = ws = 0
+        for x in nestedList:
+            dfs(x, 1)
+        return (maxDepth + 1) * s - ws

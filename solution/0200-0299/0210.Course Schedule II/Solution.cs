@@ -1,34 +1,32 @@
 public class Solution {
     public int[] FindOrder(int numCourses, int[][] prerequisites) {
-        var edges = new List<int>[numCourses];
-        for (int i = 0; i < numCourses; ++i)
-        {
-            edges[i] = new List<int>();
+        var g = new List<int>[numCourses];
+        for (int i = 0; i < numCourses; ++i) {
+            g[i] = new List<int>();
         }
-        var indegree = new int[numCourses];
-        for (int i = 0; i < prerequisites.Length; ++i)
-        {
-            int a = prerequisites[i][0];
-            int b = prerequisites[i][1];
-            edges[b].Add(a);
-            ++indegree[a];
+        var indeg = new int[numCourses];
+        foreach (var p in prerequisites) {
+            int a = p[0], b = p[1];
+            g[b].Add(a);
+            ++indeg[a];
         }
         var q = new Queue<int>();
-        for (int i = 0; i < numCourses; ++i)
-        {
-            if (indegree[i] == 0) q.Enqueue(i);
-        }
-        var ans = new int[numCourses];
-        var n = 0;
-        while (q.Count > 0)
-        {
-            int b = q.Dequeue();
-            ans[n++] = b;
-            foreach (int a in edges[b])
-            {
-                if (--indegree[a] == 0) q.Enqueue(a);
+        for (int i = 0; i < numCourses; ++i) {
+            if (indeg[i] == 0) {
+                q.Enqueue(i);
             }
         }
-        return n == numCourses ? ans : new int[0];
+        var ans = new int[numCourses];
+        var cnt = 0;
+        while (q.Count > 0) {
+            int i = q.Dequeue();
+            ans[cnt++] = i;
+            foreach (int j in g[i]) {
+                if (--indeg[j] == 0) {
+                    q.Enqueue(j);
+                }
+            }
+        }
+        return cnt == numCourses ? ans : new int[0];
     }
 }
