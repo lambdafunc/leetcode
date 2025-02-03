@@ -1,8 +1,18 @@
-# [01.08. Zero Matrix](https://leetcode-cn.com/problems/zero-matrix-lcci)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/lcci/01.08.Zero%20Matrix/README_EN.md
+---
+
+<!-- problem:start -->
+
+# [01.08. Zero Matrix](https://leetcode.cn/problems/zero-matrix-lcci)
 
 [中文文档](/lcci/01.08.Zero%20Matrix/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Write an algorithm such that if an element in an MxN matrix is 0, its entire row and column are set to 0.</p>
 
@@ -68,71 +78,178 @@
 
 </pre>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Array Marking
+
+We use arrays `rows` and `cols` to mark the rows and columns to be zeroed.
+
+Then we traverse the matrix again, zeroing the elements corresponding to the rows and columns marked in `rows` and `cols`.
+
+The time complexity is $O(m \times n)$, and the space complexity is $O(m + n)$. Here, $m$ and $n$ are the number of rows and columns of the matrix, respectively.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def setZeroes(self, matrix: List[List[int]]) -> None:
-        """
-        Do not return anything, modify matrix in-place instead.
-        """
-        rows, cols = len(matrix), len(matrix[0])
-        zero_rows, zero_cols = set(), set()
-        for i in range(rows):
-            for j in range(cols):
-                if matrix[i][j] == 0:
-                    zero_rows.add(i)
-                    zero_cols.add(j)
-
-        for i in zero_rows:
-            for j in range(cols):
-                matrix[i][j] = 0
-
-        for j in zero_cols:
-            for i in range(rows):
-                matrix[i][j] = 0
-
-        return matrix
-
+        m, n = len(matrix), len(matrix[0])
+        rows = [0] * m
+        cols = [0] * n
+        for i, row in enumerate(matrix):
+            for j, v in enumerate(row):
+                if v == 0:
+                    rows[i] = cols[j] = 1
+        for i in range(m):
+            for j in range(n):
+                if rows[i] or cols[j]:
+                    matrix[i][j] = 0
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public void setZeroes(int[][] matrix) {
-        int rows = matrix.length, cols = matrix[0].length;
-        Set<Integer> zeroRows = new HashSet<>();
-        Set<Integer> zeroCols = new HashSet<>();
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < cols; ++j) {
+        int m = matrix.length, n = matrix[0].length;
+        boolean[] rows = new boolean[m];
+        boolean[] cols = new boolean[n];
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
                 if (matrix[i][j] == 0) {
-                    zeroRows.add(i);
-                    zeroCols.add(j);
+                    rows[i] = true;
+                    cols[j] = true;
                 }
             }
         }
-
-        for (int row : zeroRows) {
-            for (int j = 0; j < cols; ++j) {
-                matrix[row][j] = 0;
-            }
-        }
-
-        for (int col : zeroCols) {
-            for (int i = 0; i < rows; ++i) {
-                matrix[i][col] = 0;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (rows[i] || cols[j]) {
+                    matrix[i][j] = 0;
+                }
             }
         }
     }
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        vector<bool> rows(m);
+        vector<bool> cols(n);
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (!matrix[i][j]) {
+                    rows[i] = 1;
+                    cols[j] = 1;
+                }
+            }
+        }
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (rows[i] || cols[j]) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+};
+```
+
+#### Go
+
+```go
+func setZeroes(matrix [][]int) {
+	m, n := len(matrix), len(matrix[0])
+	rows := make([]bool, m)
+	cols := make([]bool, n)
+	for i, row := range matrix {
+		for j, v := range row {
+			if v == 0 {
+				rows[i] = true
+				cols[j] = true
+			}
+		}
+	}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if rows[i] || cols[j] {
+				matrix[i][j] = 0
+			}
+		}
+	}
+}
+```
+
+#### TypeScript
+
+```ts
+/**
+ Do not return anything, modify matrix in-place instead.
+ */
+function setZeroes(matrix: number[][]): void {
+    const m = matrix.length;
+    const n = matrix[0].length;
+    const rows = new Array(m).fill(false);
+    const cols = new Array(n).fill(false);
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (matrix[i][j] === 0) {
+                rows[i] = true;
+                cols[j] = true;
+            }
+        }
+    }
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (rows[i] || cols[j]) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn set_zeroes(matrix: &mut Vec<Vec<i32>>) {
+        let m = matrix.len();
+        let n = matrix[0].len();
+        let mut rows = vec![false; m];
+        let mut cols = vec![false; n];
+        for i in 0..m {
+            for j in 0..n {
+                if matrix[i][j] == 0 {
+                    rows[i] = true;
+                    cols[j] = true;
+                }
+            }
+        }
+        for i in 0..m {
+            for j in 0..n {
+                if rows[i] || cols[j] {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -140,23 +257,21 @@ class Solution {
  * @return {void} Do not return anything, modify matrix in-place instead.
  */
 var setZeroes = function (matrix) {
-    let m = matrix.length,
-        n = matrix[0].length;
-    let rows = new Array(m).fill(false);
-    let cols = new Array(n).fill(false);
-    // 标记
-    for (let i = 0; i < m; i++) {
-        for (let j = 0; j < n; j++) {
+    const m = matrix.length;
+    const n = matrix[0].length;
+    const rows = new Array(m).fill(false);
+    const cols = new Array(n).fill(false);
+    for (let i = 0; i < m; ++i) {
+        for (let j = 0; j < n; ++j) {
             if (matrix[i][j] == 0) {
                 rows[i] = true;
                 cols[j] = true;
             }
         }
     }
-    // 清零
-    for (let i = 0; i < m; i++) {
-        for (let j = 0; j < n; j++) {
-            if (matrix[i][j] != 0 && (rows[i] || cols[j])) {
+    for (let i = 0; i < m; ++i) {
+        for (let j = 0; j < n; ++j) {
+            if (rows[i] || cols[j]) {
                 matrix[i][j] = 0;
             }
         }
@@ -164,10 +279,452 @@ var setZeroes = function (matrix) {
 };
 ```
 
-### **...**
+#### C
 
+```c
+void setZeroes(int** matrix, int matrixSize, int* matrixColSize) {
+    int m = matrixSize;
+    int n = matrixColSize[0];
+    int* rows = (int*) malloc(sizeof(int) * m);
+    int* cols = (int*) malloc(sizeof(int) * n);
+    memset(rows, 0, sizeof(int) * m);
+    memset(cols, 0, sizeof(int) * n);
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; ++j) {
+            if (matrix[i][j] == 0) {
+                rows[i] = 1;
+                cols[j] = 1;
+            }
+        }
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; ++j) {
+            if (rows[i] || cols[j]) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+    free(rows);
+    free(cols);
+}
 ```
 
+#### Swift
+
+```swift
+class Solution {
+    func setZeroes(_ matrix: inout [[Int]]) {
+        let m = matrix.count
+        guard m > 0 else { return }
+        let n = matrix[0].count
+        var rows = Array(repeating: false, count: m)
+        var cols = Array(repeating: false, count: n)
+
+        for i in 0..<m {
+            for j in 0..<n {
+                if matrix[i][j] == 0 {
+                    rows[i] = true
+                    cols[j] = true
+                }
+            }
+        }
+
+        for i in 0..<m {
+            for j in 0..<n {
+                if rows[i] || cols[j] {
+                    matrix[i][j] = 0
+                }
+            }
+        }
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2: In-place Marking
+
+In Solution 1, we used additional arrays to mark the rows and columns to be zeroed. In fact, we can directly use the first row and first column of the matrix for marking, without needing to allocate additional array space.
+
+Since the first row and first column are used for marking, their values may change due to the marking. Therefore, we need additional variables $i0$ and $j0$ to mark whether the first row and first column need to be zeroed.
+
+The time complexity is $O(m \times n)$, where $m$ and $n$ are the number of rows and columns of the matrix, respectively. The space complexity is $O(1)$.
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        m, n = len(matrix), len(matrix[0])
+        i0 = any(v == 0 for v in matrix[0])
+        j0 = any(matrix[i][0] == 0 for i in range(m))
+        for i in range(1, m):
+            for j in range(1, n):
+                if matrix[i][j] == 0:
+                    matrix[i][0] = matrix[0][j] = 0
+        for i in range(1, m):
+            for j in range(1, n):
+                if matrix[i][0] == 0 or matrix[0][j] == 0:
+                    matrix[i][j] = 0
+        if i0:
+            for j in range(n):
+                matrix[0][j] = 0
+        if j0:
+            for i in range(m):
+                matrix[i][0] = 0
+```
+
+#### Java
+
+```java
+class Solution {
+    public void setZeroes(int[][] matrix) {
+        int m = matrix.length, n = matrix[0].length;
+        boolean i0 = false, j0 = false;
+        for (int j = 0; j < n; ++j) {
+            if (matrix[0][j] == 0) {
+                i0 = true;
+                break;
+            }
+        }
+        for (int i = 0; i < m; ++i) {
+            if (matrix[i][0] == 0) {
+                j0 = true;
+                break;
+            }
+        }
+        for (int i = 1; i < m; ++i) {
+            for (int j = 1; j < n; ++j) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+            }
+        }
+        for (int i = 1; i < m; ++i) {
+            for (int j = 1; j < n; ++j) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        if (i0) {
+            for (int j = 0; j < n; ++j) {
+                matrix[0][j] = 0;
+            }
+        }
+        if (j0) {
+            for (int i = 0; i < m; ++i) {
+                matrix[i][0] = 0;
+            }
+        }
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        bool i0 = false, j0 = false;
+        for (int j = 0; j < n; ++j) {
+            if (matrix[0][j] == 0) {
+                i0 = true;
+                break;
+            }
+        }
+        for (int i = 0; i < m; ++i) {
+            if (matrix[i][0] == 0) {
+                j0 = true;
+                break;
+            }
+        }
+        for (int i = 1; i < m; ++i) {
+            for (int j = 1; j < n; ++j) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+            }
+        }
+        for (int i = 1; i < m; ++i) {
+            for (int j = 1; j < n; ++j) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        if (i0) {
+            for (int j = 0; j < n; ++j) {
+                matrix[0][j] = 0;
+            }
+        }
+        if (j0) {
+            for (int i = 0; i < m; ++i) {
+                matrix[i][0] = 0;
+            }
+        }
+    }
+};
+```
+
+#### Go
+
+```go
+func setZeroes(matrix [][]int) {
+	m, n := len(matrix), len(matrix[0])
+	i0, j0 := false, false
+	for j := 0; j < n; j++ {
+		if matrix[0][j] == 0 {
+			i0 = true
+			break
+		}
+	}
+	for i := 0; i < m; i++ {
+		if matrix[i][0] == 0 {
+			j0 = true
+			break
+		}
+	}
+	for i := 1; i < m; i++ {
+		for j := 1; j < n; j++ {
+			if matrix[i][j] == 0 {
+				matrix[i][0], matrix[0][j] = 0, 0
+			}
+		}
+	}
+	for i := 1; i < m; i++ {
+		for j := 1; j < n; j++ {
+			if matrix[i][0] == 0 || matrix[0][j] == 0 {
+				matrix[i][j] = 0
+			}
+		}
+	}
+	if i0 {
+		for j := 0; j < n; j++ {
+			matrix[0][j] = 0
+		}
+	}
+	if j0 {
+		for i := 0; i < m; i++ {
+			matrix[i][0] = 0
+		}
+	}
+}
+```
+
+#### TypeScript
+
+```ts
+/**
+ Do not return anything, modify matrix in-place instead.
+ */
+function setZeroes(matrix: number[][]): void {
+    const m = matrix.length;
+    const n = matrix[0].length;
+    let l0 = false;
+    let r0 = false;
+    for (let i = 0; i < m; i++) {
+        if (matrix[i][0] === 0) {
+            l0 = true;
+            break;
+        }
+    }
+    for (let j = 0; j < n; j++) {
+        if (matrix[0][j] === 0) {
+            r0 = true;
+            break;
+        }
+    }
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (matrix[i][j] === 0) {
+                matrix[i][0] = 0;
+                matrix[0][j] = 0;
+            }
+        }
+    }
+    for (let i = 1; i < m; i++) {
+        for (let j = 1; j < n; j++) {
+            if (matrix[i][0] === 0 || matrix[0][j] === 0) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+    if (l0) {
+        for (let i = 0; i < m; i++) {
+            matrix[i][0] = 0;
+        }
+    }
+    if (r0) {
+        for (let j = 0; j < n; j++) {
+            matrix[0][j] = 0;
+        }
+    }
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn set_zeroes(matrix: &mut Vec<Vec<i32>>) {
+        let m = matrix.len();
+        let n = matrix[0].len();
+        let l0 = {
+            let mut res = false;
+            for j in 0..n {
+                if matrix[0][j] == 0 {
+                    res = true;
+                    break;
+                }
+            }
+            res
+        };
+        let r0 = {
+            let mut res = false;
+            for i in 0..m {
+                if matrix[i][0] == 0 {
+                    res = true;
+                    break;
+                }
+            }
+            res
+        };
+        for i in 0..m {
+            for j in 0..n {
+                if matrix[i][j] == 0 {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+            }
+        }
+        for i in 1..m {
+            for j in 1..n {
+                if matrix[i][0] == 0 || matrix[0][j] == 0 {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        if l0 {
+            for j in 0..n {
+                matrix[0][j] = 0;
+            }
+        }
+        if r0 {
+            for i in 0..m {
+                matrix[i][0] = 0;
+            }
+        }
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[][]} matrix
+ * @return {void} Do not return anything, modify matrix in-place instead.
+ */
+var setZeroes = function (matrix) {
+    const m = matrix.length;
+    const n = matrix[0].length;
+    let i0 = matrix[0].some(v => v == 0);
+    let j0 = false;
+    for (let i = 0; i < m; ++i) {
+        if (matrix[i][0] == 0) {
+            j0 = true;
+            break;
+        }
+    }
+    for (let i = 1; i < m; ++i) {
+        for (let j = 1; j < n; ++j) {
+            if (matrix[i][j] == 0) {
+                matrix[i][0] = 0;
+                matrix[0][j] = 0;
+            }
+        }
+    }
+    for (let i = 1; i < m; ++i) {
+        for (let j = 1; j < n; ++j) {
+            if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+    if (i0) {
+        for (let j = 0; j < n; ++j) {
+            matrix[0][j] = 0;
+        }
+    }
+    if (j0) {
+        for (let i = 0; i < m; ++i) {
+            matrix[i][0] = 0;
+        }
+    }
+};
+```
+
+#### C
+
+```c
+void setZeroes(int** matrix, int matrixSize, int* matrixColSize) {
+    int m = matrixSize;
+    int n = matrixColSize[0];
+    int l0 = 0;
+    int r0 = 0;
+    for (int i = 0; i < m; i++) {
+        if (matrix[i][0] == 0) {
+            l0 = 1;
+            break;
+        }
+    }
+    for (int j = 0; j < n; j++) {
+        if (matrix[0][j] == 0) {
+            r0 = 1;
+            break;
+        }
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            if (matrix[i][j] == 0) {
+                matrix[i][0] = 0;
+                matrix[0][j] = 0;
+            }
+        }
+    }
+    for (int i = 1; i < m; i++) {
+        for (int j = 1; j < n; j++) {
+            if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+    if (l0) {
+        for (int i = 0; i < m; i++) {
+            matrix[i][0] = 0;
+        }
+    }
+    if (r0) {
+        for (int j = 0; j < n; j++) {
+            matrix[0][j] = 0;
+        }
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

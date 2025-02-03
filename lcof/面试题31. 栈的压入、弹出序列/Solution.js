@@ -4,14 +4,14 @@
  * @return {boolean}
  */
 var validateStackSequences = function (pushed, popped) {
-    let s = [];
-    let q = 0;
-    for (let num of pushed) {
-        s.push(num);
-        while (s.length > 0 && s[s.length - 1] == popped[q]) {
-            ++q;
-            s.pop();
+    let stk = [];
+    let j = 0;
+    for (const v of pushed) {
+        stk.push(v);
+        while (stk.length && stk[stk.length - 1] == popped[j]) {
+            stk.pop();
+            ++j;
         }
     }
-    return s.length == 0;
+    return j == pushed.length;
 };

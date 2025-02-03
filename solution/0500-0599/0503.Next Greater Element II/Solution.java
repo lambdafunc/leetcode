@@ -1,15 +1,19 @@
 class Solution {
     public int[] nextGreaterElements(int[] nums) {
         int n = nums.length;
-        int[] res = new int[n];
-        Arrays.fill(res, -1);
+        int[] ans = new int[n];
+        Arrays.fill(ans, -1);
         Deque<Integer> stk = new ArrayDeque<>();
-        for (int i = 0; i < (n << 1); ++i) {
-            while (!stk.isEmpty() && nums[stk.peek()] < nums[i % n]) {
-                res[stk.pop()] = nums[i % n];
+        for (int i = n * 2 - 1; i >= 0; --i) {
+            int j = i % n;
+            while (!stk.isEmpty() && stk.peek() <= nums[j]) {
+                stk.pop();
             }
-            stk.push(i % n);
+            if (!stk.isEmpty()) {
+                ans[j] = stk.peek();
+            }
+            stk.push(nums[j]);
         }
-        return res;
+        return ans;
     }
 }

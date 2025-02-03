@@ -1,13 +1,30 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1827.Minimum%20Operations%20to%20Make%20the%20Array%20Increasing/README_EN.md
+rating: 1314
+source: Biweekly Contest 50 Q1
+tags:
+    - Greedy
+    - Array
+---
+
+<!-- problem:start -->
+
 # [1827. Minimum Operations to Make the Array Increasing](https://leetcode.com/problems/minimum-operations-to-make-the-array-increasing)
 
 [中文文档](/solution/1800-1899/1827.Minimum%20Operations%20to%20Make%20the%20Array%20Increasing/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>You are given an integer array <code>nums</code> (<strong>0-indexed</strong>). In one operation, you can choose an element of the array and increment it by <code>1</code>.</p>
 
 <ul>
-	<li>For example, if <code>nums = [1,2,3]</code>, you can choose to increment <code>nums[1]</code> to make <code>nums = [1,<u><b>3</b></u>,3]</code>.</li>
+
+    <li>For example, if <code>nums = [1,2,3]</code>, you can choose to increment <code>nums[1]</code> to make <code>nums = [1,<u><b>3</b></u>,3]</code>.</li>
+
 </ul>
 
 <p>Return <em>the <strong>minimum</strong> number of operations needed to make</em> <code>nums</code> <em><strong>strictly</strong> <strong>increasing</strong>.</em></p>
@@ -16,7 +33,7 @@
 
 <p>&nbsp;</p>
 
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 
@@ -34,7 +51,7 @@
 
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 
@@ -44,7 +61,7 @@
 
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 
@@ -59,58 +76,148 @@
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>1 &lt;= nums.length &lt;= 5000</code></li>
-	<li><code>1 &lt;= nums[i] &lt;= 10<sup>4</sup></code></li>
+
+    <li><code>1 &lt;= nums.length &lt;= 5000</code></li>
+
+    <li><code>1 &lt;= nums[i] &lt;= 10<sup>4</sup></code></li>
+
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Single Pass
+
+We use a variable $mx$ to record the maximum value of the current strictly increasing array, initially $mx = 0$.
+
+Traverse the array `nums` from left to right. For the current element $v$, if $v \lt mx + 1$, we need to increase it to $mx + 1$ to ensure the array is strictly increasing. Therefore, the number of operations we need to perform this time is $max(0, mx + 1 - v)$, which is added to the answer, and then we update $mx=max(mx + 1, v)$. Continue to traverse the next element until the entire array is traversed.
+
+The time complexity is $O(n)$, where $n$ is the length of the array `nums`. The space complexity is $O(1)$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def minOperations(self, nums: List[int]) -> int:
-        n = len(nums)
-        pre_max = nums[0]
-        times = 0
-        for i in range(1, n):
-            if nums[i] <= pre_max:
-                steps = pre_max - nums[i] + 1
-                times += steps
-                pre_max = nums[i] + steps
-            else:
-                pre_max = nums[i]
-        return times
+        ans = mx = 0
+        for v in nums:
+            ans += max(0, mx + 1 - v)
+            mx = max(mx + 1, v)
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int minOperations(int[] nums) {
-        int n = nums.length;
-        int preMax = nums[0];
-        int times = 0;
-        for (int i = 1; i < n; ++i) {
-            if (nums[i] <= preMax) {
-                int steps = preMax - nums[i] + 1;
-                times += steps;
-                preMax = nums[i] + steps;
-            } else {
-                preMax = nums[i];
-            }
+        int ans = 0, mx = 0;
+        for (int v : nums) {
+            ans += Math.max(0, mx + 1 - v);
+            mx = Math.max(mx + 1, v);
         }
-        return times;
+        return ans;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int minOperations(vector<int>& nums) {
+        int ans = 0, mx = 0;
+        for (int& v : nums) {
+            ans += max(0, mx + 1 - v);
+            mx = max(mx + 1, v);
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func minOperations(nums []int) (ans int) {
+	mx := 0
+	for _, v := range nums {
+		ans += max(0, mx+1-v)
+		mx = max(mx+1, v)
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function minOperations(nums: number[]): number {
+    let ans = 0;
+    let max = 0;
+    for (const v of nums) {
+        ans += Math.max(0, max + 1 - v);
+        max = Math.max(max + 1, v);
+    }
+    return ans;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn min_operations(nums: Vec<i32>) -> i32 {
+        let mut ans = 0;
+        let mut max = 0;
+        for &v in nums.iter() {
+            ans += (0).max(max + 1 - v);
+            max = v.max(max + 1);
+        }
+        ans
+    }
+}
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int MinOperations(int[] nums) {
+        int ans = 0, mx = 0;
+        foreach (int v in nums) {
+            ans += Math.Max(0, mx + 1 - v);
+            mx = Math.Max(mx + 1, v);
+        }
+        return ans;
+    }
+}
+```
+
+#### C
+
+```c
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+
+int minOperations(int* nums, int numsSize) {
+    int ans = 0;
+    int mx = 0;
+    for (int i = 0; i < numsSize; i++) {
+        ans += max(0, mx + 1 - nums[i]);
+        mx = max(mx + 1, nums[i]);
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

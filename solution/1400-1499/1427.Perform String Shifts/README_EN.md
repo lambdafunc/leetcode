@@ -1,8 +1,22 @@
-# [1427. Perform String Shifts](https://leetcode.com/problems/perform-string-shifts)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1427.Perform%20String%20Shifts/README_EN.md
+tags:
+    - Array
+    - Math
+    - String
+---
+
+<!-- problem:start -->
+
+# [1427. Perform String Shifts 🔒](https://leetcode.com/problems/perform-string-shifts)
 
 [中文文档](/solution/1400-1499/1427.Perform%20String%20Shifts/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a string <code>s</code> containing lowercase English letters, and a matrix <code>shift</code>, where <code>shift[i] = [direction<sub>i</sub>, amount<sub>i</sub>]</code>:</p>
 
@@ -16,7 +30,7 @@
 <p>Return the final string after all operations.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;abc&quot;, shift = [[0,1],[1,2]]
@@ -25,7 +39,7 @@
 [0,1] means shift to left by 1. &quot;abc&quot; -&gt; &quot;bca&quot;
 [1,2] means shift to right by 2. &quot;bca&quot; -&gt; &quot;cab&quot;</pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;abcdefg&quot;, shift = [[1,1],[1,1],[0,2],[1,3]]
@@ -48,26 +62,104 @@
 	<li><code>0 &lt;= amount<sub>i</sub> &lt;= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Simulation
+
+We can denote the length of the string $s$ as $n$. Next, we traverse the array $shift$, accumulate to get the final offset $x$, then take $x$ modulo $n$, the final result is to move the first $n - x$ characters of $s$ to the end.
+
+The time complexity is $O(n + m)$, where $n$ and $m$ are the lengths of the string $s$ and the array $shift$ respectively. The space complexity is $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def stringShift(self, s: str, shift: List[List[int]]) -> str:
+        x = sum((b if a else -b) for a, b in shift)
+        x %= len(s)
+        return s[-x:] + s[:-x]
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public String stringShift(String s, int[][] shift) {
+        int x = 0;
+        for (var e : shift) {
+            if (e[0] == 0) {
+                e[1] *= -1;
+            }
+            x += e[1];
+        }
+        int n = s.length();
+        x = (x % n + n) % n;
+        return s.substring(n - x) + s.substring(0, n - x);
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    string stringShift(string s, vector<vector<int>>& shift) {
+        int x = 0;
+        for (auto& e : shift) {
+            if (e[0] == 0) {
+                e[1] = -e[1];
+            }
+            x += e[1];
+        }
+        int n = s.size();
+        x = (x % n + n) % n;
+        return s.substr(n - x, x) + s.substr(0, n - x);
+    }
+};
 ```
 
+#### Go
+
+```go
+func stringShift(s string, shift [][]int) string {
+	x := 0
+	for _, e := range shift {
+		if e[0] == 0 {
+			e[1] = -e[1]
+		}
+		x += e[1]
+	}
+	n := len(s)
+	x = (x%n + n) % n
+	return s[n-x:] + s[:n-x]
+}
+```
+
+#### TypeScript
+
+```ts
+function stringShift(s: string, shift: number[][]): string {
+    let x = 0;
+    for (const [a, b] of shift) {
+        x += a === 0 ? -b : b;
+    }
+    x %= s.length;
+    if (x < 0) {
+        x += s.length;
+    }
+    return s.slice(-x) + s.slice(0, -x);
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

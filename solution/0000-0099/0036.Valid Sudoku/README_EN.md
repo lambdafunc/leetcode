@@ -1,8 +1,22 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0000-0099/0036.Valid%20Sudoku/README_EN.md
+tags:
+    - Array
+    - Hash Table
+    - Matrix
+---
+
+<!-- problem:start -->
+
 # [36. Valid Sudoku](https://leetcode.com/problems/valid-sudoku)
 
 [中文文档](/solution/0000-0099/0036.Valid%20Sudoku/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Determine if a&nbsp;<code>9 x 9</code> Sudoku board&nbsp;is valid.&nbsp;Only the filled cells need to be validated&nbsp;<strong>according to the following rules</strong>:</p>
 
@@ -20,8 +34,8 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0036.Valid%20Sudoku/images/250px-Sudoku-by-L2G-20050714.svg.png" style="height:250px; width:250px" />
+<p><strong class="example">Example 1:</strong></p>
+<img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0036.Valid%20Sudoku/images/250px-Sudoku-by-L2G-20050714.svg.png" style="height:250px; width:250px" />
 <pre>
 <strong>Input:</strong> board = 
 [[&quot;5&quot;,&quot;3&quot;,&quot;.&quot;,&quot;.&quot;,&quot;7&quot;,&quot;.&quot;,&quot;.&quot;,&quot;.&quot;,&quot;.&quot;]
@@ -36,7 +50,7 @@
 <strong>Output:</strong> true
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> board = 
@@ -59,14 +73,30 @@
 <ul>
 	<li><code>board.length == 9</code></li>
 	<li><code>board[i].length == 9</code></li>
-	<li><code>board[i][j]</code> is a digit or <code>&#39;.&#39;</code>.</li>
+	<li><code>board[i][j]</code> is a digit <code>1-9</code> or <code>&#39;.&#39;</code>.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Traversal once
+
+The valid sudoku satisfies the following three conditions:
+
+-   The digits are not repeated in each row;
+-   The digits are not repeated in each column;
+-   The digits are not repeated in each $3 \times 3$ box.
+
+Traverse the sudoku, for each digit, check whether the row, column and $3 \times 3$ box it is in have appeared the digit. If it is, return `false`. If the traversal is over, return `true`.
+
+The time complexity is $O(C)$ and the space complexity is $O(C)$, where $C$ is the number of empty spaces in the sudoku. In this question, $C=81$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -89,7 +119,7 @@ class Solution:
         return True
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -118,7 +148,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -146,7 +176,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func isValidSudoku(board [][]byte) bool {
@@ -170,7 +200,39 @@ func isValidSudoku(board [][]byte) bool {
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+function isValidSudoku(board: string[][]): boolean {
+    const row: boolean[][] = Array.from({ length: 9 }, () =>
+        Array.from({ length: 9 }, () => false),
+    );
+    const col: boolean[][] = Array.from({ length: 9 }, () =>
+        Array.from({ length: 9 }, () => false),
+    );
+    const sub: boolean[][] = Array.from({ length: 9 }, () =>
+        Array.from({ length: 9 }, () => false),
+    );
+    for (let i = 0; i < 9; ++i) {
+        for (let j = 0; j < 9; ++j) {
+            const num = board[i][j].charCodeAt(0) - '1'.charCodeAt(0);
+            if (num < 0 || num > 8) {
+                continue;
+            }
+            const k = Math.floor(i / 3) * 3 + Math.floor(j / 3);
+            if (row[i][num] || col[j][num] || sub[k][num]) {
+                return false;
+            }
+            row[i][num] = true;
+            col[j][num] = true;
+            sub[k][num] = true;
+        }
+    }
+    return true;
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -178,13 +240,13 @@ func isValidSudoku(board [][]byte) bool {
  * @return {boolean}
  */
 var isValidSudoku = function (board) {
-    let row = [...Array(9)].map(() => Array(9).fill(false));
-    let col = [...Array(9)].map(() => Array(9).fill(false));
-    let sub = [...Array(9)].map(() => Array(9).fill(false));
+    const row = [...Array(9)].map(() => Array(9).fill(false));
+    const col = [...Array(9)].map(() => Array(9).fill(false));
+    const sub = [...Array(9)].map(() => Array(9).fill(false));
     for (let i = 0; i < 9; ++i) {
         for (let j = 0; j < 9; ++j) {
-            const num = board[i][j].charCodeAt() - "1".charCodeAt();
-            if (num < 0 || num > 9) {
+            const num = board[i][j].charCodeAt() - '1'.charCodeAt();
+            if (num < 0 || num > 8) {
                 continue;
             }
             const k = Math.floor(i / 3) * 3 + Math.floor(j / 3);
@@ -200,10 +262,52 @@ var isValidSudoku = function (board) {
 };
 ```
 
-### **...**
+#### PHP
 
-```
+```php
+class Solution {
+    /**
+     * @param string[][] $board
+     * @return boolean
+     */
 
+    function isValidSudoku($board) {
+        $rows = [];
+        $columns = [];
+        $boxes = [];
+
+        for ($i = 0; $i < 9; $i++) {
+            $rows[$i] = [];
+            $columns[$i] = [];
+            $boxes[$i] = [];
+        }
+
+        for ($row = 0; $row < 9; $row++) {
+            for ($column = 0; $column < 9; $column++) {
+                $cell = $board[$row][$column];
+
+                if ($cell != '.') {
+                    if (
+                        in_array($cell, $rows[$row]) ||
+                        in_array($cell, $columns[$column]) ||
+                        in_array($cell, $boxes[floor($row / 3) * 3 + floor($column / 3)])
+                    ) {
+                        return false;
+                    }
+
+                    $rows[$row][] = $cell;
+                    $columns[$column][] = $cell;
+                    $boxes[floor($row / 3) * 3 + floor($column / 3)][] = $cell;
+                }
+            }
+        }
+        return true;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

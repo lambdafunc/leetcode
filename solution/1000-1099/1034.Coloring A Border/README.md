@@ -1,112 +1,145 @@
-# [1034. 边框着色](https://leetcode-cn.com/problems/coloring-a-border)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1034.Coloring%20A%20Border/README.md
+rating: 1578
+source: 第 134 场周赛 Q2
+tags:
+    - 深度优先搜索
+    - 广度优先搜索
+    - 数组
+    - 矩阵
+---
+
+<!-- problem:start -->
+
+# [1034. 边界着色](https://leetcode.cn/problems/coloring-a-border)
 
 [English Version](/solution/1000-1099/1034.Coloring%20A%20Border/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给出一个二维整数网格&nbsp;<code>grid</code>，网格中的每个值表示该位置处的网格块的颜色。</p>
+<p>给你一个大小为 <code>m x n</code> 的整数矩阵 <code>grid</code> ，表示一个网格。另给你三个整数&nbsp;<code>row</code>、<code>col</code> 和 <code>color</code> 。网格中的每个值表示该位置处的网格块的颜色。</p>
 
-<p>只有当两个网格块的颜色相同，而且在四个方向中任意一个方向上相邻时，它们属于同一<strong>连通分量</strong>。</p>
+<p>如果两个方块在任意 4 个方向上相邻，则称它们&nbsp;<strong>相邻 </strong>。</p>
 
-<p>连通分量的<strong>边界</strong>是指连通分量中的所有与不在分量中的正方形相邻（四个方向上）的所有正方形，或者在网格的边界上（第一行/列或最后一行/列）的所有正方形。</p>
+<p>如果两个方块具有相同的颜色且相邻，它们则属于同一个 <strong>连通分量</strong> 。</p>
 
-<p>给出位于&nbsp;<code>(r0, c0)</code>&nbsp;的网格块和颜色&nbsp;<code>color</code>，使用指定颜色&nbsp;<code>color</code>&nbsp;为所给网格块的连通分量的边界进行着色，并返回最终的网格&nbsp;<code>grid</code> 。</p>
+<p><strong>连通分量的边界</strong><strong> </strong>是指连通分量中满足下述条件之一的所有网格块：</p>
+
+<ul>
+	<li>在上、下、左、右任意一个方向上与不属于同一连通分量的网格块相邻</li>
+	<li>在网格的边界上（第一行/列或最后一行/列）</li>
+</ul>
+
+<p>请你使用指定颜色&nbsp;<code>color</code> 为所有包含网格块&nbsp;<code>grid[row][col]</code> 的 <strong>连通分量的边界</strong> 进行着色。</p>
+
+<p>并返回最终的网格&nbsp;<code>grid</code> 。</p>
 
 <p>&nbsp;</p>
 
-<p><strong>示例 1：</strong></p>
+<p><strong class="example">示例 1：</strong></p>
 
-<pre><strong>输入：</strong>grid = [[1,1],[1,2]], r0 = 0, c0 = 0, color = 3
-<strong>输出：</strong>[[3, 3], [3, 2]]
-</pre>
+<pre>
+<strong>输入：</strong>grid = [[1,1],[1,2]], row = 0, col = 0, color = 3
+<strong>输出：</strong>[[3,3],[3,2]]</pre>
 
-<p><strong>示例 2：</strong></p>
+<p><strong class="example">示例 2：</strong></p>
 
-<pre><strong>输入：</strong>grid = [[1,2,2],[2,3,2]], r0 = 0, c0 = 1, color = 3
-<strong>输出：</strong>[[1, 3, 3], [2, 3, 3]]
-</pre>
+<pre>
+<strong>输入：</strong>grid = [[1,2,2],[2,3,2]], row = 0, col = 1, color = 3
+<strong>输出：</strong>[[1,3,3],[2,3,3]]</pre>
 
-<p><strong>示例 3：</strong></p>
+<p><strong class="example">示例 3：</strong></p>
 
-<pre><strong>输入：</strong>grid = [[1,1,1],[1,1,1],[1,1,1]], r0 = 1, c0 = 1, color = 2
-<strong>输出：</strong>[[2, 2, 2], [2, 1, 2], [2, 2, 2]]</pre>
+<pre>
+<strong>输入：</strong>grid = [[1,1,1],[1,1,1],[1,1,1]], row = 1, col = 1, color = 2
+<strong>输出：</strong>[[2,2,2],[2,1,2],[2,2,2]]</pre>
 
 <p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
-<ol>
-	<li><code>1 &lt;= grid.length &lt;= 50</code></li>
-	<li><code>1 &lt;= grid[0].length &lt;= 50</code></li>
-	<li><code>1 &lt;= grid[i][j] &lt;= 1000</code></li>
-	<li><code>0 &lt;= r0 &lt; grid.length</code></li>
-	<li><code>0 &lt;= c0 &lt; grid[0].length</code></li>
-	<li><code>1 &lt;= color &lt;= 1000</code></li>
-</ol>
+<ul>
+	<li><code>m == grid.length</code></li>
+	<li><code>n == grid[i].length</code></li>
+	<li><code>1 &lt;= m, n &lt;= 50</code></li>
+	<li><code>1 &lt;= grid[i][j], color &lt;= 1000</code></li>
+	<li><code>0 &lt;= row &lt; m</code></li>
+	<li><code>0 &lt;= col &lt; n</code></li>
+</ul>
 
-<p>&nbsp;</p>
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-深度优先搜索，利用 vis 记录访问过的位置。
+### 方法一：DFS
+
+我们从位置 $(row, col)$ 出发，利用 DFS 搜索所有颜色为 $grid[row][col]$ 的网格块，如果该网格块的某个相邻位置的颜色不为 $grid[row][col]$，或者该网格块在网格的边界上，则将该网格块的颜色改为 $color$。
+
+时间复杂度 $O(m \times n)$，空间复杂度 $O(m \times n)$。其中 $m$ 和 $n$ 分别是网格的行数和列数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-    def colorBorder(self, grid: List[List[int]], row: int, col: int, color: int) -> List[List[int]]:
-        m, n = len(grid), len(grid[0])
-        vis = [[False] * n for _ in range(m)]
-
-        def dfs(i, j, color):
+    def colorBorder(
+        self, grid: List[List[int]], row: int, col: int, color: int
+    ) -> List[List[int]]:
+        def dfs(i: int, j: int, c: int) -> None:
             vis[i][j] = True
-            old_color = grid[i][j]
-            for a, b in [[-1, 0], [1, 0], [0, -1], [0, 1]]:
-                x, y = a + i, b + j
+            for a, b in pairwise((-1, 0, 1, 0, -1)):
+                x, y = i + a, j + b
                 if 0 <= x < m and 0 <= y < n:
                     if not vis[x][y]:
-                        if grid[x][y] == old_color:
-                            dfs(x, y, color)
+                        if grid[x][y] == c:
+                            dfs(x, y, c)
                         else:
                             grid[i][j] = color
                 else:
                     grid[i][j] = color
 
-        dfs(row, col, color)
+        m, n = len(grid), len(grid[0])
+        vis = [[False] * n for _ in range(m)]
+        dfs(row, col, grid[row][col])
         return grid
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
-    private int[] dirs = new int[]{-1, 0, 1, 0, -1};
+    private int[][] grid;
+    private int color;
+    private int m;
+    private int n;
+    private boolean[][] vis;
 
-    public int[][] colorBorder(int[][] grid, int r0, int c0, int color) {
-        boolean[][] vis = new boolean[grid.length][grid[0].length];
-        dfs(grid, r0, c0, color, vis);
+    public int[][] colorBorder(int[][] grid, int row, int col, int color) {
+        this.grid = grid;
+        this.color = color;
+        m = grid.length;
+        n = grid[0].length;
+        vis = new boolean[m][n];
+        dfs(row, col, grid[row][col]);
         return grid;
     }
 
-    private void dfs(int[][] grid, int i, int j, int color, boolean[][] vis) {
+    private void dfs(int i, int j, int c) {
         vis[i][j] = true;
-        int oldColor = grid[i][j];
+        int[] dirs = {-1, 0, 1, 0, -1};
         for (int k = 0; k < 4; ++k) {
             int x = i + dirs[k], y = j + dirs[k + 1];
-            if (x >= 0 && x < grid.length && y >= 0 && y < grid[0].length) {
+            if (x >= 0 && x < m && y >= 0 && y < n) {
                 if (!vis[x][y]) {
-                    if (grid[x][y] == oldColor) {
-                        dfs(grid, x, y, color, vis);
+                    if (grid[x][y] == c) {
+                        dfs(x, y, c);
                     } else {
                         grid[i][j] = color;
                     }
@@ -119,63 +152,60 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    int m, n;
-    vector<vector<int>> dirs = {{0, 1}, {0, - 1}, {1, 0}, {-1, 0}};
-
     vector<vector<int>> colorBorder(vector<vector<int>>& grid, int row, int col, int color) {
-        m = grid.size();
-        n = grid[0].size();
-        vector<vector<bool>> vis(m, vector<bool>(n, false));
-        dfs(row, col, color, grid, vis);
-        return grid;
-    }
-
-    void dfs(int i, int j, int color, vector<vector<int>>& grid, vector<vector<bool>>& vis) {
-        vis[i][j] = true;
-        int oldColor = grid[i][j];
-        for (auto& dir : dirs)
-        {
-            int x = i + dir[0], y = j + dir[1];
-            if (x >= 0 && x < m && y >= 0 && y < n)
-            {
-                if (!vis[x][y])
-                {
-                    if (grid[x][y] == oldColor) dfs(x, y, color, grid, vis);
-                    else grid[i][j] = color;
+        int m = grid.size();
+        int n = grid[0].size();
+        bool vis[m][n];
+        memset(vis, false, sizeof(vis));
+        int dirs[5] = {-1, 0, 1, 0, -1};
+        function<void(int, int, int)> dfs = [&](int i, int j, int c) {
+            vis[i][j] = true;
+            for (int k = 0; k < 4; ++k) {
+                int x = i + dirs[k];
+                int y = j + dirs[k + 1];
+                if (x >= 0 && x < m && y >= 0 && y < n) {
+                    if (!vis[x][y]) {
+                        if (grid[x][y] == c) {
+                            dfs(x, y, c);
+                        } else {
+                            grid[i][j] = color;
+                        }
+                    }
+                } else {
+                    grid[i][j] = color;
                 }
             }
-            else grid[i][j] = color;
-        }
+        };
+        dfs(row, col, grid[row][col]);
+        return grid;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func colorBorder(grid [][]int, row int, col int, color int) [][]int {
 	m, n := len(grid), len(grid[0])
 	vis := make([][]bool, m)
-	for i := 0; i < m; i++ {
+	for i := range vis {
 		vis[i] = make([]bool, n)
 	}
-	dirs := [4][2]int{{0, -1}, {0, 1}, {1, 0}, {-1, 0}}
-
-	var dfs func(i, j, color int)
-	dfs = func(i, j, color int) {
+	dirs := [5]int{-1, 0, 1, 0, -1}
+	var dfs func(int, int, int)
+	dfs = func(i, j, c int) {
 		vis[i][j] = true
-		oldColor := grid[i][j]
-		for _, dir := range dirs {
-			x, y := i+dir[0], j+dir[1]
+		for k := 0; k < 4; k++ {
+			x, y := i+dirs[k], j+dirs[k+1]
 			if x >= 0 && x < m && y >= 0 && y < n {
 				if !vis[x][y] {
-					if grid[x][y] == oldColor {
-						dfs(x, y, color)
+					if grid[x][y] == c {
+						dfs(x, y, c)
 					} else {
 						grid[i][j] = color
 					}
@@ -185,15 +215,44 @@ func colorBorder(grid [][]int, row int, col int, color int) [][]int {
 			}
 		}
 	}
-	dfs(row, col, color)
+	dfs(row, col, grid[row][col])
 	return grid
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function colorBorder(grid: number[][], row: number, col: number, color: number): number[][] {
+    const m = grid.length;
+    const n = grid[0].length;
+    const vis = new Array(m).fill(0).map(() => new Array(n).fill(false));
+    const dirs = [-1, 0, 1, 0, -1];
+    const dfs = (i: number, j: number, c: number) => {
+        vis[i][j] = true;
+        for (let k = 0; k < 4; ++k) {
+            const x = i + dirs[k];
+            const y = j + dirs[k + 1];
+            if (x >= 0 && x < m && y >= 0 && y < n) {
+                if (!vis[x][y]) {
+                    if (grid[x][y] == c) {
+                        dfs(x, y, c);
+                    } else {
+                        grid[i][j] = color;
+                    }
+                }
+            } else {
+                grid[i][j] = color;
+            }
+        }
+    };
+    dfs(row, col, grid[row][col]);
+    return grid;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

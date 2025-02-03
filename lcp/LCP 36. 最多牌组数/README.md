@@ -1,13 +1,21 @@
-# [LCP 36. 最多牌组数](https://leetcode-cn.com/problems/Up5XYM)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/lcp/LCP%2036.%20%E6%9C%80%E5%A4%9A%E7%89%8C%E7%BB%84%E6%95%B0/README.md
+---
+
+<!-- problem:start -->
+
+# [LCP 36. 最多牌组数](https://leetcode.cn/problems/Up5XYM)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 麻将的游戏规则中，共有两种方式凑成「一组牌」：
 
-- 顺子：三张牌面数字连续的麻将，例如 [4,5,6]
-- 刻子：三张牌面数字相同的麻将，例如 [10,10,10]
+-   顺子：三张牌面数字连续的麻将，例如 [4,5,6]
+-   刻子：三张牌面数字相同的麻将，例如 [10,10,10]
 
 给定若干数字作为麻将牌的数值（记作一维数组 `tiles`），请返回所给 `tiles` 最多可组成的牌组数。
 
@@ -31,35 +39,13 @@
 
 **提示：**
 
-- `1 <= tiles.length <= 10^5`
-- `1 <= tiles[i] <= 10^9`
+-   `1 <= tiles.length <= 10^5`
+-   `1 <= tiles[i] <= 10^9`
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-<!-- tabs:start -->
-
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```python
-
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```java
-
-```
-
-### **...**
-
-```
-
-```
-
-<!-- tabs:end -->
+<!-- problem:end -->

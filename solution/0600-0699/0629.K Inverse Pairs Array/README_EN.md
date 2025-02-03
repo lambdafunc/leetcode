@@ -1,226 +1,190 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0629.K%20Inverse%20Pairs%20Array/README_EN.md
+tags:
+    - Dynamic Programming
+---
+
+<!-- problem:start -->
+
 # [629. K Inverse Pairs Array](https://leetcode.com/problems/k-inverse-pairs-array)
 
 [中文文档](/solution/0600-0699/0629.K%20Inverse%20Pairs%20Array/README.md)
 
 ## Description
 
-<p>Given two integers <code>n</code> and <code>k</code>, find how many different arrays consist of numbers from <code>1</code> to <code>n</code> such that there are exactly <code>k</code> inverse pairs.</p>
+<!-- description:start -->
 
-<p>We define an inverse pair as following: For <code>i<sub>th</sub></code> and <code>j<sub>th</sub></code> element in the array, if <code>i</code> &lt; <code>j</code> and <code>a[i]</code> &gt; <code>a[j]</code> then it&#39;s an inverse pair; Otherwise, it&#39;s not.</p>
+<p>For an integer array <code>nums</code>, an <strong>inverse pair</strong> is a pair of integers <code>[i, j]</code> where <code>0 &lt;= i &lt; j &lt; nums.length</code> and <code>nums[i] &gt; nums[j]</code>.</p>
 
-<p>Since the answer may be very large, the answer should be modulo 10<sup>9</sup> + 7.</p>
+<p>Given two integers n and k, return the number of different arrays consisting of numbers from <code>1</code> to <code>n</code> such that there are exactly <code>k</code> <strong>inverse pairs</strong>. Since the answer can be huge, return it <strong>modulo</strong> <code>10<sup>9</sup> + 7</code>.</p>
 
-<p><b>Example 1:</b></p>
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
+<strong>Input:</strong> n = 3, k = 0
+<strong>Output:</strong> 1
+<strong>Explanation:</strong> Only the array [1,2,3] which consists of numbers from 1 to 3 has exactly 0 inverse pairs.
+</pre>
 
-<b>Input:</b> n = 3, k = 0
+<p><strong class="example">Example 2:</strong></p>
 
-<b>Output:</b> 1
-
-<b>Explanation:</b>
-
-Only the array [1,2,3] which consists of numbers from 1 to 3 has exactly 0 inverse pair.
-
+<pre>
+<strong>Input:</strong> n = 3, k = 1
+<strong>Output:</strong> 2
+<strong>Explanation:</strong> The array [1,3,2] and [2,1,3] have exactly 1 inverse pair.
 </pre>
 
 <p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><b>Example 2:</b></p>
+<ul>
+	<li><code>1 &lt;= n &lt;= 1000</code></li>
+	<li><code>0 &lt;= k &lt;= 1000</code></li>
+</ul>
 
-<pre>
-
-<b>Input:</b> n = 3, k = 1
-
-<b>Output:</b> 2
-
-<b>Explanation:</b>
-
-The array [1,3,2] and [2,1,3] have exactly 1 inverse pair.
-
-</pre>
-
-<p>&nbsp;</p>
-
-<p><b>Note:</b></p>
-
-<ol>
-	<li>The integer <code>n</code> is in the range [1, 1000] and <code>k</code> is in the range [0, 1000].</li>
-</ol>
-
-<p>&nbsp;</p>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Dynamic Programming + Prefix Sum
+
+We define $f[i][j]$ as the number of arrays of length $i$ with $j$ inverse pairs. Initially, $f[0][0] = 1$, and the rest $f[i][j] = 0$.
+
+Next, we consider how to obtain $f[i][j]$.
+
+Assume the first $i-1$ numbers are already determined, and now we need to insert the number $i$. We discuss the cases of inserting $i$ into each position:
+
+-   If $i$ is inserted into the 1st position, the number of inverse pairs increases by $i-1$, so $f[i][j] += f[i-1][j-(i-1)]$.
+-   If $i$ is inserted into the 2nd position, the number of inverse pairs increases by $i-2$, so $f[i][j] += f[i-1][j-(i-2)]$.
+-   ...
+-   If $i$ is inserted into the $(i-1)$th position, the number of inverse pairs increases by 1, so $f[i][j] += f[i-1][j-1]$.
+-   If $i$ is inserted into the $i$th position, the number of inverse pairs does not change, so $f[i][j] += f[i-1][j]$.
+
+Therefore, $f[i][j] = \sum_{k=1}^{i} f[i-1][j-(i-k)]$.
+
+We notice that the calculation of $f[i][j]$ actually involves prefix sums, so we can use prefix sums to optimize the calculation process. Moreover, since $f[i][j]$ only depends on $f[i-1][j]$, we can use a one-dimensional array to optimize the space complexity.
+
+The time complexity is $O(n \times k)$, and the space complexity is $O(k)$. Here, $n$ and $k$ are the array length and the number of inverse pairs, respectively.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def kInversePairs(self, n: int, k: int) -> int:
-        mod = 1000000007
-        dp, pre = [0] * (k + 1), [0] * (k + 2)
+        mod = 10**9 + 7
+        f = [1] + [0] * k
+        s = [0] * (k + 2)
         for i in range(1, n + 1):
-            dp[0] = 1
-
-            # dp[i][j] = dp[i - 1][j - (i - 1)] + ... + dp[i - 1][j]
             for j in range(1, k + 1):
-                dp[j] = (pre[j + 1] - pre[max(0, j - i + 1)] + mod) % mod
-
+                f[j] = (s[j + 1] - s[max(0, j - (i - 1))]) % mod
             for j in range(1, k + 2):
-                pre[j] = (pre[j - 1] + dp[j - 1]) % mod
-
-        return dp[k]
+                s[j] = (s[j - 1] + f[j - 1]) % mod
+        return f[k]
 ```
 
-`dp[i][j] = dp[i - 1][j] + dp[i - 1][j - 1] + dp[i - 1][j - 2] + ... + dp[i - 1][j - (i - 1)]` ①
-
-`dp[i][j - 1] = dp[i - 1][j - 1] + dp[i - 1][j - 2] + ... + dp[i - 1][j - (i - 1)] + dp[i - 1][j - i]` ②
-
-① - ②, `dp[i][j] = dp[i][j - 1] + dp[i - 1][j] - dp[i - 1][j - i]`
-
-```python
-class Solution:
-    def kInversePairs(self, n: int, k: int) -> int:
-        N, MOD = 1010, int(1e9) + 7
-        dp = [[0] * N for _ in range(N)]
-        dp[1][0] = 1
-        for i in range(2, n + 1):
-            dp[i][0] = 1
-            for j in range(1, k + 1):
-                dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
-                if j >= i:
-                    dp[i][j] -= dp[i - 1][j - i]
-                dp[i][j] %= MOD
-        return dp[n][k]
-```
-
-```python
-class Solution:
-    def kInversePairs(self, n: int, k: int) -> int:
-        N, MOD = 1010, int(1e9) + 7
-        dp = [0] * N
-        dp[0] = 1
-        for i in range(2, n + 1):
-            t = dp.copy()
-            for j in range(1, k + 1):
-                dp[j] = t[j] + dp[j - 1]
-                if j >= i:
-                    dp[j] -= t[j - i]
-                dp[j] %= MOD
-        return dp[k]
-```
-
-### **Java**
-
-```java
-class Solution {
-
-    private static final int MOD = 1000000007;
-
-    public int kInversePairs(int n, int k) {
-        int[] dp = new int[k + 1];
-        int[] pre = new int[k + 2];
-        for (int i = 1; i <= n; i++) {
-            dp[0] = 1;
-
-            // dp[i][j] = dp[i - 1][j - (i - 1)] + ... + dp[i - 1][j]
-            for (int j = 1; j <= k; j++) {
-                dp[j] = (pre[j + 1] - pre[Math.max(0, j - i + 1)] + MOD) % MOD;
-            }
-
-            for (int j = 1; j <= k + 1; j++) {
-                pre[j] = (pre[j - 1] + dp[j - 1]) % MOD;
-            }
-        }
-        return dp[k];
-    }
-}
-```
+#### Java
 
 ```java
 class Solution {
     public int kInversePairs(int n, int k) {
-        int N = 1010, MOD = (int) (1e9 + 7);
-        int[][] dp = new int[N][N];
-        dp[1][0] = 1;
-        for (int i = 2; i < n + 1; ++i) {
-            dp[i][0] = 1;
-            for (int j = 1; j < k + 1; ++j) {
-                dp[i][j] = (dp[i - 1][j] + dp[i][j - 1]) % MOD;
-                if (j >= i) {
-                    dp[i][j] = (dp[i][j] - dp[i - 1][j - i] + MOD) % MOD;
-                }
+        final int mod = (int) 1e9 + 7;
+        int[] f = new int[k + 1];
+        int[] s = new int[k + 2];
+        f[0] = 1;
+        Arrays.fill(s, 1);
+        s[0] = 0;
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 1; j <= k; ++j) {
+                f[j] = (s[j + 1] - s[Math.max(0, j - (i - 1))] + mod) % mod;
+            }
+            for (int j = 1; j <= k + 1; ++j) {
+                s[j] = (s[j - 1] + f[j - 1]) % mod;
             }
         }
-        return dp[n][k];
+        return f[k];
     }
 }
 ```
 
-### **Go**
-
-```go
-const mod int = 1e9 + 7
-
-func kInversePairs(n int, k int) int {
-	dp := make([]int, k+1)
-	pre := make([]int, k+2)
-	for i := 1; i <= n; i++ {
-		dp[0] = 1
-
-		// dp[i][j] = dp[i - 1][j - (i - 1)] + ... + dp[i - 1][j]
-		for j := 1; j <= k; j++ {
-			dp[j] = (pre[j+1] - pre[max(0, j-i+1)] + mod) % mod
-		}
-
-		for j := 1; j <= k+1; j++ {
-			pre[j] = (pre[j-1] + dp[j-1]) % mod
-		}
-	}
-	return dp[k]
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
-private:
-    static constexpr int MOD = 1e9 + 7;
-
 public:
     int kInversePairs(int n, int k) {
-        vector<int> dp(k + 1), pre(k + 2, 0);
+        int f[k + 1];
+        int s[k + 2];
+        memset(f, 0, sizeof(f));
+        f[0] = 1;
+        fill(s, s + k + 2, 1);
+        s[0] = 0;
+        const int mod = 1e9 + 7;
         for (int i = 1; i <= n; ++i) {
-            dp[0] = 1;
-
-            // dp[i][j] = dp[i - 1][j - (i - 1)] + ... + dp[i - 1][j]
             for (int j = 1; j <= k; ++j) {
-                dp[j] = (pre[j + 1] - pre[max(0, j - i + 1)] + MOD) % MOD;
+                f[j] = (s[j + 1] - s[max(0, j - (i - 1))] + mod) % mod;
             }
-
             for (int j = 1; j <= k + 1; ++j) {
-                pre[j] = (pre[j - 1] + dp[j - 1]) % MOD;
+                s[j] = (s[j - 1] + f[j - 1]) % mod;
             }
         }
-        return dp[k];
+        return f[k];
     }
 };
 ```
 
-### **...**
+#### Go
 
+```go
+func kInversePairs(n int, k int) int {
+	f := make([]int, k+1)
+	s := make([]int, k+2)
+	f[0] = 1
+	for i, x := range f {
+		s[i+1] = s[i] + x
+	}
+	const mod = 1e9 + 7
+	for i := 1; i <= n; i++ {
+		for j := 1; j <= k; j++ {
+			f[j] = (s[j+1] - s[max(0, j-(i-1))] + mod) % mod
+		}
+		for j := 1; j <= k+1; j++ {
+			s[j] = (s[j-1] + f[j-1]) % mod
+		}
+	}
+	return f[k]
+}
 ```
 
+#### TypeScript
+
+```ts
+function kInversePairs(n: number, k: number): number {
+    const f: number[] = Array(k + 1).fill(0);
+    f[0] = 1;
+    const s: number[] = Array(k + 2).fill(1);
+    s[0] = 0;
+    const mod: number = 1e9 + 7;
+    for (let i = 1; i <= n; ++i) {
+        for (let j = 1; j <= k; ++j) {
+            f[j] = (s[j + 1] - s[Math.max(0, j - (i - 1))] + mod) % mod;
+        }
+        for (let j = 1; j <= k + 1; ++j) {
+            s[j] = (s[j - 1] + f[j - 1]) % mod;
+        }
+    }
+    return f[k];
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

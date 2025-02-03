@@ -1,10 +1,23 @@
-# [1456. 定长子串中元音的最大数目](https://leetcode-cn.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1456.Maximum%20Number%20of%20Vowels%20in%20a%20Substring%20of%20Given%20Length/README.md
+rating: 1263
+source: 第 190 场周赛 Q2
+tags:
+    - 字符串
+    - 滑动窗口
+---
+
+<!-- problem:start -->
+
+# [1456. 定长子串中元音的最大数目](https://leetcode.cn/problems/maximum-number-of-vowels-in-a-substring-of-given-length)
 
 [English Version](/solution/1400-1499/1456.Maximum%20Number%20of%20Vowels%20in%20a%20Substring%20of%20Given%20Length/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你字符串 <code>s</code> 和整数 <code>k</code> 。</p>
 
@@ -58,52 +71,175 @@
 	<li><code>1 &lt;= k &lt;= s.length</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：滑动窗口
+
+我们首先统计前 $k$ 个字符中元音字母的个数，记为 $cnt$，初始化答案 $ans$ 为 $cnt$。
+
+然后我们从 $k$ 开始遍历字符串，每次遍历时，我们将当前字符加入窗口，如果当前字符是元音字母，则 $cnt$ 加一；将窗口第一个字符移出窗口，如果移除的字符是元音字母，则 $cnt$ 减一。然后，我们更新答案 $ans = \max(ans, cnt)$。
+
+遍历结束后，返回答案即可。
+
+时间复杂度 $O(n)$，其中 $n$ 为字符串 $s$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def maxVowels(self, s: str, k: int) -> int:
+        vowels = set("aeiou")
+        ans = cnt = sum(c in vowels for c in s[:k])
+        for i in range(k, len(s)):
+            cnt += int(s[i] in vowels) - int(s[i - k] in vowels)
+            ans = max(ans, cnt)
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
+class Solution {
+    public int maxVowels(String s, int k) {
+        int cnt = 0;
+        for (int i = 0; i < k; ++i) {
+            if (isVowel(s.charAt(i))) {
+                ++cnt;
+            }
+        }
+        int ans = cnt;
+        for (int i = k; i < s.length(); ++i) {
+            if (isVowel(s.charAt(i))) {
+                ++cnt;
+            }
+            if (isVowel(s.charAt(i - k))) {
+                --cnt;
+            }
+            ans = Math.max(ans, cnt);
+        }
+        return ans;
+    }
 
+    private boolean isVowel(char c) {
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+    }
+}
 ```
 
-### **TypeScript**
+#### C++
 
-```ts
-function maxVowels(s: string, k: number): number {
-    const n = s.length;
-    let ans = 0;
-    let preSum = new Array(n).fill(0);
-    let cnt = 0;
-    for (let i = 0; i < n && ans != k; i++) {
-        let char = s.charAt(i);
-        if (['a', 'e', 'i', 'o', 'u'].includes(char)) {
-            cnt++;
+```cpp
+class Solution {
+public:
+    int maxVowels(string s, int k) {
+        auto isVowel = [](char c) {
+            return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+        };
+        int cnt = count_if(s.begin(), s.begin() + k, isVowel);
+        int ans = cnt;
+        for (int i = k; i < s.size(); ++i) {
+            cnt += isVowel(s[i]) - isVowel(s[i - k]);
+            ans = max(ans, cnt);
         }
-        preSum[i] = cnt;
-        ans = Math.max(i < k ? cnt : preSum[i] - preSum[i - k], ans);
+        return ans;
     }
-    return ans;
 };
 ```
 
-### **...**
+#### Go
 
+```go
+func maxVowels(s string, k int) int {
+	isVowel := func(c byte) bool {
+		return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'
+	}
+	cnt := 0
+	for i := 0; i < k; i++ {
+		if isVowel(s[i]) {
+			cnt++
+		}
+	}
+	ans := cnt
+	for i := k; i < len(s); i++ {
+		if isVowel(s[i-k]) {
+			cnt--
+		}
+		if isVowel(s[i]) {
+			cnt++
+		}
+		ans = max(ans, cnt)
+	}
+	return ans
+}
 ```
 
+#### TypeScript
+
+```ts
+function maxVowels(s: string, k: number): number {
+    const vowels = new Set(['a', 'e', 'i', 'o', 'u']);
+    let cnt = 0;
+    for (let i = 0; i < k; i++) {
+        if (vowels.has(s[i])) {
+            cnt++;
+        }
+    }
+    let ans = cnt;
+    for (let i = k; i < s.length; i++) {
+        if (vowels.has(s[i])) {
+            cnt++;
+        }
+        if (vowels.has(s[i - k])) {
+            cnt--;
+        }
+        ans = Math.max(ans, cnt);
+    }
+    return ans;
+}
+```
+
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param String $s
+     * @param Integer $k
+     * @return Integer
+     */
+    function isVowel($c) {
+        return $c === 'a' || $c === 'e' || $c === 'i' || $c === 'o' || $c === 'u';
+    }
+    function maxVowels($s, $k) {
+        $cnt = 0;
+        for ($i = 0; $i < $k; $i++) {
+            if ($this->isVowel($s[$i])) {
+                $cnt++;
+            }
+        }
+        $ans = $cnt;
+        for ($j = $k; $j < strlen($s); $j++) {
+            if ($this->isVowel($s[$j - $k])) {
+                $cnt--;
+            }
+            if ($this->isVowel($s[$j])) {
+                $cnt++;
+            }
+            $ans = max($ans, $cnt);
+        }
+        return $ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

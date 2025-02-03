@@ -1,25 +1,24 @@
 class Solution {
     public List<Integer> transformArray(int[] arr) {
-        int n = arr.length;
-        int[] copy = Arrays.copyOf(arr, n);
-        boolean hasChange = true;
-        while (hasChange) {
-            hasChange = false;
-            for (int i = 1; i < n - 1; ++i) {
-                if (arr[i] < copy[i - 1] && arr[i] < copy[i + 1]) {
-                    ++arr[i];
-                    hasChange = true;
-                } else if (arr[i] > copy[i - 1] && arr[i] > copy[i + 1]) {
+        boolean f = true;
+        while (f) {
+            f = false;
+            int[] t = arr.clone();
+            for (int i = 1; i < t.length - 1; ++i) {
+                if (t[i] > t[i - 1] && t[i] > t[i + 1]) {
                     --arr[i];
-                    hasChange = true;
+                    f = true;
+                }
+                if (t[i] < t[i - 1] && t[i] < t[i + 1]) {
+                    ++arr[i];
+                    f = true;
                 }
             }
-            System.arraycopy(arr, 0, copy, 0, n);
         }
-        List<Integer> res = new ArrayList<>();
-        for (int e : arr) {
-            res.add(e);
+        List<Integer> ans = new ArrayList<>();
+        for (int x : arr) {
+            ans.add(x);
         }
-        return res;
+        return ans;
     }
 }

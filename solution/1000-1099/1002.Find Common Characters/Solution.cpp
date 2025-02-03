@@ -1,21 +1,22 @@
 class Solution {
 public:
     vector<string> commonChars(vector<string>& words) {
-        vector<int> freq(26, 10000);
-        for (auto word : words)
-        {
-            vector<int> t(26);
-            for (char c : word)
+        vector<int> cnt(26, 20000);
+        for (const auto& w : words) {
+            vector<int> t(26, 0);
+            for (char c : w) {
                 ++t[c - 'a'];
-            for (int i = 0; i < 26; ++i)
-                freq[i] = min(freq[i], t[i]);
+            }
+            for (int i = 0; i < 26; ++i) {
+                cnt[i] = min(cnt[i], t[i]);
+            }
         }
-        vector<string> res;
-        for (int i = 0; i < 26; i++)
-        {
-            while (freq[i]--)
-                res.emplace_back(1, i + 'a');
+        vector<string> ans;
+        for (int i = 0; i < 26; ++i) {
+            for (int j = 0; j < cnt[i]; ++j) {
+                ans.push_back(string(1, 'a' + i));
+            }
         }
-        return res;
+        return ans;
     }
 };

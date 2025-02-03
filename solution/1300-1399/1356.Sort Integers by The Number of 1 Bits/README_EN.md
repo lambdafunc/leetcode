@@ -1,15 +1,32 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1356.Sort%20Integers%20by%20The%20Number%20of%201%20Bits/README_EN.md
+rating: 1257
+source: Biweekly Contest 20 Q1
+tags:
+    - Bit Manipulation
+    - Array
+    - Counting
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [1356. Sort Integers by The Number of 1 Bits](https://leetcode.com/problems/sort-integers-by-the-number-of-1-bits)
 
 [中文文档](/solution/1300-1399/1356.Sort%20Integers%20by%20The%20Number%20of%201%20Bits/README.md)
 
 ## Description
 
-<p>Given an integer array <code>arr</code>. You have to sort the integers in the array&nbsp;in ascending order by the number of <strong>1&#39;s</strong>&nbsp;in their binary representation and in case of two or more integers have the same number of <strong>1&#39;s</strong> you have to sort them in ascending order.</p>
+<!-- description:start -->
 
-<p>Return <em>the sorted array</em>.</p>
+<p>You are given an integer array <code>arr</code>. Sort the integers in the array&nbsp;in ascending order by the number of <code>1</code>&#39;s&nbsp;in their binary representation and in case of two or more integers have the same number of <code>1</code>&#39;s you have to sort them in ascending order.</p>
+
+<p>Return <em>the array after sorting it</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> arr = [0,1,2,3,4,5,6,7,8]
@@ -21,7 +38,7 @@
 The sorted array by bits is [0,1,2,4,8,3,5,6,7]
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> arr = [1024,512,256,128,64,32,16,8,4,2,1]
@@ -29,59 +46,47 @@ The sorted array by bits is [0,1,2,4,8,3,5,6,7]
 <strong>Explantion:</strong> All integers have 1 bit in the binary representation, you should just sort them in ascending order.
 </pre>
 
-<p><strong>Example 3:</strong></p>
-
-<pre>
-<strong>Input:</strong> arr = [10000,10000]
-<strong>Output:</strong> [10000,10000]
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> arr = [2,3,5,7,11,13,17,19]
-<strong>Output:</strong> [2,3,5,17,7,11,13,19]
-</pre>
-
-<p><strong>Example 5:</strong></p>
-
-<pre>
-<strong>Input:</strong> arr = [10,100,1000,10000]
-<strong>Output:</strong> [10,100,10000,1000]
-</pre>
-
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
 <ul>
 	<li><code>1 &lt;= arr.length &lt;= 500</code></li>
-	<li><code>0 &lt;= arr[i] &lt;= 10^4</code></li>
+	<li><code>0 &lt;= arr[i] &lt;= 10<sup>4</sup></code></li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Custom Sorting
+
+We sort the array $arr$ according to the requirements of the problem, that is, sort in ascending order according to the number of $1$s in the binary representation. If there are multiple numbers with the same number of $1$s in the binary representation, they must be sorted in ascending order by numerical value.
+
+The time complexity is $O(n \log n)$, and the space complexity is $O(n)$. Where $n$ is the length of the array $arr$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def sortByBits(self, arr: List[int]) -> List[int]:
-        arr.sort(key=lambda x: (bin(x).count("1"), x))
-        return arr
+        return sorted(arr, key=lambda x: (x.bit_count(), x))
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int[] sortByBits(int[] arr) {
         int n = arr.length;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; ++i) {
             arr[i] += Integer.bitCount(arr[i]) * 100000;
         }
         Arrays.sort(arr);
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; ++i) {
             arr[i] %= 100000;
         }
         return arr;
@@ -89,10 +94,165 @@ class Solution {
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> sortByBits(vector<int>& arr) {
+        for (int& v : arr) {
+            v += __builtin_popcount(v) * 100000;
+        }
+        sort(arr.begin(), arr.end());
+        for (int& v : arr) {
+            v %= 100000;
+        }
+        return arr;
+    }
+};
 ```
 
+#### Go
+
+```go
+func sortByBits(arr []int) []int {
+	for i, v := range arr {
+		arr[i] += bits.OnesCount(uint(v)) * 100000
+	}
+	sort.Ints(arr)
+	for i := range arr {
+		arr[i] %= 100000
+	}
+	return arr
+}
+```
+
+#### TypeScript
+
+```ts
+function sortByBits(arr: number[]): number[] {
+    const countOnes = (n: number) => {
+        let res = 0;
+        while (n) {
+            n &= n - 1;
+            res++;
+        }
+        return res;
+    };
+    return arr.sort((a, b) => countOnes(a) - countOnes(b) || a - b);
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn sort_by_bits(mut arr: Vec<i32>) -> Vec<i32> {
+        arr.sort_by(|a, b| {
+            let res = a.count_ones().cmp(&b.count_ones());
+            if res == std::cmp::Ordering::Equal {
+                return a.cmp(&b);
+            }
+            res
+        });
+        arr
+    }
+}
+```
+
+#### C
+
+```c
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int countOnes(int n) {
+    int res = 0;
+    while (n) {
+        n &= n - 1;
+        res++;
+    }
+    return res;
+}
+
+int cmp(const void* _a, const void* _b) {
+    int a = *(int*) _a;
+    int b = *(int*) _b;
+    int res = countOnes(a) - countOnes(b);
+    if (res == 0) {
+        return a - b;
+    }
+    return res;
+}
+
+int* sortByBits(int* arr, int arrSize, int* returnSize) {
+    qsort(arr, arrSize, sizeof(int), cmp);
+    *returnSize = arrSize;
+    return arr;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### Java
+
+```java
+class Solution {
+    public int[] sortByBits(int[] arr) {
+        int n = arr.length;
+        Integer[] t = new Integer[n];
+        for (int i = 0; i < n; ++i) {
+            t[i] = arr[i];
+        }
+        Arrays.sort(t, (a, b) -> {
+            int x = Integer.bitCount(a), y = Integer.bitCount(b);
+            return x == y ? a - b : x - y;
+        });
+        for (int i = 0; i < n; ++i) {
+            arr[i] = t[i];
+        }
+        return arr;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    vector<int> sortByBits(vector<int>& arr) {
+        sort(arr.begin(), arr.end(), [&](auto& a, auto& b) -> bool {
+            int x = __builtin_popcount(a), y = __builtin_popcount(b);
+            return x < y || (x == y && a < b);
+        });
+        return arr;
+    }
+};
+```
+
+#### Go
+
+```go
+func sortByBits(arr []int) []int {
+	sort.Slice(arr, func(i, j int) bool {
+		a, b := bits.OnesCount(uint(arr[i])), bits.OnesCount(uint(arr[j]))
+		return a < b || (a == b && arr[i] < arr[j])
+	})
+	return arr
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

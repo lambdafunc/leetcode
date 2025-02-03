@@ -3,12 +3,12 @@ public:
     int minimumSize(vector<int>& nums, int maxOperations) {
         int left = 1, right = *max_element(nums.begin(), nums.end());
         while (left < right) {
-            int mid = left + (right - left >> 1);
-            long long ops = 0;
-            for (int num : nums) {
-                ops += (num - 1) / mid;
+            int mid = (left + right) >> 1;
+            long long cnt = 0;
+            for (int x : nums) {
+                cnt += (x - 1) / mid;
             }
-            if (ops <= maxOperations) {
+            if (cnt <= maxOperations) {
                 right = mid;
             } else {
                 left = mid + 1;

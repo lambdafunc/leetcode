@@ -1,10 +1,24 @@
-# [705. 设计哈希集合](https://leetcode-cn.com/problems/design-hashset)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0705.Design%20HashSet/README.md
+tags:
+    - 设计
+    - 数组
+    - 哈希表
+    - 链表
+    - 哈希函数
+---
+
+<!-- problem:start -->
+
+# [705. 设计哈希集合](https://leetcode.cn/problems/design-hashset)
 
 [English Version](/solution/0700-0799/0705.Design%20HashSet/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>不使用任何内建的哈希表库设计一个哈希集合（HashSet）。</p>
 
@@ -15,7 +29,7 @@
 	<li><code>bool contains(key)</code> 返回哈希集合中是否存在这个值 <code>key</code> 。</li>
 	<li><code>void remove(key)</code> 将给定值 <code>key</code> 从哈希集合中删除。如果哈希集合中没有这个值，什么也不做。</li>
 </ul>
- 
+&nbsp;
 
 <p><strong>示例：</strong></p>
 
@@ -37,38 +51,36 @@ myHashSet.contains(2); // 返回 True
 myHashSet.remove(2);   // set = [1]
 myHashSet.contains(2); // 返回 False ，（已移除）</pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>0 <= key <= 10<sup>6</sup></code></li>
-	<li>最多调用 <code>10<sup>4</sup></code> 次 <code>add</code>、<code>remove</code> 和 <code>contains</code> 。</li>
+	<li><code>0 &lt;= key &lt;= 10<sup>6</sup></code></li>
+	<li>最多调用 <code>10<sup>4</sup></code> 次 <code>add</code>、<code>remove</code> 和 <code>contains</code></li>
 </ul>
 
-<p> </p>
-
-<p><strong>进阶：</strong>你可以不使用内建的哈希集合库解决此问题吗？</p>
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-数组实现。
+### 方法一：静态数组实现
+
+直接创建一个大小为 $1000001$ 的数组，初始时数组中的每个元素都为 `false`，表示哈希集合中不存在该元素。
+
+往哈希集合添加元素时，将数组中对应位置的值置为 `true`；删除元素时，将数组中对应位置的值置为 `false`；当查询元素是否存在时，直接返回数组中对应位置的值即可。
+
+以上操作的时间复杂度均为 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class MyHashSet:
-
     def __init__(self):
-        """
-        Initialize your data structure here.
-        """
         self.data = [False] * 1000001
 
     def add(self, key: int) -> None:
@@ -78,11 +90,7 @@ class MyHashSet:
         self.data[key] = False
 
     def contains(self, key: int) -> bool:
-        """
-        Returns true if this set contains the specified element
-        """
         return self.data[key]
-
 
 
 # Your MyHashSet object will be instantiated and called as such:
@@ -92,20 +100,13 @@ class MyHashSet:
 # param_3 = obj.contains(key)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-- 可以一次性开辟一个大的数组，存放所有元素。
+#### Java
 
 ```java
 class MyHashSet {
+    private boolean[] data = new boolean[1000001];
 
-    private boolean[] data;
-
-    /** Initialize your data structure here. */
     public MyHashSet() {
-        data = new boolean[1000001];
     }
 
     public void add(int key) {
@@ -116,7 +117,6 @@ class MyHashSet {
         data[key] = false;
     }
 
-    /** Returns true if this set contains the specified element */
     public boolean contains(int key) {
         return data[key];
     }
@@ -131,65 +131,73 @@ class MyHashSet {
  */
 ```
 
-- 也可以开辟一个大小为 `SIZE` 的数组，数组的每个位置是一个链表。
+#### C++
 
-```java
+```cpp
 class MyHashSet {
+public:
+    bool data[1000001];
 
-    private static final int SIZE = 1000;
-    private LinkedList[] data;
-
-    /** Initialize your data structure here. */
-    public MyHashSet() {
-        data = new LinkedList[SIZE];
-        Arrays.fill(data, new LinkedList<Integer>());
+    MyHashSet() {
+        memset(data, false, sizeof data);
     }
 
-    public void add(int key) {
-        int index = hash(key);
-        Iterator<Integer> iterator = data[index].iterator();
-        while (iterator.hasNext()) {
-            Integer e = iterator.next();
-            if (e == key) return;
-        }
-        data[index].addFirst(key);
+    void add(int key) {
+        data[key] = true;
     }
 
-    public void remove(int key) {
-        int index = hash(key);
-        ListIterator<Integer> iterator = data[index].listIterator();
-        while (iterator.hasNext()) {
-            Integer e = iterator.next();
-            if (e == key) iterator.remove();
-        }
+    void remove(int key) {
+        data[key] = false;
     }
 
-    /** Returns true if this set contains the specified element */
-    public boolean contains(int key) {
-        int index = hash(key);
-        Iterator<Integer> iterator = data[index].iterator();
-        while (iterator.hasNext()) {
-            Integer e = iterator.next();
-            if (e == key) return true;
-        }
-        return false;
+    bool contains(int key) {
+        return data[key];
     }
+};
 
-    private int hash(int key) {
-        return key % SIZE;
-    }
+/**
+ * Your MyHashSet object will be instantiated and called as such:
+ * MyHashSet* obj = new MyHashSet();
+ * obj->add(key);
+ * obj->remove(key);
+ * bool param_3 = obj->contains(key);
+ */
+```
+
+#### Go
+
+```go
+type MyHashSet struct {
+	data []bool
+}
+
+func Constructor() MyHashSet {
+	data := make([]bool, 1000010)
+	return MyHashSet{data}
+}
+
+func (this *MyHashSet) Add(key int) {
+	this.data[key] = true
+}
+
+func (this *MyHashSet) Remove(key int) {
+	this.data[key] = false
+}
+
+func (this *MyHashSet) Contains(key int) bool {
+	return this.data[key]
 }
 
 /**
  * Your MyHashSet object will be instantiated and called as such:
- * MyHashSet obj = new MyHashSet();
- * obj.add(key);
- * obj.remove(key);
- * boolean param_3 = obj.contains(key);
+ * obj := Constructor();
+ * obj.Add(key);
+ * obj.Remove(key);
+ * param_3 := obj.Contains(key);
  */
 ```
 
-### **TypeScript**
+#### TypeScript
 
 ```ts
 class MyHashSet {
@@ -220,10 +228,215 @@ class MyHashSet {
  */
 ```
 
-### **...**
+<!-- tabs:end -->
 
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：数组嵌套链表
+
+我们也可以开辟一个大小为 `SIZE=1000` 的数组，数组的每个位置是一个链表。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class MyHashSet:
+    def __init__(self):
+        self.size = 1000
+        self.data = [[] for _ in range(self.size)]
+
+    def add(self, key: int) -> None:
+        if self.contains(key):
+            return
+        idx = self.hash(key)
+        self.data[idx].append(key)
+
+    def remove(self, key: int) -> None:
+        if not self.contains(key):
+            return
+        idx = self.hash(key)
+        self.data[idx].remove(key)
+
+    def contains(self, key: int) -> bool:
+        idx = self.hash(key)
+        return any(v == key for v in self.data[idx])
+
+    def hash(self, key) -> int:
+        return key % self.size
+
+
+# Your MyHashSet object will be instantiated and called as such:
+# obj = MyHashSet()
+# obj.add(key)
+# obj.remove(key)
+# param_3 = obj.contains(key)
 ```
 
+#### Java
+
+```java
+class MyHashSet {
+    private static final int SIZE = 1000;
+    private LinkedList[] data;
+
+    public MyHashSet() {
+        data = new LinkedList[SIZE];
+        for (int i = 0; i < SIZE; ++i) {
+            data[i] = new LinkedList<Integer>();
+        }
+    }
+
+    public void add(int key) {
+        if (contains(key)) {
+            return;
+        }
+        int idx = hash(key);
+        data[idx].addFirst(key);
+    }
+
+    public void remove(int key) {
+        if (!contains(key)) {
+            return;
+        }
+        int idx = hash(key);
+        data[idx].remove(Integer.valueOf(key));
+    }
+
+    public boolean contains(int key) {
+        int idx = hash(key);
+        Iterator<Integer> it = data[idx].iterator();
+        while (it.hasNext()) {
+            Integer e = it.next();
+            if (e == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int hash(int key) {
+        return key % SIZE;
+    }
+}
+
+/**
+ * Your MyHashSet object will be instantiated and called as such:
+ * MyHashSet obj = new MyHashSet();
+ * obj.add(key);
+ * obj.remove(key);
+ * boolean param_3 = obj.contains(key);
+ */
+```
+
+#### C++
+
+```cpp
+class MyHashSet {
+private:
+    int size = 1000;
+    vector<list<int>> data;
+
+public:
+    MyHashSet()
+        : data(size) {
+    }
+
+    void add(int key) {
+        if (contains(key)) {
+            return;
+        }
+        int idx = hash(key);
+        data[idx].push_back(key);
+    }
+
+    void remove(int key) {
+        if (!contains(key)) {
+            return;
+        }
+        int idx = hash(key);
+        data[idx].remove(key);
+    }
+
+    bool contains(int key) {
+        int idx = hash(key);
+        for (auto it = data[idx].begin(); it != data[idx].end(); it++) {
+            if ((*it) == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    int hash(int key) {
+        return key % size;
+    }
+};
+
+/**
+ * Your MyHashSet object will be instantiated and called as such:
+ * MyHashSet* obj = new MyHashSet();
+ * obj->add(key);
+ * obj->remove(key);
+ * bool param_3 = obj->contains(key);
+ */
+```
+
+#### Go
+
+```go
+type MyHashSet struct {
+	data []list.List
+}
+
+func Constructor() MyHashSet {
+	return MyHashSet{make([]list.List, 1000)}
+}
+
+func (this *MyHashSet) Add(key int) {
+	if this.Contains(key) {
+		return
+	}
+	idx := this.hash(key)
+	this.data[idx].PushBack(key)
+}
+
+func (this *MyHashSet) Remove(key int) {
+	idx := this.hash(key)
+	for e := this.data[idx].Front(); e != nil; e = e.Next() {
+		if e.Value.(int) == key {
+			this.data[idx].Remove(e)
+		}
+	}
+}
+
+func (this *MyHashSet) Contains(key int) bool {
+	idx := this.hash(key)
+	for e := this.data[idx].Front(); e != nil; e = e.Next() {
+		if e.Value.(int) == key {
+			return true
+		}
+	}
+	return false
+}
+
+func (this *MyHashSet) hash(key int) int {
+	return key % len(this.data)
+}
+
+/**
+ * Your MyHashSet object will be instantiated and called as such:
+ * obj := Constructor();
+ * obj.Add(key);
+ * obj.Remove(key);
+ * param_3 := obj.Contains(key);
+ */
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,18 +1,13 @@
 func chalkReplacer(chalk []int, k int) int {
-	n := len(chalk)
-	preSum := make([]int, n+1)
-	for i := 0; i < n; i++ {
-		preSum[i+1] = preSum[i] + chalk[i]
+	s := 0
+	for _, x := range chalk {
+		s += x
 	}
-	k %= preSum[n]
-	left, right := 0, n-1
-	for left < right {
-		mid := left + ((right - left) >> 1)
-		if preSum[mid+1] > k {
-			right = mid
-		} else {
-			left = mid + 1
+	k %= s
+	for i := 0; ; i++ {
+		if k < chalk[i] {
+			return i
 		}
+		k -= chalk[i]
 	}
-	return left
 }

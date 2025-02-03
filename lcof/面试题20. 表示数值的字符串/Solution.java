@@ -1,34 +1,41 @@
 class Solution {
     public boolean isNumber(String s) {
-        if (s == null || s.trim().length() == 0) {
+        int i = 0, j = s.length() - 1;
+        while (i < j && s.charAt(i) == ' ') {
+            ++i;
+        }
+        while (i <= j && s.charAt(j) == ' ') {
+            --j;
+        }
+        if (i > j) {
             return false;
         }
-        char[] chars = s.trim().toCharArray();
-        boolean findNum = false;
-        boolean findE = false;
-        boolean findDot = false;
-        for (int i = 0, n = chars.length; i < n; ++i) {
-            if (chars[i] == '+' || chars[i] == '-') {
-                if (i != 0 && chars[i - 1] != 'e' && chars[i - 1] != 'E') {
+        boolean digit = false;
+        boolean dot = false;
+        boolean e = false;
+        for (; i <= j; ++i) {
+            if (s.charAt(i) == '+' || s.charAt(i) == '-') {
+                if (i > 0 && s.charAt(i - 1) != ' ' && s.charAt(i - 1) != 'e'
+                    && s.charAt(i - 1) != 'E') {
                     return false;
                 }
-            } else if (chars[i] >= '0' && chars[i] <= '9') {
-                findNum = true;
-            } else if (chars[i] == '.') {
-                if (findDot || findE) {
+            } else if (Character.isDigit(s.charAt(i))) {
+                digit = true;
+            } else if (s.charAt(i) == '.') {
+                if (dot || e) {
                     return false;
                 }
-                findDot = true;
-            } else if (chars[i] == 'e' || chars[i] == 'E') {
-                if (findE || !findNum) {
+                dot = true;
+            } else if (s.charAt(i) == 'e' || s.charAt(i) == 'E') {
+                if (!digit || e) {
                     return false;
                 }
-                findE = true;
-                findNum = false; // 确保e之后也出现数
+                e = true;
+                digit = false;
             } else {
                 return false;
             }
         }
-        return findNum;
+        return digit;
     }
 }

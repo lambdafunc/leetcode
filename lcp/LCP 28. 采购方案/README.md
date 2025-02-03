@@ -1,8 +1,15 @@
-# [LCP 28. 采购方案](https://leetcode-cn.com/problems/4xy4Wx)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcp/LCP%2028.%20%E9%87%87%E8%B4%AD%E6%96%B9%E6%A1%88/README.md
+---
+
+<!-- problem:start -->
+
+# [LCP 28. 采购方案](https://leetcode.cn/problems/4xy4Wx)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 小力将 N 个零件的报价存于数组 `nums`。小力预算为 `target`，假定小力仅购买两个零件，要求购买零件的花费不超过预算，请问他有多少种采购方案。
 
@@ -30,18 +37,20 @@
 
 **提示：**
 
-- `2 <= nums.length <= 10^5`
-- `1 <= nums[i], target <= 10^5`
+-   `2 <= nums.length <= 10^5`
+-   `1 <= nums[i], target <= 10^5`
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -53,14 +62,12 @@ class Solution:
             if nums[i] + nums[j] > target:
                 j -= 1
             else:
-                res += (j - i)
+                res += j - i
                 i += 1
         return res % 1000000007
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -80,7 +87,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -89,17 +96,16 @@ public:
         const int MOD = 1000000007;
         sort(nums.begin(), nums.end());
         int res = 0;
-        for (int i = 0, j = nums.size() - 1; i < j; ++i)
-        {
+        for (int i = 0, j = nums.size() - 1; i < j; ++i) {
             while (i < j && nums[i] + nums[j] > target) --j;
-            if (i < j)  res = (res + j - i) % MOD;
+            if (i < j) res = (res + j - i) % MOD;
         }
-        return res;
+        return res % MOD;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func purchasePlans(nums []int, target int) int {
@@ -117,10 +123,33 @@ func purchasePlans(nums []int, target int) int {
 }
 ```
 
-### **...**
+#### Swift
 
-```
+```swift
+class Solution {
+    func purchasePlans(_ nums: [Int], _ target: Int) -> Int {
+        let mod = 1_000_000_007
+        let nums = nums.sorted()
+        var res = 0
+        var i = 0
+        var j = nums.count - 1
 
+        while i < j {
+            if nums[i] + nums[j] > target {
+                j -= 1
+            } else {
+                res = (res + j - i) % mod
+                i += 1
+            }
+        }
+
+        return res
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

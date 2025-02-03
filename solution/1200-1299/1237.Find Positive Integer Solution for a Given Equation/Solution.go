@@ -7,21 +7,12 @@
  *              i.e. f(x, y) < f(x + 1, y), f(x, y) < f(x, y + 1)
  */
 
-func findSolution(customFunction func(int, int) int, z int) [][]int {
-	res := [][]int{}
-	for i := 1; i <= 1000; i++ {
-		left, right := 1, 1000
-		for left < right {
-			mid := (left + right) >> 1
-			if customFunction(i, mid) >= z {
-				right = mid
-			} else {
-				left = mid + 1
-			}
-		}
-		if customFunction(i, left) == z {
-			res = append(res, []int{i, left})
+func findSolution(customFunction func(int, int) int, z int) (ans [][]int) {
+	for x := 1; x <= 1000; x++ {
+		y := 1 + sort.Search(999, func(y int) bool { return customFunction(x, y+1) >= z })
+		if customFunction(x, y) == z {
+			ans = append(ans, []int{x, y})
 		}
 	}
-	return res
+	return
 }

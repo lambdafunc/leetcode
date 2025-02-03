@@ -1,8 +1,15 @@
-# [LCP 04. 覆盖](https://leetcode-cn.com/problems/broken-board-dominoes)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcp/LCP%2004.%20%E8%A6%86%E7%9B%96/README.md
+---
+
+<!-- problem:start -->
+
+# [LCP 04. 覆盖](https://leetcode.cn/problems/broken-board-dominoes)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>你有一块棋盘，棋盘上有一些格子已经坏掉了。你还有无穷块大小为<code>1 * 2</code>的多米诺骨牌，你想把这些骨牌<strong>不重叠</strong>地覆盖在<strong>完好</strong>的格子上，请找出你最多能在棋盘上放多少块骨牌？这些骨牌可以横着或者竖着放。</p>
 
@@ -20,7 +27,7 @@
 <strong>输出：</strong>2
 <strong>解释：</strong>我们最多可以放两块骨牌：[[0, 0], [0, 1]]以及[[0, 2], [1, 2]]。（见下图）</pre>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/lcp/LCP%2004.%20覆盖/images/domino_example_1.jpg" style="height: 204px; width: 304px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/lcp/LCP%2004.%20覆盖/images/domino_example_1.jpg" style="height: 204px; width: 304px;"></p>
 
 <p>&nbsp;</p>
 
@@ -31,7 +38,7 @@
 <strong>解释：</strong>下图是其中一种可行的摆放方式
 </pre>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/lcp/LCP%2004.%20覆盖/images/domino_example_2.jpg" style="height: 304px; width: 304px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/lcp/LCP%2004.%20覆盖/images/domino_example_2.jpg" style="height: 304px; width: 304px;"></p>
 
 <p>&nbsp;</p>
 
@@ -43,32 +50,10 @@
 	<li><code>0 &lt;= b &lt;= n * m</code></li>
 </ol>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-<!-- tabs:start -->
-
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```python
-
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```java
-
-```
-
-### **...**
-
-```
-
-```
-
-<!-- tabs:end -->
+<!-- problem:end -->

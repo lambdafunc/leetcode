@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1742.Maximum%20Number%20of%20Balls%20in%20a%20Box/README_EN.md
+rating: 1277
+source: Weekly Contest 226 Q1
+tags:
+    - Hash Table
+    - Math
+    - Counting
+---
+
+<!-- problem:start -->
+
 # [1742. Maximum Number of Balls in a Box](https://leetcode.com/problems/maximum-number-of-balls-in-a-box)
 
 [中文文档](/solution/1700-1799/1742.Maximum%20Number%20of%20Balls%20in%20a%20Box/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are working in a ball factory where you have <code>n</code> balls numbered from <code>lowLimit</code> up to <code>highLimit</code> <strong>inclusive</strong> (i.e., <code>n == highLimit - lowLimit + 1</code>), and an infinite number of boxes numbered from <code>1</code> to <code>infinity</code>.</p>
 
@@ -11,7 +27,7 @@
 <p>Given two integers <code>lowLimit</code> and <code>highLimit</code>, return<em> the number of balls in the box with the most balls.</em></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> lowLimit = 1, highLimit = 10
@@ -21,7 +37,7 @@ Box Number:  1 2 3 4 5 6 7 8 9 10 11 ...
 Ball Count:  2 1 1 1 1 1 1 1 1 0  0  ...
 Box 1 has the most number of balls with 2 balls.</pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> lowLimit = 5, highLimit = 15
@@ -32,7 +48,7 @@ Ball Count:  1 1 1 1 2 2 1 1 1 0  0  ...
 Boxes 5 and 6 have the most number of balls with 2 balls in each.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> lowLimit = 19, highLimit = 28
@@ -50,96 +66,112 @@ Box 10 has the most number of balls with 2 balls.
 	<li><code>1 &lt;= lowLimit &lt;= highLimit &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Array + Simulation
+
+Observing the data range of the problem, the maximum number of the ball does not exceed $10^5$, so the maximum value of the sum of each digit of the number is less than $50$. Therefore, we can directly create an array $cnt$ with a length of $50$ to count the number of each digit sum of each number.
+
+The answer is the maximum value in the array $cnt$.
+
+The time complexity is $O(n \times \log_{10}m)$. Here, $n = highLimit - lowLimit + 1$, and $m = highLimit$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def countBalls(self, lowLimit: int, highLimit: int) -> int:
-        counter = [0] * 60
-        for i in range(lowLimit, highLimit + 1):
-            s = 0
-            while i:
-                s += (i % 10)
-                i //= 10
-            counter[s] += 1
-        return max(counter)
+        cnt = [0] * 50
+        for x in range(lowLimit, highLimit + 1):
+            y = 0
+            while x:
+                y += x % 10
+                x //= 10
+            cnt[y] += 1
+        return max(cnt)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int countBalls(int lowLimit, int highLimit) {
-        int[] counter = new int[60];
-        int ans = 0;
+        int[] cnt = new int[50];
         for (int i = lowLimit; i <= highLimit; ++i) {
-            int s = 0;
-            int j = i;
-            while (j > 0) {
-                s += (j % 10);
-                j /= 10;
+            int y = 0;
+            for (int x = i; x > 0; x /= 10) {
+                y += x % 10;
             }
-            ++counter[s];
-            ans = Math.max(ans, counter[s]);
+            ++cnt[y];
         }
-        return ans;
+        return Arrays.stream(cnt).max().getAsInt();
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int countBalls(int lowLimit, int highLimit) {
-        vector<int> counter(60);
+        int cnt[50] = {0};
         int ans = 0;
-        for (int i = lowLimit; i <= highLimit; ++i)
-        {
-            int s = 0, j = i;
-            while (j)
-            {
-                s += (j % 10);
-                j /= 10;
+        for (int i = lowLimit; i <= highLimit; ++i) {
+            int y = 0;
+            for (int x = i; x; x /= 10) {
+                y += x % 10;
             }
-            ++counter[s];
-            ans = max(ans, counter[s]);
+            ans = max(ans, ++cnt[y]);
         }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func countBalls(lowLimit int, highLimit int) int {
-	counter := make([]int, 60)
-	ans := 0
+func countBalls(lowLimit int, highLimit int) (ans int) {
+	cnt := [50]int{}
 	for i := lowLimit; i <= highLimit; i++ {
-		s, j := 0, i
-		for j > 0 {
-			s += (j % 10)
-			j /= 10
+		y := 0
+		for x := i; x > 0; x /= 10 {
+			y += x % 10
 		}
-		counter[s]++
-		if counter[s] > ans {
-			ans = counter[s]
+		cnt[y]++
+		if ans < cnt[y] {
+			ans = cnt[y]
 		}
 	}
-	return ans
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function countBalls(lowLimit: number, highLimit: number): number {
+    const cnt: number[] = Array(50).fill(0);
+    for (let i = lowLimit; i <= highLimit; ++i) {
+        let y = 0;
+        for (let x = i; x; x = Math.floor(x / 10)) {
+            y += x % 10;
+        }
+        ++cnt[y];
+    }
+    return Math.max(...cnt);
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

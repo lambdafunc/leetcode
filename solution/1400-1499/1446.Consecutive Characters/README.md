@@ -1,47 +1,43 @@
-# [1446. 连续字符](https://leetcode-cn.com/problems/consecutive-characters)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1446.Consecutive%20Characters/README.md
+rating: 1165
+source: 第 26 场双周赛 Q1
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1446. 连续字符](https://leetcode.cn/problems/consecutive-characters)
 
 [English Version](/solution/1400-1499/1446.Consecutive%20Characters/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给你一个字符串&nbsp;<code>s</code>&nbsp;，字符串的「能量」定义为：只包含一种字符的最长非空子字符串的长度。</p>
+<p>给你一个字符串&nbsp;<code>s</code>&nbsp;，字符串的<strong>「能量」</strong>定义为：只包含一种字符的最长非空子字符串的长度。</p>
 
-<p>请你返回字符串的能量。</p>
+<p>请你返回字符串 <code>s</code> 的 <strong>能量</strong>。</p>
 
 <p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入：</strong>s = &quot;leetcode&quot;
+<pre>
+<strong>输入：</strong>s = "leetcode"
 <strong>输出：</strong>2
-<strong>解释：</strong>子字符串 &quot;ee&quot; 长度为 2 ，只包含字符 &#39;e&#39; 。
+<strong>解释：</strong>子字符串 "ee" 长度为 2 ，只包含字符 'e' 。
 </pre>
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入：</strong>s = &quot;abbcccddddeeeeedcba&quot;
+<pre>
+<strong>输入：</strong>s = "abbcccddddeeeeedcba"
 <strong>输出：</strong>5
-<strong>解释：</strong>子字符串 &quot;eeeee&quot; 长度为 5 ，只包含字符 &#39;e&#39; 。
-</pre>
-
-<p><strong>示例 3：</strong></p>
-
-<pre><strong>输入：</strong>s = &quot;triplepillooooow&quot;
-<strong>输出：</strong>5
-</pre>
-
-<p><strong>示例 4：</strong></p>
-
-<pre><strong>输入：</strong>s = &quot;hooraaaaaaaaaaay&quot;
-<strong>输出：</strong>11
-</pre>
-
-<p><strong>示例 5：</strong></p>
-
-<pre><strong>输入：</strong>s = &quot;tourist&quot;
-<strong>输出：</strong>1
+<strong>解释：</strong>子字符串 "eeeee" 长度为 5 ，只包含字符 'e' 。
 </pre>
 
 <p>&nbsp;</p>
@@ -53,96 +49,112 @@
 	<li><code>s</code>&nbsp;只包含小写英文字母。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：遍历计数
+
+我们定义一个变量 $\textit{t}$，表示当前连续字符的长度，初始时 $\textit{t}=1$。
+
+接下来，我们从字符串 $s$ 的第二个字符开始遍历，如果当前字符与上一个字符相同，那么 $\textit{t} = \textit{t} + 1$，然后更新答案 $\textit{ans} = \max(\textit{ans}, \textit{t})$；否则 $\textit{t} = 1$。
+
+最后返回答案 $\textit{ans}$ 即可。
+
+时间复杂度 $O(n)$，其中 $n$ 是字符串 $s$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def maxPower(self, s: str) -> int:
-        ans = t = 0
-        for i, c in enumerate(s):
-            if i == 0 or c == s[i - 1]:
+        ans = t = 1
+        for a, b in pairwise(s):
+            if a == b:
                 t += 1
+                ans = max(ans, t)
             else:
                 t = 1
-            ans = max(ans, t)
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int maxPower(String s) {
-        int ans = 0, t = 0;
-        for (int i = 0; i < s.length(); ++i) {
-            if (i == 0 || s.charAt(i) == s.charAt(i - 1)) {
-                ++t;
+        int ans = 1, t = 1;
+        for (int i = 1; i < s.length(); ++i) {
+            if (s.charAt(i) == s.charAt(i - 1)) {
+                ans = Math.max(ans, ++t);
             } else {
                 t = 1;
             }
-            ans = Math.max(ans, t);
         }
         return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int maxPower(string s) {
-        int ans = 0, t = 0;
-        for (int i = 0; i < s.size(); ++i)
-        {
-            if (i == 0 || s[i] == s[i - 1]) ++t;
-            else t = 1;
-            ans = max(ans, t);
+        int ans = 1, t = 1;
+        for (int i = 1; i < s.size(); ++i) {
+            if (s[i] == s[i - 1]) {
+                ans = max(ans, ++t);
+            } else {
+                t = 1;
+            }
         }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func maxPower(s string) int {
-	ans, t := 0, 0
-	for i := range s {
-		if i == 0 || s[i] == s[i-1] {
+	ans, t := 1, 1
+	for i := 1; i < len(s); i++ {
+		if s[i] == s[i-1] {
 			t++
+			ans = max(ans, t)
 		} else {
 			t = 1
 		}
-		ans = max(ans, t)
 	}
 	return ans
 }
+```
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+#### TypeScript
+
+```ts
+function maxPower(s: string): number {
+    let ans = 1;
+    let t = 1;
+    for (let i = 1; i < s.length; ++i) {
+        if (s[i] === s[i - 1]) {
+            ans = Math.max(ans, ++t);
+        } else {
+            t = 1;
+        }
+    }
+    return ans;
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

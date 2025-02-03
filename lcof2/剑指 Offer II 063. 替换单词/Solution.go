@@ -1,37 +1,17 @@
 func replaceWords(dictionary []string, sentence string) string {
-	trie := &Trie{}
-	for _, root := range dictionary {
-		cur := trie
-		for _, c := range root {
-			c -= 'a'
-			if cur.children[c] == nil {
-				cur.children[c] = &Trie{}
-			}
-			cur = cur.children[c]
-		}
-		cur.root = root
+	s := map[string]bool{}
+	for _, v := range dictionary {
+		s[v] = true
 	}
-
-	var ans []string
-	for _, word := range strings.Split(sentence, " ") {
-		cur := trie
-		for _, c := range word {
-			c -= 'a'
-			if cur.children[c] == nil || cur.root != "" {
+	words := strings.Split(sentence, " ")
+	for i, word := range words {
+		for j := 1; j <= len(word); j++ {
+			t := word[:j]
+			if s[t] {
+				words[i] = t
 				break
 			}
-			cur = cur.children[c]
-		}
-		if cur.root == "" {
-			ans = append(ans, word)
-		} else {
-			ans = append(ans, cur.root)
 		}
 	}
-	return strings.Join(ans, " ")
-}
-
-type Trie struct {
-	children [26]*Trie
-	root     string
+	return strings.Join(words, " ")
 }

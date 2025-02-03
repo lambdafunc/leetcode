@@ -1,8 +1,22 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1880.Check%20if%20Word%20Equals%20Summation%20of%20Two%20Words/README_EN.md
+rating: 1187
+source: Weekly Contest 243 Q1
+tags:
+    - String
+---
+
+<!-- problem:start -->
+
 # [1880. Check if Word Equals Summation of Two Words](https://leetcode.com/problems/check-if-word-equals-summation-of-two-words)
 
 [中文文档](/solution/1800-1899/1880.Check%20if%20Word%20Equals%20Summation%20of%20Two%20Words/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>The <strong>letter value</strong> of a letter is its position in the alphabet <strong>starting from 0</strong> (i.e. <code>&#39;a&#39; -&gt; 0</code>, <code>&#39;b&#39; -&gt; 1</code>, <code>&#39;c&#39; -&gt; 2</code>, etc.).</p>
 
@@ -17,69 +31,43 @@
 <p>Return <code>true</code> <em>if the <strong>summation</strong> of the <strong>numerical values</strong> of </em><code>firstWord</code><em> and </em><code>secondWord</code><em> equals the <strong>numerical value</strong> of </em><code>targetWord</code><em>, or </em><code>false</code><em> otherwise.</em></p>
 
 <p>&nbsp;</p>
-
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
 <strong>Input:</strong> firstWord = &quot;acb&quot;, secondWord = &quot;cba&quot;, targetWord = &quot;cdb&quot;
-
 <strong>Output:</strong> true
-
 <strong>Explanation:</strong>
-
 The numerical value of firstWord is &quot;acb&quot; -&gt; &quot;021&quot; -&gt; 21.
-
 The numerical value of secondWord is &quot;cba&quot; -&gt; &quot;210&quot; -&gt; 210.
-
 The numerical value of targetWord is &quot;cdb&quot; -&gt; &quot;231&quot; -&gt; 231.
-
 We return true because 21 + 210 == 231.
-
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
 <strong>Input:</strong> firstWord = &quot;aaa&quot;, secondWord = &quot;a&quot;, targetWord = &quot;aab&quot;
-
 <strong>Output:</strong> false
-
 <strong>Explanation:</strong> 
-
 The numerical value of firstWord is &quot;aaa&quot; -&gt; &quot;000&quot; -&gt; 0.
-
 The numerical value of secondWord is &quot;a&quot; -&gt; &quot;0&quot; -&gt; 0.
-
 The numerical value of targetWord is &quot;aab&quot; -&gt; &quot;001&quot; -&gt; 1.
-
 We return false because 0 + 0 != 1.
-
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
-
 <strong>Input:</strong> firstWord = &quot;aaa&quot;, secondWord = &quot;a&quot;, targetWord = &quot;aaaa&quot;
-
 <strong>Output:</strong> true
-
 <strong>Explanation:</strong> 
-
 The numerical value of firstWord is &quot;aaa&quot; -&gt; &quot;000&quot; -&gt; 0.
-
 The numerical value of secondWord is &quot;a&quot; -&gt; &quot;0&quot; -&gt; 0.
-
 The numerical value of targetWord is &quot;aaaa&quot; -&gt; &quot;0000&quot; -&gt; 0.
-
 We return true because 0 + 0 == 0.
-
 </pre>
 
 <p>&nbsp;</p>
-
 <p><strong>Constraints:</strong></p>
 
 <ul>
@@ -87,64 +75,114 @@ We return true because 0 + 0 == 0.
 	<li><code>firstWord</code>, <code>secondWord</code>, and <code>targetWord</code> consist of lowercase English letters from <code>&#39;a&#39;</code> to <code>&#39;j&#39;</code> <strong>inclusive</strong>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def isSumEqual(self, firstWord: str, secondWord: str, targetWord: str) -> bool:
-        def convert(word):
+        def f(s):
             res = 0
-            for c in word:
-                res *= 10
-                res += (ord(c) - ord('a'))
+            for c in s:
+                res = res * 10 + (ord(c) - ord('a'))
             return res
-        return convert(firstWord) + convert(secondWord) == convert(targetWord)
+
+        return f(firstWord) + f(secondWord) == f(targetWord)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public boolean isSumEqual(String firstWord, String secondWord, String targetWord) {
-        return convert(firstWord) + convert(secondWord) == convert(targetWord);
+        return f(firstWord) + f(secondWord) == f(targetWord);
     }
 
-    private int convert(String word) {
+    private int f(String s) {
         int res = 0;
-        for (char c : word.toCharArray()) {
-            res *= 10;
-            res += (c - 'a');
+        for (char c : s.toCharArray()) {
+            res = res * 10 + (c - 'a');
         }
         return res;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool isSumEqual(string firstWord, string secondWord, string targetWord) {
-        return convert(firstWord) + convert(secondWord) == convert(targetWord);
+        return f(firstWord) + f(secondWord) == f(targetWord);
     }
-private:
-    int convert(string word) {
+
+    int f(string s) {
         int res = 0;
-        for (char c : word) {
-            res *= 10;
-            res += (c - 'a');
-        }
+        for (char c : s) res = res * 10 + (c - 'a');
         return res;
     }
 };
 ```
 
-### **JavaScript**
+#### Go
+
+```go
+func isSumEqual(firstWord string, secondWord string, targetWord string) bool {
+	f := func(s string) int {
+		res := 0
+		for _, c := range s {
+			res = res*10 + int(c-'a')
+		}
+		return res
+	}
+	return f(firstWord)+f(secondWord) == f(targetWord)
+}
+```
+
+#### TypeScript
+
+```ts
+function isSumEqual(firstWord: string, secondWord: string, targetWord: string): boolean {
+    const calc = (s: string) => {
+        let res = 0;
+        for (const c of s) {
+            res = res * 10 + c.charCodeAt(0) - 'a'.charCodeAt(0);
+        }
+        return res;
+    };
+    return calc(firstWord) + calc(secondWord) === calc(targetWord);
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    fn calc(s: &String) -> i32 {
+        let mut res = 0;
+        for c in s.as_bytes() {
+            res = res * 10 + ((c - b'a') as i32);
+        }
+        res
+    }
+
+    pub fn is_sum_equal(first_word: String, second_word: String, target_word: String) -> bool {
+        Self::calc(&first_word) + Self::calc(&second_word) == Self::calc(&target_word)
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -154,30 +192,35 @@ private:
  * @return {boolean}
  */
 var isSumEqual = function (firstWord, secondWord, targetWord) {
-    let carry = 0;
-    let n1 = firstWord.length,
-        n2 = secondWord.length;
-    let n3 = targetWord.length;
-    for (let i = 0; i < n3; i++) {
-        let num1 = getNum(firstWord.charAt(n1 - 1 - i));
-        let num2 = getNum(secondWord.charAt(n2 - 1 - i));
-        let sum = carry + num1 + num2;
-        if (getNum(targetWord.charAt(n3 - 1 - i)) != sum % 10) return false;
-        carry = parseInt(sum / 10);
+    function f(s) {
+        let res = 0;
+        for (let c of s) {
+            res = res * 10 + (c.charCodeAt() - 'a'.charCodeAt());
+        }
+        return res;
     }
-    return true;
+    return f(firstWord) + f(secondWord) == f(targetWord);
 };
+```
 
-function getNum(char) {
-    if (!char) return 0;
-    return char.charCodeAt() - "a".charCodeAt();
+#### C
+
+```c
+int calc(char* s) {
+    int res = 0;
+    for (int i = 0; s[i]; i++) {
+        res = res * 10 + s[i] - 'a';
+    }
+    return res;
+}
+
+bool isSumEqual(char* firstWord, char* secondWord, char* targetWord) {
+    return calc(firstWord) + calc(secondWord) == calc(targetWord);
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

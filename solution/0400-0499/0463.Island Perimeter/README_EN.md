@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0463.Island%20Perimeter/README_EN.md
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Array
+    - Matrix
+---
+
+<!-- problem:start -->
+
 # [463. Island Perimeter](https://leetcode.com/problems/island-perimeter)
 
 [中文文档](/solution/0400-0499/0463.Island%20Perimeter/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given <code>row x col</code> <code>grid</code> representing a map where <code>grid[i][j] = 1</code> represents&nbsp;land and <code>grid[i][j] = 0</code> represents water.</p>
 
@@ -11,22 +26,22 @@
 <p>The island doesn&#39;t have &quot;lakes&quot;, meaning the water inside isn&#39;t connected to the water around the island. One cell is a square with side length 1. The grid is rectangular, width and height don&#39;t exceed 100. Determine the perimeter of the island.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0463.Island%20Perimeter/images/island.png" style="width: 221px; height: 213px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0463.Island%20Perimeter/images/island.png" style="width: 221px; height: 213px;" />
 <pre>
 <strong>Input:</strong> grid = [[0,1,0,0],[1,1,1,0],[0,1,0,0],[1,1,0,0]]
 <strong>Output:</strong> 16
 <strong>Explanation:</strong> The perimeter is the 16 yellow stripes in the image above.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> grid = [[1]]
 <strong>Output:</strong> 4
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> grid = [[1,0]]
@@ -41,13 +56,20 @@
 	<li><code>col == grid[i].length</code></li>
 	<li><code>1 &lt;= row, col &lt;= 100</code></li>
 	<li><code>grid[i][j]</code> is <code>0</code> or <code>1</code>.</li>
+	<li>There is exactly one island in <code>grid</code>.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -60,12 +82,12 @@ class Solution:
                     ans += 4
                     if i < m - 1 and grid[i + 1][j] == 1:
                         ans -= 2
-                    if j < n -1 and grid[i][j + 1] == 1:
+                    if j < n - 1 and grid[i][j + 1] == 1:
                         ans -= 2
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -91,7 +113,52 @@ class Solution {
 }
 ```
 
-### **TypeScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int islandPerimeter(vector<vector<int>>& grid) {
+        int m = grid.size(), n = grid[0].size();
+        int ans = 0;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j] == 1) {
+                    ans += 4;
+                    if (i < m - 1 && grid[i + 1][j] == 1) ans -= 2;
+                    if (j < n - 1 && grid[i][j + 1] == 1) ans -= 2;
+                }
+            }
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func islandPerimeter(grid [][]int) int {
+	m, n := len(grid), len(grid[0])
+	ans := 0
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if grid[i][j] == 1 {
+				ans += 4
+				if i < m-1 && grid[i+1][j] == 1 {
+					ans -= 2
+				}
+				if j < n-1 && grid[i][j+1] == 1 {
+					ans -= 2
+				}
+			}
+		}
+	}
+	return ans
+}
+```
+
+#### TypeScript
 
 ```ts
 function islandPerimeter(grid: number[][]): number {
@@ -124,58 +191,8 @@ function islandPerimeter(grid: number[][]): number {
 }
 ```
 
-### **C++**
-
-```cpp
-class Solution {
-public:
-    int islandPerimeter(vector<vector<int>>& grid) {
-        int m = grid.size(), n = grid[0].size();
-        int ans = 0;
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (grid[i][j] == 1)
-                {
-                    ans += 4;
-                    if (i < m - 1 && grid[i + 1][j] == 1) ans -= 2;
-                    if (j < n - 1 && grid[i][j + 1] == 1) ans -= 2;
-                }
-            }
-        }
-        return ans;
-    }
-};
-```
-
-### **Go**
-
-```go
-func islandPerimeter(grid [][]int) int {
-	m, n := len(grid), len(grid[0])
-	ans := 0
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if grid[i][j] == 1 {
-				ans += 4
-				if i < m-1 && grid[i+1][j] == 1 {
-					ans -= 2
-				}
-				if j < n-1 && grid[i][j+1] == 1 {
-					ans -= 2
-				}
-			}
-		}
-	}
-	return ans
-}
-```
-
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

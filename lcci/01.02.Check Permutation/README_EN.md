@@ -1,8 +1,18 @@
-# [01.02. Check Permutation](https://leetcode-cn.com/problems/check-permutation-lcci)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/lcci/01.02.Check%20Permutation/README_EN.md
+---
+
+<!-- problem:start -->
+
+# [01.02. Check Permutation](https://leetcode.cn/problems/check-permutation-lcci)
 
 [中文文档](/lcci/01.02.Check%20Permutation/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given two strings,write a method to decide if one is a permutation of the other.</p>
 
@@ -10,7 +20,7 @@
 
 <pre>
 
-<strong>Input: </strong><code>s1</code> = &quot;abc&quot;, <code>s2</code> = &quot;bca&quot;
+<strong>Input: </strong>s1 = &quot;abc&quot;, s2 = &quot;bca&quot;
 
 <strong>Output: </strong>true
 
@@ -20,7 +30,7 @@
 
 <pre>
 
-<strong>Input: </strong><code>s1</code> = &quot;abc&quot;, <code>s2</code> = &quot;bad&quot;
+<strong>Input: </strong>s1 = &quot;abc&quot;, s2 = &quot;bad&quot;
 
 <strong>Output: </strong>false
 
@@ -32,45 +42,50 @@
 	<li><code>0 &lt;= len(s2) &lt;= 100</code></li>
 </ol>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Array or Hash Table
+
+First, we check whether the lengths of the two strings are equal. If they are not equal, we directly return `false`.
+
+Then, we use an array or hash table to count the occurrence of each character in string $s1$.
+
+Next, we traverse the other string $s2$. For each character we encounter, we decrement its corresponding count. If the count after decrementing is less than $0$, it means that the occurrence of characters in the two strings is different, so we directly return `false`.
+
+Finally, after traversing string $s2$, we return `true`.
+
+Note: In this problem, all test case strings only contain lowercase letters, so we can directly create an array of length $26$ for counting.
+
+The time complexity is $O(n)$, and the space complexity is $O(C)$. Here, $n$ is the length of the string, and $C$ is the size of the character set. In this problem, $C=26$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def CheckPermutation(self, s1: str, s2: str) -> bool:
-        n1, n2 = len(s1), len(s2)
-        if n1 != n2:
-            return False
-        counter = Counter()
-        for i in range(n1):
-            counter[s1[i]] += 1
-            counter[s2[i]] -= 1
-        for val in counter.values():
-            if val != 0:
-                return False
-        return True
+        return Counter(s1) == Counter(s2)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public boolean CheckPermutation(String s1, String s2) {
-        int n1 = s1.length(), n2 = s2.length();
-        if (n1 != n2) {
+        if (s1.length() != s2.length()) {
             return false;
         }
-        Map<Character, Integer> counter = new HashMap<>();
-        for (int i = 0; i < n1; ++i) {
-            char c1 = s1.charAt(i), c2 = s2.charAt(i);
-            counter.put(c1, counter.getOrDefault(c1, 0) + 1);
-            counter.put(c2, counter.getOrDefault(c2, 0) - 1);
+        int[] cnt = new int[26];
+        for (char c : s1.toCharArray()) {
+            ++cnt[c - 'a'];
         }
-        for (int val : counter.values()) {
-            if (val != 0) {
+        for (char c : s2.toCharArray()) {
+            if (--cnt[c - 'a'] < 0) {
                 return false;
             }
         }
@@ -79,40 +94,36 @@ class Solution {
 }
 ```
 
-### **JavaScript**
+#### C++
 
-```js
-var CheckPermutation = function (s1, s2) {
-    let n1 = s1.length,
-        n2 = s2.length;
-    if (n1 != n2) return false;
-    let counter = {};
-    for (let i = 0; i < n1; i++) {
-        let cur1 = s1.charAt(i),
-            cur2 = s2.charAt(i);
-        counter[cur1] = (counter[cur1] || 0) + 1;
-        counter[cur2] = (counter[cur2] || 0) - 1;
+```cpp
+class Solution {
+public:
+    bool CheckPermutation(string s1, string s2) {
+        if (s1.size() != s2.size()) return false;
+        int cnt[26] = {0};
+        for (char& c : s1) ++cnt[c - 'a'];
+        for (char& c : s2)
+            if (--cnt[c - 'a'] < 0) return false;
+        return true;
     }
-    return Object.values(counter).every(v => v == 0);
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func CheckPermutation(s1 string, s2 string) bool {
-	freq := make(map[rune]int)
-	for _, r := range s1 {
-		freq[r]++
+	if len(s1) != len(s2) {
+		return false
 	}
-	for _, r := range s2 {
-		if freq[r] == 0 {
-			return false
-		}
-		freq[r]--
+	cnt := make([]int, 26)
+	for _, c := range s1 {
+		cnt[c-'a']++
 	}
-	for _, v := range freq {
-		if v != 0 {
+	for _, c := range s2 {
+		cnt[c-'a']--
+		if cnt[c-'a'] < 0 {
 			return false
 		}
 	}
@@ -120,10 +131,192 @@ func CheckPermutation(s1 string, s2 string) bool {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function CheckPermutation(s1: string, s2: string): boolean {
+    const n = s1.length;
+    const m = s2.length;
+    if (n !== m) {
+        return false;
+    }
+    const map = new Map<string, number>();
+    for (let i = 0; i < n; i++) {
+        map.set(s1[i], (map.get(s1[i]) ?? 0) + 1);
+        map.set(s2[i], (map.get(s2[i]) ?? 0) - 1);
+    }
+    for (const v of map.values()) {
+        if (v !== 0) {
+            return false;
+        }
+    }
+    return true;
+}
 ```
 
+#### Rust
+
+```rust
+use std::collections::HashMap;
+impl Solution {
+    pub fn check_permutation(s1: String, s2: String) -> bool {
+        let n = s1.len();
+        let m = s2.len();
+        if n != m {
+            return false;
+        }
+        let s1 = s1.as_bytes();
+        let s2 = s2.as_bytes();
+        let mut map = HashMap::new();
+        for i in 0..n {
+            *map.entry(s1[i]).or_insert(0) += 1;
+            *map.entry(s2[i]).or_insert(0) -= 1;
+        }
+        map.values().all(|i| *i == 0)
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {string} s1
+ * @param {string} s2
+ * @return {boolean}
+ */
+var CheckPermutation = function (s1, s2) {
+    if (s1.length != s2.length) {
+        return false;
+    }
+    const cnt = new Array(26).fill(0);
+    for (let i = 0; i < s1.length; ++i) {
+        const j = s1.codePointAt(i) - 'a'.codePointAt(0);
+        ++cnt[j];
+    }
+    for (let i = 0; i < s2.length; ++i) {
+        const j = s2.codePointAt(i) - 'a'.codePointAt(0);
+        if (--cnt[j] < 0) {
+            return false;
+        }
+    }
+    return true;
+};
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func CheckPermutation(_ s1: String, _ s2: String) -> Bool {
+        if s1.count != s2.count {
+            return false
+        }
+
+        var cnt = Array(repeating: 0, count: 26)
+
+        for char in s1 {
+            let index = Int(char.asciiValue! - Character("a").asciiValue!)
+            cnt[index] += 1
+        }
+
+        for char in s2 {
+            let index = Int(char.asciiValue! - Character("a").asciiValue!)
+            cnt[index] -= 1
+            if cnt[index] < 0 {
+                return false
+            }
+        }
+
+        return true
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2: Sorting
+
+We can also sort the two strings in lexicographical order, and then compare whether the two strings are equal.
+
+The time complexity is $O(n \times \log n)$, and the space complexity is $O(n)$. Here, $n$ is the length of the string.
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def CheckPermutation(self, s1: str, s2: str) -> bool:
+        return sorted(s1) == sorted(s2)
+```
+
+#### Java
+
+```java
+class Solution {
+    public boolean CheckPermutation(String s1, String s2) {
+        char[] cs1 = s1.toCharArray();
+        char[] cs2 = s2.toCharArray();
+        Arrays.sort(cs1);
+        Arrays.sort(cs2);
+        return Arrays.equals(cs1, cs2);
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    bool CheckPermutation(string s1, string s2) {
+        sort(s1.begin(), s1.end());
+        sort(s2.begin(), s2.end());
+        return s1 == s2;
+    }
+};
+```
+
+#### Go
+
+```go
+func CheckPermutation(s1 string, s2 string) bool {
+	cs1, cs2 := []byte(s1), []byte(s2)
+	sort.Slice(cs1, func(i, j int) bool { return cs1[i] < cs1[j] })
+	sort.Slice(cs2, func(i, j int) bool { return cs2[i] < cs2[j] })
+	return string(cs1) == string(cs2)
+}
+```
+
+#### TypeScript
+
+```ts
+function CheckPermutation(s1: string, s2: string): boolean {
+    return [...s1].sort().join('') === [...s2].sort().join('');
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn check_permutation(s1: String, s2: String) -> bool {
+        let mut s1: Vec<char> = s1.chars().collect();
+        let mut s2: Vec<char> = s2.chars().collect();
+        s1.sort();
+        s2.sort();
+        s1 == s2
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

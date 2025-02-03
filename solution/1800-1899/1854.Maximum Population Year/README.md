@@ -1,10 +1,24 @@
-# [1854. 人口最多的年份](https://leetcode-cn.com/problems/maximum-population-year)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1854.Maximum%20Population%20Year/README.md
+rating: 1370
+source: 第 240 场周赛 Q1
+tags:
+    - 数组
+    - 计数
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [1854. 人口最多的年份](https://leetcode.cn/problems/maximum-population-year)
 
 [English Version](/solution/1800-1899/1854.Maximum%20Population%20Year/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个二维整数数组 <code>logs</code> ，其中每个 <code>logs[i] = [birth<sub>i</sub>, death<sub>i</sub>]</code> 表示第 <code>i</code> 个人的出生和死亡年份。</p>
 
@@ -38,61 +52,142 @@
 	<li><code>1950 &lt;= birth<sub>i</sub> &lt; death<sub>i</sub> &lt;= 2050</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-差分数组实现。
+### 方法一：差分数组
+
+我们注意到，年份的范围是 $[1950,..2050]$，因此我们可以将这些年份映射到一个长度为 $101$ 的数组 $d$ 中，数组的下标表示年份减去 $1950$ 的值。
+
+接下来遍历 $logs$，对于每个人，我们将 $d[birth_i - 1950]$ 加 $1$，将 $d[death_i - 1950]$ 减 $1$。最后遍历数组 $d$，求出前缀和的最大值，即为人口最多的年份，再加上 $1950$ 即为答案。
+
+时间复杂度 $O(n)$，空间复杂度 $O(C)$。其中 $n$ 为数组 $logs$ 的长度；而 $C$ 为年份的范围大小，即 $2050 - 1950 + 1 = 101$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def maximumPopulation(self, logs: List[List[int]]) -> int:
-        delta = [0] * 2055
-        for birth, death in logs:
-            delta[birth] += 1
-            delta[death] -= 1
-
-        mx = res = cur = 0
-        for i, v in enumerate(delta):
-            cur += v
-            if mx < cur:
-                mx = cur
-                res = i
-        return res
+        d = [0] * 101
+        offset = 1950
+        for a, b in logs:
+            a, b = a - offset, b - offset
+            d[a] += 1
+            d[b] -= 1
+        s = mx = j = 0
+        for i, x in enumerate(d):
+            s += x
+            if mx < s:
+                mx, j = s, i
+        return j + offset
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int maximumPopulation(int[][] logs) {
-        int[] delta = new int[2055];
-        for (int[] log : logs) {
-            ++delta[log[0]];
-            --delta[log[1]];
+        int[] d = new int[101];
+        final int offset = 1950;
+        for (var log : logs) {
+            int a = log[0] - offset;
+            int b = log[1] - offset;
+            ++d[a];
+            --d[b];
         }
-        int res = 0, mx = 0, cur = 0;
-        for (int i = 0; i < delta.length; ++i) {
-            cur += delta[i];
-            if (cur > mx) {
-                mx = cur;
-                res = i;
+        int s = 0, mx = 0;
+        int j = 0;
+        for (int i = 0; i < d.length; ++i) {
+            s += d[i];
+            if (mx < s) {
+                mx = s;
+                j = i;
             }
         }
-        return res;
+        return j + offset;
     }
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int maximumPopulation(vector<vector<int>>& logs) {
+        int d[101]{};
+        const int offset = 1950;
+        for (auto& log : logs) {
+            int a = log[0] - offset;
+            int b = log[1] - offset;
+            ++d[a];
+            --d[b];
+        }
+        int s = 0, mx = 0;
+        int j = 0;
+        for (int i = 0; i < 101; ++i) {
+            s += d[i];
+            if (mx < s) {
+                mx = s;
+                j = i;
+            }
+        }
+        return j + offset;
+    }
+};
+```
+
+#### Go
+
+```go
+func maximumPopulation(logs [][]int) int {
+	d := [101]int{}
+	offset := 1950
+	for _, log := range logs {
+		a, b := log[0]-offset, log[1]-offset
+		d[a]++
+		d[b]--
+	}
+	var s, mx, j int
+	for i, x := range d {
+		s += x
+		if mx < s {
+			mx = s
+			j = i
+		}
+	}
+	return j + offset
+}
+```
+
+#### TypeScript
+
+```ts
+function maximumPopulation(logs: number[][]): number {
+    const d: number[] = new Array(101).fill(0);
+    const offset = 1950;
+    for (const [birth, death] of logs) {
+        d[birth - offset]++;
+        d[death - offset]--;
+    }
+    let j = 0;
+    for (let i = 0, s = 0, mx = 0; i < d.length; ++i) {
+        s += d[i];
+        if (mx < s) {
+            mx = s;
+            j = i;
+        }
+    }
+    return j + offset;
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -100,78 +195,28 @@ class Solution {
  * @return {number}
  */
 var maximumPopulation = function (logs) {
+    const d = new Array(101).fill(0);
     const offset = 1950;
-    const len = 2050 - 1950 + 1;
-    let delta = new Array(len).fill(0);
-    for (let log of logs) {
-        delta[log[0] - offset] += 1;
-        delta[log[1] - offset] -= 1;
+    for (let [a, b] of logs) {
+        a -= offset;
+        b -= offset;
+        d[a]++;
+        d[b]--;
     }
-    let max = 0;
-    let total = 0;
-    let index = 0;
-    for (let i = 0; i < len; i++) {
-        total += delta[i];
-        if (total > max) {
-            max = total;
-            index = i;
+    let j = 0;
+    for (let i = 0, s = 0, mx = 0; i < 101; ++i) {
+        s += d[i];
+        if (mx < s) {
+            mx = s;
+            j = i;
         }
     }
-    return index + offset;
+    return j + offset;
 };
-```
-
-### **C++**
-
-```cpp
-class Solution {
-public:
-    int maximumPopulation(vector<vector<int>>& logs) {
-        vector<int> delta(101, 0);
-        int offset = 1950;
-        for (auto log : logs) {
-            ++delta[log[0] - offset];
-            --delta[log[1] - offset];
-        }
-        int res = 0, mx = 0, cur = 0;
-        for (int i = 0; i < delta.size(); ++i) {
-            cur += delta[i];
-            if (cur > mx) {
-                mx = cur;
-                res = i;
-            }
-        }
-        return res + offset;
-    }
-};
-```
-
-### **Go**
-
-```go
-func maximumPopulation(logs [][]int) int {
-	delta := make([]int, 101)
-	offset := 1950
-	for _, log := range logs {
-		delta[log[0]-offset]++
-		delta[log[1]-offset]--
-	}
-	res, mx, cur := 0, 0, 0
-	for i := 0; i < len(delta); i++ {
-		cur += delta[i]
-		if cur > mx {
-			mx = cur
-			res = i
-		}
-	}
-	return res + offset
-}
-```
-
-### **...**
-
-```
-
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

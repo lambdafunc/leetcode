@@ -1,66 +1,78 @@
-# [817. 链表组件](https://leetcode-cn.com/problems/linked-list-components)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0817.Linked%20List%20Components/README.md
+tags:
+    - 数组
+    - 哈希表
+    - 链表
+---
+
+<!-- problem:start -->
+
+# [817. 链表组件](https://leetcode.cn/problems/linked-list-components)
 
 [English Version](/solution/0800-0899/0817.Linked%20List%20Components/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定链表头结点&nbsp;<code>head</code>，该链表上的每个结点都有一个 <strong>唯一的整型值</strong> 。</p>
+<p>给定链表头结点&nbsp;<code>head</code>，该链表上的每个结点都有一个 <strong>唯一的整型值</strong> 。同时给定列表&nbsp;<code>nums</code>，该列表是上述链表中整型值的一个子集。</p>
 
-<p>同时给定列表&nbsp;<code>G</code>，该列表是上述链表中整型值的一个子集。</p>
-
-<p>返回列表&nbsp;<code>G</code>&nbsp;中组件的个数，这里对组件的定义为：链表中一段最长连续结点的值（该值必须在列表&nbsp;<code>G</code>&nbsp;中）构成的集合。</p>
+<p>返回列表&nbsp;<code>nums</code>&nbsp;中组件的个数，这里对组件的定义为：链表中一段最长连续结点的值（该值必须在列表&nbsp;<code>nums</code>&nbsp;中）构成的集合。</p>
 
 <p>&nbsp;</p>
 
 <p><strong>示例&nbsp;1：</strong></p>
 
-<pre><strong>输入:</strong> 
-head: 0-&gt;1-&gt;2-&gt;3
-G = [0, 1, 3]
+<p><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0800-0899/0817.Linked%20List%20Components/images/lc-linkedlistcom1.jpg" /></p>
+
+<pre>
+<strong>输入:</strong> head = [0,1,2,3], nums = [0,1,3]
 <strong>输出:</strong> 2
-<strong>解释:</strong> 
-链表中,0 和 1 是相连接的，且 G 中不包含 2，所以 [0, 1] 是 G 的一个组件，同理 [3] 也是一个组件，故返回 2。</pre>
+<strong>解释:</strong> 链表中,0 和 1 是相连接的，且 nums 中不包含 2，所以 [0, 1] 是 nums 的一个组件，同理 [3] 也是一个组件，故返回 2。</pre>
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入:</strong> 
-head: 0-&gt;1-&gt;2-&gt;3-&gt;4
-G = [0, 3, 1, 4]
+<p><strong>&nbsp;</strong><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0800-0899/0817.Linked%20List%20Components/images/lc-linkedlistcom2.jpg" /></p>
+
+<pre>
+<strong>输入:</strong> head = [0,1,2,3,4], nums = [0,3,1,4]
 <strong>输出:</strong> 2
-<strong>解释:</strong> 
-链表中，0 和 1 是相连接的，3 和 4 是相连接的，所以 [0, 1] 和 [3, 4] 是两个组件，故返回 2。</pre>
+<strong>解释:</strong> 链表中，0 和 1 是相连接的，3 和 4 是相连接的，所以 [0, 1] 和 [3, 4] 是两个组件，故返回 2。</pre>
 
 <p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li>如果&nbsp;<code>N</code>&nbsp;是给定链表&nbsp;<code>head</code>&nbsp;的长度，<code>1 &lt;= N &lt;= 10000</code>。</li>
-	<li>链表中每个结点的值所在范围为&nbsp;<code>[0, N - 1]</code>。</li>
-	<li><code>1 &lt;= G.length &lt;= 10000</code></li>
-	<li><code>G</code> 是链表中所有结点的值的一个子集.</li>
+	<li>链表中节点数为<code>n</code></li>
+	<li><code>1 &lt;= n &lt;= 10<sup>4</sup></code></li>
+	<li><code>0 &lt;= Node.val &lt; n</code></li>
+	<li><code>Node.val</code>&nbsp;中所有值 <strong>不同</strong></li>
+	<li><code>1 &lt;= nums.length &lt;= n</code></li>
+	<li><code>0 &lt;= nums[i] &lt; n</code></li>
+	<li><code>nums</code> 中所有值 <strong>不同</strong></li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-定义 pre 表示是否可加 1，初始为 true。
+### 方法一：哈希表 + 链表一次遍历
 
-遍历链表各个结点：
+题目中需要判断链表中节点的值是否在数组 `nums` 中，因此我们可以使用哈希表 $s$ 存储数组 `nums` 中的值。
 
-- 若当前结点值在 nums 中，并且当前为可加 1 的状态，则 `res++`，并且将 pre 状态置为 false；
-- 若当前结点值不在 nums 中，则将 pre 置为 true，表示可加 1。
+然后遍历链表，找到第一个在哈希表 $s$ 中的节点，然后从该节点开始遍历，直到遇到不在哈希表 $s$ 中的节点，这样就找到了一个组件，然后继续遍历链表，直到遍历完整个链表。
 
-最后返回 res 即可。
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为链表的节点个数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -69,23 +81,19 @@ G = [0, 3, 1, 4]
 #         self.val = val
 #         self.next = next
 class Solution:
-    def numComponents(self, head: ListNode, nums: List[int]) -> int:
+    def numComponents(self, head: Optional[ListNode], nums: List[int]) -> int:
+        ans = 0
         s = set(nums)
-        res, pre = 0, True
         while head:
-            if head.val in s:
-                if pre:
-                    res += 1
-                    pre = False
-            else:
-                pre = True
-            head = head.next
-        return res
+            while head and head.val not in s:
+                head = head.next
+            ans += head is not None
+            while head and head.val in s:
+                head = head.next
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -100,32 +108,194 @@ class Solution:
  */
 class Solution {
     public int numComponents(ListNode head, int[] nums) {
+        int ans = 0;
         Set<Integer> s = new HashSet<>();
-        for (int num : nums) {
-            s.add(num);
+        for (int v : nums) {
+            s.add(v);
         }
-        int res = 0;
-        boolean pre = true;
         while (head != null) {
-            if (s.contains(head.val)) {
-                if (pre) {
-                    ++res;
-                    pre = false;
-                }
-            } else {
-                pre = true;
+            while (head != null && !s.contains(head.val)) {
+                head = head.next;
             }
-            head = head.next;
+            ans += head != null ? 1 : 0;
+            while (head != null && s.contains(head.val)) {
+                head = head.next;
+            }
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    int numComponents(ListNode* head, vector<int>& nums) {
+        unordered_set<int> s(nums.begin(), nums.end());
+        int ans = 0;
+        while (head) {
+            while (head && !s.count(head->val)) head = head->next;
+            ans += head != nullptr;
+            while (head && s.count(head->val)) head = head->next;
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func numComponents(head *ListNode, nums []int) int {
+	s := map[int]bool{}
+	for _, v := range nums {
+		s[v] = true
+	}
+	ans := 0
+	for head != nil {
+		for head != nil && !s[head.Val] {
+			head = head.Next
+		}
+		if head != nil {
+			ans++
+		}
+		for head != nil && s[head.Val] {
+			head = head.Next
+		}
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+function numComponents(head: ListNode | null, nums: number[]): number {
+    const set = new Set<number>(nums);
+    let res = 0;
+    let cur = head;
+    let inSet = false;
+    while (cur != null) {
+        if (set.has(cur.val)) {
+            if (!inSet) {
+                inSet = true;
+                res++;
+            }
+        } else {
+            inSet = false;
+        }
+        cur = cur.next;
+    }
+    return res;
+}
+```
+
+#### Rust
+
+```rust
+// Definition for singly-linked list.
+// #[derive(PartialEq, Eq, Clone, Debug)]
+// pub struct ListNode {
+//   pub val: i32,
+//   pub next: Option<Box<ListNode>>
+// }
+//
+// impl ListNode {
+//   #[inline]
+//   fn new(val: i32) -> Self {
+//     ListNode {
+//       next: None,
+//       val
+//     }
+//   }
+// }
+use std::collections::HashSet;
+impl Solution {
+    pub fn num_components(head: Option<Box<ListNode>>, nums: Vec<i32>) -> i32 {
+        let set = nums.into_iter().collect::<HashSet<i32>>();
+        let mut res = 0;
+        let mut in_set = false;
+        let mut cur = &head;
+        while let Some(node) = cur {
+            if set.contains(&node.val) {
+                if !in_set {
+                    in_set = true;
+                    res += 1;
+                }
+            } else {
+                in_set = false;
+            }
+            cur = &node.next;
+        }
+        res
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number[]} nums
+ * @return {number}
+ */
+var numComponents = function (head, nums) {
+    const s = new Set(nums);
+    let ans = 0;
+    while (head) {
+        while (head && !s.has(head.val)) {
+            head = head.next;
+        }
+        ans += head != null;
+        while (head && s.has(head.val)) {
+            head = head.next;
+        }
+    }
+    return ans;
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

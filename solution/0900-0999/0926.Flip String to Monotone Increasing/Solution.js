@@ -1,17 +1,16 @@
-const minFlipsMonoIncr = function (S) {
-    let n = S.length;
-    let f = [];
-    for (let i = 0; i < n + 1; i++) {
-        f.push(0);
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var minFlipsMonoIncr = function (s) {
+    let tot = 0;
+    for (const c of s) {
+        tot += c === '0' ? 1 : 0;
     }
-    for (let i = 0; i < n; i++) {
-        f[i + 1] = f[i] + (S[i] === "1");
-    }
-    let ans = n;
-    for (let i = 0; i <= n; i++) {
-        let a = f[i];
-        let b = n - i - (f[n] - f[i]);
-        ans = Math.min(ans, b + a);
+    let [ans, cur] = [tot, 0];
+    for (let i = 1; i <= s.length; ++i) {
+        cur += s[i - 1] === '0' ? 1 : 0;
+        ans = Math.min(ans, i - cur + tot - cur);
     }
     return ans;
 };

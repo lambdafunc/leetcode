@@ -2,14 +2,13 @@ class Solution {
 public:
     int minOperations(vector<int>& nums) {
         sort(nums.begin(), nums.end());
-        int End = unique(nums.begin(), nums.end()) - nums.begin();
+        int m = unique(nums.begin(), nums.end()) - nums.begin();
         int n = nums.size();
-
-        int len = 0;
-        for (int i = 0; i < End; ++i) {
-            int temp = upper_bound(nums.begin(), nums.begin() + End, n + nums[i] - 1) - nums.begin() - i;
-            len = max(len, temp);
+        int ans = n;
+        for (int i = 0; i < m; ++i) {
+            int j = upper_bound(nums.begin() + i, nums.begin() + m, nums[i] + n - 1) - nums.begin();
+            ans = min(ans, n - (j - i));
         }
-        return n - len;
+        return ans;
     }
 };

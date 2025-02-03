@@ -1,10 +1,22 @@
-# [1450. 在既定时间做作业的学生人数](https://leetcode-cn.com/problems/number-of-students-doing-homework-at-a-given-time)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1450.Number%20of%20Students%20Doing%20Homework%20at%20a%20Given%20Time/README.md
+rating: 1129
+source: 第 189 场周赛 Q1
+tags:
+    - 数组
+---
+
+<!-- problem:start -->
+
+# [1450. 在既定时间做作业的学生人数](https://leetcode.cn/problems/number-of-students-doing-homework-at-a-given-time)
 
 [English Version](/solution/1400-1499/1450.Number%20of%20Students%20Doing%20Homework%20at%20a%20Given%20Time/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你两个整数数组 <code>startTime</code>（开始时间）和 <code>endTime</code>（结束时间），并指定一个整数 <code>queryTime</code> 作为查询时间。</p>
 
@@ -60,78 +72,123 @@
 	<li><code>1 &lt;=&nbsp;queryTime &lt;= 1000</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：直接遍历
+
+我们可以直接遍历两个数组，对于每个学生，判断 $\textit{queryTime}$ 是否在他们的作业时间区间内，若是，答案加一。
+
+遍历结束后，返回答案即可。
+
+时间复杂度 $O(n)$，其中 $n$ 为学生数量。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-    def busyStudent(self, startTime: List[int], endTime: List[int], queryTime: int) -> int:
-        count, n = 0, len(startTime)
-        for i in range(n):
-            count += startTime[i] <= queryTime <= endTime[i]
-        return count
+    def busyStudent(
+        self, startTime: List[int], endTime: List[int], queryTime: int
+    ) -> int:
+        return sum(x <= queryTime <= y for x, y in zip(startTime, endTime))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int busyStudent(int[] startTime, int[] endTime, int queryTime) {
-        int count = 0, n = startTime.length;
-        for (int i = 0; i < n; ++i) {
+        int ans = 0;
+        for (int i = 0; i < startTime.length; ++i) {
             if (startTime[i] <= queryTime && queryTime <= endTime[i]) {
-                ++count;
+                ++ans;
             }
         }
-        return count;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int busyStudent(vector<int>& startTime, vector<int>& endTime, int queryTime) {
-        int count = 0, n = startTime.size();
-        for (int i = 0; i < n; ++i) {
-            if (startTime[i] <= queryTime && queryTime <= endTime[i]) {
-                ++count;
-            }
+        int ans = 0;
+        for (int i = 0; i < startTime.size(); ++i) {
+            ans += startTime[i] <= queryTime && queryTime <= endTime[i];
         }
-        return count;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func busyStudent(startTime []int, endTime []int, queryTime int) int {
-	count, n := 0, len(startTime)
-	for i := 0; i < n; i++ {
-		if startTime[i] <= queryTime && queryTime <= endTime[i] {
-			count++
+func busyStudent(startTime []int, endTime []int, queryTime int) (ans int) {
+	for i, x := range startTime {
+		if x <= queryTime && queryTime <= endTime[i] {
+			ans++
 		}
 	}
-	return count
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function busyStudent(startTime: number[], endTime: number[], queryTime: number): number {
+    const n = startTime.length;
+    let ans = 0;
+    for (let i = 0; i < n; i++) {
+        if (startTime[i] <= queryTime && queryTime <= endTime[i]) {
+            ans++;
+        }
+    }
+    return ans;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn busy_student(start_time: Vec<i32>, end_time: Vec<i32>, query_time: i32) -> i32 {
+        let mut ans = 0;
+        for i in 0..start_time.len() {
+            if start_time[i] <= query_time && end_time[i] >= query_time {
+                ans += 1;
+            }
+        }
+        ans
+    }
+}
+```
+
+#### C
+
+```c
+int busyStudent(int* startTime, int startTimeSize, int* endTime, int endTimeSize, int queryTime) {
+    int ans = 0;
+    for (int i = 0; i < startTimeSize; i++) {
+        if (startTime[i] <= queryTime && endTime[i] >= queryTime) {
+            ans++;
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

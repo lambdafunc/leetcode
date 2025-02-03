@@ -1,54 +1,83 @@
-# [256. 粉刷房子](https://leetcode-cn.com/problems/paint-house)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0256.Paint%20House/README.md
+tags:
+    - 数组
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [256. 粉刷房子 🔒](https://leetcode.cn/problems/paint-house)
 
 [English Version](/solution/0200-0299/0256.Paint%20House/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>假如有一排房子，共 <em>n</em> 个，每个房子可以被粉刷成红色、蓝色或者绿色这三种颜色中的一种，你需要粉刷所有的房子并且使其相邻的两个房子颜色不能相同。</p>
+<p>假如有一排房子，共 <code>n</code> 个，每个房子可以被粉刷成红色、蓝色或者绿色这三种颜色中的一种，你需要粉刷所有的房子并且使其相邻的两个房子颜色不能相同。</p>
 
-<p>当然，因为市场上不同颜色油漆的价格不同，所以房子粉刷成不同颜色的花费成本也是不同的。每个房子粉刷成不同颜色的花费是以一个&nbsp;<code><em>n</em> x <em>3</em></code><em>&nbsp;</em>的矩阵来表示的。</p>
+<p>当然，因为市场上不同颜色油漆的价格不同，所以房子粉刷成不同颜色的花费成本也是不同的。每个房子粉刷成不同颜色的花费是以一个 <code>n x 3</code><em> </em>的正整数矩阵 <code>costs</code> 来表示的。</p>
 
-<p>例如，<code>costs[0][0]</code> 表示第 0 号房子粉刷成红色的成本花费；<code>costs[1][2]</code>&nbsp;表示第 1 号房子粉刷成绿色的花费，以此类推。请你计算出粉刷完所有房子最少的花费成本。</p>
+<p>例如，<code>costs[0][0]</code> 表示第 0 号房子粉刷成红色的成本花费；<code>costs[1][2]</code> 表示第 1 号房子粉刷成绿色的花费，以此类推。</p>
 
-<p><strong>注意：</strong></p>
+<p>请计算出粉刷完所有房子最少的花费成本。</p>
 
-<p>所有花费均为正整数。</p>
+<p> </p>
 
-<p><strong>示例：</strong></p>
+<p><strong>示例 1：</strong></p>
 
-<pre><strong>输入: </strong>[[17,2,17],[16,16,5],[14,3,19]]
+<pre>
+<strong>输入: </strong>costs = [[17,2,17],[16,16,5],[14,3,19]]
 <strong>输出: </strong>10
-<strong>解释: 将 0 号房子粉刷成蓝色，1 号房子粉刷成绿色，2 号房子粉刷成蓝色。</strong>
-&nbsp;    <strong>最少花费:</strong> 2 + 5 + 3 = 10。
+<strong>解释: </strong>将 0 号房子粉刷成蓝色，1 号房子粉刷成绿色，2 号房子粉刷成蓝色<strong>。</strong>
+     最少花费: 2 + 5 + 3 = 10。
 </pre>
+
+<p><strong>示例 2：</strong></p>
+
+<pre>
+<strong>输入: </strong>costs = [[7,6,2]]
+<strong>输出: 2</strong>
+</pre>
+
+<p> </p>
+
+<p><strong>提示:</strong></p>
+
+<ul>
+	<li><code>costs.length == n</code></li>
+	<li><code>costs[i].length == 3</code></li>
+	<li><code>1 <= n <= 100</code></li>
+	<li><code>1 <= costs[i][j] <= 20</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：动态规划
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 表示房子的数量。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def minCost(self, costs: List[List[int]]) -> int:
-        r, g, b = 0, 0, 0
-        for cost in costs:
-            _r, _g, _b = r, g, b
-            r = min(_g, _b) + cost[0]
-            g = min(_r, _b) + cost[1]
-            b = min(_r, _g) + cost[2]
-        return min(r, g, b)
+        a = b = c = 0
+        for ca, cb, cc in costs:
+            a, b, c = min(b, c) + ca, min(a, c) + cb, min(a, b) + cc
+        return min(a, b, c)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -65,7 +94,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -83,7 +112,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func minCost(costs [][]int) int {
@@ -96,19 +125,26 @@ func minCost(costs [][]int) int {
 	}
 	return min(r, min(g, b))
 }
-
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
-}
 ```
 
-### **...**
+#### JavaScript
 
-```
-
+```js
+/**
+ * @param {number[][]} costs
+ * @return {number}
+ */
+var minCost = function (costs) {
+    let [a, b, c] = [0, 0, 0];
+    for (let [ca, cb, cc] of costs) {
+        [a, b, c] = [Math.min(b, c) + ca, Math.min(a, c) + cb, Math.min(a, b) + cc];
+    }
+    return Math.min(a, b, c);
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

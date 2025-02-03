@@ -1,14 +1,28 @@
-# [2046. Sort Linked List Already Sorted Using Absolute Values](https://leetcode.com/problems/sort-linked-list-already-sorted-using-absolute-values)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2046.Sort%20Linked%20List%20Already%20Sorted%20Using%20Absolute%20Values/README_EN.md
+tags:
+    - Linked List
+    - Two Pointers
+    - Sorting
+---
+
+<!-- problem:start -->
+
+# [2046. Sort Linked List Already Sorted Using Absolute Values 🔒](https://leetcode.com/problems/sort-linked-list-already-sorted-using-absolute-values)
 
 [中文文档](/solution/2000-2099/2046.Sort%20Linked%20List%20Already%20Sorted%20Using%20Absolute%20Values/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 Given the <code>head</code> of a singly linked list that is sorted in <strong>non-decreasing</strong> order using the <strong>absolute values</strong> of its nodes, return <em>the list sorted in <strong>non-decreasing</strong> order using the <strong>actual values</strong> of its nodes</em>.
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2046.Sort%20Linked%20List%20Already%20Sorted%20Using%20Absolute%20Values/images/image-20211017201318-4.png" style="width: 621px; height: 250px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2046.Sort%20Linked%20List%20Already%20Sorted%20Using%20Absolute%20Values/images/image-20211017201240-3.png" style="width: 621px; height: 250px;" />
 <pre>
 <strong>Input:</strong> head = [0,2,-5,5,10,-10]
 <strong>Output:</strong> [-10,-5,0,2,5,10]
@@ -17,8 +31,8 @@ The list sorted in non-descending order using the absolute values of the nodes i
 The list sorted in non-descending order using the actual values is [-10,-5,0,2,5,10].
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2046.Sort%20Linked%20List%20Already%20Sorted%20Using%20Absolute%20Values/images/image-20211017201318-4.png" style="width: 338px; height: 250px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2046.Sort%20Linked%20List%20Already%20Sorted%20Using%20Absolute%20Values/images/image-20211017201318-4.png" style="width: 338px; height: 250px;" />
 <pre>
 <strong>Input:</strong> head = [0,1,2]
 <strong>Output:</strong> [0,1,2]
@@ -26,7 +40,7 @@ The list sorted in non-descending order using the actual values is [-10,-5,0,2,5
 The linked list is already sorted in non-decreasing order.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> head = [1]
@@ -50,11 +64,21 @@ The linked list is already sorted in non-decreasing order.
 	<li>Can you think of a solution with <code>O(n)</code> time complexity?</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Head Insertion Method
+
+We first assume that the first node is already sorted. Starting from the second node, when we encounter a node with a negative value, we use the head insertion method. For non-negative values, we continue to traverse down.
+
+The time complexity is $O(n)$, where $n$ is the length of the linked list. The space complexity is $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -77,7 +101,7 @@ class Solution:
         return head
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -110,7 +134,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -128,18 +152,14 @@ public:
     ListNode* sortLinkedList(ListNode* head) {
         ListNode* prev = head;
         ListNode* curr = head->next;
-        while (curr)
-        {
-            if (curr->val < 0)
-            {
+        while (curr) {
+            if (curr->val < 0) {
                 auto t = curr->next;
                 prev->next = t;
                 curr->next = head;
                 head = curr;
                 curr = t;
-            }
-            else
-            {
+            } else {
                 prev = curr;
                 curr = curr->next;
             }
@@ -149,7 +169,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -176,10 +196,40 @@ func sortLinkedList(head *ListNode) *ListNode {
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
 
+function sortLinkedList(head: ListNode | null): ListNode | null {
+    let [prev, curr] = [head, head.next];
+    while (curr !== null) {
+        if (curr.val < 0) {
+            const t = curr.next;
+            prev.next = t;
+            curr.next = head;
+            head = curr;
+            curr = t;
+        } else {
+            [prev, curr] = [curr, curr.next];
+        }
+    }
+    return head;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,8 +1,20 @@
-# [1205. Monthly Transactions II](https://leetcode.com/problems/monthly-transactions-ii)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1200-1299/1205.Monthly%20Transactions%20II/README_EN.md
+tags:
+    - Database
+---
+
+<!-- problem:start -->
+
+# [1205. Monthly Transactions II 🔒](https://leetcode.com/problems/monthly-transactions-ii)
 
 [中文文档](/solution/1200-1299/1205.Monthly%20Transactions%20II/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Table: <code>Transactions</code></p>
 
@@ -16,9 +28,9 @@
 | amount         | int     |
 | trans_date     | date    |
 +----------------+---------+
-id is the primary key of this table.
+id is the column of unique values of this table.
 The table has information about incoming transactions.
-The state column is an enum of type [&quot;approved&quot;, &quot;declined&quot;].
+The state column is an ENUM (category) of type [&quot;approved&quot;, &quot;declined&quot;].
 </pre>
 
 <p>Table: <code>Chargebacks</code></p>
@@ -28,59 +40,92 @@ The state column is an enum of type [&quot;approved&quot;, &quot;declined&quot;]
 | Column Name    | Type    |
 +----------------+---------+
 | trans_id       | int     |
-| charge_date    | date    |
+| trans_date     | date    |
 +----------------+---------+
 Chargebacks contains basic information regarding incoming chargebacks from some transactions placed in Transactions table.
-trans_id is a foreign key to the id column of Transactions table.
+trans_id is a foreign key (reference column) to the id column of Transactions table.
 Each chargeback corresponds to a transaction made previously even if they were not approved.</pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query to find for each month and country, the number of approved transactions and their total amount, the number of chargebacks and their total amount.</p>
+<p>Write a solution to find for each month and country: the number of approved transactions and their total amount, the number of chargebacks, and their total amount.</p>
 
-<p><strong>Note</strong>: In your&nbsp;query, given the month and country, ignore&nbsp;rows with all&nbsp;zeros.</p>
+<p><strong>Note</strong>: In your solution, given the month and country, ignore rows with all zeros.</p>
 
-<p>The query result format is in the following example:</p>
+<p>Return the result table in <strong>any order</strong>.</p>
+
+<p>The result format is in the following example.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-<code>Transactions</code> table:
-+------+---------+----------+--------+------------+
-| id   | country | state    | amount | trans_date |
-+------+---------+----------+--------+------------+
-| 101  | US      | approved | 1000   | 2019-05-18 |
-| 102  | US      | declined | 2000   | 2019-05-19 |
-| 103  | US      | approved | 3000   | 2019-06-10 |
-| 104  | US      | approved | 4000   | 2019-06-13 |
-| 105  | US      | approved | 5000   | 2019-06-15 |
-+------+---------+----------+--------+------------+
-
-<code>Chargebacks</code> table:
-+------------+------------+
-| trans_id   | trans_date |
-+------------+------------+
-| 102        | 2019-05-29 |
-| 101        | 2019-06-30 |
-| 105        | 2019-09-18 |
-+------------+------------+
-
-Result table:
-+----------+---------+----------------+-----------------+-------------------+--------------------+
-| month    | country | approved_count | approved_amount | chargeback_count  | chargeback_amount  |
-+----------+---------+----------------+-----------------+-------------------+--------------------+
-| 2019-05  | US      | 1              | 1000            | 1                 | 2000               |
-| 2019-06  | US      | 3              | 12000           | 1                 | 1000               |
-| 2019-09  | US      | 0              | 0               | 1                 | 5000               |
-+----------+---------+----------------+-----------------+-------------------+--------------------+
+<strong>Input:</strong> 
+Transactions table:
++-----+---------+----------+--------+------------+
+| id  | country | state    | amount | trans_date |
++-----+---------+----------+--------+------------+
+| 101 | US      | approved | 1000   | 2019-05-18 |
+| 102 | US      | declined | 2000   | 2019-05-19 |
+| 103 | US      | approved | 3000   | 2019-06-10 |
+| 104 | US      | declined | 4000   | 2019-06-13 |
+| 105 | US      | approved | 5000   | 2019-06-15 |
++-----+---------+----------+--------+------------+
+Chargebacks table:
++----------+------------+
+| trans_id | trans_date |
++----------+------------+
+| 102      | 2019-05-29 |
+| 101      | 2019-06-30 |
+| 105      | 2019-09-18 |
++----------+------------+
+<strong>Output:</strong> 
++---------+---------+----------------+-----------------+------------------+-------------------+
+| month   | country | approved_count | approved_amount | chargeback_count | chargeback_amount |
++---------+---------+----------------+-----------------+------------------+-------------------+
+| 2019-05 | US      | 1              | 1000            | 1                | 2000              |
+| 2019-06 | US      | 2              | 8000            | 1                | 1000              |
+| 2019-09 | US      | 0              | 0               | 1                | 5000              |
++---------+---------+----------------+-----------------+------------------+-------------------+
 </pre>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **SQL**
+#### MySQL
 
 ```sql
-
+# Write your MySQL query statement below
+WITH
+    T AS (
+        SELECT * FROM Transactions
+        UNION
+        SELECT id, country, 'chargeback', amount, c.trans_date
+        FROM
+            Transactions AS t
+            JOIN Chargebacks AS c ON t.id = c.trans_id
+    )
+SELECT
+    DATE_FORMAT(trans_date, '%Y-%m') AS month,
+    country,
+    SUM(state = 'approved') AS approved_count,
+    SUM(IF(state = 'approved', amount, 0)) AS approved_amount,
+    SUM(state = 'chargeback') AS chargeback_count,
+    SUM(IF(state = 'chargeback', amount, 0)) AS chargeback_amount
+FROM T
+GROUP BY 1, 2
+HAVING approved_amount OR chargeback_amount;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

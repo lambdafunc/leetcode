@@ -1,10 +1,23 @@
-# [1664. 生成平衡数组的方案数](https://leetcode-cn.com/problems/ways-to-make-a-fair-array)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1664.Ways%20to%20Make%20a%20Fair%20Array/README.md
+rating: 1590
+source: 第 216 场周赛 Q3
+tags:
+    - 数组
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [1664. 生成平衡数组的方案数](https://leetcode.cn/problems/ways-to-make-a-fair-array)
 
 [English Version](/solution/1600-1699/1664.Ways%20to%20Make%20a%20Fair%20Array/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组 <code>nums</code> 。你需要选择 <strong>恰好</strong> 一个下标（下标从 <strong>0</strong> 开始）并删除对应的元素。请注意剩下元素的下标可能会因为删除操作而发生改变。</p>
 
@@ -60,32 +73,156 @@
 	<li><code>1 <= nums[i] <= 10<sup>4</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：枚举 + 前缀和
+
+我们先预处理得到数组 `nums` 的偶数下标元素之和 $s_1$ 以及奇数下标元素之和 $s_2$。
+
+然后从前往后枚举数组 `nums` 的每个元素 $v$，用变量 $t_1$ 和 $t_2$ 分别记录已遍历的偶数下标元素之和以及奇数下标元素之和。
+
+我们观察发现，对于当前遍历到的元素 $v$，如果删除了，那么该元素之后的奇偶下标元素之和会发生交换。此时，我们先判断该位置下标 $i$ 是奇数还是偶数。
+
+-   如果是偶数下标，删除该元素后，数组的奇数下标元素之和为 $t_2 + s_1 - t_1 - v$，而偶数下标元素之和为 $t_1 + s_2 - t_2$，如果这两个和相等，那么就是一个平衡数组，答案加一。
+
+-   如果是奇数下标，删除该元素后，数组的偶数下标元素之和为 $t_1 + s_2 - t_2 - v$，而奇数下标元素之和为 $t_2 + s_1 - t_1$，如果这两个和相等，那么就是一个平衡数组，答案加一。
+
+然后我们更新 $t_1$ 和 $t_2$，继续遍历下一个元素。遍历完数组后，即可得到答案。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def waysToMakeFair(self, nums: List[int]) -> int:
+        s1, s2 = sum(nums[::2]), sum(nums[1::2])
+        ans = t1 = t2 = 0
+        for i, v in enumerate(nums):
+            ans += i % 2 == 0 and t2 + s1 - t1 - v == t1 + s2 - t2
+            ans += i % 2 == 1 and t2 + s1 - t1 == t1 + s2 - t2 - v
+            t1 += v if i % 2 == 0 else 0
+            t2 += v if i % 2 == 1 else 0
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int waysToMakeFair(int[] nums) {
+        int s1 = 0, s2 = 0;
+        int n = nums.length;
+        for (int i = 0; i < n; ++i) {
+            s1 += i % 2 == 0 ? nums[i] : 0;
+            s2 += i % 2 == 1 ? nums[i] : 0;
+        }
+        int t1 = 0, t2 = 0;
+        int ans = 0;
+        for (int i = 0; i < n; ++i) {
+            int v = nums[i];
+            ans += i % 2 == 0 && t2 + s1 - t1 - v == t1 + s2 - t2 ? 1 : 0;
+            ans += i % 2 == 1 && t2 + s1 - t1 == t1 + s2 - t2 - v ? 1 : 0;
+            t1 += i % 2 == 0 ? v : 0;
+            t2 += i % 2 == 1 ? v : 0;
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int waysToMakeFair(vector<int>& nums) {
+        int s1 = 0, s2 = 0;
+        int n = nums.size();
+        for (int i = 0; i < n; ++i) {
+            s1 += i % 2 == 0 ? nums[i] : 0;
+            s2 += i % 2 == 1 ? nums[i] : 0;
+        }
+        int t1 = 0, t2 = 0;
+        int ans = 0;
+        for (int i = 0; i < n; ++i) {
+            int v = nums[i];
+            ans += i % 2 == 0 && t2 + s1 - t1 - v == t1 + s2 - t2;
+            ans += i % 2 == 1 && t2 + s1 - t1 == t1 + s2 - t2 - v;
+            t1 += i % 2 == 0 ? v : 0;
+            t2 += i % 2 == 1 ? v : 0;
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func waysToMakeFair(nums []int) (ans int) {
+	var s1, s2, t1, t2 int
+	for i, v := range nums {
+		if i%2 == 0 {
+			s1 += v
+		} else {
+			s2 += v
+		}
+	}
+	for i, v := range nums {
+		if i%2 == 0 && t2+s1-t1-v == t1+s2-t2 {
+			ans++
+		}
+		if i%2 == 1 && t2+s1-t1 == t1+s2-t2-v {
+			ans++
+		}
+		if i%2 == 0 {
+			t1 += v
+		} else {
+			t2 += v
+		}
+	}
+	return
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var waysToMakeFair = function (nums) {
+    let [s1, s2, t1, t2] = [0, 0, 0, 0];
+    const n = nums.length;
+    for (let i = 0; i < n; ++i) {
+        if (i % 2 == 0) {
+            s1 += nums[i];
+        } else {
+            s2 += nums[i];
+        }
+    }
+    let ans = 0;
+    for (let i = 0; i < n; ++i) {
+        const v = nums[i];
+        ans += i % 2 == 0 && t2 + s1 - t1 - v == t1 + s2 - t2;
+        ans += i % 2 == 1 && t2 + s1 - t1 == t1 + s2 - t2 - v;
+        t1 += i % 2 == 0 ? v : 0;
+        t2 += i % 2 == 1 ? v : 0;
+    }
+    return ans;
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

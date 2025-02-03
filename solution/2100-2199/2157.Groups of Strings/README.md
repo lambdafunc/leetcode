@@ -1,10 +1,24 @@
-# [2157. 字符串分组](https://leetcode-cn.com/problems/groups-of-strings)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2157.Groups%20of%20Strings/README.md
+rating: 2499
+source: 第 278 场周赛 Q4
+tags:
+    - 位运算
+    - 并查集
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [2157. 字符串分组](https://leetcode.cn/problems/groups-of-strings)
 
 [English Version](/solution/2100-2199/2157.Groups%20of%20Strings/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个下标从&nbsp;<strong>0&nbsp;</strong>开始的字符串数组&nbsp;<code>words</code>&nbsp;。每个字符串都只包含 <strong>小写英文字母</strong>&nbsp;。<code>words</code>&nbsp;中任意一个子串中，每个字母都至多只出现一次。</p>
 
@@ -16,12 +30,7 @@
 	<li>将 <code>s1</code>&nbsp;中的一个字母替换成另外任意一个字母（也可以替换为这个字母本身）。</li>
 </ul>
 
-<p>数组&nbsp;<code>words</code>&nbsp;可以分为一个或者多个无交集的 <strong>组</strong>&nbsp;。一个字符串与一个组如果满足以下 <strong>任一</strong>&nbsp;条件，它就属于这个组：</p>
-
-<ul>
-	<li>它与组内 <strong>至少</strong>&nbsp;一个其他字符串关联。</li>
-	<li>它是这个组中 <strong>唯一</strong>&nbsp;的字符串。</li>
-</ul>
+<p>数组&nbsp;<code>words</code>&nbsp;可以分为一个或者多个无交集的 <strong>组</strong>&nbsp;。如果一个字符串与另一个字符串关联，那么它们应当属于同一个组。</p>
 
 <p>注意，你需要确保分好组后，一个组内的任一字符串与其他组的字符串都不关联。可以证明在这个条件下，分组方案是唯一的。</p>
 
@@ -36,7 +45,8 @@
 
 <p><strong>示例 1：</strong></p>
 
-<pre><b>输入：</b>words = ["a","b","ab","cde"]
+<pre>
+<b>输入：</b>words = ["a","b","ab","cde"]
 <b>输出：</b>[2,3]
 <b>解释：</b>
 - words[0] 可以得到 words[1] （将 'a' 替换为 'b'）和 words[2] （添加 'b'）。所以 words[0] 与 words[1] 和 words[2] 关联。
@@ -48,7 +58,8 @@
 
 <p><strong>示例 2：</strong></p>
 
-<pre><b>输入：</b>words = ["a","ab","abc"]
+<pre>
+<b>输入：</b>words = ["a","ab","abc"]
 <b>输出：</b>[1,3]
 <strong>解释：</strong>
 - words[0] 与 words[1] 关联。
@@ -69,38 +80,233 @@
 	<li><code>words[i]</code> 中每个字母最多只出现一次。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：状态压缩（位运算） + 并查集
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
+class Solution:
+    def groupStrings(self, words: List[str]) -> List[int]:
+        def find(x):
+            if p[x] != x:
+                p[x] = find(p[x])
+            return p[x]
 
+        def union(a, b):
+            nonlocal mx, n
+            if b not in p:
+                return
+            pa, pb = find(a), find(b)
+            if pa == pb:
+                return
+            p[pa] = pb
+            size[pb] += size[pa]
+            mx = max(mx, size[pb])
+            n -= 1
+
+        p = {}
+        size = Counter()
+        n = len(words)
+        mx = 0
+        for word in words:
+            x = 0
+            for c in word:
+                x |= 1 << (ord(c) - ord('a'))
+            p[x] = x
+            size[x] += 1
+            mx = max(mx, size[x])
+            if size[x] > 1:
+                n -= 1
+        for x in p.keys():
+            for i in range(26):
+                union(x, x ^ (1 << i))
+                if (x >> i) & 1:
+                    for j in range(26):
+                        if ((x >> j) & 1) == 0:
+                            union(x, x ^ (1 << i) | (1 << j))
+        return [n, mx]
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
+class Solution {
+    private Map<Integer, Integer> p;
+    private Map<Integer, Integer> size;
+    private int mx;
+    private int n;
 
+    public int[] groupStrings(String[] words) {
+        p = new HashMap<>();
+        size = new HashMap<>();
+        n = words.length;
+        mx = 0;
+        for (String word : words) {
+            int x = 0;
+            for (char c : word.toCharArray()) {
+                x |= 1 << (c - 'a');
+            }
+            p.put(x, x);
+            size.put(x, size.getOrDefault(x, 0) + 1);
+            mx = Math.max(mx, size.get(x));
+            if (size.get(x) > 1) {
+                --n;
+            }
+        }
+        for (int x : p.keySet()) {
+            for (int i = 0; i < 26; ++i) {
+                union(x, x ^ (1 << i));
+                if (((x >> i) & 1) != 0) {
+                    for (int j = 0; j < 26; ++j) {
+                        if (((x >> j) & 1) == 0) {
+                            union(x, x ^ (1 << i) | (1 << j));
+                        }
+                    }
+                }
+            }
+        }
+        return new int[] {n, mx};
+    }
+
+    private int find(int x) {
+        if (p.get(x) != x) {
+            p.put(x, find(p.get(x)));
+        }
+        return p.get(x);
+    }
+
+    private void union(int a, int b) {
+        if (!p.containsKey(b)) {
+            return;
+        }
+        int pa = find(a), pb = find(b);
+        if (pa == pb) {
+            return;
+        }
+        p.put(pa, pb);
+        size.put(pb, size.get(pb) + size.get(pa));
+        mx = Math.max(mx, size.get(pb));
+        --n;
+    }
+}
 ```
 
-### **TypeScript**
+#### C++
 
-```ts
+```cpp
+class Solution {
+public:
+    int mx, n;
 
+    vector<int> groupStrings(vector<string>& words) {
+        unordered_map<int, int> p;
+        unordered_map<int, int> size;
+        mx = 0;
+        n = words.size();
+        for (auto& word : words) {
+            int x = 0;
+            for (auto& c : word) x |= 1 << (c - 'a');
+            p[x] = x;
+            ++size[x];
+            mx = max(mx, size[x]);
+            if (size[x] > 1) --n;
+        }
+        for (auto& [x, _] : p) {
+            for (int i = 0; i < 26; ++i) {
+                unite(x, x ^ (1 << i), p, size);
+                if ((x >> i) & 1) {
+                    for (int j = 0; j < 26; ++j) {
+                        if (((x >> j) & 1) == 0) unite(x, x ^ (1 << i) | (1 << j), p, size);
+                    }
+                }
+            }
+        }
+        return {n, mx};
+    }
+
+    int find(int x, unordered_map<int, int>& p) {
+        if (p[x] != x) p[x] = find(p[x], p);
+        return p[x];
+    }
+
+    void unite(int a, int b, unordered_map<int, int>& p, unordered_map<int, int>& size) {
+        if (!p.count(b)) return;
+        int pa = find(a, p), pb = find(b, p);
+        if (pa == pb) return;
+        p[pa] = pb;
+        size[pb] += size[pa];
+        mx = max(mx, size[pb]);
+        --n;
+    }
+};
 ```
 
-### **...**
+#### Go
 
-```
+```go
+func groupStrings(words []string) []int {
+	p := map[int]int{}
+	size := map[int]int{}
+	mx, n := 0, len(words)
+	var find func(int) int
+	find = func(x int) int {
+		if p[x] != x {
+			p[x] = find(p[x])
+		}
+		return p[x]
+	}
+	union := func(a, b int) {
+		if _, ok := p[b]; !ok {
+			return
+		}
+		pa, pb := find(a), find(b)
+		if pa == pb {
+			return
+		}
+		p[pa] = pb
+		size[pb] += size[pa]
+		mx = max(mx, size[pb])
+		n--
+	}
 
+	for _, word := range words {
+		x := 0
+		for _, c := range word {
+			x |= 1 << (c - 'a')
+		}
+		p[x] = x
+		size[x]++
+		mx = max(mx, size[x])
+		if size[x] > 1 {
+			n--
+		}
+	}
+	for x := range p {
+		for i := 0; i < 26; i++ {
+			union(x, x^(1<<i))
+			if ((x >> i) & 1) != 0 {
+				for j := 0; j < 26; j++ {
+					if ((x >> j) & 1) == 0 {
+						union(x, x^(1<<i)|(1<<j))
+					}
+				}
+			}
+		}
+	}
+	return []int{n, mx}
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

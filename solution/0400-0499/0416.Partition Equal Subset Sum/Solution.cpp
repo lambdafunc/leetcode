@@ -1,20 +1,21 @@
 class Solution {
 public:
     bool canPartition(vector<int>& nums) {
-        int s = 0;
-        for (int x : nums) s += x;
-        if (s % 2 != 0) return false;
-        int m = nums.size(), n = (s >> 1) + 1;
-        vector<bool> dp(n);
-        dp[0] = true;
-        if (nums[0] < n) dp[nums[0]] = true;
-        for (int i = 1; i < m; ++i)
-        {
-            for (int j = n - 1; j >= nums[i]; --j)
-            {
-                dp[j] = dp[j] || dp[j - nums[i]];
+        int s = accumulate(nums.begin(), nums.end(), 0);
+        if (s % 2 == 1) {
+            return false;
+        }
+        int n = nums.size();
+        int m = s >> 1;
+        bool f[n + 1][m + 1];
+        memset(f, false, sizeof(f));
+        f[0][0] = true;
+        for (int i = 1; i <= n; ++i) {
+            int x = nums[i - 1];
+            for (int j = 0; j <= m; ++j) {
+                f[i][j] = f[i - 1][j] || (j >= x && f[i - 1][j - x]);
             }
         }
-        return dp[n - 1];
+        return f[n][m];
     }
 };

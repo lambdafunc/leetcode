@@ -1,13 +1,13 @@
 class Solution:
     def countPairs(self, deliciousness: List[int]) -> int:
-        mod = 1000000007
-        limit = max(deliciousness) * 2
-        pairs = 0
-        freq = defaultdict(int)
+        mod = 10**9 + 7
+        mx = max(deliciousness) << 1
+        cnt = Counter()
+        ans = 0
         for d in deliciousness:
-            target = 1
-            while target <= limit:
-                pairs = (pairs + freq[target - d]) % mod
-                target = target << 1
-            freq[d] += 1
-        return pairs
+            s = 1
+            while s <= mx:
+                ans = (ans + cnt[s - d]) % mod
+                s <<= 1
+            cnt[d] += 1
+        return ans

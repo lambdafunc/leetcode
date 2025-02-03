@@ -1,11 +1,15 @@
 class Solution {
 public:
     int longestPalindrome(string s) {
-        vector<int> counter(128);
-        for (char c : s) ++counter[c];
-        int oddCnt = 0;
-        for (int e : counter) oddCnt += e % 2;
-        int n = s.size();
-        return oddCnt == 0 ? n : n - oddCnt + 1;
+        int cnt[128]{};
+        for (char c : s) {
+            ++cnt[c];
+        }
+        int ans = 0;
+        for (int v : cnt) {
+            ans += v / 2 * 2;
+        }
+        ans += ans < s.size();
+        return ans;
     }
 };

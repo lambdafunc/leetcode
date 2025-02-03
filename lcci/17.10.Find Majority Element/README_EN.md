@@ -1,8 +1,18 @@
-# [17.10. Find Majority Element](https://leetcode-cn.com/problems/find-majority-element-lcci)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/lcci/17.10.Find%20Majority%20Element/README_EN.md
+---
+
+<!-- problem:start -->
+
+# [17.10. Find Majority Element](https://leetcode.cn/problems/find-majority-element-lcci)
 
 [中文文档](/lcci/17.10.Find%20Majority%20Element/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A majority element is an element that makes up more than half of the items in an array. Given a positive integers array, find the majority element. If there is no majority element, return -1. Do this in O(N) time and O(1) space.</p>
 
@@ -36,49 +46,105 @@
 
 </pre>
 
+<!-- description:end -->
+
 ## Solutions
 
-Boyer–Moore majority vote algorithm
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def majorityElement(self, nums: List[int]) -> int:
-        cnt = candidate = 0
-        for num in nums:
+        cnt = m = 0
+        for v in nums:
             if cnt == 0:
-                candidate = num
-            cnt += (1 if candidate == num else -1)
-        return candidate if nums.count(candidate) > len(nums) / 2 else -1
+                m, cnt = v, 1
+            else:
+                cnt += 1 if m == v else -1
+        return m if nums.count(m) > len(nums) // 2 else -1
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int majorityElement(int[] nums) {
-        int cnt = 0, candidate = 0;
-        for (int num : nums) {
+        int cnt = 0, m = 0;
+        for (int v : nums) {
             if (cnt == 0) {
-                candidate = num;
+                m = v;
+                cnt = 1;
+            } else {
+                cnt += (m == v ? 1 : -1);
             }
-            cnt += (num == candidate ? 1 : -1);
         }
         cnt = 0;
-        for (int num : nums) {
-            if (num == candidate) {
+        for (int v : nums) {
+            if (m == v) {
                 ++cnt;
             }
         }
-        return cnt > nums.length / 2 ? candidate : -1;
+        return cnt > nums.length / 2 ? m : -1;
     }
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        int cnt = 0, m = 0;
+        for (int& v : nums) {
+            if (cnt == 0) {
+                m = v;
+                cnt = 1;
+            } else
+                cnt += (m == v ? 1 : -1);
+        }
+        cnt = count(nums.begin(), nums.end(), m);
+        return cnt > nums.size() / 2 ? m : -1;
+    }
+};
+```
+
+#### Go
+
+```go
+func majorityElement(nums []int) int {
+	cnt, m := 0, 0
+	for _, v := range nums {
+		if cnt == 0 {
+			m, cnt = v, 1
+		} else {
+			if m == v {
+				cnt++
+			} else {
+				cnt--
+			}
+		}
+	}
+	cnt = 0
+	for _, v := range nums {
+		if m == v {
+			cnt++
+		}
+	}
+	if cnt > len(nums)/2 {
+		return m
+	}
+	return -1
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -86,101 +152,95 @@ class Solution {
  * @return {number}
  */
 var majorityElement = function (nums) {
-    let cnt = 0;
-    let candidate = 0;
-    for (const num of nums) {
+    let cnt = 0,
+        m = 0;
+    for (const v of nums) {
         if (cnt == 0) {
-            candidate = num;
+            m = v;
+            cnt = 1;
+        } else {
+            cnt += m == v ? 1 : -1;
         }
-        cnt += candidate == num ? 1 : -1;
     }
     cnt = 0;
-    for (const num of nums) {
-        if (candidate == num) {
+    for (const v of nums) {
+        if (m == v) {
             ++cnt;
         }
     }
-    return cnt > nums.length / 2 ? candidate : -1;
+    return cnt > nums.length / 2 ? m : -1;
 };
 ```
 
-### **C++**
-
-```cpp
-class Solution {
-public:
-    int majorityElement(vector<int>& nums) {
-        int cnt = 0, candidate = 0;
-        for (int num : nums)
-        {
-            if (cnt == 0) candidate = num;
-            cnt += (candidate == num ? 1 : -1);
-        }
-        cnt = count(nums.begin(), nums.end(), candidate);
-        return cnt > nums.size() / 2 ? candidate : -1;
-    }
-};
-```
-
-### **Go**
-
-```go
-func majorityElement(nums []int) int {
-	var cnt, candidate int
-	for _, num := range nums {
-		if cnt == 0 {
-			candidate = num
-		}
-		if candidate == num {
-			cnt++
-		} else {
-			cnt--
-		}
-	}
-	cnt = 0
-	for _, num := range nums {
-		if candidate == num {
-			cnt++
-		}
-	}
-	if cnt > len(nums)/2 {
-		return candidate
-	}
-	return -1
-}
-```
-
-### **C#**
+#### C#
 
 ```cs
 public class Solution {
     public int MajorityElement(int[] nums) {
-        int cnt = 0, candidate = 0;
-        foreach (int num in nums)
+        int cnt = 0, m = 0;
+        foreach (int v in nums)
         {
             if (cnt == 0)
             {
-                candidate = num;
+                m = v;
+                cnt = 1;
             }
-            cnt += (candidate == num ? 1 : -1);
+            else
+            {
+                cnt += m == v ? 1 : -1;
+            }
         }
         cnt = 0;
-        foreach (int num in nums)
+        foreach (int v in nums)
         {
-            if (candidate == num)
+            if (m == v)
             {
                 ++cnt;
             }
         }
-        return cnt > nums.Length / 2 ? candidate : -1;
+        return cnt > nums.Length / 2 ? m : -1;
     }
 }
 ```
 
-### **...**
+#### Swift
 
-```
+```swift
+class Solution {
+    func majorityElement(_ nums: [Int]) -> Int {
+        var count = 0
+        var candidate: Int?
 
+        for num in nums {
+            if count == 0 {
+                candidate = num
+                count = 1
+            } else if let candidate = candidate, candidate == num {
+                count += 1
+            } else {
+                count -= 1
+            }
+        }
+
+        count = 0
+        if let candidate = candidate {
+            for num in nums {
+                if num == candidate {
+                    count += 1
+                }
+            }
+            if count > nums.count / 2 {
+                return candidate
+            }
+        }
+
+        return -1
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

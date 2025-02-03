@@ -1,8 +1,20 @@
-# [1549. The Most Recent Orders for Each Product](https://leetcode.com/problems/the-most-recent-orders-for-each-product)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1549.The%20Most%20Recent%20Orders%20for%20Each%20Product/README_EN.md
+tags:
+    - Database
+---
+
+<!-- problem:start -->
+
+# [1549. The Most Recent Orders for Each Product 🔒](https://leetcode.com/problems/the-most-recent-orders-for-each-product)
 
 [中文文档](/solution/1500-1599/1549.The%20Most%20Recent%20Orders%20for%20Each%20Product/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Table: <code>Customers</code></p>
 
@@ -13,7 +25,7 @@
 | customer_id   | int     |
 | name          | varchar |
 +---------------+---------+
-customer_id is the primary key for this table.
+customer_id is the column with unique values for this table.
 This table contains information about the customers.
 </pre>
 
@@ -30,7 +42,7 @@ This table contains information about the customers.
 | customer_id   | int     |
 | product_id    | int     |
 +---------------+---------+
-order_id is the primary key for this table.
+order_id is the column with unique values for this table.
 This table contains information about the orders made by customer_id.
 There will be no product ordered by the same user <strong>more than once</strong> in one day.</pre>
 
@@ -46,20 +58,24 @@ There will be no product ordered by the same user <strong>more than once</strong
 | product_name  | varchar |
 | price         | int     |
 +---------------+---------+
-product_id is the primary key for this table.
+product_id is the column with unique values for this table.
 This table contains information about the Products.
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query to find the most recent&nbsp;order(s) of each product.</p>
+<p>Write a solution to find the most recent order(s) of each product.</p>
 
-<p>Return the result table sorted by <code>product_name</code> in <strong>ascending</strong> order and in case of a tie by the <code>product_id</code> in <strong>ascending</strong> order. If there still a tie, order them by the <code>order_id</code> in <strong>ascending</strong> order.</p>
+<p>Return the result table ordered by <code>product_name</code> in ascending order and in case of a tie by the <code>product_id</code> in <strong>ascending order</strong>. If there still a tie, order them by <code>order_id</code> in <strong>ascending order</strong>.</p>
 
-<p>The query result format is in the following example:</p>
+<p>The result format is in the following example.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-<code>Customers</code>
+<strong>Input:</strong> 
+Customers table:
 +-------------+-----------+
 | customer_id | name      |
 +-------------+-----------+
@@ -69,8 +85,7 @@ This table contains information about the Products.
 | 4           | Marwan    |
 | 5           | Khaled    |
 +-------------+-----------+
-
-<code>Orders</code>
+Orders table:
 +----------+------------+-------------+------------+
 | order_id | order_date | customer_id | product_id |
 +----------+------------+-------------+------------+
@@ -85,8 +100,7 @@ This table contains information about the Products.
 | 9        | 2020-08-07 | 2           | 3          |
 | 10       | 2020-07-15 | 1           | 2          |
 +----------+------------+-------------+------------+
-
-<code>Products</code>
+Products table:
 +------------+--------------+-------+
 | product_id | product_name | price |
 +------------+--------------+-------+
@@ -95,8 +109,7 @@ This table contains information about the Products.
 | 3          | screen       | 600   |
 | 4          | hard disk    | 450   |
 +------------+--------------+-------+
-
-Result table:
+<strong>Output:</strong> 
 +--------------+------------+----------+------------+
 | product_name | product_id | order_id | order_date |
 +--------------+------------+----------+------------+
@@ -105,20 +118,49 @@ Result table:
 | mouse        | 2          | 8        | 2020-08-03 |
 | screen       | 3          | 3        | 2020-08-29 |
 +--------------+------------+----------+------------+
+<strong>Explanation:</strong> 
 keyboard&#39;s most recent order is in 2020-08-01, it was ordered two times this day.
 mouse&#39;s most recent order is in 2020-08-03, it was ordered only once this day.
 screen&#39;s most recent order is in 2020-08-29, it was ordered only once this day.
-The hard disk was never ordered and we don&#39;t include it in the result table.
+The hard disk was never ordered and we do not include it in the result table.
 </pre>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Equi-Join + Window Function
+
+We can use an equi-join to join the `Orders` table and the `Products` table based on `product_id`, and then use the window function `rank()`, which assigns a rank to each `product_id` in the `Orders` table based on its `order_date` in descending order. Finally, we can select the rows with a rank of $1$ for each `product_id`.
+
 <!-- tabs:start -->
 
-### **SQL**
+#### MySQL
 
 ```sql
-
+# Write your MySQL query statement below
+WITH
+    T AS (
+        SELECT
+            *,
+            RANK() OVER (
+                PARTITION BY product_id
+                ORDER BY order_date DESC
+            ) AS rk
+        FROM
+            Orders
+            JOIN Products USING (product_id)
+    )
+SELECT product_name, product_id, order_id, order_date
+FROM T
+WHERE rk = 1
+ORDER BY 1, 2, 3;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

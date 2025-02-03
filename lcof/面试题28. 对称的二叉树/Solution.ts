@@ -13,22 +13,14 @@
  */
 
 function isSymmetric(root: TreeNode | null): boolean {
-    if (root == null) {
-        return true;
-    }
-    const dfs = (l: TreeNode | null, r: TreeNode | null) => {
-        if (l == null && r == null) {
+    const dfs = (a: TreeNode | null, b: TreeNode | null): boolean => {
+        if (!a && !b) {
             return true;
         }
-        if (l == null || r == null) {
+        if (!a || !b || a.val != b.val) {
             return false;
         }
-        return (
-            l.val == r.val &&
-            dfs(l.left, r.right) &&
-            dfs(l.right, r.left) &&
-            true
-        );
+        return dfs(a.left, b.right) && dfs(a.right, b.left);
     };
-    return dfs(root.left, root.right);
+    return dfs(root, root);
 }

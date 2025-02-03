@@ -10,24 +10,19 @@
  * }
  */
 
-function mergeTwoLists(
-    l1: ListNode | null,
-    l2: ListNode | null
-): ListNode | null {
-    const res = new ListNode();
-    let cur = res;
+function mergeTwoLists(l1: ListNode | null, l2: ListNode | null): ListNode | null {
+    const dummy = new ListNode(0);
+    let cur = dummy;
     while (l1 && l2) {
-        let node: ListNode;
-        if (l1.val < l2.val) {
-            node = l1;
+        if (l1.val <= l2.val) {
+            cur.next = l1;
             l1 = l1.next;
         } else {
-            node = l2;
+            cur.next = l2;
             l2 = l2.next;
         }
-        cur.next = node;
-        cur = node;
+        cur = cur.next;
     }
     cur.next = l1 || l2;
-    return res.next;
+    return dummy.next;
 }

@@ -1,93 +1,73 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0888.Fair%20Candy%20Swap/README_EN.md
+tags:
+    - Array
+    - Hash Table
+    - Binary Search
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [888. Fair Candy Swap](https://leetcode.com/problems/fair-candy-swap)
 
 [中文文档](/solution/0800-0899/0888.Fair%20Candy%20Swap/README.md)
 
 ## Description
 
-<p>Alice and Bob have candy bars of different sizes: <code>A[i]</code> is the size of the <code>i</code>-th bar of candy that Alice has, and <code>B[j]</code> is the size of the <code>j</code>-th bar of candy that Bob has.</p>
+<!-- description:start -->
 
-<p>Since they are friends, they would like to exchange one candy bar each so that after the exchange, they both have the same total&nbsp;amount of candy.&nbsp; (<em>The total amount of candy&nbsp;a person has is the sum of the sizes of candy&nbsp;bars they have.</em>)</p>
+<p>Alice and Bob have a different total number of candies. You are given two integer arrays <code>aliceSizes</code> and <code>bobSizes</code> where <code>aliceSizes[i]</code> is the number of candies of the <code>i<sup>th</sup></code> box of candy that Alice has and <code>bobSizes[j]</code> is the number of candies of the <code>j<sup>th</sup></code> box of candy that Bob has.</p>
 
-<p>Return an integer array <code>ans</code>&nbsp;where <code>ans[0]</code> is the size of the candy bar that Alice must exchange, and <code>ans[1]</code> is the size of the candy bar that Bob must exchange.</p>
+<p>Since they are friends, they would like to exchange one candy box each so that after the exchange, they both have the same total amount of candy. The total amount of candy a person has is the sum of the number of candies in each box they have.</p>
 
-<p>If there are multiple answers, you may return any one of them.&nbsp; It is guaranteed an answer exists.</p>
+<p>Return a<em>n integer array </em><code>answer</code><em> where </em><code>answer[0]</code><em> is the number of candies in the box that Alice must exchange, and </em><code>answer[1]</code><em> is the number of candies in the box that Bob must exchange</em>. If there are multiple answers, you may <strong>return any</strong> one of them. It is guaranteed that at least one answer exists.</p>
 
 <p>&nbsp;</p>
-
-<div>
-
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
-<strong>Input: </strong>A = <span id="example-input-1-1">[1,1]</span>, B = <span id="example-input-1-2">[2,2]</span>
-
-<strong>Output: </strong><span id="example-output-1">[1,2]</span>
-
+<strong>Input:</strong> aliceSizes = [1,1], bobSizes = [2,2]
+<strong>Output:</strong> [1,2]
 </pre>
 
-<div>
-
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
-<strong>Input: </strong>A = <span id="example-input-2-1">[1,2]</span>, B = <span id="example-input-2-2">[2,3]</span>
-
-<strong>Output: </strong><span id="example-output-2">[1,2]</span>
-
+<strong>Input:</strong> aliceSizes = [1,2], bobSizes = [2,3]
+<strong>Output:</strong> [1,2]
 </pre>
 
-<div>
-
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
-
-<strong>Input: </strong>A = <span id="example-input-3-1">[2]</span>, B = <span id="example-input-3-2">[1,3]</span>
-
-<strong>Output: </strong><span id="example-output-3">[2,3]</span>
-
-</pre>
-
-<div>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-
-<strong>Input: </strong>A = <span id="example-input-4-1">[1,2,5]</span>, B = <span id="example-input-4-2">[2,4]</span>
-
-<strong>Output: </strong><span id="example-output-4">[5,4]</span>
-
+<strong>Input:</strong> aliceSizes = [2], bobSizes = [1,3]
+<strong>Output:</strong> [2,3]
 </pre>
 
 <p>&nbsp;</p>
-
-<p><strong><span>Note:</span></strong></p>
+<p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><span><code>1 &lt;= A.length &lt;= 10000</code></span></li>
-	<li><span><code>1 &lt;= B.length &lt;= 10000</code></span></li>
-	<li><code><span>1 &lt;= A[i] &lt;= 100000</span></code></li>
-	<li><code><span>1 &lt;= B[i] &lt;= 100000</span></code></li>
-	<li>It is guaranteed that Alice and Bob have different total amounts of&nbsp;candy.</li>
-	<li>It is guaranteed there exists an&nbsp;answer.</li>
+	<li><code>1 &lt;= aliceSizes.length, bobSizes.length &lt;= 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= aliceSizes[i], bobSizes[j] &lt;= 10<sup>5</sup></code></li>
+	<li>Alice and Bob have a different total number of candies.</li>
+	<li>There will be at least one valid answer for the given input.</li>
 </ul>
 
-</div>
-
-</div>
-
-</div>
-
-</div>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -100,7 +80,7 @@ class Solution:
                 return [a, target]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -118,7 +98,7 @@ class Solution {
         for (int a : aliceSizes) {
             int target = a - diff;
             if (s.contains(target)) {
-                return new int[]{a, target};
+                return new int[] {a, target};
             }
         }
         return null;
@@ -126,23 +106,7 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function fairCandySwap(aliceSizes: number[], bobSizes: number[]): number[] {
-    let s1 = aliceSizes.reduce((a, c) => a + c, 0);
-    let s2 = bobSizes.reduce((a, c) => a + c, 0);
-    let diff = (s1 - s2) >> 1;
-    for (let num of aliceSizes) {
-        let target = num - diff;
-        if (bobSizes.includes(target)) {
-            return [num, target];
-        }
-    }
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -165,10 +129,24 @@ public:
 };
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function fairCandySwap(aliceSizes: number[], bobSizes: number[]): number[] {
+    let s1 = aliceSizes.reduce((a, c) => a + c, 0);
+    let s2 = bobSizes.reduce((a, c) => a + c, 0);
+    let diff = (s1 - s2) >> 1;
+    for (let num of aliceSizes) {
+        let target = num - diff;
+        if (bobSizes.includes(target)) {
+            return [num, target];
+        }
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

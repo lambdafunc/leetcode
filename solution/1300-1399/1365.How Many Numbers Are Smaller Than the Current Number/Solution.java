@@ -1,16 +1,23 @@
 class Solution {
     public int[] smallerNumbersThanCurrent(int[] nums) {
-        int[] cnt = new int[101];
-        for (int e : nums) {
-            ++cnt[e];
-        }
-        for (int i = 1; i < 101; ++i) {
-            cnt[i] += cnt[i - 1];
-        }
-        int[] res = new int[nums.length];
+        int[] arr = nums.clone();
+        Arrays.sort(arr);
         for (int i = 0; i < nums.length; ++i) {
-            res[i] = nums[i] == 0 ? 0 : cnt[nums[i] - 1];
+            nums[i] = search(arr, nums[i]);
         }
-        return res;
+        return nums;
+    }
+
+    private int search(int[] nums, int x) {
+        int l = 0, r = nums.length;
+        while (l < r) {
+            int mid = (l + r) >> 1;
+            if (nums[mid] >= x) {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return l;
     }
 }

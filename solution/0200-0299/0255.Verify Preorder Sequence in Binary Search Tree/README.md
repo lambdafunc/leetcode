@@ -1,58 +1,76 @@
-# [255. 验证前序遍历序列二叉搜索树](https://leetcode-cn.com/problems/verify-preorder-sequence-in-binary-search-tree)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0255.Verify%20Preorder%20Sequence%20in%20Binary%20Search%20Tree/README.md
+tags:
+    - 栈
+    - 树
+    - 二叉搜索树
+    - 递归
+    - 数组
+    - 二叉树
+    - 单调栈
+---
+
+<!-- problem:start -->
+
+# [255. 验证二叉搜索树的前序遍历序列 🔒](https://leetcode.cn/problems/verify-preorder-sequence-in-binary-search-tree)
 
 [English Version](/solution/0200-0299/0255.Verify%20Preorder%20Sequence%20in%20Binary%20Search%20Tree/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个整数数组，你需要验证它是否是一个二叉搜索树正确的先序遍历序列。</p>
+<p>给定一个&nbsp;<b>无重复元素</b>&nbsp;的整数数组&nbsp;<code>preorder</code>&nbsp;，&nbsp;<em>如果它是以二叉搜索树的<strong>先序遍历</strong>排列</em><em>&nbsp;</em>，返回 <code>true</code> 。</p>
 
-<p>你可以假定该序列中的数都是不相同的。</p>
-
-<p>参考以下这颗二叉搜索树：</p>
-
-<pre>     5
-    / \
-   2   6
-  / \
- 1   3</pre>
+<p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入: </strong>[5,2,6,1,3]
-<strong>输出: </strong>false</pre>
+<p><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0200-0299/0255.Verify%20Preorder%20Sequence%20in%20Binary%20Search%20Tree/images/preorder-tree.jpg" /></p>
+
+<pre>
+<strong>输入: </strong>preorder = [5,2,1,3,6]
+<strong>输出: </strong>true</pre>
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入: </strong>[5,2,1,3,6]
-<strong>输出: </strong>true</pre>
+<pre>
+<strong>输入: </strong>preorder = [5,2,6,1,3]
+<strong>输出: </strong>false</pre>
 
-<p><strong>进阶挑战：</strong></p>
+<p>&nbsp;</p>
 
-<p>您能否使用恒定的空间复杂度来完成此题？</p>
+<p><strong>提示:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= preorder.length &lt;= 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= preorder[i] &lt;= 10<sup>4</sup></code></li>
+	<li><code>preorder</code>&nbsp;中&nbsp;<strong>无重复元素</strong></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><strong>进阶：</strong>您能否使用恒定的空间复杂度来完成此题？</p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-二叉搜索树先序遍历时，每次移向左子树时，值递减，移向右子树时，值递增。
-
-因此，可以维护一个单调递减栈。遍历序列，若当前值大于栈顶元素，说明开始要进入右子树的遍历。只要栈顶元素比当前值小，就表示还是左子树，要移除，也就是从栈中弹出，直至栈顶元素大于当前值，或者栈为空。此过程要记录弹出栈的最后一个元素 last。
-
-接下来继续往后遍历，之后右子树的每个节点，都要比 last 大，才能满足二叉搜索树，否则直接返回 false。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def verifyPreorder(self, preorder: List[int]) -> bool:
         stk = []
-        last = float('-inf')
+        last = -inf
         for x in preorder:
             if x < last:
                 return False
@@ -62,9 +80,7 @@ class Solution:
         return True
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -85,7 +101,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -93,11 +109,9 @@ public:
     bool verifyPreorder(vector<int>& preorder) {
         stack<int> stk;
         int last = INT_MIN;
-        for (int x : preorder)
-        {
+        for (int x : preorder) {
             if (x < last) return false;
-            while (!stk.empty() && stk.top() < x)
-            {
+            while (!stk.empty() && stk.top() < x) {
                 last = stk.top();
                 stk.pop();
             }
@@ -108,7 +122,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func verifyPreorder(preorder []int) bool {
@@ -128,10 +142,8 @@ func verifyPreorder(preorder []int) bool {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

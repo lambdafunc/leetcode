@@ -1,38 +1,70 @@
-# [234. 回文链表](https://leetcode-cn.com/problems/palindrome-linked-list)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0234.Palindrome%20Linked%20List/README.md
+tags:
+    - 栈
+    - 递归
+    - 链表
+    - 双指针
+---
+
+<!-- problem:start -->
+
+# [234. 回文链表](https://leetcode.cn/problems/palindrome-linked-list)
 
 [English Version](/solution/0200-0299/0234.Palindrome%20Linked%20List/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>请判断一个链表是否为回文链表。</p>
+<p>给你一个单链表的头节点 <code>head</code> ，请你判断该链表是否为<span data-keyword="palindrome-sequence">回文链表</span>。如果是，返回 <code>true</code> ；否则，返回 <code>false</code> 。</p>
 
-<p><strong>示例 1:</strong></p>
+<p>&nbsp;</p>
 
-<pre><strong>输入:</strong> 1-&gt;2
-<strong>输出:</strong> false</pre>
-
-<p><strong>示例 2:</strong></p>
-
-<pre><strong>输入:</strong> 1-&gt;2-&gt;2-&gt;1
-<strong>输出:</strong> true
+<p><strong>示例 1：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0200-0299/0234.Palindrome%20Linked%20List/images/pal1linked-list.jpg" style="width: 422px; height: 62px;" />
+<pre>
+<strong>输入：</strong>head = [1,2,2,1]
+<strong>输出：</strong>true
 </pre>
 
-<p><strong>进阶：</strong><br>
-你能否用&nbsp;O(n) 时间复杂度和 O(1) 空间复杂度解决此题？</p>
+<p><strong>示例 2：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0200-0299/0234.Palindrome%20Linked%20List/images/pal2linked-list.jpg" style="width: 182px; height: 62px;" />
+<pre>
+<strong>输入：</strong>head = [1,2]
+<strong>输出：</strong>false
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li>链表中节点数目在范围<code>[1, 10<sup>5</sup>]</code> 内</li>
+	<li><code>0 &lt;= Node.val &lt;= 9</code></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><strong>进阶：</strong>你能否用&nbsp;<code>O(n)</code> 时间复杂度和 <code>O(1)</code> 空间复杂度解决此题？</p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-先用快慢指针找到链表的中点，接着反转右半部分的链表。然后同时遍历前后两段链表，若前后两段链表节点对应的值不等，说明不是回文链表，否则说明是回文链表。
+### 方法一：快慢指针
+
+我们可以先用快慢指针找到链表的中点，接着反转右半部分的链表。然后同时遍历前后两段链表，若前后两段链表节点对应的值不等，说明不是回文链表，否则说明是回文链表。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 为链表的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -41,9 +73,7 @@
 #         self.val = val
 #         self.next = next
 class Solution:
-    def isPalindrome(self, head: ListNode) -> bool:
-        if head is None or head.next is None:
-            return True
+    def isPalindrome(self, head: Optional[ListNode]) -> bool:
         slow, fast = head, head.next
         while fast and fast.next:
             slow, fast = slow.next, fast.next.next
@@ -59,9 +89,7 @@ class Solution:
         return True
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -76,9 +104,6 @@ class Solution:
  */
 class Solution {
     public boolean isPalindrome(ListNode head) {
-        if (head == null || head.next == null) {
-            return true;
-        }
         ListNode slow = head;
         ListNode fast = head.next;
         while (fast != null && fast.next != null) {
@@ -106,7 +131,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -122,25 +147,21 @@ class Solution {
 class Solution {
 public:
     bool isPalindrome(ListNode* head) {
-        if (!head || !head->next) return true;
         ListNode* slow = head;
         ListNode* fast = head->next;
-        while (fast && fast->next)
-        {
+        while (fast && fast->next) {
             slow = slow->next;
             fast = fast->next->next;
         }
         ListNode* pre = nullptr;
         ListNode* cur = slow->next;
-        while (cur)
-        {
+        while (cur) {
             ListNode* t = cur->next;
             cur->next = pre;
             pre = cur;
             cur = t;
         }
-        while (pre)
-        {
+        while (pre) {
             if (pre->val != head->val) return false;
             pre = pre->next;
             head = head->next;
@@ -150,7 +171,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -161,9 +182,6 @@ public:
  * }
  */
 func isPalindrome(head *ListNode) bool {
-	if head == nil || head.Next == nil {
-		return true
-	}
 	slow, fast := head, head.Next
 	for fast != nil && fast.Next != nil {
 		slow, fast = slow.Next, fast.Next.Next
@@ -186,7 +204,47 @@ func isPalindrome(head *ListNode) bool {
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+function isPalindrome(head: ListNode | null): boolean {
+    let slow: ListNode = head,
+        fast: ListNode = head.next;
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    let cur: ListNode = slow.next;
+    slow.next = null;
+    let prev: ListNode = null;
+    while (cur != null) {
+        let t: ListNode = cur.next;
+        cur.next = prev;
+        prev = cur;
+        cur = t;
+    }
+    while (prev != null) {
+        if (prev.val != head.val) return false;
+        prev = prev.next;
+        head = head.next;
+    }
+    return true;
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -201,9 +259,6 @@ func isPalindrome(head *ListNode) bool {
  * @return {boolean}
  */
 var isPalindrome = function (head) {
-    if (!head || !head.next) {
-        return true;
-    }
     let slow = head;
     let fast = head.next;
     while (fast && fast.next) {
@@ -230,7 +285,7 @@ var isPalindrome = function (head) {
 };
 ```
 
-### **C#**
+#### C#
 
 ```cs
 /**
@@ -246,31 +301,23 @@ var isPalindrome = function (head) {
  */
 public class Solution {
     public bool IsPalindrome(ListNode head) {
-        if (head == null || head.next == null)
-        {
-            return true;
-        }
         ListNode slow = head;
         ListNode fast = head.next;
-        while (fast != null && fast.next != null)
-        {
+        while (fast != null && fast.next != null) {
             slow = slow.next;
             fast = fast.next.next;
         }
         ListNode cur = slow.next;
         slow.next = null;
         ListNode pre = null;
-        while (cur != null)
-        {
+        while (cur != null) {
             ListNode t = cur.next;
             cur.next = pre;
             pre = cur;
             cur = t;
         }
-        while (pre != null)
-        {
-            if (pre.val != head.val)
-            {
+        while (pre != null) {
+            if (pre.val != head.val) {
                 return false;
             }
             pre = pre.next;
@@ -281,54 +328,8 @@ public class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-/**
- * Definition for singly-linked list.
- * class ListNode {
- *     val: number
- *     next: ListNode | null
- *     constructor(val?: number, next?: ListNode | null) {
- *         this.val = (val===undefined ? 0 : val)
- *         this.next = (next===undefined ? null : next)
- *     }
- * }
- */
-
-function isPalindrome(head: ListNode | null): boolean {
-    if (head == null || head.next == null) return true;
-    // 快慢指针定位到中点
-    let slow: ListNode = head,
-        fast: ListNode = head.next;
-    while (fast != null && fast.next != null) {
-        slow = slow.next;
-        fast = fast.next.next;
-    }
-    // 翻转链表
-    let cur: ListNode = slow.next;
-    slow.next = null;
-    let prev: ListNode = null;
-    while (cur != null) {
-        let t: ListNode = cur.next;
-        cur.next = prev;
-        prev = cur;
-        cur = t;
-    }
-    // 判断回文
-    while (prev != null) {
-        if (prev.val != head.val) return false;
-        prev = prev.next;
-        head = head.next;
-    }
-    return true;
-}
-```
-
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

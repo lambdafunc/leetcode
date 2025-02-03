@@ -1,10 +1,23 @@
-# [1772. 按受欢迎程度排列功能](https://leetcode-cn.com/problems/sort-features-by-popularity)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1772.Sort%20Features%20by%20Popularity/README.md
+tags:
+    - 数组
+    - 哈希表
+    - 字符串
+    - 排序
+---
+
+<!-- problem:start -->
+
+# [1772. 按受欢迎程度排列功能 🔒](https://leetcode.cn/problems/sort-features-by-popularity)
 
 [English Version](/solution/1700-1799/1772.Sort%20Features%20by%20Popularity/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给定一个字符串数组 <code>features</code> ，其中 <code>features[i]</code> 是一个单词，描述你最近参与开发的项目中一个功能的名称。你调查了用户喜欢哪些功能。另给定一个字符串数组 <code>responses</code>，其中 <code>responses[i]</code> 是一个包含以空格分隔的一系列单词的字符串。</p>
 
@@ -45,73 +58,148 @@
 	<li><code>responses[i]</code> 没有前置或后置空格。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-“哈希表 + 计数器”实现。
+### 方法一：哈希表 + 自定义排序
+
+我们遍历 `responses`，对于 `responses[i]` 中的每个单词，我们用一个哈希表 `vis` 暂存。接下来将 `vis` 中的单词记录到哈希表 `cnt` 中，记录每个单词出现的次数。
+
+接下来，采用自定义排序，将 `features` 中的单词按照出现次数从大到小排序，如果出现次数相同，则按照出现的下标从小到大排序。
+
+时间复杂度 $O(n \times \log n)$，其中 $n$ 为 `features` 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def sortFeatures(self, features: List[str], responses: List[str]) -> List[str]:
-        feature_set = set(features)
-        counter = Counter()
-        for resp in responses:
-            for feat in set(resp.split(' ')):
-                if feat in feature_set:
-                    counter[feat] += 1
-        order = {feat: i for i, feat in enumerate(features)}
-        return sorted(features, key=lambda feat: (-counter[feat], order[feat]))
+        cnt = Counter()
+        for s in responses:
+            for w in set(s.split()):
+                cnt[w] += 1
+        return sorted(features, key=lambda w: -cnt[w])
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public String[] sortFeatures(String[] features, String[] responses) {
-        Set<String> featureSet = new HashSet<>();
-        Map<String, Integer> order = new HashMap<>();
-        for (int i = 0; i < features.length; ++i) {
-            featureSet.add(features[i]);
-            order.put(features[i], i);
-        }
-
-        Map<String, Integer> counter = new HashMap<>();
-        for (String resp : responses) {
-            Set<String> s = new HashSet<>();
-            String[] words = resp.split(" ");
-            for (String word : words) {
-                s.add(word);
-            }
-            for (String word : s) {
-                if (featureSet.contains(word)) {
-                    counter.put(word, counter.getOrDefault(word, 0) + 1);
+        Map<String, Integer> cnt = new HashMap<>();
+        for (String s : responses) {
+            Set<String> vis = new HashSet<>();
+            for (String w : s.split(" ")) {
+                if (vis.add(w)) {
+                    cnt.merge(w, 1, Integer::sum);
                 }
             }
         }
-        String[] copyFeatures = Arrays.copyOf(features, features.length);
-        Arrays.sort(copyFeatures, (a, b) -> {
-            // 自定义排序比较器，先按照词频大小从高到低排，若词频相等，再根据features顺序从小到大排
-            int diff = counter.getOrDefault(b, 0) - counter.getOrDefault(a, 0);
-            return diff == 0 ? order.get(a) - order.get(b) : diff;
+        int n = features.length;
+        Integer[] idx = new Integer[n];
+        for (int i = 0; i < n; i++) {
+            idx[i] = i;
+        }
+        Arrays.sort(idx, (i, j) -> {
+            int x = cnt.getOrDefault(features[i], 0);
+            int y = cnt.getOrDefault(features[j], 0);
+            return x == y ? i - j : y - x;
         });
-        return copyFeatures;
+        String[] ans = new String[n];
+        for (int i = 0; i < n; i++) {
+            ans[i] = features[idx[i]];
+        }
+        return ans;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<string> sortFeatures(vector<string>& features, vector<string>& responses) {
+        unordered_map<string, int> cnt;
+        for (auto& s : responses) {
+            istringstream iss(s);
+            string w;
+            unordered_set<string> st;
+            while (iss >> w) {
+                st.insert(w);
+            }
+            for (auto& w : st) {
+                ++cnt[w];
+            }
+        }
+        int n = features.size();
+        vector<int> idx(n);
+        iota(idx.begin(), idx.end(), 0);
+        sort(idx.begin(), idx.end(), [&](int i, int j) {
+            int x = cnt[features[i]], y = cnt[features[j]];
+            return x == y ? i < j : x > y;
+        });
+        vector<string> ans(n);
+        for (int i = 0; i < n; ++i) {
+            ans[i] = features[idx[i]];
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func sortFeatures(features []string, responses []string) []string {
+	cnt := map[string]int{}
+	for _, s := range responses {
+		vis := map[string]bool{}
+		for _, w := range strings.Split(s, " ") {
+			if !vis[w] {
+				cnt[w]++
+				vis[w] = true
+			}
+		}
+	}
+	sort.SliceStable(features, func(i, j int) bool { return cnt[features[i]] > cnt[features[j]] })
+	return features
+}
+```
+
+#### TypeScript
+
+```ts
+function sortFeatures(features: string[], responses: string[]): string[] {
+    const cnt: Map<string, number> = new Map();
+    for (const s of responses) {
+        const vis: Set<string> = new Set();
+        for (const w of s.split(' ')) {
+            if (vis.has(w)) {
+                continue;
+            }
+            vis.add(w);
+            cnt.set(w, (cnt.get(w) || 0) + 1);
+        }
+    }
+    const n = features.length;
+    const idx: number[] = Array.from({ length: n }, (_, i) => i);
+    idx.sort((i, j) => {
+        const x = cnt.get(features[i]) || 0;
+        const y = cnt.get(features[j]) || 0;
+        return x === y ? i - j : y - x;
+    });
+    return idx.map(i => features[i]);
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

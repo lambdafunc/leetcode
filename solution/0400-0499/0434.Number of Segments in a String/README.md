@@ -1,10 +1,20 @@
-# [434. 字符串中的单词数](https://leetcode-cn.com/problems/number-of-segments-in-a-string)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0434.Number%20of%20Segments%20in%20a%20String/README.md
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [434. 字符串中的单词数](https://leetcode.cn/problems/number-of-segments-in-a-string)
 
 [English Version](/solution/0400-0499/0434.Number%20of%20Segments%20in%20a%20String/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>统计字符串中的单词个数，这里的单词指的是连续的不是空格的字符。</p>
 
@@ -17,17 +27,21 @@
 <strong>解释: </strong>这里的单词是指连续的不是空格的字符，所以 &quot;Hello,&quot; 算作 1 个单词。
 </pre>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-split 切分字符串，或者直接遍历计数。
+### 方法一：字符串分割
+
+将字符串 `s` 按照空格进行分割，然后统计不为空的单词个数。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -35,83 +49,146 @@ class Solution:
         return len(s.split())
 ```
 
-```python
-class Solution:
-    def countSegments(self, s: str) -> int:
-        res = 0
-        for i in range(len(s)):
-            if s[i] != ' ' and (i == 0 or s[i - 1] == ' '):
-                res += 1
-        return res
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int countSegments(String s) {
-        int res = 0;
+        int ans = 0;
         for (String t : s.split(" ")) {
             if (!"".equals(t)) {
-                ++res;
+                ++ans;
             }
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-```java
-class Solution {
-    public int countSegments(String s) {
-        int res = 0;
-        for (int i = 0; i < s.length(); ++i) {
-            if (s.charAt(i) != ' ' && (i == 0 || s.charAt(i - 1) == ' ')) {
-                ++res;
-            }
-        }
-        return res;
-    }
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int countSegments(string s) {
-        int res = 0;
-        for (int i = 0; i < s.size(); ++i)
-        {
-            if (s[i] != ' ' && (i == 0 || s[i - 1] == ' '))
-                ++res;
-        }
-        return res;
+        int ans = 0;
+        istringstream ss(s);
+        while (ss >> s) ++ans;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func countSegments(s string) int {
-	res := 0
-	for i, c := range s {
-		if c != ' ' && (i == 0 || s[i-1] == ' ') {
-			res++
+	ans := 0
+	for _, t := range strings.Split(s, " ") {
+		if len(t) > 0 {
+			ans++
 		}
 	}
-	return res
+	return ans
 }
 ```
 
-### **...**
+#### PHP
 
-```
-
+```php
+class Solution {
+    /**
+     * @param String $s
+     * @return Integer
+     */
+    function countSegments($s) {
+        $arr = explode(' ', $s);
+        $cnt = 0;
+        for ($i = 0; $i < count($arr); $i++) {
+            if (strlen($arr[$i]) != 0) {
+                $cnt++;
+            }
+        }
+        return $cnt;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：模拟
+
+直接模拟，遍历字符串，检测每个字符，统计个数。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def countSegments(self, s: str) -> int:
+        ans = 0
+        for i, c in enumerate(s):
+            if c != ' ' and (i == 0 or s[i - 1] == ' '):
+                ans += 1
+        return ans
+```
+
+#### Java
+
+```java
+class Solution {
+    public int countSegments(String s) {
+        int ans = 0;
+        for (int i = 0; i < s.length(); ++i) {
+            if (s.charAt(i) != ' ' && (i == 0 || s.charAt(i - 1) == ' ')) {
+                ++ans;
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int countSegments(string s) {
+        int ans = 0;
+        for (int i = 0; i < s.size(); ++i) {
+            if (s[i] != ' ' && (i == 0 || s[i - 1] == ' ')) {
+                ++ans;
+            }
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func countSegments(s string) int {
+	ans := 0
+	for i, c := range s {
+		if c != ' ' && (i == 0 || s[i-1] == ' ') {
+			ans++
+		}
+	}
+	return ans
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

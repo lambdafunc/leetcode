@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0900-0999/0957.Prison%20Cells%20After%20N%20Days/README_EN.md
+tags:
+    - Bit Manipulation
+    - Array
+    - Hash Table
+    - Math
+---
+
+<!-- problem:start -->
+
 # [957. Prison Cells After N Days](https://leetcode.com/problems/prison-cells-after-n-days)
 
 [中文文档](/solution/0900-0999/0957.Prison%20Cells%20After%20N%20Days/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>There are <code>8</code> prison cells in a row and each cell is either occupied or vacant.</p>
 
@@ -20,7 +35,7 @@
 <p>Return the state of the prison after <code>n</code> days (i.e., <code>n</code> such changes described above).</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> cells = [0,1,0,1,1,0,0,1], n = 7
@@ -36,7 +51,7 @@ Day 6: [0, 0, 1, 0, 1, 1, 0, 0]
 Day 7: [0, 0, 1, 1, 0, 0, 0, 0]
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> cells = [1,0,0,1,0,0,1,0], n = 1000000000
@@ -52,26 +67,42 @@ Day 7: [0, 0, 1, 1, 0, 0, 0, 0]
 	<li><code>1 &lt;= n &lt;= 10<sup>9</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 
 ```
 
-### **Java**
+#### Java
 
 ```java
 
 ```
 
-### **...**
+#### C++
+
+```cpp
 
 ```
+
+#### Go
+
+```go
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

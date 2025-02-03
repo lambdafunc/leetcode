@@ -1,10 +1,24 @@
-# [2110. 股票平滑下跌阶段的数目](https://leetcode-cn.com/problems/number-of-smooth-descent-periods-of-a-stock)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2110.Number%20of%20Smooth%20Descent%20Periods%20of%20a%20Stock/README.md
+rating: 1408
+source: 第 272 场周赛 Q3
+tags:
+    - 数组
+    - 数学
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [2110. 股票平滑下跌阶段的数目](https://leetcode.cn/problems/number-of-smooth-descent-periods-of-a-stock)
 
 [English Version](/solution/2100-2199/2110.Number%20of%20Smooth%20Descent%20Periods%20of%20a%20Stock/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组&nbsp;<code>prices</code>&nbsp;，表示一支股票的历史每日股价，其中&nbsp;<code>prices[i]</code>&nbsp;是这支股票第&nbsp;<code>i</code>&nbsp;天的价格。</p>
 
@@ -47,100 +61,121 @@
 	<li><code>1 &lt;= prices[i] &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：双指针
+
+我们定义一个答案变量 `ans`，初始值为 $0$。
+
+接下来，我们使用双指针 $i$ 和 $j$，分别指向当前平滑下降阶段的第一天和最后一天的下一天。初始时 $i = 0$, $j = 0$。
+
+从左到右遍历数组 `prices`，对于每个位置 $i$，我们将 $j$ 向右移动，直到 $j$ 到达数组末尾或者 $prices[j - 1] - prices[j] \neq 1$ 为止。此时，$cnt = j - i$ 即为当前平滑下降阶段的长度，我们累加 $\frac{(1 + cnt) \times cnt}{2}$ 到答案变量 `ans` 中。接下来将 $i$ 更新为 $j$，继续遍历。
+
+遍历结束后，返回答案变量 `ans` 即可。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组 `prices` 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def getDescentPeriods(self, prices: List[int]) -> int:
-        i, n = 0, len(prices)
         ans = 0
+        i, n = 0, len(prices)
         while i < n:
-            j = i
-            while j + 1 < n and prices[j] - prices[j + 1] == 1:
+            j = i + 1
+            while j < n and prices[j - 1] - prices[j] == 1:
                 j += 1
-            t = j - i + 1
-            ans += t * (t + 1) // 2
-            i = j + 1
+            cnt = j - i
+            ans += (1 + cnt) * cnt // 2
+            i = j
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public long getDescentPeriods(int[] prices) {
         long ans = 0;
-        for (int i = 0, n = prices.length; i < n;) {
-            int j = i;
-            for (; j + 1 < n && prices[j] - prices[j + 1] == 1; ++j);
-            int t = j - i + 1;
-            ans += (long) t * (t + 1) / 2;
-            i = j + 1;
+        int n = prices.length;
+        for (int i = 0, j = 0; i < n; i = j) {
+            j = i + 1;
+            while (j < n && prices[j - 1] - prices[j] == 1) {
+                ++j;
+            }
+            int cnt = j - i;
+            ans += (1L + cnt) * cnt / 2;
         }
         return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     long long getDescentPeriods(vector<int>& prices) {
         long long ans = 0;
-        for (int i = 0, n = prices.size(); i < n;)
-        {
-            int j = i;
-            for (; j + 1 < n && prices[j] - prices[j + 1] == 1; ++j);
-            int t = j - i + 1;
-            ans += (long long) t * (t + 1) / 2;
-            i = j + 1;
+        int n = prices.size();
+        for (int i = 0, j = 0; i < n; i = j) {
+            j = i + 1;
+            while (j < n && prices[j - 1] - prices[j] == 1) {
+                ++j;
+            }
+            int cnt = j - i;
+            ans += (1LL + cnt) * cnt / 2;
         }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func getDescentPeriods(prices []int) int64 {
-	var ans int64
-	for i, n := 0, len(prices); i < n; {
-		j := i
-		for ; j+1 < n && prices[j]-prices[j+1] == 1; j++ {
+func getDescentPeriods(prices []int) (ans int64) {
+	n := len(prices)
+	for i, j := 0, 0; i < n; i = j {
+		j = i + 1
+		for j < n && prices[j-1]-prices[j] == 1 {
+			j++
 		}
-		t := j - i + 1
-		ans += int64(t * (t + 1) / 2)
-		i = j + 1
+		cnt := j - i
+		ans += int64((1 + cnt) * cnt / 2)
 	}
-	return ans
+	return
 }
 ```
 
-### **TypeScript**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### TypeScript
 
 ```ts
-
-```
-
-### **...**
-
-```
-
+function getDescentPeriods(prices: number[]): number {
+    let ans = 0;
+    const n = prices.length;
+    for (let i = 0, j = 0; i < n; i = j) {
+        j = i + 1;
+        while (j < n && prices[j - 1] - prices[j] === 1) {
+            ++j;
+        }
+        const cnt = j - i;
+        ans += Math.floor(((1 + cnt) * cnt) / 2);
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

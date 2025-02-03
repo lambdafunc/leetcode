@@ -1,21 +1,24 @@
 class Solution {
 public:
     string rankTeams(vector<string>& votes) {
-        unordered_map<char, vector<int>> counter;
-        int n = votes[0].size();
-        for (auto& vote : votes)
-        {
-            for (int i = 0; i < n; ++i)
-            {
-                char v = vote[i];
-                counter[v].resize(n);
-                ++counter[v][i];
+        int m = votes[0].size();
+        array<array<int, 27>, 26> cnt{};
+
+        for (const auto& vote : votes) {
+            for (int i = 0; i < m; ++i) {
+                ++cnt[vote[i] - 'A'][i];
             }
         }
-        string ans = votes[0];
-        sort(ans.begin(), ans.end(), [&](char a, char b){
-            return counter[a] > counter[b] || (counter[a] == counter[b] && a < b);
+        string s = votes[0];
+        ranges::sort(s, [&](char a, char b) {
+            int i = a - 'A', j = b - 'A';
+            for (int k = 0; k < m; ++k) {
+                if (cnt[i][k] != cnt[j][k]) {
+                    return cnt[i][k] > cnt[j][k];
+                }
+            }
+            return a < b;
         });
-        return ans;
+        return string(s.begin(), s.end());
     }
 };

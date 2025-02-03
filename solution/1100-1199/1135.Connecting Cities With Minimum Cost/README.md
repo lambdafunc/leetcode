@@ -1,172 +1,134 @@
-# [1135. 最低成本联通所有城市](https://leetcode-cn.com/problems/connecting-cities-with-minimum-cost)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1135.Connecting%20Cities%20With%20Minimum%20Cost/README.md
+rating: 1752
+source: 第 5 场双周赛 Q3
+tags:
+    - 并查集
+    - 图
+    - 最小生成树
+    - 堆（优先队列）
+---
+
+<!-- problem:start -->
+
+# [1135. 最低成本连通所有城市 🔒](https://leetcode.cn/problems/connecting-cities-with-minimum-cost)
 
 [English Version](/solution/1100-1199/1135.Connecting%20Cities%20With%20Minimum%20Cost/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>想象一下你是个城市基建规划者，地图上有&nbsp;<code>N</code>&nbsp;座城市，它们按以&nbsp;<code>1</code> 到&nbsp;<code>N</code>&nbsp;的次序编号。</p>
+<p>想象一下你是个城市基建规划者，地图上有&nbsp;<code>n</code>&nbsp;座城市，它们按以&nbsp;<code>1</code> 到&nbsp;<code>n</code>&nbsp;的次序编号。</p>
 
-<p>给你一些可连接的选项&nbsp;<code>conections</code>，其中每个选项&nbsp;<code>conections[i] = [city1, city2, cost]</code>&nbsp;表示将城市&nbsp;<code>city1</code> 和城市&nbsp;<code>city2</code>&nbsp;连接所要的成本。（<strong>连接是双向的</strong>，也就是说城市 <code>city1</code>&nbsp;和城市&nbsp;<code>city2</code>&nbsp;相连也同样意味着城市&nbsp;<code>city2</code> 和城市&nbsp;<code>city1</code>&nbsp;相连）。</p>
+<p>给你整数 <code>n</code> 和一个数组&nbsp;<code>conections</code>，其中&nbsp;<code>connections[i] = [x<sub>i</sub>, y<sub>i</sub>, cost<sub>i</sub>]</code>&nbsp;表示将城市&nbsp;<code>x<sub>i</sub></code>&nbsp;和城市&nbsp;<code>y<sub>i</sub></code>&nbsp;连接所要的<code>cost<sub>i</sub></code>（<strong>连接是双向的</strong>）。</p>
 
-<p>返回使得每对城市间都存在将它们连接在一起的连通路径（可能长度为 1 的）最小成本。该最小成本应该是所用全部连接代价的综合。如果根据已知条件无法完成该项任务，则请你返回&nbsp;-1。</p>
+<p>返回连接所有城市的<strong>最低成本</strong>，每对城市之间<strong>至少</strong>有一条路径。如果无法连接所有 <code>n</code>&nbsp;个城市，返回 <code>-1</code></p>
+
+<p>该 <strong>最小成本</strong> 应该是所用全部连接成本的总和。</p>
 
 <p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1100-1199/1135.Connecting%20Cities%20With%20Minimum%20Cost/images/1314_ex2.png" style="height: 141px; width: 161px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1100-1199/1135.Connecting%20Cities%20With%20Minimum%20Cost/images/1314_ex2.png" /></p>
 
-<pre><strong>输入：</strong>N = 3, conections = [[1,2,5],[1,3,6],[2,3,1]]
+<pre>
+<strong>输入：</strong>n = 3, conections = [[1,2,5],[1,3,6],[2,3,1]]
 <strong>输出：</strong>6
-<strong>解释：</strong>
-选出任意 2 条边都可以连接所有城市，我们从中选取成本最小的 2 条。
+<strong>解释：</strong>选出任意 2 条边都可以连接所有城市，我们从中选取成本最小的 2 条。
 </pre>
 
 <p><strong>示例 2：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1100-1199/1135.Connecting%20Cities%20With%20Minimum%20Cost/images/1314_ex1.png" style="height: 91px; width: 136px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1100-1199/1135.Connecting%20Cities%20With%20Minimum%20Cost/images/1314_ex1.png" /></p>
 
-<pre><strong>输入：</strong>N = 4, conections = [[1,2,3],[3,4,4]]
+<pre>
+<strong>输入：</strong>n = 4, conections = [[1,2,3],[3,4,4]]
 <strong>输出：</strong>-1
-<strong>解释： </strong>
-即使连通所有的边，也无法连接所有城市。
+<strong>解释：</strong>即使连通所有的边，也无法连接所有城市。
 </pre>
 
 <p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
-<ol>
-	<li><code>1 &lt;= N &lt;= 10000</code></li>
-	<li><code>1 &lt;= conections.length &lt;= 10000</code></li>
-	<li><code>1 &lt;= conections[i][0], conections[i][1] &lt;= N</code></li>
-	<li><code>0 &lt;= conections[i][2] &lt;= 10^5</code></li>
-	<li><code>conections[i][0] != conections[i][1]</code></li>
-</ol>
+<ul>
+	<li><code>1 &lt;= n &lt;= 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= connections.length &lt;= 10<sup>4</sup></code></li>
+	<li><code>connections[i].length == 3</code></li>
+	<li><code>1 &lt;= x<sub>i</sub>, y<sub>i</sub>&nbsp;&lt;= n</code></li>
+	<li><code>x<sub>i</sub>&nbsp;!= y<sub>i</sub></code></li>
+	<li><code>0 &lt;= cost<sub>i</sub>&nbsp;&lt;= 10<sup>5</sup></code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-最小生成树 + 并查集。
+### 方法一：Kruskal 算法
 
-并查集模板：
+Kruskal 算法是一种贪心算法，用于计算最小生成树。
 
-模板 1——朴素并查集：
+Kruskal 算法的基本思想是，每次从边集中选择一条最小的边，如果这条边连接的两个顶点不在同一个连通分量中，则将这条边加入到最小生成树中，否则舍弃这条边。
 
-```python
-# 初始化，p存储每个点的父节点
-p = list(range(n))
+对于本题，我们可以将边按照连通成本从小到大排序，用并查集维护连通分量，每次选择一条最小的边，如果这条边连接的两个顶点不在同一个连通分量中，则合并这两个顶点，然后累加连通成本。如果出现连通份量为 $1$ 的情况，则说明所有顶点都连通了，返回累加的连通成本，否则返回 $-1$。
 
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        # 路径压缩
-        p[x] = find(p[x])
-    return p[x]
-
-# 合并a和b所在的两个集合
-p[find(a)] = find(b)
-```
-
-模板 2——维护 size 的并查集：
-
-```python
-# 初始化，p存储每个点的父节点，size只有当节点是祖宗节点时才有意义，表示祖宗节点所在集合中，点的数量
-p = list(range(n))
-size = [1] * n
-
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        # 路径压缩
-        p[x] = find(p[x])
-    return p[x]
-
-# 合并a和b所在的两个集合
-if find(a) != find(b):
-    size[find(b)] += size[find(a)]
-    p[find(a)] = find(b)
-```
-
-模板 3——维护到祖宗节点距离的并查集：
-
-```python
-# 初始化，p存储每个点的父节点，d[x]存储x到p[x]的距离
-p = list(range(n))
-d = [0] * n
-
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        t = find(p[x])
-        d[x] += d[p[x]]
-        p[x] = t
-    return p[x]
-
-# 合并a和b所在的两个集合
-p[find(a)] = find(b)
-d[find(a)] = distance
-```
+时间复杂度 $O(m \times \log m)$，空间复杂度 $O(n)$。其中 $m$ 和 $n$ 分别为边数和顶点数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def minimumCost(self, n: int, connections: List[List[int]]) -> int:
-        p = list(range(n))
-        connections.sort(key=lambda x: x[2])
-        res = 0
-
         def find(x):
             if p[x] != x:
                 p[x] = find(p[x])
             return p[x]
 
-        def union(a, b):
-            pa, pb = find(a - 1), find(b - 1)
-            if pa == pb:
-                return False
-            p[pa] = pb
-            return True
-
-        for c1, c2, cost in connections:
-            if union(c1, c2):
-                n -= 1
-                res += cost
-                if n == 1:
-                    return res
+        connections.sort(key=lambda x: x[2])
+        p = list(range(n))
+        ans = 0
+        for x, y, cost in connections:
+            x, y = x - 1, y - 1
+            if find(x) == find(y):
+                continue
+            p[find(x)] = find(y)
+            ans += cost
+            n -= 1
+            if n == 1:
+                return ans
         return -1
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     private int[] p;
 
     public int minimumCost(int n, int[][] connections) {
+        Arrays.sort(connections, Comparator.comparingInt(a -> a[2]));
         p = new int[n];
         for (int i = 0; i < n; ++i) {
             p[i] = i;
         }
-        Arrays.sort(connections, (a, b) -> a[2] - b[2]);
-        int res = 0;
+        int ans = 0;
         for (int[] e : connections) {
-            if (union(e[0], e[1])) {
-                res += e[2];
-                --n;
-                if (n == 1) {
-                    return res;
-                }
+            int x = e[0] - 1, y = e[1] - 1, cost = e[2];
+            if (find(x) == find(y)) {
+                continue;
+            }
+            p[find(x)] = find(y);
+            ans += cost;
+            if (--n == 1) {
+                return ans;
             }
         }
         return -1;
@@ -178,107 +140,102 @@ class Solution {
         }
         return p[x];
     }
-
-    private boolean union(int a, int b) {
-        int pa = find(a - 1), pb = find(b - 1);
-        if (pa == pb) {
-            return false;
-        }
-        p[pa] = pb;
-        return true;
-    }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    vector<int> p;
-
-    int minimumCost(int n, vector<vector<int>> &connections) {
-        p.resize(n);
-        for (int i = 0; i < n; ++i) p[i] = i;
-        auto cmp = [](auto &a, auto &b)
-        {
-            return a[2] < b[2];
+    int minimumCost(int n, vector<vector<int>>& connections) {
+        vector<int> p(n);
+        iota(p.begin(), p.end(), 0);
+        sort(connections.begin(), connections.end(), [](auto& a, auto& b) { return a[2] < b[2]; });
+        int ans = 0;
+        function<int(int)> find = [&](int x) -> int {
+            if (p[x] != x) {
+                p[x] = find(p[x]);
+            }
+            return p[x];
         };
-        sort(connections.begin(), connections.end(), cmp);
-        int res = 0;
-        for (auto e : connections)
-        {
-            if (unite(e[0], e[1]))
-            {
-                res += e[2];
-                --n;
-                if (n == 1) return res;
+        for (auto& e : connections) {
+            int x = e[0] - 1, y = e[1] - 1, cost = e[2];
+            if (find(x) == find(y)) {
+                continue;
+            }
+            p[find(x)] = find(y);
+            ans += cost;
+            if (--n == 1) {
+                return ans;
             }
         }
         return -1;
     }
-
-    int find(int x) {
-        if (p[x] != x) p[x] = find(p[x]);
-        return p[x];
-    }
-
-    bool unite(int a, int b) {
-        int pa = find(a - 1), pb = find(b - 1);
-        if (pa == pb) return false;
-        p[pa] = pb;
-        return true;
-    }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-var p []int
-
-func minimumCost(n int, connections [][]int) int {
-	p = make([]int, n)
-	for i := 0; i < len(p); i++ {
+func minimumCost(n int, connections [][]int) (ans int) {
+	p := make([]int, n)
+	for i := range p {
 		p[i] = i
 	}
-	sort.Slice(connections, func(i, j int) bool {
-		return connections[i][2] < connections[j][2]
-	})
-	res := 0
+	sort.Slice(connections, func(i, j int) bool { return connections[i][2] < connections[j][2] })
+	var find func(int) int
+	find = func(x int) int {
+		if p[x] != x {
+			p[x] = find(p[x])
+		}
+		return p[x]
+	}
 	for _, e := range connections {
-		if union(e[0], e[1]) {
-			res += e[2]
-			n--
-			if n == 1 {
-				return res
-			}
+		x, y, cost := e[0]-1, e[1]-1, e[2]
+		if find(x) == find(y) {
+			continue
+		}
+		p[find(x)] = find(y)
+		ans += cost
+		n--
+		if n == 1 {
+			return
 		}
 	}
 	return -1
 }
-
-func find(x int) int {
-	if p[x] != x {
-		p[x] = find(p[x])
-	}
-	return p[x]
-}
-
-func union(a, b int) bool {
-	pa, pb := find(a-1), find(b-1)
-	if pa == pb {
-		return false
-	}
-	p[pa] = pb
-	return true
-}
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function minimumCost(n: number, connections: number[][]): number {
+    const p: number[] = Array.from({ length: n }, (_, i) => i);
+    const find = (x: number): number => {
+        if (p[x] !== x) {
+            p[x] = find(p[x]);
+        }
+        return p[x];
+    };
+    connections.sort((a, b) => a[2] - b[2]);
+    let ans = 0;
+    for (const [x, y, cost] of connections) {
+        if (find(x - 1) === find(y - 1)) {
+            continue;
+        }
+        p[find(x - 1)] = find(y - 1);
+        ans += cost;
+        if (--n === 1) {
+            return ans;
+        }
+    }
+    return -1;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

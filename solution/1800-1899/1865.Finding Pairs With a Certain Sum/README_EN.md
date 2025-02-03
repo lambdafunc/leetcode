@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1865.Finding%20Pairs%20With%20a%20Certain%20Sum/README_EN.md
+rating: 1680
+source: Weekly Contest 241 Q3
+tags:
+    - Design
+    - Array
+    - Hash Table
+---
+
+<!-- problem:start -->
+
 # [1865. Finding Pairs With a Certain Sum](https://leetcode.com/problems/finding-pairs-with-a-certain-sum)
 
 [中文文档](/solution/1800-1899/1865.Finding%20Pairs%20With%20a%20Certain%20Sum/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given two integer arrays <code>nums1</code> and <code>nums2</code>. You are tasked to implement a data structure that supports queries of two types:</p>
 
@@ -20,7 +36,7 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input</strong>
@@ -54,28 +70,34 @@ findSumPairs.count(7);  // return 11; pairs (2,1), (2,2), (2,4), (3,1), (3,2), (
 	<li>At most <code>1000</code> calls are made to <code>add</code> and <code>count</code> <strong>each</strong>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class FindSumPairs:
-
     def __init__(self, nums1: List[int], nums2: List[int]):
         self.nums1 = nums1
         self.nums2 = nums2
-        self.counter = Counter(nums2)
+        self.cnt = Counter(nums2)
 
     def add(self, index: int, val: int) -> None:
-        old_val = self.nums2[index]
-        self.counter[old_val] -= 1
+        old = self.nums2[index]
+        self.cnt[old] -= 1
+        self.cnt[old + val] += 1
         self.nums2[index] += val
-        self.counter[old_val + val] += 1
 
     def count(self, tot: int) -> int:
-        return sum([self.counter[tot - num] for num in self.nums1])
+        return sum(self.cnt[tot - v] for v in self.nums1)
+
 
 # Your FindSumPairs object will be instantiated and called as such:
 # obj = FindSumPairs(nums1, nums2)
@@ -83,36 +105,35 @@ class FindSumPairs:
 # param_2 = obj.count(tot)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class FindSumPairs {
     private int[] nums1;
     private int[] nums2;
-    private Map<Integer, Integer> counter;
+    private Map<Integer, Integer> cnt = new HashMap<>();
 
     public FindSumPairs(int[] nums1, int[] nums2) {
         this.nums1 = nums1;
         this.nums2 = nums2;
-        counter = new HashMap<>();
-        for (int num : nums2) {
-            counter.put(num, counter.getOrDefault(num, 0) + 1);
+        for (int v : nums2) {
+            cnt.put(v, cnt.getOrDefault(v, 0) + 1);
         }
     }
 
     public void add(int index, int val) {
-        int oldVal = nums2[index];
-        counter.put(oldVal, counter.get(oldVal) - 1);
+        int old = nums2[index];
+        cnt.put(old, cnt.get(old) - 1);
+        cnt.put(old + val, cnt.getOrDefault(old + val, 0) + 1);
         nums2[index] += val;
-        counter.put(oldVal + val, counter.getOrDefault(oldVal + val, 0) + 1);
     }
 
     public int count(int tot) {
-        int res = 0;
-        for (int num : nums1) {
-            res += counter.getOrDefault(tot - num, 0);
+        int ans = 0;
+        for (int v : nums1) {
+            ans += cnt.getOrDefault(tot - v, 0);
         }
-        return res;
+        return ans;
     }
 }
 
@@ -124,10 +145,89 @@ class FindSumPairs {
  */
 ```
 
-### **...**
+#### C++
 
+```cpp
+class FindSumPairs {
+public:
+    FindSumPairs(vector<int>& nums1, vector<int>& nums2) {
+        this->nums1 = nums1;
+        this->nums2 = nums2;
+        for (int& v : nums2) {
+            ++cnt[v];
+        }
+    }
+
+    void add(int index, int val) {
+        int old = nums2[index];
+        --cnt[old];
+        ++cnt[old + val];
+        nums2[index] += val;
+    }
+
+    int count(int tot) {
+        int ans = 0;
+        for (int& v : nums1) {
+            ans += cnt[tot - v];
+        }
+        return ans;
+    }
+
+private:
+    vector<int> nums1;
+    vector<int> nums2;
+    unordered_map<int, int> cnt;
+};
+
+/**
+ * Your FindSumPairs object will be instantiated and called as such:
+ * FindSumPairs* obj = new FindSumPairs(nums1, nums2);
+ * obj->add(index,val);
+ * int param_2 = obj->count(tot);
+ */
 ```
 
+#### Go
+
+```go
+type FindSumPairs struct {
+	nums1 []int
+	nums2 []int
+	cnt   map[int]int
+}
+
+func Constructor(nums1 []int, nums2 []int) FindSumPairs {
+	cnt := map[int]int{}
+	for _, v := range nums2 {
+		cnt[v]++
+	}
+	return FindSumPairs{nums1, nums2, cnt}
+}
+
+func (this *FindSumPairs) Add(index int, val int) {
+	old := this.nums2[index]
+	this.cnt[old]--
+	this.cnt[old+val]++
+	this.nums2[index] += val
+}
+
+func (this *FindSumPairs) Count(tot int) (ans int) {
+	for _, v := range this.nums1 {
+		ans += this.cnt[tot-v]
+	}
+	return
+}
+
+/**
+ * Your FindSumPairs object will be instantiated and called as such:
+ * obj := Constructor(nums1, nums2);
+ * obj.Add(index,val);
+ * param_2 := obj.Count(tot);
+ */
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

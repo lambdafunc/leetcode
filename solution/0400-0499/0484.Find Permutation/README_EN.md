@@ -1,8 +1,23 @@
-# [484. Find Permutation](https://leetcode.com/problems/find-permutation)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0484.Find%20Permutation/README_EN.md
+tags:
+    - Stack
+    - Greedy
+    - Array
+    - String
+---
+
+<!-- problem:start -->
+
+# [484. Find Permutation 🔒](https://leetcode.com/problems/find-permutation)
 
 [中文文档](/solution/0400-0499/0484.Find%20Permutation/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A permutation <code>perm</code> of <code>n</code>&nbsp;integers of all the integers in the range <code>[1, n]</code> can be represented as a string <code>s</code> of length <code>n - 1</code> where:</p>
 
@@ -14,7 +29,7 @@
 <p>Given a string <code>s</code>, reconstruct the lexicographically smallest permutation <code>perm</code> and return it.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;I&quot;
@@ -22,7 +37,7 @@
 <strong>Explanation:</strong> [1,2] is the only legal permutation that can represented by s, where the number 1 and 2 construct an increasing relationship.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;DI&quot;
@@ -38,26 +53,117 @@
 	<li><code>s[i]</code> is either <code>&#39;I&#39;</code> or <code>&#39;D&#39;</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def findPermutation(self, s: str) -> List[int]:
+        n = len(s)
+        ans = list(range(1, n + 2))
+        i = 0
+        while i < n:
+            j = i
+            while j < n and s[j] == 'D':
+                j += 1
+            ans[i : j + 1] = ans[i : j + 1][::-1]
+            i = max(i + 1, j)
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
+class Solution {
+    public int[] findPermutation(String s) {
+        int n = s.length();
+        int[] ans = new int[n + 1];
+        for (int i = 0; i < n + 1; ++i) {
+            ans[i] = i + 1;
+        }
+        int i = 0;
+        while (i < n) {
+            int j = i;
+            while (j < n && s.charAt(j) == 'D') {
+                ++j;
+            }
+            reverse(ans, i, j);
+            i = Math.max(i + 1, j);
+        }
+        return ans;
+    }
 
+    private void reverse(int[] arr, int i, int j) {
+        for (; i < j; ++i, --j) {
+            int t = arr[i];
+            arr[i] = arr[j];
+            arr[j] = t;
+        }
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> findPermutation(string s) {
+        int n = s.size();
+        vector<int> ans(n + 1);
+        iota(ans.begin(), ans.end(), 1);
+        int i = 0;
+        while (i < n) {
+            int j = i;
+            while (j < n && s[j] == 'D') {
+                ++j;
+            }
+            reverse(ans.begin() + i, ans.begin() + j + 1);
+            i = max(i + 1, j);
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func findPermutation(s string) []int {
+	n := len(s)
+	ans := make([]int, n+1)
+	for i := range ans {
+		ans[i] = i + 1
+	}
+	i := 0
+	for i < n {
+		j := i
+		for ; j < n && s[j] == 'D'; j++ {
+		}
+		reverse(ans, i, j)
+		i = max(i+1, j)
+	}
+	return ans
+}
+
+func reverse(arr []int, i, j int) {
+	for ; i < j; i, j = i+1, j-1 {
+		arr[i], arr[j] = arr[j], arr[i]
+	}
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

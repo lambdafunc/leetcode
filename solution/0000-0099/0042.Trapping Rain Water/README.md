@@ -1,18 +1,32 @@
-# [42. 接雨水](https://leetcode-cn.com/problems/trapping-rain-water)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0000-0099/0042.Trapping%20Rain%20Water/README.md
+tags:
+    - 栈
+    - 数组
+    - 双指针
+    - 动态规划
+    - 单调栈
+---
+
+<!-- problem:start -->
+
+# [42. 接雨水](https://leetcode.cn/problems/trapping-rain-water)
 
 [English Version](/solution/0000-0099/0042.Trapping%20Rain%20Water/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定 <em>n</em> 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。</p>
+<p>给定&nbsp;<code>n</code> 个非负整数表示每个宽度为 <code>1</code> 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。</p>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0042.Trapping%20Rain%20Water/images/rainwatertrap.png" style="height: 161px; width: 412px;" /></p>
+<p><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0042.Trapping%20Rain%20Water/images/rainwatertrap.png" style="height: 161px; width: 412px;" /></p>
 
 <pre>
 <strong>输入：</strong>height = [0,1,0,2,1,0,1,3,2,1,2,1]
@@ -27,181 +41,228 @@
 <strong>输出：</strong>9
 </pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
 	<li><code>n == height.length</code></li>
-	<li><code>0 <= n <= 3 * 10<sup>4</sup></code></li>
-	<li><code>0 <= height[i] <= 10<sup>5</sup></code></li>
+	<li><code>1 &lt;= n &lt;= 2 * 10<sup>4</sup></code></li>
+	<li><code>0 &lt;= height[i] &lt;= 10<sup>5</sup></code></li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-动态规划法。
+### 方法一：动态规划
 
-对于下标 i，水能达到的最大高度等于下标 i 左右两侧的最大高度的最小值，再减去 `height[i]` 就能得到当前柱子所能存的水量。
+我们定义 $left[i]$ 表示下标 $i$ 位置及其左边的最高柱子的高度，定义 $right[i]$ 表示下标 $i$ 位置及其右边的最高柱子的高度。那么下标 $i$ 位置能接的雨水量为 $\min(left[i], right[i]) - height[i]$。我们遍历数组，计算出 $left[i]$ 和 $right[i]$，最后答案为 $\sum_{i=0}^{n-1} \min(left[i], right[i]) - height[i]$。
 
-同[面试题 17.21. 直方图的水量](/lcci/17.21.Volume%20of%20Histogram/README.md)
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为数组的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def trap(self, height: List[int]) -> int:
         n = len(height)
-        if n < 3:
-            return 0
-
-        lmx, rmx = [height[0]] * n, [height[n - 1]] * n
+        left = [height[0]] * n
+        right = [height[-1]] * n
         for i in range(1, n):
-            lmx[i] = max(lmx[i - 1], height[i])
-            rmx[n - 1 - i] = max(rmx[n - i], height[n - 1 - i])
-
-        res = 0
-        for i in range(n):
-            res += min(lmx[i], rmx[i]) - height[i]
-        return res
+            left[i] = max(left[i - 1], height[i])
+            right[n - i - 1] = max(right[n - i], height[n - i - 1])
+        return sum(min(l, r) - h for l, r, h in zip(left, right, height))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int trap(int[] height) {
         int n = height.length;
-        if (n < 3) {
-            return 0;
-        }
-
-        int[] lmx = new int[n];
-        int[] rmx = new int[n];
-        lmx[0] = height[0];
-        rmx[n - 1] = height[n - 1];
+        int[] left = new int[n];
+        int[] right = new int[n];
+        left[0] = height[0];
+        right[n - 1] = height[n - 1];
         for (int i = 1; i < n; ++i) {
-            lmx[i] = Math.max(lmx[i - 1], height[i]);
-            rmx[n - 1 - i] = Math.max(rmx[n - i], height[n - i - 1]);
+            left[i] = Math.max(left[i - 1], height[i]);
+            right[n - i - 1] = Math.max(right[n - i], height[n - i - 1]);
         }
-
-        int res = 0;
+        int ans = 0;
         for (int i = 0; i < n; ++i) {
-            res += Math.min(lmx[i], rmx[i]) - height[i];
+            ans += Math.min(left[i], right[i]) - height[i];
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **TypeScript**
-
-```ts
-function trap(height: number[]): number {
-    let ans = 0;
-    let left = 0,
-        right = height.length - 1;
-    let maxLeft = 0,
-        maxRight = 0;
-    while (left < right) {
-        if (height[left] < height[right]) {
-            // move left
-            if (height[left] >= maxLeft) {
-                maxLeft = height[left];
-            } else {
-                ans += maxLeft - height[left];
-            }
-            ++left;
-        } else {
-            // move right
-            if (height[right] >= maxRight) {
-                maxRight = height[right];
-            } else {
-                ans += maxRight - height[right];
-            }
-            --right;
-        }
-    }
-    return ans;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int trap(vector<int>& height) {
         int n = height.size();
-        if (n < 3) {
-            return 0;
-        }
-
-        vector<int> lmx(n, height[0]);
-        vector<int> rmx(n, height[n - 1]);
+        int left[n], right[n];
+        left[0] = height[0];
+        right[n - 1] = height[n - 1];
         for (int i = 1; i < n; ++i) {
-            lmx[i] = max(lmx[i - 1], height[i]);
-            rmx[n - 1 - i] = max(rmx[n - i], height[n - 1 - i]);
+            left[i] = max(left[i - 1], height[i]);
+            right[n - i - 1] = max(right[n - i], height[n - i - 1]);
         }
-
-        int res = 0;
+        int ans = 0;
         for (int i = 0; i < n; ++i) {
-            res += min(lmx[i], rmx[i]) - height[i];
+            ans += min(left[i], right[i]) - height[i];
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func trap(height []int) int {
+func trap(height []int) (ans int) {
 	n := len(height)
-	if n < 3 {
-		return 0
-	}
-
-	lmx, rmx := make([]int, n), make([]int, n)
-	lmx[0], rmx[n-1] = height[0], height[n-1]
+	left := make([]int, n)
+	right := make([]int, n)
+	left[0], right[n-1] = height[0], height[n-1]
 	for i := 1; i < n; i++ {
-		lmx[i] = max(lmx[i-1], height[i])
-		rmx[n-1-i] = max(rmx[n-i], height[n-1-i])
+		left[i] = max(left[i-1], height[i])
+		right[n-i-1] = max(right[n-i], height[n-i-1])
 	}
-
-	res := 0
-	for i := 0; i < n; i++ {
-		res += min(lmx[i], rmx[i]) - height[i]
+	for i, h := range height {
+		ans += min(left[i], right[i]) - h
 	}
-	return res
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function trap(height: number[]): number {
+    const n = height.length;
+    const left: number[] = new Array(n).fill(height[0]);
+    const right: number[] = new Array(n).fill(height[n - 1]);
+    for (let i = 1; i < n; ++i) {
+        left[i] = Math.max(left[i - 1], height[i]);
+        right[n - i - 1] = Math.max(right[n - i], height[n - i - 1]);
+    }
+    let ans = 0;
+    for (let i = 0; i < n; ++i) {
+        ans += Math.min(left[i], right[i]) - height[i];
+    }
+    return ans;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    #[allow(dead_code)]
+    pub fn trap(height: Vec<i32>) -> i32 {
+        let n = height.len();
+        let mut left: Vec<i32> = vec![0; n];
+        let mut right: Vec<i32> = vec![0; n];
+
+        left[0] = height[0];
+        right[n - 1] = height[n - 1];
+
+        // Initialize the left & right vector
+        for i in 1..n {
+            left[i] = std::cmp::max(left[i - 1], height[i]);
+            right[n - i - 1] = std::cmp::max(right[n - i], height[n - i - 1]);
+        }
+
+        let mut ans = 0;
+
+        // Calculate the ans
+        for i in 0..n {
+            ans += std::cmp::min(left[i], right[i]) - height[i];
+        }
+
+        ans
+    }
+}
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int Trap(int[] height) {
+        int n = height.Length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+        left[0] = height[0];
+        right[n - 1] = height[n - 1];
+        for (int i = 1; i < n; ++i) {
+            left[i] = Math.Max(left[i - 1], height[i]);
+            right[n - i - 1] = Math.Max(right[n - i], height[n - i - 1]);
+        }
+        int ans = 0;
+        for (int i = 0; i < n; ++i) {
+            ans += Math.Min(left[i], right[i]) - height[i];
+        }
+        return ans;
+    }
+}
+```
+
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param integer[] $height
+     * @return integer
+     */
+
+    function trap($height) {
+        $n = count($height);
+
+        if ($n == 0) {
+            return 0;
+        }
+
+        $left = 0;
+        $right = $n - 1;
+        $leftMax = 0;
+        $rightMax = 0;
+        $ans = 0;
+
+        while ($left < $right) {
+            if ($height[$left] < $height[$right]) {
+                if ($height[$left] > $leftMax) {
+                    $leftMax = $height[$left];
+                } else {
+                    $ans += $leftMax - $height[$left];
+                }
+                $left++;
+            } else {
+                if ($height[$right] > $rightMax) {
+                    $rightMax = $height[$right];
+                } else {
+                    $ans += $rightMax - $height[$right];
+                }
+                $right--;
+            }
+        }
+        return $ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

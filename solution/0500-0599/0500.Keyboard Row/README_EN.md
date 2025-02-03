@@ -1,10 +1,26 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0500.Keyboard%20Row/README_EN.md
+tags:
+    - Array
+    - Hash Table
+    - String
+---
+
+<!-- problem:start -->
+
 # [500. Keyboard Row](https://leetcode.com/problems/keyboard-row)
 
 [中文文档](/solution/0500-0599/0500.Keyboard%20Row/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given an array of strings <code>words</code>, return <em>the words that can be typed using letters of the alphabet on only one row of American keyboard like the image below</em>.</p>
+
+<p><strong>Note</strong> that the strings are <strong>case-insensitive</strong>, both lowercased and uppercased of the same letter are treated as if they are at the same row.</p>
 
 <p>In the <strong>American keyboard</strong>:</p>
 
@@ -13,28 +29,35 @@
 	<li>the second row consists of the characters <code>&quot;asdfghjkl&quot;</code>, and</li>
 	<li>the third row consists of the characters <code>&quot;zxcvbnm&quot;</code>.</li>
 </ul>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0500-0599/0500.Keyboard%20Row/images/keyboard.png" style="width: 800px; max-width: 600px; height: 267px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0500-0599/0500.Keyboard%20Row/images/keyboard.png" style="width: 800px; max-width: 600px; height: 267px;" />
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
-<pre>
-<strong>Input:</strong> words = [&quot;Hello&quot;,&quot;Alaska&quot;,&quot;Dad&quot;,&quot;Peace&quot;]
-<strong>Output:</strong> [&quot;Alaska&quot;,&quot;Dad&quot;]
-</pre>
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">words = [&quot;Hello&quot;,&quot;Alaska&quot;,&quot;Dad&quot;,&quot;Peace&quot;]</span></p>
 
-<p><strong>Example 2:</strong></p>
+<p><strong>Output:</strong> <span class="example-io">[&quot;Alaska&quot;,&quot;Dad&quot;]</span></p>
 
-<pre>
-<strong>Input:</strong> words = [&quot;omk&quot;]
-<strong>Output:</strong> []
-</pre>
+<p><strong>Explanation:</strong></p>
 
-<p><strong>Example 3:</strong></p>
+<p>Both <code>&quot;a&quot;</code> and <code>&quot;A&quot;</code> are in the 2nd row of the American keyboard due to case insensitivity.</p>
+</div>
 
-<pre>
-<strong>Input:</strong> words = [&quot;adsdf&quot;,&quot;sfd&quot;]
-<strong>Output:</strong> [&quot;adsdf&quot;,&quot;sfd&quot;]
-</pre>
+<p><strong class="example">Example 2:</strong></p>
+
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">words = [&quot;omk&quot;]</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">[]</span></p>
+</div>
+
+<p><strong class="example">Example 3:</strong></p>
+
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">words = [&quot;adsdf&quot;,&quot;sfd&quot;]</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">[&quot;adsdf&quot;,&quot;sfd&quot;]</span></p>
+</div>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
@@ -45,11 +68,17 @@
 	<li><code>words[i]</code> consists of English letters (both lowercase and uppercase).&nbsp;</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -57,64 +86,41 @@ class Solution:
         s1 = set('qwertyuiop')
         s2 = set('asdfghjkl')
         s3 = set('zxcvbnm')
-        res = []
-        for word in words:
-            t = set(word.lower())
-            if t <= s1 or t <= s2 or t <= s3:
-                res.append(word)
-        return res
+        ans = []
+        for w in words:
+            s = set(w.lower())
+            if s <= s1 or s <= s2 or s <= s3:
+                ans.append(w)
+        return ans
 ```
 
-### **Java**
-
-```java
-class Solution {
-    public String[] findWords(String[] words) {
-        String s1 = "qwertyuiopQWERTYUIOP";
-        String s2 = "asdfghjklASDFGHJKL";
-        String s3 = "zxcvbnmZXCVBNM";
-        List<String> res = new ArrayList<>();
-        for (String word : words) {
-            int n1 = 0, n2 = 0, n3 = 0;
-            int n = word.length();
-            for (int i = 0; i < n; ++i) {
-                if (s1.contains(String.valueOf(word.charAt(i)))) {
-                    ++n1;
-                } else if (s2.contains(String.valueOf(word.charAt(i)))) {
-                    ++n2;
-                } else {
-                    ++n3;
-                }
-            }
-            if (n1 == n || n2 == n || n3 == n) {
-                res.add(word);
-            }
-        }
-        return res.toArray(new String[0]);
-    }
-}
-```
+#### Java
 
 ```java
 class Solution {
     public String[] findWords(String[] words) {
         String s = "12210111011122000010020202";
-        List<String> res = new ArrayList<>();
-        for (String word : words) {
-            Set<Character> t = new HashSet<>();
-            for (char c : word.toLowerCase().toCharArray()) {
-                t.add(s.charAt(c - 'a'));
+        List<String> ans = new ArrayList<>();
+        for (var w : words) {
+            String t = w.toLowerCase();
+            char x = s.charAt(t.charAt(0) - 'a');
+            boolean ok = true;
+            for (char c : t.toCharArray()) {
+                if (s.charAt(c - 'a') != x) {
+                    ok = false;
+                    break;
+                }
             }
-            if (t.size() == 1) {
-                res.add(word);
+            if (ok) {
+                ans.add(w);
             }
         }
-        return res.toArray(new String[0]);
+        return ans.toArray(new String[0]);
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -122,40 +128,121 @@ public:
     vector<string> findWords(vector<string>& words) {
         string s = "12210111011122000010020202";
         vector<string> ans;
-        for (auto& word : words)
-        {
-            unordered_set<char> t;
-            for (char c : word) t.insert(s[tolower(c) - 'a']);
-            if (t.size() == 1) ans.push_back(word);
+        for (auto& w : words) {
+            char x = s[tolower(w[0]) - 'a'];
+            bool ok = true;
+            for (char& c : w) {
+                if (s[tolower(c) - 'a'] != x) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                ans.emplace_back(w);
+            }
         }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func findWords(words []string) []string {
+func findWords(words []string) (ans []string) {
 	s := "12210111011122000010020202"
-	var ans []string
-	for _, word := range words {
-		t := make(map[byte]bool)
-		for _, c := range word {
-			t[s[unicode.ToLower(c)-'a']] = true
+	for _, w := range words {
+		x := s[unicode.ToLower(rune(w[0]))-'a']
+		ok := true
+		for _, c := range w[1:] {
+			if s[unicode.ToLower(c)-'a'] != x {
+				ok = false
+				break
+			}
 		}
-		if len(t) == 1 {
-			ans = append(ans, word)
+		if ok {
+			ans = append(ans, w)
 		}
 	}
-	return ans
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function findWords(words: string[]): string[] {
+    const s = '12210111011122000010020202';
+    const ans: string[] = [];
+    for (const w of words) {
+        const t = w.toLowerCase();
+        const x = s[t.charCodeAt(0) - 'a'.charCodeAt(0)];
+        let ok = true;
+        for (const c of t) {
+            if (s[c.charCodeAt(0) - 'a'.charCodeAt(0)] !== x) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) {
+            ans.push(w);
+        }
+    }
+    return ans;
+}
 ```
 
+#### C#
+
+```cs
+public class Solution {
+    public string[] FindWords(string[] words) {
+        string s = "12210111011122000010020202";
+        IList<string> ans = new List<string>();
+        foreach (string w in words) {
+            char x = s[char.ToLower(w[0]) - 'a'];
+            bool ok = true;
+            for (int i = 1; i < w.Length; ++i) {
+                if (s[char.ToLower(w[i]) - 'a'] != x) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                ans.Add(w);
+            }
+        }
+        return ans.ToArray();
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def findWords(self, words: List[str]) -> List[str]:
+        ans = []
+        s = "12210111011122000010020202"
+        for w in words:
+            x = s[ord(w[0].lower()) - ord('a')]
+            if all(s[ord(c.lower()) - ord('a')] == x for c in w):
+                ans.append(w)
+        return ans
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

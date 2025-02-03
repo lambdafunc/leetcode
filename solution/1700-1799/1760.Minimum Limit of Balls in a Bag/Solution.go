@@ -1,26 +1,11 @@
 func minimumSize(nums []int, maxOperations int) int {
-	left, right := 1, max(nums)
-	for left < right {
-		mid := (left + right) >> 1
-		var ops int
-		for _, num := range nums {
-			ops += (num - 1) / mid
+	r := slices.Max(nums)
+	return 1 + sort.Search(r, func(mx int) bool {
+		mx++
+		cnt := 0
+		for _, x := range nums {
+			cnt += (x - 1) / mx
 		}
-		if ops <= maxOperations {
-			right = mid
-		} else {
-			left = mid + 1
-		}
-	}
-	return left
-}
-
-func max(nums []int) int {
-	res := 0
-	for _, num := range nums {
-		if res < num {
-			res = num
-		}
-	}
-	return res
+		return cnt <= maxOperations
+	})
 }

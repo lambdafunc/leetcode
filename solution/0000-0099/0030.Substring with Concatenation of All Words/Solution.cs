@@ -1,57 +1,51 @@
-using System.Collections.Generic;
-
 public class Solution {
     public IList<int> FindSubstring(string s, string[] words) {
-        if (words.Length == 0) return new List<int>();
-        
-        var wordsDict = new Dictionary<string, int>();
-        foreach (var word in words)
-        {
-            if (!wordsDict.ContainsKey(word))
-            {
-                wordsDict.Add(word, 1);
-            }
-            else
-            {
-                ++wordsDict[word];
+        var cnt = new Dictionary<string, int>();
+        foreach (var w in words) {
+            if (cnt.ContainsKey(w)) {
+                cnt[w]++;
+            } else {
+                cnt[w] = 1;
             }
         }
-        
-        var wordOfS = new string[s.Length];
-        var wordLength = words[0].Length;
-        var wordCount = words.Length;
-        for (var i = 0; i <= s.Length - wordLength; ++i)
-        {
-            var substring = s.Substring(i, wordLength);
-            if (wordsDict.ContainsKey(substring))
-            {
-                wordOfS[i] = substring;
-            }
-        }
-        
-        var result = new List<int>();
-        for (var i = 0; i <= s.Length - wordLength * wordCount; ++i)
-        {
-            var tempDict = new Dictionary<string, int>(wordsDict);
-            var tempCount = 0;
-            for (var j = i; j <= i + wordLength * (wordCount - 1); j += wordLength)
-            {
-                if (wordOfS[j] != null && tempDict[wordOfS[j]] > 0)
-                {
-                    --tempDict[wordOfS[j]];
-                    ++tempCount;
+
+        var ans = new List<int>();
+        int m = s.Length, n = words.Length, k = words[0].Length;
+
+        for (int i = 0; i < k; ++i) {
+            int l = i, r = i;
+            var cnt1 = new Dictionary<string, int>();
+            while (r + k <= m) {
+                var t = s.Substring(r, k);
+                r += k;
+
+                if (!cnt.ContainsKey(t)) {
+                    cnt1.Clear();
+                    l = r;
+                    continue;
                 }
-                else
-                {
-                    break;
+
+                if (cnt1.ContainsKey(t)) {
+                    cnt1[t]++;
+                } else {
+                    cnt1[t] = 1;
+                }
+
+                while (cnt1[t] > cnt[t]) {
+                    var w = s.Substring(l, k);
+                    cnt1[w]--;
+                    if (cnt1[w] == 0) {
+                        cnt1.Remove(w);
+                    }
+                    l += k;
+                }
+
+                if (r - l == n * k) {
+                    ans.Add(l);
                 }
             }
-            if (tempCount == wordCount)
-            {
-                result.Add(i);
-            }
         }
-        
-        return result;
+
+        return ans;
     }
 }

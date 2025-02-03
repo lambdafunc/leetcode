@@ -1,25 +1,35 @@
-using System.Collections.Generic;
-
 public class MinStack {
-    private Stack<int> _stack = new Stack<int>();
-    private Stack<int> _minStack = new Stack<int>();
-    
+    private Stack<int> stk1 = new Stack<int>();
+    private Stack<int> stk2 = new Stack<int>();
+
+    public MinStack() {
+        stk2.Push(int.MaxValue);
+    }
+
     public void Push(int x) {
-        _stack.Push(x);
-        if (GetMin() >= x) _minStack.Push(x);
+        stk1.Push(x);
+        stk2.Push(Math.Min(x, GetMin()));
     }
 
     public void Pop() {
-        var x = _stack.Pop();
-        if (GetMin() == x) _minStack.Pop();
+        stk1.Pop();
+        stk2.Pop();
     }
 
     public int Top() {
-        return _stack.Peek();
+        return stk1.Peek();
     }
 
     public int GetMin() {
-        if (_minStack.Count == 0) return int.MaxValue;
-        return _minStack.Peek();
+        return stk2.Peek();
     }
 }
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack obj = new MinStack();
+ * obj.Push(x);
+ * obj.Pop();
+ * int param_3 = obj.Top();
+ * int param_4 = obj.GetMin();
+ */

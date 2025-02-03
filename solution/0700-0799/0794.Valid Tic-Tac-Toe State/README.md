@@ -1,222 +1,272 @@
-# [794. 有效的井字游戏](https://leetcode-cn.com/problems/valid-tic-tac-toe-state)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0794.Valid%20Tic-Tac-Toe%20State/README.md
+tags:
+    - 数组
+    - 矩阵
+---
+
+<!-- problem:start -->
+
+# [794. 有效的井字游戏](https://leetcode.cn/problems/valid-tic-tac-toe-state)
 
 [English Version](/solution/0700-0799/0794.Valid%20Tic-Tac-Toe%20State/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>用字符串数组作为井字游戏的游戏板&nbsp;<code>board</code>。当且仅当在井字游戏过程中，玩家有可能将字符放置成游戏板所显示的状态时，才返回 true。</p>
+<p>给你一个字符串数组 <code>board</code> 表示井字游戏的棋盘。当且仅当在井字游戏过程中，棋盘有可能达到 <code>board</code> 所显示的状态时，才返回 <code>true</code> 。</p>
 
-<p>该游戏板是一个 3 x 3 数组，由字符&nbsp;<code>&quot; &quot;</code>，<code>&quot;X&quot;</code>&nbsp;和&nbsp;<code>&quot;O&quot;</code>&nbsp;组成。字符&nbsp;<code>&quot; &quot;</code>&nbsp;代表一个空位。</p>
+<p>井字游戏的棋盘是一个 <code>3 x 3</code> 数组，由字符 <code>' '</code>，<code>'X'</code> 和 <code>'O'</code> 组成。字符 <code>' '</code> 代表一个空位。</p>
 
 <p>以下是井字游戏的规则：</p>
 
 <ul>
-	<li>玩家轮流将字符放入空位（&quot; &quot;）中。</li>
-	<li>第一个玩家总是放字符 &ldquo;X&rdquo;，且第二个玩家总是放字符 &ldquo;O&rdquo;。</li>
-	<li>&ldquo;X&rdquo; 和 &ldquo;O&rdquo; 只允许放置在空位中，不允许对已放有字符的位置进行填充。</li>
+	<li>玩家轮流将字符放入空位（<code>' '</code>）中。</li>
+	<li>玩家 1 总是放字符 <code>'X'</code> ，而玩家 2 总是放字符 <code>'O'</code> 。</li>
+	<li><code>'X'</code> 和 <code>'O'</code> 只允许放置在空位中，不允许对已放有字符的位置进行填充。</li>
 	<li>当有 3 个相同（且非空）的字符填充任何行、列或对角线时，游戏结束。</li>
 	<li>当所有位置非空时，也算为游戏结束。</li>
 	<li>如果游戏结束，玩家不允许再放置字符。</li>
 </ul>
 
+<p>&nbsp;</p>
+
+<p><strong>示例 1：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0794.Valid%20Tic-Tac-Toe%20State/images/tictactoe1-grid.jpg" style="width: 253px; height: 253px;" />
 <pre>
-<strong>示例 1:</strong>
-<strong>输入:</strong> board = [&quot;O&nbsp; &quot;, &quot;&nbsp; &nbsp;&quot;, &quot;&nbsp; &nbsp;&quot;]
-<strong>输出:</strong> false
-<strong>解释:</strong> 第一个玩家总是放置&ldquo;X&rdquo;。
-
-<strong>示例 2:</strong>
-<strong>输入:</strong> board = [&quot;XOX&quot;, &quot; X &quot;, &quot;   &quot;]
-<strong>输出:</strong> false
-<strong>解释:</strong> 玩家应该是轮流放置的。
-
-<strong>示例 3:</strong>
-<strong>输入:</strong> board = [&quot;XXX&quot;, &quot;   &quot;, &quot;OOO&quot;]
-<strong>输出:</strong> false
-
-<strong>示例 4:</strong>
-<strong>输入:</strong> board = [&quot;XOX&quot;, &quot;O O&quot;, &quot;XOX&quot;]
-<strong>输出:</strong> true
+<strong>输入：</strong>board = ["O  ","   ","   "]
+<strong>输出：</strong>false
+<strong>解释：</strong>玩家 1 总是放字符 "X" 。
 </pre>
 
-<p><strong>说明:</strong></p>
+<p><strong>示例 2：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0794.Valid%20Tic-Tac-Toe%20State/images/tictactoe2-grid.jpg" style="width: 253px; height: 253px;" />
+<pre>
+<strong>输入：</strong>board = ["XOX"," X ","   "]
+<strong>输出：</strong>false
+<strong>解释：</strong>玩家应该轮流放字符。
+</pre>
+
+<p><strong>示例 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0794.Valid%20Tic-Tac-Toe%20State/images/tictactoe4-grid.jpg" style="width: 253px; height: 253px;" />
+<pre>
+<strong>输入：</strong>board = ["XOX","O O","XOX"]
+<strong>输出：</strong>true
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
 
 <ul>
-	<li>游戏板&nbsp;<code>board</code>&nbsp;是长度为 3 的字符串数组，其中每个字符串&nbsp;<code>board[i]</code>&nbsp;的长度为&nbsp;3。</li>
-	<li>&nbsp;<code>board[i][j]</code>&nbsp;是集合&nbsp;<code>{&quot; &quot;, &quot;X&quot;, &quot;O&quot;}</code>&nbsp;中的一个字符。</li>
+	<li><code>board.length == 3</code></li>
+	<li><code>board[i].length == 3</code></li>
+	<li><code>board[i][j]</code> 为 <code>'X'</code>、<code>'O'</code> 或 <code>' '</code></li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：分类讨论
+
+我们先统计当前棋盘上 `'X'` 和 `'O'` 的数量，记为 $x$ 和 $o$。接下来，我们分情况讨论：
+
+-   如果 $x \neq o$ 且 $x - 1 \neq o$，则当前棋盘不可能是有效棋盘，返回 `false`。
+-   如果当前棋盘上玩家 1 获胜，但 $x-1 \neq o$，则当前棋盘不可能是有效棋盘，返回 `false`。
+-   如果当前棋盘上玩家 2 获胜，但 $x \neq o$，则当前棋盘不可能是有效棋盘，返回 `false`。
+-   其他情况下，当前棋盘是有效棋盘，返回 `true`。
+
+时间复杂度 $O(C)$，空间复杂度 $O(1)$。其中 $C$ 是棋盘上的格子数。本题中 $C = 9$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def validTicTacToe(self, board: List[str]) -> bool:
-
-        def win(p):
+        def win(x):
             for i in range(3):
-                if board[i][0] == board[i][1] == board[i][2] == p:
+                if all(board[i][j] == x for j in range(3)):
                     return True
-                if board[0][i] == board[1][i] == board[2][i] == p:
+                if all(board[j][i] == x for j in range(3)):
                     return True
-            if board[0][0] == board[1][1] == board[2][2] == p:
+            if all(board[i][i] == x for i in range(3)):
                 return True
-            return board[0][2] == board[1][1] == board[2][0] == p
+            return all(board[i][2 - i] == x for i in range(3))
 
-        x, o = 0, 0
-        for i in range(3):
-            for j in range(3):
-                if board[i][j] == 'X':
-                    x += 1
-                elif board[i][j] == 'O':
-                    o += 1
-
+        x = sum(board[i][j] == 'X' for i in range(3) for j in range(3))
+        o = sum(board[i][j] == 'O' for i in range(3) for j in range(3))
         if x != o and x - 1 != o:
             return False
-
         if win('X') and x - 1 != o:
             return False
-
         return not (win('O') and x != o)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
+    private String[] board;
+
     public boolean validTicTacToe(String[] board) {
-        int x = 0, o = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (board[i].charAt(j) == 'X') {
-                    x++;
-                } else if (board[i].charAt(j) == 'O') {
-                    o++;
-                }
-            }
-        }
+        this.board = board;
+        int x = count('X'), o = count('O');
         if (x != o && x - 1 != o) {
             return false;
         }
-        if (win(board, 'X') && x - 1 != o) {
+        if (win('X') && x - 1 != o) {
             return false;
         }
-        return !(win(board, 'O') && x != o);
+        return !(win('O') && x != o);
     }
 
-    private boolean win(String[] b, char p) {
-        for (int i = 0; i < 3; i++) {
-            if (b[i].charAt(0) == p && b[i].charAt(1) == p && b[i].charAt(2) == p) {
+    private boolean win(char x) {
+        for (int i = 0; i < 3; ++i) {
+            if (board[i].charAt(0) == x && board[i].charAt(1) == x && board[i].charAt(2) == x) {
                 return true;
             }
-            if (b[0].charAt(i) == p && b[1].charAt(i) == p && b[2].charAt(i) == p) {
+            if (board[0].charAt(i) == x && board[1].charAt(i) == x && board[2].charAt(i) == x) {
                 return true;
             }
         }
-        if (b[0].charAt(0) == p && b[1].charAt(1) == p && b[2].charAt(2) == p) {
+        if (board[0].charAt(0) == x && board[1].charAt(1) == x && board[2].charAt(2) == x) {
             return true;
         }
-        return b[0].charAt(2) == p && b[1].charAt(1) == p && b[2].charAt(0) == p;
+        return board[0].charAt(2) == x && board[1].charAt(1) == x && board[2].charAt(0) == x;
+    }
+
+    private int count(char x) {
+        int cnt = 0;
+        for (var row : board) {
+            for (var c : row.toCharArray()) {
+                if (c == x) {
+                    ++cnt;
+                }
+            }
+        }
+        return cnt;
     }
 }
 ```
 
-### **Go**
-
-```go
-func validTicTacToe(board []string) bool {
-	x, o := 0, 0
-	for i := 0; i < 3; i++ {
-		for j := 0; j < 3; j++ {
-			if board[i][j] == 'X' {
-				x++
-			} else if board[i][j] == 'O' {
-				o++
-			}
-		}
-	}
-	if x != o && x-1 != o {
-		return false
-	}
-	if win(board, 'X') && x-1 != o {
-		return false
-	}
-	return !(win(board, 'O') && x != o)
-}
-
-func win(b []string, p byte) bool {
-	for i := 0; i < 3; i++ {
-		if b[i][0] == p && b[i][1] == p && b[i][2] == p {
-			return true
-		}
-		if b[0][i] == p && b[1][i] == p && b[2][i] == p {
-			return true
-		}
-	}
-	if b[0][0] == p && b[1][1] == p && b[2][2] == p {
-		return true
-	}
-	return b[0][2] == p && b[1][1] == p && b[2][0] == p
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool validTicTacToe(vector<string>& board) {
-        int x = 0, o = 0;
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                if (board[i][j] == 'X') {
-                    ++x;
-                } else if (board[i][j] == 'O') {
-                    ++o;
-                }
+        auto count = [&](char x) {
+            int ans = 0;
+            for (auto& row : board)
+                for (auto& c : row) ans += c == x;
+            return ans;
+        };
+        auto win = [&](char x) {
+            for (int i = 0; i < 3; ++i) {
+                if (board[i][0] == x && board[i][1] == x && board[i][2] == x) return true;
+                if (board[0][i] == x && board[1][i] == x && board[2][i] == x) return true;
             }
-        }
-        if (x != o && x - 1 != o) {
-            return false;
-        }
-        if (win(board, 'X') && x - 1 != o) {
-            return false;
-        }
-        return !(win(board, 'O') && x != o);
-    }
-
-    bool win(vector<string>& b, char p) {
-        for (int i = 0; i < 3; ++i) {
-            if (b[i][0] == p && b[i][1] == p && b[i][2] == p) {
-                return true;
-            }
-            if (b[0][i] == p && b[1][i] == p && b[2][i] == p) {
-                return true;
-            }
-        }
-        if (b[0][0] == p && b[1][1] == p && b[2][2] == p) {
-            return true;
-        }
-        return b[0][2] == p && b[1][1] == p && b[2][0] == p;
+            if (board[0][0] == x && board[1][1] == x && board[2][2] == x) return true;
+            return board[0][2] == x && board[1][1] == x && board[2][0] == x;
+        };
+        int x = count('X'), o = count('O');
+        if (x != o && x - 1 != o) return false;
+        if (win('X') && x - 1 != o) return false;
+        return !(win('O') && x != o);
     }
 };
 ```
 
-### **...**
+#### Go
 
+```go
+func validTicTacToe(board []string) bool {
+	var x, o int
+	for _, row := range board {
+		for _, c := range row {
+			if c == 'X' {
+				x++
+			} else if c == 'O' {
+				o++
+			}
+		}
+	}
+	win := func(x byte) bool {
+		for i := 0; i < 3; i++ {
+			if board[i][0] == x && board[i][1] == x && board[i][2] == x {
+				return true
+			}
+			if board[0][i] == x && board[1][i] == x && board[2][i] == x {
+				return true
+			}
+		}
+		if board[0][0] == x && board[1][1] == x && board[2][2] == x {
+			return true
+		}
+		return board[0][2] == x && board[1][1] == x && board[2][0] == x
+	}
+	if x != o && x-1 != o {
+		return false
+	}
+	if win('X') && x-1 != o {
+		return false
+	}
+	return !(win('O') && x != o)
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * @param {string[]} board
+ * @return {boolean}
+ */
+var validTicTacToe = function (board) {
+    function count(x) {
+        let cnt = 0;
+        for (const row of board) {
+            for (const c of row) {
+                cnt += c == x;
+            }
+        }
+        return cnt;
+    }
+    function win(x) {
+        for (let i = 0; i < 3; ++i) {
+            if (board[i][0] == x && board[i][1] == x && board[i][2] == x) {
+                return true;
+            }
+            if (board[0][i] == x && board[1][i] == x && board[2][i] == x) {
+                return true;
+            }
+        }
+        if (board[0][0] == x && board[1][1] == x && board[2][2] == x) {
+            return true;
+        }
+        return board[0][2] == x && board[1][1] == x && board[2][0] == x;
+    }
+    const [x, o] = [count('X'), count('O')];
+    if (x != o && x - 1 != o) {
+        return false;
+    }
+    if (win('X') && x - 1 != o) {
+        return false;
+    }
+    return !(win('O') && x != o);
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

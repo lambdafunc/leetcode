@@ -14,18 +14,23 @@ class Solution:
                     vis = set()
                     while q:
                         d += 1
-                        for _ in range(len(q), 0, -1):
+                        for _ in range(len(q)):
                             r, c = q.popleft()
                             for a, b in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
                                 x, y = r + a, c + b
-                                if 0 <= x < m and 0 <= y < n and grid[x][y] == 0 and (x, y) not in vis:
+                                if (
+                                    0 <= x < m
+                                    and 0 <= y < n
+                                    and grid[x][y] == 0
+                                    and (x, y) not in vis
+                                ):
                                     cnt[x][y] += 1
                                     dist[x][y] += d
                                     q.append((x, y))
                                     vis.add((x, y))
-        ans = float('inf')
+        ans = inf
         for i in range(m):
             for j in range(n):
                 if grid[i][j] == 0 and cnt[i][j] == total:
                     ans = min(ans, dist[i][j])
-        return -1 if ans == float('inf') else ans
+        return -1 if ans == inf else ans

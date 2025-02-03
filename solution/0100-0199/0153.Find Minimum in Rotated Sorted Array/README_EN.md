@@ -1,8 +1,21 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0153.Find%20Minimum%20in%20Rotated%20Sorted%20Array/README_EN.md
+tags:
+    - Array
+    - Binary Search
+---
+
+<!-- problem:start -->
+
 # [153. Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array)
 
 [中文文档](/solution/0100-0199/0153.Find%20Minimum%20in%20Rotated%20Sorted%20Array/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Suppose an array of length <code>n</code> sorted in ascending order is <strong>rotated</strong> between <code>1</code> and <code>n</code> times. For example, the array <code>nums = [0,1,2,4,5,6,7]</code> might become:</p>
 
@@ -15,8 +28,10 @@
 
 <p>Given the sorted rotated array <code>nums</code> of <strong>unique</strong> elements, return <em>the minimum element of this array</em>.</p>
 
+<p>You must write an algorithm that runs in&nbsp;<code>O(log n) time</code>.</p>
+
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [3,4,5,1,2]
@@ -24,7 +39,7 @@
 <strong>Explanation:</strong> The original array was [1,2,3,4,5] rotated 3 times.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [4,5,6,7,0,1,2]
@@ -32,7 +47,7 @@
 <strong>Explanation:</strong> The original array was [0,1,2,4,5,6,7] and it was rotated 4 times.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [11,13,15,17]
@@ -51,83 +66,137 @@
 	<li><code>nums</code> is sorted and rotated between <code>1</code> and <code>n</code> times.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def findMin(self, nums: List[int]) -> int:
-        l, r = 0, len(nums) - 1
-        if nums[l] < nums[r]:
+        if nums[0] <= nums[-1]:
             return nums[0]
-        while l < r:
-            m = (l + r) >> 1
-            if nums[m] > nums[r]:
-                l = m + 1
+        left, right = 0, len(nums) - 1
+        while left < right:
+            mid = (left + right) >> 1
+            if nums[0] <= nums[mid]:
+                left = mid + 1
             else:
-                r = m
-        return nums[l]
+                right = mid
+        return nums[left]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int findMin(int[] nums) {
-        int l = 0, r = nums.length - 1;
-        if (nums[l] < nums[r]) return nums[0];
-        while (l < r) {
-            int m = (l + r) >>> 1;
-            if (nums[m] > nums[r]) l = m + 1;
-            else r = m;
+        int n = nums.length;
+        if (nums[0] <= nums[n - 1]) {
+            return nums[0];
         }
-        return nums[l];
+        int left = 0, right = n - 1;
+        while (left < right) {
+            int mid = (left + right) >> 1;
+            if (nums[0] <= nums[mid]) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return nums[left];
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int findMin(vector<int>& nums) {
-        int l = 0, r = nums.size() - 1;
-        if (nums[l] < nums[r]) return nums[0];
-        while (l < r) {
-            int m = (l + r) >> 1;
-            if (nums[m] > nums[r]) l = m + 1;
-            else r = m;
+        int n = nums.size();
+        if (nums[0] <= nums[n - 1]) return nums[0];
+        int left = 0, right = n - 1;
+        while (left < right) {
+            int mid = (left + right) >> 1;
+            if (nums[0] <= nums[mid])
+                left = mid + 1;
+            else
+                right = mid;
         }
-        return nums[l];
+        return nums[left];
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func findMin(nums []int) int {
-    l, r := 0, len(nums) - 1
-    if nums[l] < nums[r] {
-        return nums[0]
-    }
-    for l < r {
-        m := (l + r) >> 1
-        if nums[m] > nums[r] {
-            l = m + 1
-        } else {
-            r = m
-        }
-    }
-    return nums[l]
+	n := len(nums)
+	if nums[0] <= nums[n-1] {
+		return nums[0]
+	}
+	left, right := 0, n-1
+	for left < right {
+		mid := (left + right) >> 1
+		if nums[0] <= nums[mid] {
+			left = mid + 1
+		} else {
+			right = mid
+		}
+	}
+	return nums[left]
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+function findMin(nums: number[]): number {
+    let left = 0;
+    let right = nums.length - 1;
+    while (left < right) {
+        const mid = (left + right) >>> 1;
+        if (nums[mid] > nums[right]) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    return nums[left];
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn find_min(nums: Vec<i32>) -> i32 {
+        let mut left = 0;
+        let mut right = nums.len() - 1;
+        while left < right {
+            let mid = left + (right - left) / 2;
+            if nums[mid] > nums[right] {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        nums[left]
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -147,10 +216,8 @@ var findMin = function (nums) {
 };
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

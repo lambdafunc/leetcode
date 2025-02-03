@@ -1,10 +1,27 @@
-# [1472. 设计浏览器历史记录](https://leetcode-cn.com/problems/design-browser-history)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1472.Design%20Browser%20History/README.md
+rating: 1453
+source: 第 192 场周赛 Q3
+tags:
+    - 栈
+    - 设计
+    - 数组
+    - 链表
+    - 数据流
+    - 双向链表
+---
+
+<!-- problem:start -->
+
+# [1472. 设计浏览器历史记录](https://leetcode.cn/problems/design-browser-history)
 
 [English Version](/solution/1400-1499/1472.Design%20Browser%20History/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>你有一个只支持单个标签页的 <strong>浏览器</strong>&nbsp;，最开始你浏览的网页是&nbsp;<code>homepage</code>&nbsp;，你可以访问其他的网站&nbsp;<code>url</code>&nbsp;，也可以在浏览历史中后退&nbsp;<code>steps</code>&nbsp;步或前进&nbsp;<code>steps</code>&nbsp;步。</p>
 
@@ -53,78 +70,50 @@ browserHistory.back(7);                   // 你原本在浏览 &quot;google.com
 	<li>最多调用&nbsp;<code>5000</code>&nbsp;次&nbsp;<code>visit</code>，&nbsp;<code>back</code>&nbsp;和&nbsp;<code>forward</code>&nbsp;函数。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：双栈
+
+我们可以使用两个栈 $\textit{stk1}$ 和 $\textit{stk2}$ 分别存储浏览后退页面和前进页面。初始时 $\textit{stk1}$ 包含 $\textit{homepage}$，而 $\textit{stk2}$ 为空。
+
+调用 $\text{visit}(url)$ 时，我们将 $\textit{url}$ 加入 $\textit{stk1}$，并清空 $\textit{stk2}$。时间复杂度 $O(1)$。
+
+调用 $\text{back}(steps)$ 时，我们将 $\textit{stk1}$ 的栈顶元素弹出并加入 $\textit{stk2}$，重复这一操作 $steps$ 次，直到 $\textit{stk1}$ 的长度为 $1$ 或者 $steps$ 为 $0$。最后返回 $\textit{stk1}$ 的栈顶元素。时间复杂度 $O(\textit{steps})$。
+
+调用 $\text{forward}(steps)$ 时，我们将 $\textit{stk2}$ 的栈顶元素弹出并加入 $\textit{stk1}$，重复这一操作 $steps$ 次，直到 $\textit{stk2}$ 为空或者 $steps$ 为 $0$。最后返回 $\textit{stk1}$ 的栈顶元素。时间复杂度 $O(\textit{steps})$。
+
+空间复杂度 $O(n)$，其中 $n$ 是浏览历史记录的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-列表实现。
+#### Python3
 
 ```python
 class BrowserHistory:
-
     def __init__(self, homepage: str):
-        self.urls = []
-        self.cur = -1
-        self.tail = -1
+        self.stk1 = []
+        self.stk2 = []
         self.visit(homepage)
 
     def visit(self, url: str) -> None:
-        self.cur += 1
-        if self.cur < len(self.urls):
-            self.urls[self.cur] = url
-        else:
-            self.urls.append(url)
-        self.tail = self.cur
+        self.stk1.append(url)
+        self.stk2.clear()
 
     def back(self, steps: int) -> str:
-        self.cur = max(0, self.cur -steps)
-        return self.urls[self.cur]
+        while steps and len(self.stk1) > 1:
+            self.stk2.append(self.stk1.pop())
+            steps -= 1
+        return self.stk1[-1]
 
     def forward(self, steps: int) -> str:
-        self.cur = min(self.tail, self.cur + steps)
-        return self.urls[self.cur]
-
-# Your BrowserHistory object will be instantiated and called as such:
-# obj = BrowserHistory(homepage)
-# obj.visit(url)
-# param_2 = obj.back(steps)
-# param_3 = obj.forward(steps)
-```
-
-栈实现。
-
-```python
-class BrowserHistory:
-
-    def __init__(self, homepage: str):
-        self.s1 = []
-        self.s2 = []
-        self.cur = homepage
-
-    def visit(self, url: str) -> None:
-        self.s2.clear()
-        self.s1.append(self.cur)
-        self.cur = url
-
-    def back(self, steps: int) -> str:
-        while steps > 0 and self.s1:
-            self.s2.append(self.cur)
-            self.cur = self.s1.pop()
+        while steps and self.stk2:
+            self.stk1.append(self.stk2.pop())
             steps -= 1
-        return self.cur
-
-    def forward(self, steps: int) -> str:
-        while steps > 0 and self.s2:
-            self.s1.append(self.cur)
-            self.cur = self.s2.pop()
-            steps -= 1
-        return self.cur
+        return self.stk1[-1]
 
 
 # Your BrowserHistory object will be instantiated and called as such:
@@ -134,41 +123,34 @@ class BrowserHistory:
 # param_3 = obj.forward(steps)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-列表实现。
+#### Java
 
 ```java
 class BrowserHistory {
-    private List<String> urls;
-    private int cur = -1;
-    private int tail = -1;
+    private Deque<String> stk1 = new ArrayDeque<>();
+    private Deque<String> stk2 = new ArrayDeque<>();
 
     public BrowserHistory(String homepage) {
-        urls = new ArrayList<>();
         visit(homepage);
     }
 
     public void visit(String url) {
-        ++cur;
-        if (cur < urls.size()) {
-            urls.set(cur, url);
-        } else {
-            urls.add(url);
-        }
-        tail = cur;
+        stk1.push(url);
+        stk2.clear();
     }
 
     public String back(int steps) {
-        cur = Math.max(0, cur - steps);
-        return urls.get(cur);
+        for (; steps > 0 && stk1.size() > 1; --steps) {
+            stk2.push(stk1.pop());
+        }
+        return stk1.peek();
     }
 
     public String forward(int steps) {
-        cur = Math.min(tail, cur + steps);
-        return urls.get(cur);
+        for (; steps > 0 && !stk2.isEmpty(); --steps) {
+            stk1.push(stk2.pop());
+        }
+        return stk1.peek();
     }
 }
 
@@ -181,58 +163,95 @@ class BrowserHistory {
  */
 ```
 
-栈实现。
+#### C++
 
-```java
+```cpp
 class BrowserHistory {
-    private Deque<String> s1;
-    private Deque<String> s2;
-    private String cur;
+public:
+    stack<string> stk1;
+    stack<string> stk2;
 
-    public BrowserHistory(String homepage) {
-        s1 = new ArrayDeque<>();
-        s2 = new ArrayDeque<>();
-        cur = homepage;
+    BrowserHistory(string homepage) {
+        visit(homepage);
     }
 
-    public void visit(String url) {
-        s2.clear();
-        s1.push(cur);
-        cur = url;
+    void visit(string url) {
+        stk1.push(url);
+        stk2 = stack<string>();
     }
 
-    public String back(int steps) {
-        while (steps > 0 && !s1.isEmpty()) {
-            s2.push(cur);
-            cur = s1.pop();
-            --steps;
+    string back(int steps) {
+        for (; steps && stk1.size() > 1; --steps) {
+            stk2.push(stk1.top());
+            stk1.pop();
         }
-        return cur;
+        return stk1.top();
     }
 
-    public String forward(int steps) {
-        while (steps > 0 && !s2.isEmpty()) {
-            s1.push(cur);
-            cur = s2.pop();
-            --steps;
+    string forward(int steps) {
+        for (; steps && !stk2.empty(); --steps) {
+            stk1.push(stk2.top());
+            stk2.pop();
         }
-        return cur;
+        return stk1.top();
     }
+};
+
+/**
+ * Your BrowserHistory object will be instantiated and called as such:
+ * BrowserHistory* obj = new BrowserHistory(homepage);
+ * obj->visit(url);
+ * string param_2 = obj->back(steps);
+ * string param_3 = obj->forward(steps);
+ */
+```
+
+#### Go
+
+```go
+type BrowserHistory struct {
+	stk1 []string
+	stk2 []string
+}
+
+func Constructor(homepage string) BrowserHistory {
+	t := BrowserHistory{[]string{}, []string{}}
+	t.Visit(homepage)
+	return t
+}
+
+func (this *BrowserHistory) Visit(url string) {
+	this.stk1 = append(this.stk1, url)
+	this.stk2 = []string{}
+}
+
+func (this *BrowserHistory) Back(steps int) string {
+	for i := 0; i < steps && len(this.stk1) > 1; i++ {
+		this.stk2 = append(this.stk2, this.stk1[len(this.stk1)-1])
+		this.stk1 = this.stk1[:len(this.stk1)-1]
+	}
+	return this.stk1[len(this.stk1)-1]
+}
+
+func (this *BrowserHistory) Forward(steps int) string {
+	for i := 0; i < steps && len(this.stk2) > 0; i++ {
+		this.stk1 = append(this.stk1, this.stk2[len(this.stk2)-1])
+		this.stk2 = this.stk2[:len(this.stk2)-1]
+	}
+	return this.stk1[len(this.stk1)-1]
 }
 
 /**
  * Your BrowserHistory object will be instantiated and called as such:
- * BrowserHistory obj = new BrowserHistory(homepage);
- * obj.visit(url);
- * String param_2 = obj.back(steps);
- * String param_3 = obj.forward(steps);
+ * obj := Constructor(homepage);
+ * obj.Visit(url);
+ * param_2 := obj.Back(steps);
+ * param_3 := obj.Forward(steps);
  */
-```
-
-### **...**
-
-```
-
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

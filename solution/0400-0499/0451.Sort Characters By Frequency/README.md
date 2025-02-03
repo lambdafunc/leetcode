@@ -1,149 +1,221 @@
-# [451. 根据字符出现频率排序](https://leetcode-cn.com/problems/sort-characters-by-frequency)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0451.Sort%20Characters%20By%20Frequency/README.md
+tags:
+    - 哈希表
+    - 字符串
+    - 桶排序
+    - 计数
+    - 排序
+    - 堆（优先队列）
+---
+
+<!-- problem:start -->
+
+# [451. 根据字符出现频率排序](https://leetcode.cn/problems/sort-characters-by-frequency)
 
 [English Version](/solution/0400-0499/0451.Sort%20Characters%20By%20Frequency/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个字符串，请将字符串里的字符按照出现的频率降序排列。</p>
+<p>给定一个字符串 <code>s</code> ，根据字符出现的 <strong>频率</strong> 对其进行 <strong>降序排序</strong> 。一个字符出现的 <strong>频率</strong> 是它出现在字符串中的次数。</p>
 
-<p><strong>示例 1:</strong></p>
+<p>返回 <em>已排序的字符串&nbsp;</em>。如果有多个答案，返回其中任何一个。</p>
 
-<pre>
-<strong>输入:</strong>
-&quot;tree&quot;
+<p>&nbsp;</p>
 
-<strong>输出:</strong>
-&quot;eert&quot;
-
-<strong>解释:
-</strong>&#39;e&#39;出现两次，&#39;r&#39;和&#39;t&#39;都只出现一次。
-因此&#39;e&#39;必须出现在&#39;r&#39;和&#39;t&#39;之前。此外，&quot;eetr&quot;也是一个有效的答案。
-</pre>
-
-<p><strong>示例 2:</strong></p>
+<p><strong class="example">示例 1:</strong></p>
 
 <pre>
-<strong>输入:</strong>
-&quot;cccaaa&quot;
-
-<strong>输出:</strong>
-&quot;cccaaa&quot;
-
-<strong>解释:
-</strong>&#39;c&#39;和&#39;a&#39;都出现三次。此外，&quot;aaaccc&quot;也是有效的答案。
-注意&quot;cacaca&quot;是不正确的，因为相同的字母必须放在一起。
+<strong>输入: </strong>s = "tree"
+<strong>输出: </strong>"eert"
+<strong>解释: </strong>'e'出现两次，'r'和't'都只出现一次。
+因此'e'必须出现在'r'和't'之前。此外，"eetr"也是一个有效的答案。
 </pre>
 
-<p><strong>示例 3:</strong></p>
+<p><strong class="example">示例 2:</strong></p>
 
 <pre>
-<strong>输入:</strong>
-&quot;Aabb&quot;
-
-<strong>输出:</strong>
-&quot;bbAa&quot;
-
-<strong>解释:
-</strong>此外，&quot;bbaA&quot;也是一个有效的答案，但&quot;Aabb&quot;是不正确的。
-注意&#39;A&#39;和&#39;a&#39;被认为是两种不同的字符。
+<strong>输入: </strong>s = "cccaaa"
+<strong>输出: </strong>"cccaaa"
+<strong>解释: </strong>'c'和'a'都出现三次。此外，"aaaccc"也是有效的答案。
+注意"cacaca"是不正确的，因为相同的字母必须放在一起。
 </pre>
+
+<p><strong class="example">示例 3:</strong></p>
+
+<pre>
+<strong>输入: </strong>s = "Aabb"
+<strong>输出: </strong>"bbAa"
+<strong>解释: </strong>此外，"bbaA"也是一个有效的答案，但"Aabb"是不正确的。
+注意'A'和'a'被认为是两种不同的字符。
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= s.length &lt;= 5 * 10<sup>5</sup></code></li>
+	<li><code>s</code>&nbsp;由大小写英文字母和数字组成</li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-“计数器 + 桶”实现。其中，计数器统计字符串中每个字符出现的次数。而对于桶，第 i 个位置存放出现次数为 i 的所有字符。
+### 方法一：哈希表 + 排序
+
+我们用哈希表 $\textit{cnt}$ 统计字符串 $s$ 中每个字符出现的次数，然后将 $\textit{cnt}$ 中的键值对按照出现次数降序排序，最后按照排序后的顺序拼接字符串即可。
+
+时间复杂度 $O(n + k \times \log k)$，空间复杂度 $O(n + k)$，其中 $n$ 为字符串 $s$ 的长度，而 $k$ 为不同字符的个数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def frequencySort(self, s: str) -> str:
-        counter = Counter(s)
-        buckets = defaultdict(list)
-        for c, freq in counter.items():
-            buckets[freq].append(c)
-        res = []
-        for i in range(len(s), -1, -1):
-            if buckets[i]:
-                for c in buckets[i]:
-                    res.append(c * i)
-        return ''.join(res)
+        cnt = Counter(s)
+        return ''.join(c * v for c, v in sorted(cnt.items(), key=lambda x: -x[1]))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public String frequencySort(String s) {
-        Map<Character, Integer> counter = new HashMap<>();
-        for (char c : s.toCharArray()) {
-            counter.put(c, counter.getOrDefault(c, 0) + 1);
+        Map<Character, Integer> cnt = new HashMap<>(52);
+        for (int i = 0; i < s.length(); ++i) {
+            cnt.merge(s.charAt(i), 1, Integer::sum);
         }
-        List<Character>[] buckets = new List[s.length() + 1];
-        for (Map.Entry<Character, Integer> entry : counter.entrySet()) {
-            char c = entry.getKey();
-            int freq = entry.getValue();
-            if (buckets[freq] == null) {
-                buckets[freq] = new ArrayList<>();
-            }
-            buckets[freq].add(c);
-        }
-        StringBuilder sb = new StringBuilder();
-        for (int i = s.length(); i >= 0; --i) {
-            if (buckets[i] != null) {
-                for (char c : buckets[i]) {
-                    for (int j = 0; j < i; ++j) {
-                        sb.append(c);
-                    }
-                }
+        List<Character> cs = new ArrayList<>(cnt.keySet());
+        cs.sort((a, b) -> cnt.get(b) - cnt.get(a));
+        StringBuilder ans = new StringBuilder();
+        for (char c : cs) {
+            for (int v = cnt.get(c); v > 0; --v) {
+                ans.append(c);
             }
         }
-        return sb.toString();
+        return ans.toString();
     }
 }
 ```
 
-### **Go**
+#### C++
 
-用结构体排序进行模拟
+```cpp
+class Solution {
+public:
+    string frequencySort(string s) {
+        unordered_map<char, int> cnt;
+        for (char& c : s) {
+            ++cnt[c];
+        }
+        vector<char> cs;
+        for (auto& [c, _] : cnt) {
+            cs.push_back(c);
+        }
+        sort(cs.begin(), cs.end(), [&](char& a, char& b) {
+            return cnt[a] > cnt[b];
+        });
+        string ans;
+        for (char& c : cs) {
+            ans += string(cnt[c], c);
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
 
 ```go
-type pair struct {
-	b   byte
-	cnt int
-}
-
 func frequencySort(s string) string {
-	freq := make(map[byte]int)
-	for _, r := range s {
-		freq[byte(r)]++
+	cnt := map[byte]int{}
+	for i := range s {
+		cnt[s[i]]++
 	}
-	a := make([]pair, 0)
-	for k, v := range freq {
-		a = append(a, pair{b: k, cnt: v})
+	cs := make([]byte, 0, len(s))
+	for c := range cnt {
+		cs = append(cs, c)
 	}
-	sort.Slice(a, func(i, j int) bool { return a[i].cnt > a[j].cnt })
-	var sb strings.Builder
-	for _, p := range a {
-		sb.Write(bytes.Repeat([]byte{p.b}, p.cnt))
+	sort.Slice(cs, func(i, j int) bool { return cnt[cs[i]] > cnt[cs[j]] })
+	ans := make([]byte, 0, len(s))
+	for _, c := range cs {
+		ans = append(ans, bytes.Repeat([]byte{c}, cnt[c])...)
 	}
-	return sb.String()
+	return string(ans)
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function frequencySort(s: string): string {
+    const cnt: Map<string, number> = new Map();
+    for (const c of s) {
+        cnt.set(c, (cnt.get(c) || 0) + 1);
+    }
+    const cs = Array.from(cnt.keys()).sort((a, b) => cnt.get(b)! - cnt.get(a)!);
+    const ans: string[] = [];
+    for (const c of cs) {
+        ans.push(c.repeat(cnt.get(c)!));
+    }
+    return ans.join('');
+}
 ```
 
+#### Rust
+
+```rust
+use std::collections::HashMap;
+impl Solution {
+    pub fn frequency_sort(s: String) -> String {
+        let mut cnt = HashMap::new();
+        for c in s.chars() {
+            cnt.insert(c, cnt.get(&c).unwrap_or(&0) + 1);
+        }
+        let mut cs = cnt.into_iter().collect::<Vec<(char, i32)>>();
+        cs.sort_unstable_by(|(_, a), (_, b)| b.cmp(&a));
+        cs.into_iter()
+            .map(|(c, v)| vec![c; v as usize].into_iter().collect::<String>())
+            .collect()
+    }
+}
+```
+
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param String $s
+     * @return String
+     */
+    function frequencySort($s) {
+        $cnt = array_count_values(str_split($s));
+        $cs = array_keys($cnt);
+        usort($cs, function ($a, $b) use ($cnt) {
+            return $cnt[$b] <=> $cnt[$a];
+        });
+        $ans = '';
+        foreach ($cs as $c) {
+            $ans .= str_repeat($c, $cnt[$c]);
+        }
+        return $ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

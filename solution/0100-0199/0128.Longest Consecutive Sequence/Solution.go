@@ -1,25 +1,17 @@
-func longestConsecutive(nums []int) int {
-	s := make(map[int]bool)
-	for _, num := range nums {
-		s[num] = true
+func longestConsecutive(nums []int) (ans int) {
+	s := map[int]bool{}
+	for _, x := range nums {
+		s[x] = true
 	}
-	res := 0
-	for _, num := range nums {
-		if !s[num-1] {
-			t, next := 1, num+1
-			for s[next] {
-				next++
-				t++
-			}
-			res = max(res, t)
+	d := map[int]int{}
+	for _, x := range nums {
+		y := x
+		for s[y] {
+			delete(s, y)
+			y++
 		}
+		d[x] = d[y] + y - x
+		ans = max(ans, d[x])
 	}
-	return res
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return
 }

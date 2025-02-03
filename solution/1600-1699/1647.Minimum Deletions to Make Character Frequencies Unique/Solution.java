@@ -1,14 +1,14 @@
 class Solution {
     public int minDeletions(String s) {
-        int[] counter = new int[26];
-        for (char c : s.toCharArray()) {
-            ++counter[c - 'a'];
+        int[] cnt = new int[26];
+        for (int i = 0; i < s.length(); ++i) {
+            ++cnt[s.charAt(i) - 'a'];
         }
-        Arrays.sort(counter);
+        Arrays.sort(cnt);
         int ans = 0;
         for (int i = 24; i >= 0; --i) {
-            while (counter[i] >= counter[i + 1] && counter[i] > 0) {
-                --counter[i];
+            while (cnt[i] >= cnt[i + 1] && cnt[i] > 0) {
+                --cnt[i];
                 ++ans;
             }
         }

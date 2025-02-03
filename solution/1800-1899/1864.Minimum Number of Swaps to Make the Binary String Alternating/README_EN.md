@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1864.Minimum%20Number%20of%20Swaps%20to%20Make%20the%20Binary%20String%20Alternating/README_EN.md
+rating: 1600
+source: Weekly Contest 241 Q2
+tags:
+    - Greedy
+    - String
+---
+
+<!-- problem:start -->
+
 # [1864. Minimum Number of Swaps to Make the Binary String Alternating](https://leetcode.com/problems/minimum-number-of-swaps-to-make-the-binary-string-alternating)
 
 [中文文档](/solution/1800-1899/1864.Minimum%20Number%20of%20Swaps%20to%20Make%20the%20Binary%20String%20Alternating/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given a binary string <code>s</code>, return <em>the <strong>minimum</strong> number of character swaps to make it <strong>alternating</strong>, or </em><code>-1</code><em> if it is impossible.</em></p>
 
@@ -11,7 +26,7 @@
 <p>Any two characters may be swapped, even if they are&nbsp;<strong>not adjacent</strong>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;111000&quot;
@@ -20,7 +35,7 @@
 The string is now alternating.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;010&quot;
@@ -28,7 +43,7 @@ The string is now alternating.
 <strong>Explanation:</strong> The string is already alternating, no swaps are needed.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;1110&quot;
@@ -43,11 +58,17 @@ The string is now alternating.
 	<li><code>s[i]</code> is either <code>&#39;0&#39;</code> or <code>&#39;1&#39;</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -73,7 +94,7 @@ class Solution:
         return min(s0n0, s1n0)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -109,7 +130,7 @@ class Solution {
 }
 ```
 
-### **JavaScript**
+#### JavaScript
 
 ```js
 /**
@@ -126,7 +147,7 @@ var minSwaps = function (s) {
     if (n1 == Math.ceil(half) && n0 == Math.floor(half)) {
         let cur = 0;
         for (let i = 0; i < n; i++) {
-            if (i % 2 == 0 && s.charAt(i) != "1") cur++;
+            if (i % 2 == 0 && s.charAt(i) != '1') cur++;
         }
         count = Math.min(count, cur);
     }
@@ -134,7 +155,7 @@ var minSwaps = function (s) {
     if (n0 == Math.ceil(half) && n1 == Math.floor(half)) {
         let cur = 0;
         for (let i = 0; i < n; i++) {
-            if (i % 2 == 0 && s.charAt(i) != "0") cur++;
+            if (i % 2 == 0 && s.charAt(i) != '0') cur++;
         }
         count = Math.min(count, cur);
     }
@@ -142,10 +163,8 @@ var minSwaps = function (s) {
 };
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

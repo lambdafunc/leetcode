@@ -1,10 +1,24 @@
-# [2121. 相同元素的间隔之和](https://leetcode-cn.com/problems/intervals-between-identical-elements)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2121.Intervals%20Between%20Identical%20Elements/README.md
+rating: 1760
+source: 第 273 场周赛 Q3
+tags:
+    - 数组
+    - 哈希表
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [2121. 相同元素的间隔之和](https://leetcode.cn/problems/intervals-between-identical-elements)
 
 [English Version](/solution/2100-2199/2121.Intervals%20Between%20Identical%20Elements/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个下标从 <strong>0</strong> 开始、由 <code>n</code> 个整数组成的数组 <code>arr</code> 。</p>
 
@@ -51,17 +65,17 @@
 	<li><code>1 &lt;= arr[i] &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-先用哈希表记录相同元素出现的位置。遍历哈希表，先计算最左侧元素的间隔和，然后逐个计算下个元素的间隔和。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -81,9 +95,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -112,7 +124,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -122,15 +134,13 @@ public:
         int n = arr.size();
         for (int i = 0; i < n; ++i) d[arr[i]].push_back(i);
         vector<long long> ans(n);
-        for (auto& item : d)
-        {
+        for (auto& item : d) {
             auto& v = item.second;
             int m = v.size();
             long long val = 0;
             for (int e : v) val += e;
             val -= m * v[0];
-            for (int i = 0; i < v.size(); ++i)
-            {
+            for (int i = 0; i < v.size(); ++i) {
                 int delta = i >= 1 ? v[i] - v[i - 1] : 0;
                 val += i * delta - (m - i) * delta;
                 ans[v[i]] = val;
@@ -141,7 +151,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func getDistances(arr []int) []int64 {
@@ -171,18 +181,8 @@ func getDistances(arr []int) []int64 {
 }
 ```
 
-### **TypeScript**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```ts
-
-```
-
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

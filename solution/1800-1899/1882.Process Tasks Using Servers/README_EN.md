@@ -1,23 +1,40 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1882.Process%20Tasks%20Using%20Servers/README_EN.md
+rating: 1979
+source: Weekly Contest 243 Q3
+tags:
+    - Array
+    - Heap (Priority Queue)
+---
+
+<!-- problem:start -->
+
 # [1882. Process Tasks Using Servers](https://leetcode.com/problems/process-tasks-using-servers)
 
 [中文文档](/solution/1800-1899/1882.Process%20Tasks%20Using%20Servers/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>You are given two <strong>0-indexed</strong> integer arrays <code>servers</code> and <code>tasks</code> of lengths <code>n</code>​​​​​​ and <code>m</code>​​​​​​ respectively. <code>servers[i]</code> is the <strong>weight</strong> of the <code>i<sup>​​​​​​th</sup></code>​​​​ server, and <code>tasks[j]</code> is the <strong>time needed</strong> to process the <code>j<sup>​​​​​​th</sup></code>​​​​ task <strong>in seconds</strong>.</p>
 
-<p>You are running a simulation system that will shut down after all tasks are processed. Each server can only process one task at a time. You will be able to process the <code>j<sup>th</sup></code> task starting from the <code>j<sup>th</sup></code> second beginning with the <code>0<sup>th</sup></code> task at second <code>0</code>. To process task <code>j</code>, you assign it to the server with the <strong>smallest weight</strong> that is free, and in case of a tie, choose the server with the <strong>smallest index</strong>. If a free server gets assigned task <code>j</code> at second <code>t</code>,​​​​​​ it will be free again at the second <code>t + tasks[j]</code>.</p>
+<p>Tasks are assigned to the servers using a <strong>task queue</strong>. Initially, all servers are free, and the queue is <strong>empty</strong>.</p>
 
-<p>If there are no free servers, you must wait until one is free and execute the free tasks <strong>as soon as possible</strong>. If <strong>multiple</strong> tasks need to be assigned, assign them in order of <strong>increasing index</strong>.</p>
+<p>At second <code>j</code>, the <code>j<sup>th</sup></code> task is <strong>inserted</strong> into the queue (starting with the <code>0<sup>th</sup></code> task being inserted at second <code>0</code>). As long as there are free servers and the queue is not empty, the task in the front of the queue will be assigned to a free server with the <strong>smallest weight</strong>, and in case of a tie, it is assigned to a free server with the <strong>smallest index</strong>.</p>
 
-<p>You may assign multiple tasks at the same second if there are multiple free servers.</p>
+<p>If there are no free servers and the queue is not empty, we wait until a server becomes free and immediately assign the next task. If multiple servers become free at the same time, then multiple tasks from the queue will be assigned <strong>in order of insertion</strong> following the weight and index priorities above.</p>
+
+<p>A server that is assigned task <code>j</code> at second <code>t</code> will be free again at second <code>t + tasks[j]</code>.</p>
 
 <p>Build an array <code>ans</code>​​​​ of length <code>m</code>, where <code>ans[j]</code> is the <strong>index</strong> of the server the <code>j<sup>​​​​​​th</sup></code> task will be assigned to.</p>
 
 <p>Return <em>the array </em><code>ans</code>​​​​.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> servers = [3,3,2], tasks = [1,2,3,2,1,2]
@@ -30,7 +47,7 @@
 - At second 4, task 4 is added and processed using server 1 until second 5.
 - At second 5, all servers become free. Task 5 is added and processed using server 2 until second 7.</pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> servers = [5,1,4,3,2], tasks = [2,1,2,4,5,2,1]
@@ -55,40 +72,47 @@
 	<li><code>1 &lt;= servers[i], tasks[j] &lt;= 2 * 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def assignTasks(self, servers: List[int], tasks: List[int]) -> List[int]:
         idle, busy = [], []
         for i, weight in enumerate(servers):
-            heapq.heappush(idle, (weight, i))
+            heappush(idle, (weight, i))
         res = []
         for start, cost in enumerate(tasks):
             while busy and busy[0][0] <= start:
-                _, s, i = heapq.heappop(busy)
-                heapq.heappush(idle, (s, i))
+                _, s, i = heappop(busy)
+                heappush(idle, (s, i))
             if idle:
-                s, i = heapq.heappop(idle)
-                heapq.heappush(busy, (start + cost, s, i))
+                s, i = heappop(idle)
+                heappush(busy, (start + cost, s, i))
             else:
-                t, s, i = heapq.heappop(busy)
-                heapq.heappush(busy, (t + cost, s, i))
+                t, s, i = heappop(busy)
+                heappush(busy, (t + cost, s, i))
             res.append(i)
         return res
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int[] assignTasks(int[] servers, int[] tasks) {
         int m = tasks.length, n = servers.length;
-        PriorityQueue<int[]> idle = new PriorityQueue<>((a, b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        PriorityQueue<int[]> idle
+            = new PriorityQueue<>((a, b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
         PriorityQueue<int[]> busy = new PriorityQueue<>((a, b) -> {
             if (a[0] == b[0]) {
                 return a[1] == b[1] ? a[2] - b[2] : a[1] - b[1];
@@ -96,7 +120,7 @@ class Solution {
             return a[0] - b[0];
         });
         for (int i = 0; i < n; ++i) {
-            idle.offer(new int[]{servers[i], i});
+            idle.offer(new int[] {servers[i], i});
         }
         int[] res = new int[m];
         int j = 0;
@@ -104,16 +128,16 @@ class Solution {
             int cost = tasks[start];
             while (!busy.isEmpty() && busy.peek()[0] <= start) {
                 int[] item = busy.poll();
-                idle.offer(new int[]{item[1], item[2]});
+                idle.offer(new int[] {item[1], item[2]});
             }
             if (!idle.isEmpty()) {
                 int[] item = idle.poll();
                 res[j++] = item[1];
-                busy.offer(new int[]{start + cost, item[0], item[1]});
+                busy.offer(new int[] {start + cost, item[0], item[1]});
             } else {
                 int[] item = busy.poll();
                 res[j++] = item[2];
-                busy.offer(new int[]{item[0] + cost, item[1], item[2]});
+                busy.offer(new int[] {item[0] + cost, item[1], item[2]});
             }
         }
         return res;
@@ -121,10 +145,8 @@ class Solution {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

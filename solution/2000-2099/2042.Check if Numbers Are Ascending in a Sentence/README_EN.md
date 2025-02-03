@@ -1,8 +1,22 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/README_EN.md
+rating: 1257
+source: Weekly Contest 263 Q1
+tags:
+    - String
+---
+
+<!-- problem:start -->
+
 # [2042. Check if Numbers Are Ascending in a Sentence](https://leetcode.com/problems/check-if-numbers-are-ascending-in-a-sentence)
 
 [中文文档](/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A sentence is a list of <strong>tokens</strong> separated by a <strong>single</strong> space with no leading or trailing spaces. Every token is either a <strong>positive number</strong> consisting of digits <code>0-9</code> with no leading zeros, or a <strong>word</strong> consisting of lowercase English letters.</p>
 
@@ -15,8 +29,8 @@
 <p>Return <code>true</code><em> if so, or </em><code>false</code><em> otherwise</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="example-1" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/images/example1.png" style="width: 637px; height: 48px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="example-1" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/images/example1.png" style="width: 637px; height: 48px;" />
 <pre>
 <strong>Input:</strong> s = &quot;1 box has 3 blue 4 red 6 green and 12 yellow marbles&quot;
 <strong>Output:</strong> true
@@ -24,7 +38,7 @@
 They are strictly increasing from left to right: 1 &lt; 3 &lt; 4 &lt; 6 &lt; 12.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;hello world 5 x 5&quot;
@@ -32,21 +46,12 @@ They are strictly increasing from left to right: 1 &lt; 3 &lt; 4 &lt; 6 &lt; 12.
 <strong>Explanation:</strong> The numbers in s are: <u><strong>5</strong></u>, <strong><u>5</u></strong>. They are not strictly increasing.
 </pre>
 
-<p><strong>Example 3:</strong></p>
-<img alt="example-3" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/images/example3.png" style="width: 794px; height: 48px;" />
+<p><strong class="example">Example 3:</strong></p>
+<img alt="example-3" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/images/example3.png" style="width: 794px; height: 48px;" />
 <pre>
 <strong>Input:</strong> s = &quot;sunset is at 7 51 pm overnight lows will be in the low 50 and 60 s&quot;
 <strong>Output:</strong> false
 <strong>Explanation:</strong> The numbers in s are: 7, <u><strong>51</strong></u>, <u><strong>50</strong></u>, 60. They are not strictly increasing.
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> s = &quot;4 5 11 26&quot;
-<strong>Output:</strong> true
-<strong>Explanation:</strong> The numbers in s are: 4, 5, 11, 26.
-They are strictly increasing from left to right: 4 &lt; 5 &lt; 11 &lt; 26.
 </pre>
 
 <p>&nbsp;</p>
@@ -62,38 +67,49 @@ They are strictly increasing from left to right: 4 &lt; 5 &lt; 11 &lt; 26.
 	<li><code>s</code> contains no leading or trailing spaces.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Simulation
+
+We can split the string $s$ into several words by spaces. Then, for each word, check if it is a number. If it is a number, convert it to an integer, compare it with the previous number. If it is not strictly increasing, return `false`. Otherwise, assign the current number to the previous number and continue the traversal.
+
+If the traversal ends, it means that the numbers in the string are strictly increasing, so return `true`.
+
+The time complexity is $O(n)$, and the space complexity is $O(n)$. Here, $n$ is the length of the string $s$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def areNumbersAscending(self, s: str) -> bool:
-        curr = 0
-        for t in s.split(' '):
+        pre = 0
+        for t in s.split():
             if t[0].isdigit():
-                if curr >= int(t):
+                if (cur := int(t)) <= pre:
                     return False
-                curr = int(t)
+                pre = cur
         return True
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public boolean areNumbersAscending(String s) {
-        int curr = 0;
-        for (String t : s.split(" ")) {
-            char c = t.charAt(0);
-            if (Character.isDigit(c)) {
-                int x = Integer.parseInt(t);
-                if (curr >= x) {
+        int pre = 0;
+        for (var t : s.split(" ")) {
+            if (t.charAt(0) <= '9') {
+                int cur = Integer.parseInt(t);
+                if (pre >= cur) {
                     return false;
                 }
-                curr = x;
+                pre = cur;
             }
         }
         return true;
@@ -101,39 +117,22 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function areNumbersAscending(s: string): boolean {
-    let strs = s.split(" ");
-    let prev = Number.MIN_SAFE_INTEGER;
-    for (let str of strs) {
-        let num = Number(str);
-        if (!isNaN(num)) {
-            if (num <= prev) return false;
-            prev = num;
-        }
-    }
-    return true;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool areNumbersAscending(string s) {
-        int curr = 0;
+        int pre = 0;
         istringstream is(s);
         string t;
-        while (is >> t)
-        {
-            if (isdigit(t[0]))
-            {
-                int x = stoi(t);
-                if (curr >= x) return false;
-                curr = x;
+        while (is >> t) {
+            if (isdigit(t[0])) {
+                int cur = stoi(t);
+                if (pre >= cur) {
+                    return false;
+                }
+                pre = cur;
             }
         }
         return true;
@@ -141,28 +140,90 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func areNumbersAscending(s string) bool {
-	curr := 0
+	pre := 0
 	for _, t := range strings.Split(s, " ") {
-		if unicode.IsDigit(rune(t[0])) {
-			x, _ := strconv.Atoi(t)
-			if curr >= x {
+		if t[0] <= '9' {
+			cur, _ := strconv.Atoi(t)
+			if pre >= cur {
 				return false
 			}
-			curr = x
+			pre = cur
 		}
 	}
 	return true
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function areNumbersAscending(s: string): boolean {
+    let pre = -1;
+    for (const cur of s.split(' ')) {
+        if (cur[0] <= '9') {
+            const num = Number(cur);
+            if (num <= pre) {
+                return false;
+            }
+            pre = num;
+        }
+    }
+    return true;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn are_numbers_ascending(s: String) -> bool {
+        let mut pre = -1;
+        for cur in s.split(' ') {
+            if cur.as_bytes()[0] <= b'9' {
+                let num = cur.parse::<i32>().unwrap();
+                if num <= pre {
+                    return false;
+                }
+                pre = num;
+            }
+        }
+        true
+    }
+}
+```
+
+#### C
+
+```c
+bool areNumbersAscending(char* s) {
+    int pre = -1;
+    int cur = 0;
+    for (int i = 0; s[i]; i++) {
+        if (isdigit(s[i])) {
+            cur = cur * 10 + s[i] - '0';
+        } else {
+            if (cur != 0) {
+                if (cur <= pre) {
+                    return 0;
+                }
+                pre = cur;
+                cur = 0;
+            }
+        }
+    }
+    if (cur != 0 && cur <= pre) {
+        return 0;
+    }
+    return 1;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

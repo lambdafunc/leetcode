@@ -1,8 +1,23 @@
-# [1165. Single-Row Keyboard](https://leetcode.com/problems/single-row-keyboard)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1165.Single-Row%20Keyboard/README_EN.md
+rating: 1199
+source: Biweekly Contest 7 Q1
+tags:
+    - Hash Table
+    - String
+---
+
+<!-- problem:start -->
+
+# [1165. Single-Row Keyboard 🔒](https://leetcode.com/problems/single-row-keyboard)
 
 [中文文档](/solution/1100-1199/1165.Single-Row%20Keyboard/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>There is a special keyboard with <strong>all keys in a single row</strong>.</p>
 
@@ -11,7 +26,7 @@
 <p>You want to type a string <code>word</code>. Write a function to calculate how much time it takes to type it with one finger.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> keyboard = &quot;abcdefghijklmnopqrstuvwxyz&quot;, word = &quot;cba&quot;
@@ -20,7 +35,7 @@
 Total time = 2 + 1 + 1 = 4. 
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> keyboard = &quot;pqrstuvwxyzabcdefghijklmno&quot;, word = &quot;leetcode&quot;
@@ -37,77 +52,93 @@ Total time = 2 + 1 + 1 = 4.
 	<li><code>word[i]</code> is an English lowercase letter.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Hash Table or Array
+
+We can use a hash table or an array $pos$ of length $26$ to store the position of each character on the keyboard, where $pos[c]$ represents the position of character $c$ on the keyboard.
+
+Then we traverse the string $word$, using a variable $i$ to record the current position of the finger, initially $i = 0$. Each time, we calculate the position $j$ of the current character $c$ on the keyboard, and increase the answer by $|i - j|$, then update $i$ to $j$. Continue to traverse the next character until the entire string $word$ is traversed.
+
+After traversing the string $word$, we can get the answer.
+
+The time complexity is $O(n)$, and the space complexity is $O(C)$. Here, $n$ is the length of the string $word$, and $C$ is the size of the character set. In this problem, $C = 26$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def calculateTime(self, keyboard: str, word: str) -> int:
-        index = {c: i for i, c in enumerate(keyboard)}
-        res = t = 0
+        pos = {c: i for i, c in enumerate(keyboard)}
+        ans = i = 0
         for c in word:
-            res += abs(index[c] - t)
-            t = index[c]
-        return res
+            ans += abs(pos[c] - i)
+            i = pos[c]
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int calculateTime(String keyboard, String word) {
-        Map<Character, Integer> index = new HashMap<>();
-        for (int i = 0; i < keyboard.length(); ++i) {
-            index.put(keyboard.charAt(i), i);
+        int[] pos = new int[26];
+        for (int i = 0; i < 26; ++i) {
+            pos[keyboard.charAt(i) - 'a'] = i;
         }
-        int res = 0, t = 0;
-        for (char c : word.toCharArray()) {
-            res += Math.abs(index.get(c) - t);
-            t = index.get(c);
+        int ans = 0, i = 0;
+        for (int k = 0; k < word.length(); ++k) {
+            int j = pos[word.charAt(k) - 'a'];
+            ans += Math.abs(i - j);
+            i = j;
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int calculateTime(string keyboard, string word) {
-        unordered_map <char, int> index;
-        for (int i = 0; i < keyboard.size(); ++i) {
-            index[keyboard[i]] = i;
+        int pos[26];
+        for (int i = 0; i < 26; ++i) {
+            pos[keyboard[i] - 'a'] = i;
         }
-        int res = 0, t = 0;
-        for (char c : word) {
-            res += abs(index[c] - t);
-            t = index[c];
+        int ans = 0, i = 0;
+        for (char& c : word) {
+            int j = pos[c - 'a'];
+            ans += abs(i - j);
+            i = j;
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func calculateTime(keyboard string, word string) int {
-	index := map[byte]int{}
-	for i := 0; i < len(keyboard); i++ {
-		index[keyboard[i]] = i
+func calculateTime(keyboard string, word string) (ans int) {
+	pos := [26]int{}
+	for i, c := range keyboard {
+		pos[c-'a'] = i
 	}
-	res := 0
-	t := 0
-	for i := 0; i < len(word); i++ {
-		res += abs(index[word[i]] - t)
-		t = index[word[i]]
+	i := 0
+	for _, c := range word {
+		j := pos[c-'a']
+		ans += abs(i - j)
+		i = j
 	}
-	return res
+	return
 }
 
 func abs(x int) int {
@@ -118,10 +149,27 @@ func abs(x int) int {
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function calculateTime(keyboard: string, word: string): number {
+    const pos: number[] = Array(26).fill(0);
+    for (let i = 0; i < 26; ++i) {
+        pos[keyboard.charCodeAt(i) - 97] = i;
+    }
+    let ans = 0;
+    let i = 0;
+    for (const c of word) {
+        const j = pos[c.charCodeAt(0) - 97];
+        ans += Math.abs(i - j);
+        i = j;
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

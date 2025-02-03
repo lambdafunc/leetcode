@@ -1,52 +1,73 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0306.Additive%20Number/README_EN.md
+tags:
+    - String
+    - Backtracking
+---
+
+<!-- problem:start -->
+
 # [306. Additive Number](https://leetcode.com/problems/additive-number)
 
 [中文文档](/solution/0300-0399/0306.Additive%20Number/README.md)
 
 ## Description
 
-<p>Additive number is a string whose digits can form additive sequence.</p>
+<!-- description:start -->
 
-<p>A valid additive sequence should contain <b>at least</b> three numbers. Except for the first two numbers, each subsequent number in the sequence must be the sum of the preceding two.</p>
+<p>An <strong>additive number</strong> is a string whose digits can form an <strong>additive sequence</strong>.</p>
 
-<p>Given a string containing only digits <code>&#39;0&#39;-&#39;9&#39;</code>, write a function to determine if it&#39;s an additive number.</p>
+<p>A valid <strong>additive sequence</strong> should contain <strong>at least</strong> three numbers. Except for the first two numbers, each subsequent number in the sequence must be the sum of the preceding two.</p>
 
-<p><b>Note:</b> Numbers in the additive sequence <b>cannot</b> have leading zeros, so sequence <code>1, 2, 03</code> or <code>1, 02, 3</code> is invalid.</p>
+<p>Given a string containing only digits, return <code>true</code> if it is an <strong>additive number</strong> or <code>false</code> otherwise.</p>
+
+<p><strong>Note:</strong> Numbers in the additive sequence <strong>cannot</strong> have leading zeros, so sequence <code>1, 2, 03</code> or <code>1, 02, 3</code> is invalid.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> &quot;112358&quot;
 <strong>Output:</strong> true
-<strong>Explanation:</strong> The digits can form an additive sequence: 1, 1, 2, 3, 5, 8. 
-&nbsp;            1 + 1 = 2, 1 + 2 = 3, 2 + 3 = 5, 3 + 5 = 8
+<strong>Explanation:</strong> 
+The digits can form an additive sequence: 1, 1, 2, 3, 5, 8. 
+1 + 1 = 2, 1 + 2 = 3, 2 + 3 = 5, 3 + 5 = 8
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> &quot;199100199&quot;
 <strong>Output:</strong> true
-<strong>Explanation:</strong> The additive sequence is: 1, 99, 100, 199.&nbsp;
-&nbsp;            1 + 99 = 100, 99 + 100 = 199
+<strong>Explanation:</strong> 
+The additive sequence is: 1, 99, 100, 199.&nbsp;
+1 + 99 = 100, 99 + 100 = 199
 </pre>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><font face="monospace"><code>num</code>&nbsp;</font>consists only of digits <code>&#39;0&#39;-&#39;9&#39;</code>.</li>
 	<li><code>1 &lt;= num.length &lt;= 35</code></li>
+	<li><code>num</code> consists only of digits.</li>
 </ul>
 
-<p><b>Follow up:</b><br />
-How would you handle overflow for very large input integers?</p>
+<p>&nbsp;</p>
+<p><strong>Follow up:</strong> How would you handle overflow for very large input integers?</p>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -69,12 +90,12 @@ class Solution:
                     break
                 if j - i > 1 and num[i] == '0':
                     continue
-                if dfs(int(num[:i]), int(num[i: j]), num[j:]):
+                if dfs(int(num[:i]), int(num[i:j]), num[j:]):
                     return True
         return False
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -117,17 +138,15 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool isAdditiveNumber(string num) {
         int n = num.size();
-        for (int i = 1; i < min(n - 1, 19); ++i)
-        {
-            for (int j = i + 1; j < min(n, i + 19); ++j)
-            {
+        for (int i = 1; i < min(n - 1, 19); ++i) {
+            for (int j = i + 1; j < min(n, i + 19); ++j) {
                 if (i > 1 && num[0] == '0') break;
                 if (j - i > 1 && num[i] == '0') continue;
                 auto a = stoll(num.substr(0, i));
@@ -150,7 +169,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func isAdditiveNumber(num string) bool {
@@ -190,19 +209,10 @@ func isAdditiveNumber(num string) bool {
 	}
 	return false
 }
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-```
-
-### **...**
-
-```
-
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

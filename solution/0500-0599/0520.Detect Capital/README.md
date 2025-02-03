@@ -1,62 +1,84 @@
-# [520. 检测大写字母](https://leetcode-cn.com/problems/detect-capital)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0520.Detect%20Capital/README.md
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [520. 检测大写字母](https://leetcode.cn/problems/detect-capital)
 
 [English Version](/solution/0500-0599/0520.Detect%20Capital/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
-
-<p>给定一个单词，你需要判断单词的大写使用是否正确。</p>
+<!-- description:start -->
 
 <p>我们定义，在以下情况时，单词的大写用法是正确的：</p>
 
-<ol>
-	<li>全部字母都是大写，比如&quot;USA&quot;。</li>
-	<li>单词中所有字母都不是大写，比如&quot;leetcode&quot;。</li>
-	<li>如果单词不只含有一个字母，只有首字母大写，&nbsp;比如&nbsp;&quot;Google&quot;。</li>
-</ol>
+<ul>
+	<li>全部字母都是大写，比如 <code>"USA"</code> 。</li>
+	<li>单词中所有字母都不是大写，比如 <code>"leetcode"</code> 。</li>
+	<li>如果单词不只含有一个字母，只有首字母大写，&nbsp;比如&nbsp;<code>"Google"</code> 。</li>
+</ul>
 
-<p>否则，我们定义这个单词没有正确使用大写字母。</p>
+<p>给你一个字符串 <code>word</code> 。如果大写用法正确，返回 <code>true</code> ；否则，返回 <code>false</code> 。</p>
 
-<p><strong>示例 1:</strong></p>
+<p>&nbsp;</p>
 
-<pre>
-<strong>输入:</strong> &quot;USA&quot;
-<strong>输出:</strong> True
-</pre>
-
-<p><strong>示例 2:</strong></p>
+<p><strong>示例 1：</strong></p>
 
 <pre>
-<strong>输入:</strong> &quot;FlaG&quot;
-<strong>输出:</strong> False
+<strong>输入：</strong>word = "USA"
+<strong>输出：</strong>true
 </pre>
 
-<p><strong>注意:</strong> 输入是由大写和小写拉丁字母组成的非空单词。</p>
+<p><strong>示例 2：</strong></p>
+
+<pre>
+<strong>输入：</strong>word = "FlaG"
+<strong>输出：</strong>false
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 &lt;= word.length &lt;= 100</code></li>
+	<li><code>word</code> 由小写和大写英文字母组成</li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：统计大写字母的个数
+
+我们可以统计字符串中大写字母的个数，然后根据大写字母的个数判断是否符合题目要求。
+
+-   如果大写字母的个数为 0 或者等于字符串的长度，那么返回 `true`。
+-   如果大写字母的个数为 1 并且第一个字母是大写字母，那么返回 `true`。
+-   否则返回 `false`。
+
+时间复杂度 $O(n)$，其中 $n$ 为字符串 `word` 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def detectCapitalUse(self, word: str) -> bool:
-        cnt = 0
-        for c in word:
-            if c.isupper():
-                cnt += 1
+        cnt = sum(c.isupper() for c in word)
         return cnt == 0 or cnt == len(word) or (cnt == 1 and word[0].isupper())
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -67,26 +89,25 @@ class Solution {
                 ++cnt;
             }
         }
-        return cnt == 0 || cnt == word.length() || (cnt == 1 && Character.isUpperCase(word.charAt(0)));
+        return cnt == 0 || cnt == word.length()
+            || (cnt == 1 && Character.isUpperCase(word.charAt(0)));
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool detectCapitalUse(string word) {
-        int cnt = 0;
-        for (char c : word)
-            if (isupper(c)) ++cnt;
-        return cnt == 0 || cnt == word.size() || (cnt == 1 && isupper(word[0]));
+        int cnt = count_if(word.begin(), word.end(), [](char c) { return isupper(c); });
+        return cnt == 0 || cnt == word.length() || (cnt == 1 && isupper(word[0]));
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func detectCapitalUse(word string) bool {
@@ -100,10 +121,17 @@ func detectCapitalUse(word string) bool {
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function detectCapitalUse(word: string): boolean {
+    const cnt = word.split('').reduce((acc, c) => acc + (c === c.toUpperCase() ? 1 : 0), 0);
+    return cnt === 0 || cnt === word.length || (cnt === 1 && word[0] === word[0].toUpperCase());
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

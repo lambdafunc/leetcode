@@ -1,140 +1,211 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0896.Monotonic%20Array/README_EN.md
+tags:
+    - Array
+---
+
+<!-- problem:start -->
+
 # [896. Monotonic Array](https://leetcode.com/problems/monotonic-array)
 
 [中文文档](/solution/0800-0899/0896.Monotonic%20Array/README.md)
 
 ## Description
 
-<p>An array is <em>monotonic</em> if it is either monotone increasing or monotone decreasing.</p>
+<!-- description:start -->
 
-<p>An array <code>A</code> is monotone increasing if for all <code>i &lt;= j</code>, <code>A[i] &lt;= A[j]</code>.&nbsp; An array <code>A</code> is monotone decreasing if for all <code>i &lt;= j</code>, <code>A[i] &gt;= A[j]</code>.</p>
+<p>An array is <strong>monotonic</strong> if it is either monotone increasing or monotone decreasing.</p>
 
-<p>Return <code>true</code> if and only if the given array <code>A</code> is monotonic.</p>
+<p>An array <code>nums</code> is monotone increasing if for all <code>i &lt;= j</code>, <code>nums[i] &lt;= nums[j]</code>. An array <code>nums</code> is monotone decreasing if for all <code>i &lt;= j</code>, <code>nums[i] &gt;= nums[j]</code>.</p>
+
+<p>Given an integer array <code>nums</code>, return <code>true</code><em> if the given array is monotonic, or </em><code>false</code><em> otherwise</em>.</p>
 
 <p>&nbsp;</p>
-
-<ol>
-
-</ol>
-
-<div>
-
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
-<strong>Input: </strong><span id="example-input-1-1">[1,2,2,3]</span>
-
-<strong>Output: </strong><span id="example-output-1">true</span>
-
+<strong>Input:</strong> nums = [1,2,2,3]
+<strong>Output:</strong> true
 </pre>
 
-<div>
-
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
-<strong>Input: </strong><span id="example-input-2-1">[6,5,4,4]</span>
-
-<strong>Output: </strong><span id="example-output-2">true</span>
-
+<strong>Input:</strong> nums = [6,5,4,4]
+<strong>Output:</strong> true
 </pre>
 
-<div>
-
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
-
-<strong>Input: </strong><span id="example-input-3-1">[1,3,2]</span>
-
-<strong>Output: </strong><span id="example-output-3">false</span>
-
-</pre>
-
-<div>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-
-<strong>Input: </strong><span id="example-input-4-1">[1,2,4,5]</span>
-
-<strong>Output: </strong><span id="example-output-4">true</span>
-
-</pre>
-
-<div>
-
-<p><strong>Example 5:</strong></p>
-
-<pre>
-
-<strong>Input: </strong><span id="example-input-5-1">[1,1,1]</span>
-
-<strong>Output: </strong><span id="example-output-5">true</span>
-
+<strong>Input:</strong> nums = [1,3,2]
+<strong>Output:</strong> false
 </pre>
 
 <p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><strong>Note:</strong></p>
+<ul>
+	<li><code>1 &lt;= nums.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>-10<sup>5</sup> &lt;= nums[i] &lt;= 10<sup>5</sup></code></li>
+</ul>
 
-<ol>
-	<li><code>1 &lt;= A.length &lt;= 50000</code></li>
-	<li><code>-100000 &lt;= A[i] &lt;= 100000</code></li>
-</ol>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Single Traversal
+
+We traverse the array, and if an increasing or decreasing situation occurs, we record it. We then check whether both increasing and decreasing situations have occurred. If both have occurred, it means that the array is not monotonic, and we return `false`.
+
+Otherwise, if we reach the end of the traversal, it means that the array is monotonic, and we return `true`.
+
+The time complexity is $O(n)$, where $n$ is the length of the array. The space complexity is $O(1)$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
-    def isMonotonic(self, A: List[int]) -> bool:
-        increase = decrease = True
-        for i in range(1, len(A)):
-            if not increase and not decrease:
-                return False
-            if A[i] < A[i - 1]:
-                increase = False
-            elif A[i] > A[i - 1]:
-                decrease = False
-        return increase or decrease
+    def isMonotonic(self, nums: List[int]) -> bool:
+        asc = all(a <= b for a, b in pairwise(nums))
+        desc = all(a >= b for a, b in pairwise(nums))
+        return asc or desc
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
-    public boolean isMonotonic(int[] A) {
-        boolean increase = true, decrease = true;
-        for (int i = 1, n = A.length; i < n; ++i) {
-            if (!increase && !decrease) return false;
-            if (A[i] < A[i - 1]) decrease = false;
-            else if (A[i] > A[i - 1]) increase = false;
+    public boolean isMonotonic(int[] nums) {
+        boolean asc = false, desc = false;
+        for (int i = 1; i < nums.length; ++i) {
+            if (nums[i - 1] < nums[i]) {
+                asc = true;
+            } else if (nums[i - 1] > nums[i]) {
+                desc = true;
+            }
+            if (asc && desc) {
+                return false;
+            }
         }
-        return increase || decrease;
+        return true;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    bool isMonotonic(vector<int>& nums) {
+        bool asc = false, desc = false;
+        for (int i = 1; i < nums.size(); ++i) {
+            if (nums[i - 1] < nums[i]) {
+                asc = true;
+            } else if (nums[i - 1] > nums[i]) {
+                desc = true;
+            }
+            if (asc && desc) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
 ```
 
+#### Go
+
+```go
+func isMonotonic(nums []int) bool {
+	asc, desc := false, false
+	for i, x := range nums[1:] {
+		if nums[i] < x {
+			asc = true
+		} else if nums[i] > x {
+			desc = true
+		}
+		if asc && desc {
+			return false
+		}
+	}
+	return true
+}
+```
+
+#### TypeScript
+
+```ts
+function isMonotonic(nums: number[]): boolean {
+    let [asc, desc] = [false, false];
+    for (let i = 1; i < nums.length; ++i) {
+        if (nums[i - 1] < nums[i]) {
+            asc = true;
+        } else if (nums[i - 1] > nums[i]) {
+            desc = true;
+        }
+        if (asc && desc) {
+            return false;
+        }
+    }
+    return true;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn is_monotonic(nums: Vec<i32>) -> bool {
+        let mut asc = false;
+        let mut desc = false;
+        for i in 1..nums.len() {
+            if nums[i - 1] < nums[i] {
+                asc = true;
+            } else if nums[i - 1] > nums[i] {
+                desc = true;
+            }
+            if asc && desc {
+                return false;
+            }
+        }
+        true
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+var isMonotonic = function (nums) {
+    let [asc, desc] = [false, false];
+    for (let i = 1; i < nums.length; ++i) {
+        if (nums[i - 1] < nums[i]) {
+            asc = true;
+        } else if (nums[i - 1] > nums[i]) {
+            desc = true;
+        }
+        if (asc && desc) {
+            return false;
+        }
+    }
+    return true;
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

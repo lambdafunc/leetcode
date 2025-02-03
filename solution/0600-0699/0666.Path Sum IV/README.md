@@ -1,66 +1,83 @@
-# [666. 路径总和 IV](https://leetcode-cn.com/problems/path-sum-iv)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0666.Path%20Sum%20IV/README.md
+tags:
+    - 树
+    - 深度优先搜索
+    - 数组
+    - 哈希表
+    - 二叉树
+---
+
+<!-- problem:start -->
+
+# [666. 路径总和 IV 🔒](https://leetcode.cn/problems/path-sum-iv)
 
 [English Version](/solution/0600-0699/0666.Path%20Sum%20IV/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>对于一棵深度小于 <code>5</code> 的树，可以用一组三位十进制整数来表示。</p>
+<p>对于一棵深度小于&nbsp;<code>5</code>&nbsp;的树，可以用一组三位十进制整数来表示。给定一个由三位数组成的&nbsp;<strong>递增</strong>&nbsp;的数组&nbsp;<code>nums</code>&nbsp;表示一棵深度小于&nbsp;<code>5</code>&nbsp;的二叉树，对于每个整数：</p>
 
-<p>对于每个整数：</p>
+<ul>
+	<li>百位上的数字表示这个节点的深度 <code>d</code>，<code>1 &lt;= d&nbsp;&lt;= 4</code>。</li>
+	<li>十位上的数字表示这个节点在当前层所在的位置 <code>p</code>， <code>1 &lt;= p&nbsp;&lt;= 8</code>。位置编号与一棵 <strong>满二叉树</strong> 的位置编号相同。</li>
+	<li>个位上的数字表示这个节点的权值 <code>v</code>，<code>0 &lt;= v&nbsp;&lt;= 9</code>。</li>
+</ul>
 
-<ol>
-	<li>百位上的数字表示这个节点的深度 <code>D</code>，<code>1 <= D <= 4</code>。</li>
-	<li>十位上的数字表示这个节点在当前层所在的位置 <code>P</code>， <code>1 <= P <= 8</code>。位置编号与一棵满二叉树的位置编号相同。</li>
-	<li>个位上的数字表示这个节点的权值 <code>V</code>，<code>0 <= V <= 9</code>。</li>
-</ol>
+<p>返回从&nbsp;<strong>根&nbsp;</strong>到所有 <strong>叶子结点</strong> 的 <strong>路径</strong> 之 <strong>和</strong>。</p>
 
-<p>给定一个包含三位整数的<code>升序</code>数组，表示一棵深度小于 5 的二叉树，请你返回从根到所有叶子结点的路径之和。</p>
+<p><strong>保证&nbsp;</strong>给定的数组表示一个有效的连接二叉树。</p>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<pre>
-<strong>输入:</strong> [113, 215, 221]
-<strong>输出:</strong> 12
-<strong>解释:</strong> 
-这棵树形状如下:
-    3
-   / \
-  5   1
+<p><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0666.Path%20Sum%20IV/images/pathsum4-1-tree.jpg" /></p>
 
-路径和 = (3 + 5) + (3 + 1) = 12.
+<pre>
+<strong>输入:</strong> nums = [113, 215, 221]
+<strong>输出:</strong> 12
+<strong>解释:</strong> 列表所表示的树如上所示。
+路径和 = (3 + 5) + (3 + 1) = 12。
 </pre>
 
 <p><strong>示例 2：</strong></p>
 
-<pre>
-<strong>输入:</strong> [113, 221]
-<strong>输出:</strong> 4
-<strong>解释:</strong> 
-这棵树形状如下: 
-    3
-     \
-      1
+<p><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0666.Path%20Sum%20IV/images/pathsum4-2-tree.jpg" /></p>
 
-路径和 = (3 + 1) = 4.
+<pre>
+<strong>输入:</strong> nums = [113, 221]
+<strong>输出:</strong> 4
+<strong>解释:</strong> 列表所表示的树如上所示。
+路径和 = (3 + 1) = 4。
 </pre>
 
-<p> </p>
+<p>&nbsp;</p>
+
+<p><strong>提示:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= nums.length &lt;= 15</code></li>
+	<li><code>110 &lt;= nums[i] &lt;= 489</code></li>
+	<li><code>nums</code>&nbsp;表示深度小于&nbsp;<code>5</code> 的有效二叉树</li>
+	<li><code>nums</code>&nbsp;以升序排序。</li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-DFS。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -85,9 +102,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -122,7 +137,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -144,8 +159,7 @@ public:
         int d = node / 10, p = node % 10;
         int l = (d + 1) * 10 + (p * 2) - 1;
         int r = l + 1;
-        if (!mp.count(l) && !mp.count(r))
-        {
+        if (!mp.count(l) && !mp.count(r)) {
             ans += t;
             return;
         }
@@ -155,7 +169,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func pathSum(nums []int) int {
@@ -186,10 +200,8 @@ func pathSum(nums []int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

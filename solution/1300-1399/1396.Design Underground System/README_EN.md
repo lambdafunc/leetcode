@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1396.Design%20Underground%20System/README_EN.md
+rating: 1464
+source: Weekly Contest 182 Q3
+tags:
+    - Design
+    - Hash Table
+    - String
+---
+
+<!-- problem:start -->
+
 # [1396. Design Underground System](https://leetcode.com/problems/design-underground-system)
 
 [中文文档](/solution/1300-1399/1396.Design%20Underground%20System/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>An underground railway system is keeping track of customer travel times between different stations. They are using this data to calculate the average time it takes to travel from one station to another.</p>
 
@@ -10,30 +26,32 @@
 
 <ul>
 	<li><code>void checkIn(int id, string stationName, int t)</code>
-	<ul>
-		<li>A customer with a card ID equal to <code>id</code>, checks in at the station <code>stationName</code> at time <code>t</code>.</li>
-		<li>A customer can only be checked into one place at a time.</li>
-	</ul>
-	</li>
-	<li><code>void checkOut(int id, string stationName, int t)</code>
-	<ul>
-		<li>A customer with a card ID equal to <code>id</code>, checks out from the station <code>stationName</code> at time <code>t</code>.</li>
-	</ul>
-	</li>
-	<li><code>double getAverageTime(string startStation, string endStation)</code>
-	<ul>
-		<li>Returns the average time it takes to travel from <code>startStation</code> to <code>endStation</code>.</li>
-		<li>The average time is computed from all the previous traveling times from <code>startStation</code> to <code>endStation</code> that happened <strong>directly</strong>, meaning a check in at <code>startStation</code> followed by a check out from <code>endStation</code>.</li>
-		<li>The time it takes to travel from <code>startStation</code> to <code>endStation</code> <strong>may be different</strong> from the time it takes to travel from <code>endStation</code> to <code>startStation</code>.</li>
-		<li>There will be at least one customer that has traveled from <code>startStation</code> to <code>endStation</code> before <code>getAverageTime</code> is called.</li>
-	</ul>
-	</li>
+
+    <ul>
+    	<li>A customer with a card ID equal to <code>id</code>, checks in at the station <code>stationName</code> at time <code>t</code>.</li>
+    	<li>A customer can only be checked into one place at a time.</li>
+    </ul>
+    </li>
+    <li><code>void checkOut(int id, string stationName, int t)</code>
+    <ul>
+    	<li>A customer with a card ID equal to <code>id</code>, checks out from the station <code>stationName</code> at time <code>t</code>.</li>
+    </ul>
+    </li>
+    <li><code>double getAverageTime(string startStation, string endStation)</code>
+    <ul>
+    	<li>Returns the average time it takes to travel from <code>startStation</code> to <code>endStation</code>.</li>
+    	<li>The average time is computed from all the previous traveling times from <code>startStation</code> to <code>endStation</code> that happened <strong>directly</strong>, meaning a check in at <code>startStation</code> followed by a check out from <code>endStation</code>.</li>
+    	<li>The time it takes to travel from <code>startStation</code> to <code>endStation</code> <strong>may be different</strong> from the time it takes to travel from <code>endStation</code> to <code>startStation</code>.</li>
+    	<li>There will be at least one customer that has traveled from <code>startStation</code> to <code>endStation</code> before <code>getAverageTime</code> is called.</li>
+    </ul>
+    </li>
+
 </ul>
 
 <p>You may assume all calls to the <code>checkIn</code> and <code>checkOut</code> methods are consistent. If a customer checks in at time <code>t<sub>1</sub></code> then checks out at time <code>t<sub>2</sub></code>, then <code>t<sub>1</sub> &lt; t<sub>2</sub></code>. All events happen in chronological order.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input</strong>
@@ -59,7 +77,7 @@ undergroundSystem.checkOut(10, &quot;Waterloo&quot;, 38);  // Customer 10 &quot;
 undergroundSystem.getAverageTime(&quot;Leyton&quot;, &quot;Waterloo&quot;);    // return 12.00000. Three trips &quot;Leyton&quot; -&gt; &quot;Waterloo&quot;, (10 + 12 + 14) / 3 = 12
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input</strong>
@@ -93,37 +111,48 @@ undergroundSystem.getAverageTime(&quot;Leyton&quot;, &quot;Paradise&quot;); // r
 	<li>Answers within <code>10<sup>-5</sup></code> of the actual value will be accepted.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Hash Table
+
+We use two hash tables to store data:
+
+-   `ts`: Stores the passenger's id, check-in time, and check-in station. The key is the passenger's id, and the value is a tuple `(t, stationName)`.
+-   `d`: Stores the passenger's check-in station, check-out station, travel time, and number of trips. The key is a tuple `(startStation, endStation)`, and the value is a tuple `(totalTime, count)`.
+
+When a passenger checks in, we store the passenger's id, check-in time, and check-in station in `ts`, i.e., `ts[id] = (t, stationName)`.
+
+When a passenger checks out, we retrieve the passenger's check-in time and station `(t0, station)` from `ts`, then calculate the passenger's travel time $t - t_0$, and store the passenger's travel time and number of trips in `d`.
+
+When we want to calculate a passenger's average travel time, we retrieve the passenger's total travel time and number of trips `(totalTime, count)` from `d`, then calculate the average travel time as $totalTime / count$.
+
+The time complexity is $O(1)$, and the space complexity is $O(n)$. Where $n$ is the number of passengers.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class UndergroundSystem:
-
     def __init__(self):
-        self.check_in_station = {}
-        self.check_in_time = {}
-        self.total_time = {}
+        self.ts = {}
+        self.d = {}
 
     def checkIn(self, id: int, stationName: str, t: int) -> None:
-        self.check_in_station[id] = stationName
-        self.check_in_time[id] = t
+        self.ts[id] = (t, stationName)
 
     def checkOut(self, id: int, stationName: str, t: int) -> None:
-        cost = t - self.check_in_time.pop(id)
-        start_station = self.check_in_station.pop(id)
-        stations = start_station + '.' + stationName
-        times = self.total_time.get(stations, [0, 0])
-        times[0] += cost
-        times[1] += 1
-        self.total_time[stations] = times
+        t0, station = self.ts[id]
+        x = self.d.get((station, stationName), (0, 0))
+        self.d[(station, stationName)] = (x[0] + t - t0, x[1] + 1)
 
     def getAverageTime(self, startStation: str, endStation: str) -> float:
-        stations = startStation + '.' + endStation
-        times = self.total_time[stations]
-        return times[0] / times[1]
+        x = self.d[(startStation, endStation)]
+        return x[0] / x[1]
 
 
 # Your UndergroundSystem object will be instantiated and called as such:
@@ -133,39 +162,34 @@ class UndergroundSystem:
 # param_3 = obj.getAverageTime(startStation,endStation)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class UndergroundSystem {
-    private Map<Integer, String> checkInStation;
-    private Map<Integer, Integer> checkInTime;
-    private Map<String, int[]> totalTime;
+    private Map<Integer, Integer> ts = new HashMap<>();
+    private Map<Integer, String> names = new HashMap<>();
+    private Map<String, int[]> d = new HashMap<>();
 
     public UndergroundSystem() {
-        checkInStation = new HashMap<>();
-        checkInTime = new HashMap<>();
-        totalTime = new HashMap<>();
     }
 
     public void checkIn(int id, String stationName, int t) {
-        checkInStation.put(id, stationName);
-        checkInTime.put(id, t);
+        ts.put(id, t);
+        names.put(id, stationName);
     }
 
     public void checkOut(int id, String stationName, int t) {
-        int cost = t - checkInTime.remove(id);
-        String startStation = checkInStation.remove(id);
-        String stations = startStation + "." + stationName;
-        int[] times = totalTime.getOrDefault(stations, new int[2]);
-        times[0] += cost;
-        ++times[1];
-        totalTime.put(stations, times);
+        String key = names.get(id) + "-" + stationName;
+        int[] v = d.getOrDefault(key, new int[2]);
+        v[0] += t - ts.get(id);
+        v[1]++;
+        d.put(key, v);
     }
 
     public double getAverageTime(String startStation, String endStation) {
-        String stations = startStation + "." + endStation;
-        int[] times = totalTime.get(stations);
-        return times[0] * 1.0 / times[1];
+        String key = startStation + "-" + endStation;
+        int[] v = d.get(key);
+        return (double) v[0] / v[1];
     }
 }
 
@@ -178,10 +202,100 @@ class UndergroundSystem {
  */
 ```
 
-### **...**
+#### C++
 
+```cpp
+class UndergroundSystem {
+public:
+    UndergroundSystem() {
+    }
+
+    void checkIn(int id, string stationName, int t) {
+        ts[id] = {stationName, t};
+    }
+
+    void checkOut(int id, string stationName, int t) {
+        auto [station, t0] = ts[id];
+        auto key = station + "-" + stationName;
+        auto [tot, cnt] = d[key];
+        d[key] = {tot + t - t0, cnt + 1};
+    }
+
+    double getAverageTime(string startStation, string endStation) {
+        auto [tot, cnt] = d[startStation + "-" + endStation];
+        return (double) tot / cnt;
+    }
+
+private:
+    unordered_map<int, pair<string, int>> ts;
+    unordered_map<string, pair<int, int>> d;
+};
+
+/**
+ * Your UndergroundSystem object will be instantiated and called as such:
+ * UndergroundSystem* obj = new UndergroundSystem();
+ * obj->checkIn(id,stationName,t);
+ * obj->checkOut(id,stationName,t);
+ * double param_3 = obj->getAverageTime(startStation,endStation);
+ */
 ```
 
+#### Go
+
+```go
+type UndergroundSystem struct {
+	ts map[int]pair
+	d  map[station][2]int
+}
+
+func Constructor() UndergroundSystem {
+	return UndergroundSystem{
+		ts: make(map[int]pair),
+		d:  make(map[station][2]int),
+	}
+}
+
+func (this *UndergroundSystem) CheckIn(id int, stationName string, t int) {
+	this.ts[id] = pair{t, stationName}
+}
+
+func (this *UndergroundSystem) CheckOut(id int, stationName string, t int) {
+	p := this.ts[id]
+	s := station{p.a, stationName}
+	if _, ok := this.d[s]; !ok {
+		this.d[s] = [2]int{t - p.t, 1}
+	} else {
+		this.d[s] = [2]int{this.d[s][0] + t - p.t, this.d[s][1] + 1}
+	}
+
+}
+
+func (this *UndergroundSystem) GetAverageTime(startStation string, endStation string) float64 {
+	s := station{startStation, endStation}
+	return float64(this.d[s][0]) / float64(this.d[s][1])
+}
+
+type station struct {
+	a string
+	b string
+}
+
+type pair struct {
+	t int
+	a string
+}
+
+/**
+ * Your UndergroundSystem object will be instantiated and called as such:
+ * obj := Constructor();
+ * obj.CheckIn(id,stationName,t);
+ * obj.CheckOut(id,stationName,t);
+ * param_3 := obj.GetAverageTime(startStation,endStation);
+ */
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

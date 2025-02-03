@@ -1,18 +1,32 @@
-# [1605. 给定行和列的和求可行矩阵](https://leetcode-cn.com/problems/find-valid-matrix-given-row-and-column-sums)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1605.Find%20Valid%20Matrix%20Given%20Row%20and%20Column%20Sums/README.md
+rating: 1867
+source: 第 36 场双周赛 Q3
+tags:
+    - 贪心
+    - 数组
+    - 矩阵
+---
+
+<!-- problem:start -->
+
+# [1605. 给定行和列的和求可行矩阵](https://leetcode.cn/problems/find-valid-matrix-given-row-and-column-sums)
 
 [English Version](/solution/1600-1699/1605.Find%20Valid%20Matrix%20Given%20Row%20and%20Column%20Sums/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给你两个非负整数数组 <code>rowSum</code> 和 <code>colSum</code> ，其中 <code>rowSum[i]</code> 是二维矩阵中第 <code>i</code> 行元素的和， <code>colSum[j]</code> 是第 <code>j</code> 列元素的和。换言之你不知道矩阵里的每个元素，但是你知道每一行和每一列的和。</p>
+<p>给你两个非负整数数组&nbsp;<code>rowSum</code> 和&nbsp;<code>colSum</code>&nbsp;，其中&nbsp;<code>rowSum[i]</code>&nbsp;是二维矩阵中第 <code>i</code>&nbsp;行元素的和， <code>colSum[j]</code>&nbsp;是第 <code>j</code>&nbsp;列元素的和。换言之你不知道矩阵里的每个元素，但是你知道每一行和每一列的和。</p>
 
-<p>请找到大小为 <code>rowSum.length x colSum.length</code> 的任意 <strong>非负整数</strong> 矩阵，且该矩阵满足 <code>rowSum</code> 和 <code>colSum</code> 的要求。</p>
+<p>请找到大小为&nbsp;<code>rowSum.length x colSum.length</code>&nbsp;的任意 <strong>非负整数</strong>&nbsp;矩阵，且该矩阵满足&nbsp;<code>rowSum</code> 和&nbsp;<code>colSum</code>&nbsp;的要求。</p>
 
-<p>请你返回任意一个满足题目要求的二维矩阵，题目保证存在 <strong>至少一个</strong> 可行矩阵。</p>
+<p>请你返回任意一个满足题目要求的二维矩阵，题目保证存在 <strong>至少一个</strong>&nbsp;可行矩阵。</p>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
@@ -62,42 +76,162 @@
 <strong>输出：</strong>[[0]]
 </pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>1 <= rowSum.length, colSum.length <= 500</code></li>
-	<li><code>0 <= rowSum[i], colSum[i] <= 10<sup>8</sup></code></li>
-	<li><code>sum(rows) == sum(columns)</code></li>
+	<li><code>1 &lt;= rowSum.length, colSum.length &lt;= 500</code></li>
+	<li><code>0 &lt;= rowSum[i], colSum[i] &lt;= 10<sup>8</sup></code></li>
+	<li><code>sum(rowSum) == sum(colSum)</code></li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：贪心 + 构造
+
+我们可以先初始化一个 $m$ 行 $n$ 列的答案矩阵 $ans$。
+
+接下来，遍历矩阵的每一个位置 $(i, j)$，将该位置的元素设为 $x = min(rowSum[i], colSum[j])$，并将 $rowSum[i]$ 和 $colSum[j]$ 分别减去 $x$。遍历完所有的位置后，我们就可以得到一个满足题目要求的矩阵 $ans$。
+
+以上策略的正确性说明如下：
+
+根据题目的要求，我们知道 $rowSum$ 和 $colSum$ 的和是相等的，那么 $rowSum[0]$ 一定小于等于 $\sum_{j = 0}^{n - 1} colSum[j]$。所以，在经过 $n$ 次操作后，一定能够使得 $rowSum[0]$ 为 $0$，并且保证对任意 $j \in [0, n - 1]$，都有 $colSum[j] \geq 0$。
+
+因此，我们把原问题缩小为一个 $m-1$ 行和 $n$ 列的子问题，继续进行上述的操作，直到 $rowSum$ 和 $colSum$ 中的所有元素都为 $0$，就可以得到一个满足题目要求的矩阵 $ans$。
+
+时间复杂度 $O(m \times n)$，空间复杂度 $O(m \times n)$。其中 $m$ 和 $n$ 分别为 $rowSum$ 和 $colSum$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def restoreMatrix(self, rowSum: List[int], colSum: List[int]) -> List[List[int]]:
+        m, n = len(rowSum), len(colSum)
+        ans = [[0] * n for _ in range(m)]
+        for i in range(m):
+            for j in range(n):
+                x = min(rowSum[i], colSum[j])
+                ans[i][j] = x
+                rowSum[i] -= x
+                colSum[j] -= x
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int[][] restoreMatrix(int[] rowSum, int[] colSum) {
+        int m = rowSum.length;
+        int n = colSum.length;
+        int[][] ans = new int[m][n];
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                int x = Math.min(rowSum[i], colSum[j]);
+                ans[i][j] = x;
+                rowSum[i] -= x;
+                colSum[j] -= x;
+            }
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<vector<int>> restoreMatrix(vector<int>& rowSum, vector<int>& colSum) {
+        int m = rowSum.size(), n = colSum.size();
+        vector<vector<int>> ans(m, vector<int>(n));
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                int x = min(rowSum[i], colSum[j]);
+                ans[i][j] = x;
+                rowSum[i] -= x;
+                colSum[j] -= x;
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func restoreMatrix(rowSum []int, colSum []int) [][]int {
+	m, n := len(rowSum), len(colSum)
+	ans := make([][]int, m)
+	for i := range ans {
+		ans[i] = make([]int, n)
+	}
+	for i := range rowSum {
+		for j := range colSum {
+			x := min(rowSum[i], colSum[j])
+			ans[i][j] = x
+			rowSum[i] -= x
+			colSum[j] -= x
+		}
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+function restoreMatrix(rowSum: number[], colSum: number[]): number[][] {
+    const m = rowSum.length;
+    const n = colSum.length;
+    const ans = Array.from(new Array(m), () => new Array(n).fill(0));
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            const x = Math.min(rowSum[i], colSum[j]);
+            ans[i][j] = x;
+            rowSum[i] -= x;
+            colSum[j] -= x;
+        }
+    }
+    return ans;
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} rowSum
+ * @param {number[]} colSum
+ * @return {number[][]}
+ */
+var restoreMatrix = function (rowSum, colSum) {
+    const m = rowSum.length;
+    const n = colSum.length;
+    const ans = Array.from(new Array(m), () => new Array(n).fill(0));
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            const x = Math.min(rowSum[i], colSum[j]);
+            ans[i][j] = x;
+            rowSum[i] -= x;
+            colSum[j] -= x;
+        }
+    }
+    return ans;
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

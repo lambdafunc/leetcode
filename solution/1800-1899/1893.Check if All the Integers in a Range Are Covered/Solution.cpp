@@ -1,17 +1,18 @@
 class Solution {
 public:
     bool isCovered(vector<vector<int>>& ranges, int left, int right) {
-        vector<int> d(52);
-        for (auto& e : ranges)
-        {
-            ++d[e[0]];
-            --d[e[1] + 1];
+        vector<int> diff(52);
+        for (auto& range : ranges) {
+            int l = range[0], r = range[1];
+            ++diff[l];
+            --diff[r + 1];
         }
         int s = 0;
-        for (int i = 0; i < d.size(); ++i)
-        {
-            s += d[i];
-            if (left <= i && i <= right && s == 0) return false;
+        for (int i = 0; i < diff.size(); ++i) {
+            s += diff[i];
+            if (s <= 0 && left <= i && i <= right) {
+                return false;
+            }
         }
         return true;
     }
