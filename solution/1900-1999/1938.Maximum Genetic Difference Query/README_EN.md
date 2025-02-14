@@ -1,8 +1,26 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1938.Maximum%20Genetic%20Difference%20Query/README_EN.md
+rating: 2502
+source: Weekly Contest 250 Q4
+tags:
+    - Bit Manipulation
+    - Depth-First Search
+    - Trie
+    - Array
+    - Hash Table
+---
+
+<!-- problem:start -->
+
 # [1938. Maximum Genetic Difference Query](https://leetcode.com/problems/maximum-genetic-difference-query)
 
 [中文文档](/solution/1900-1999/1938.Maximum%20Genetic%20Difference%20Query/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>There is a rooted tree consisting of <code>n</code> nodes numbered <code>0</code> to <code>n - 1</code>. Each node&#39;s number denotes its <strong>unique genetic value</strong> (i.e. the genetic value of node <code>x</code> is <code>x</code>). The <strong>genetic difference</strong> between two genetic values is defined as the <strong>bitwise-</strong><strong>XOR</strong> of their values. You are given the integer array <code>parents</code>, where <code>parents[i]</code> is the parent for node <code>i</code>. If node <code>x</code> is the <strong>root</strong> of the tree, then <code>parents[x] == -1</code>.</p>
 
@@ -11,8 +29,8 @@
 <p>Return <em>an array </em><code>ans</code><em> where </em><code>ans[i]</code><em> is the answer to the </em><code>i<sup>th</sup></code><em> query</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1938.Maximum%20Genetic%20Difference%20Query/images/c1.png" style="width: 118px; height: 163px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1938.Maximum%20Genetic%20Difference%20Query/images/c1.png" style="width: 118px; height: 163px;" />
 <pre>
 <strong>Input:</strong> parents = [-1,0,1,1], queries = [[0,2],[3,2],[2,5]]
 <strong>Output:</strong> [2,3,7]
@@ -22,8 +40,8 @@
 - [2,5]: The node with the maximum genetic difference is 2, with a difference of 5 XOR 2 = 7.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1938.Maximum%20Genetic%20Difference%20Query/images/c2.png" style="width: 256px; height: 221px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1938.Maximum%20Genetic%20Difference%20Query/images/c2.png" style="width: 256px; height: 221px;" />
 <pre>
 <strong>Input:</strong> parents = [3,7,-1,2,0,7,0,2], queries = [[4,6],[1,15],[0,5]]
 <strong>Output:</strong> [6,14,7]
@@ -45,26 +63,42 @@
 	<li><code>0 &lt;= val<sub>i</sub> &lt;= 2 * 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 
 ```
 
-### **Java**
+#### Java
 
 ```java
 
 ```
 
-### **...**
+#### C++
+
+```cpp
 
 ```
+
+#### Go
+
+```go
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

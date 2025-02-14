@@ -1,10 +1,23 @@
-# [1663. 具有给定数值的最小字符串](https://leetcode-cn.com/problems/smallest-string-with-a-given-numeric-value)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1663.Smallest%20String%20With%20A%20Given%20Numeric%20Value/README.md
+rating: 1460
+source: 第 216 场周赛 Q2
+tags:
+    - 贪心
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1663. 具有给定数值的最小字符串](https://leetcode.cn/problems/smallest-string-with-a-given-numeric-value)
 
 [English Version](/solution/1600-1699/1663.Smallest%20String%20With%20A%20Given%20Numeric%20Value/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p><strong>小写字符 </strong>的 <strong>数值</strong> 是它在字母表中的位置（从 <code>1</code> 开始），因此 <code>a</code> 的数值为 <code>1</code> ，<code>b</code> 的数值为 <code>2</code> ，<code>c</code> 的数值为 <code>3</code> ，以此类推。</p>
 
@@ -44,32 +57,90 @@
 	<li><code>n <= k <= 26 * n</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：贪心
+
+我们先将字符串的每个字符都初始化为 `'a'`，此时剩余的数值为 $d=k-n$。
+
+接着从后往前遍历字符串，每次贪心地将当前位置的字符替换为能够使得剩余的数字最小的字符 `'z'`，直到剩余的数字不超过 $25$。最后将剩余的数字加到我们遍历到的位置上即可。
+
+时间复杂度 $O(n)$，其中 $n$ 为字符串的长度。忽略答案的空间消耗，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def getSmallestString(self, n: int, k: int) -> str:
+        ans = ['a'] * n
+        i, d = n - 1, k - n
+        while d > 25:
+            ans[i] = 'z'
+            d -= 25
+            i -= 1
+        ans[i] = chr(ord(ans[i]) + d)
+        return ''.join(ans)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public String getSmallestString(int n, int k) {
+        char[] ans = new char[n];
+        Arrays.fill(ans, 'a');
+        int i = n - 1, d = k - n;
+        for (; d > 25; d -= 25) {
+            ans[i--] = 'z';
+        }
+        ans[i] = (char) ('a' + d);
+        return String.valueOf(ans);
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    string getSmallestString(int n, int k) {
+        string ans(n, 'a');
+        int i = n - 1, d = k - n;
+        for (; d > 25; d -= 25) {
+            ans[i--] = 'z';
+        }
+        ans[i] += d;
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func getSmallestString(n int, k int) string {
+	ans := make([]byte, n)
+	for i := range ans {
+		ans[i] = 'a'
+	}
+	i, d := n-1, k-n
+	for ; d > 25; i, d = i-1, d-25 {
+		ans[i] = 'z'
+	}
+	ans[i] += byte(d)
+	return string(ans)
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

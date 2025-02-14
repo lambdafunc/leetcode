@@ -1,22 +1,21 @@
-var p []int
-
 func findRedundantConnection(edges [][]int) []int {
-	p = make([]int, 1010)
-	for i := 0; i < len(p); i++ {
+	n := len(edges)
+	p := make([]int, n)
+	for i := range p {
 		p[i] = i
 	}
-	for _, e := range edges {
-		if find(e[0]) == find(e[1]) {
-			return e
+	var find func(int) int
+	find = func(x int) int {
+		if p[x] != x {
+			p[x] = find(p[x])
 		}
-		p[find(e[0])] = find(e[1])
+		return p[x]
 	}
-	return nil
-}
-
-func find(x int) int {
-	if p[x] != x {
-		p[x] = find(p[x])
+	for i := 0; ; i++ {
+		pa, pb := find(edges[i][0]-1), find(edges[i][1]-1)
+		if pa == pb {
+			return edges[i]
+		}
+		p[pa] = pb
 	}
-	return p[x]
 }

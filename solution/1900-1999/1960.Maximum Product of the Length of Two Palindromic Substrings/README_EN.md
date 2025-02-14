@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1960.Maximum%20Product%20of%20the%20Length%20of%20Two%20Palindromic%20Substrings/README_EN.md
+rating: 2690
+source: Biweekly Contest 58 Q4
+tags:
+    - String
+    - Hash Function
+    - Rolling Hash
+---
+
+<!-- problem:start -->
+
 # [1960. Maximum Product of the Length of Two Palindromic Substrings](https://leetcode.com/problems/maximum-product-of-the-length-of-two-palindromic-substrings)
 
 [中文文档](/solution/1900-1999/1960.Maximum%20Product%20of%20the%20Length%20of%20Two%20Palindromic%20Substrings/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a <strong>0-indexed</strong> string <code>s</code> and are tasked with finding two <strong>non-intersecting palindromic </strong>substrings of <strong>odd</strong> length such that the product of their lengths is maximized.</p>
 
@@ -13,7 +29,7 @@
 <p>A <strong>palindrome</strong> is a string that is the same forward and backward. A <strong>substring</strong> is a contiguous sequence of characters in a string.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;ababbb&quot;
@@ -21,7 +37,7 @@
 <strong>Explanation:</strong> Substrings &quot;aba&quot; and &quot;bbb&quot; are palindromes with odd length. product = 3 * 3 = 9.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;zaaaxbbby&quot;
@@ -37,26 +53,42 @@
 	<li><code>s</code> consists of lowercase English letters.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 
 ```
 
-### **Java**
+#### Java
 
 ```java
 
 ```
 
-### **...**
+#### C++
+
+```cpp
 
 ```
+
+#### Go
+
+```go
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

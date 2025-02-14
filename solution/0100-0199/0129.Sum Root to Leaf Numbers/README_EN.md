@@ -1,8 +1,22 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0129.Sum%20Root%20to%20Leaf%20Numbers/README_EN.md
+tags:
+    - Tree
+    - Depth-First Search
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
 # [129. Sum Root to Leaf Numbers](https://leetcode.com/problems/sum-root-to-leaf-numbers)
 
 [中文文档](/solution/0100-0199/0129.Sum%20Root%20to%20Leaf%20Numbers/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given the <code>root</code> of a binary tree containing digits from <code>0</code> to <code>9</code> only.</p>
 
@@ -12,13 +26,13 @@
 	<li>For example, the root-to-leaf path <code>1 -&gt; 2 -&gt; 3</code> represents the number <code>123</code>.</li>
 </ul>
 
-<p>Return <em>the total sum of all root-to-leaf numbers</em>.</p>
+<p>Return <em>the total sum of all root-to-leaf numbers</em>. Test cases are generated so that the answer will fit in a <strong>32-bit</strong> integer.</p>
 
 <p>A <strong>leaf</strong> node is a node with no children.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0129.Sum%20Root%20to%20Leaf%20Numbers/images/num1tree.jpg" style="width: 212px; height: 182px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0129.Sum%20Root%20to%20Leaf%20Numbers/images/num1tree.jpg" style="width: 212px; height: 182px;" />
 <pre>
 <strong>Input:</strong> root = [1,2,3]
 <strong>Output:</strong> 25
@@ -28,8 +42,8 @@ The root-to-leaf path <code>1-&gt;3</code> represents the number <code>13</code>
 Therefore, sum = 12 + 13 = <code>25</code>.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0129.Sum%20Root%20to%20Leaf%20Numbers/images/num2tree.jpg" style="width: 292px; height: 302px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0129.Sum%20Root%20to%20Leaf%20Numbers/images/num2tree.jpg" style="width: 292px; height: 302px;" />
 <pre>
 <strong>Input:</strong> root = [4,9,0,5,1]
 <strong>Output:</strong> 1026
@@ -49,13 +63,28 @@ Therefore, sum = 495 + 491 + 40 = <code>1026</code>.
 	<li>The depth of the tree will not exceed <code>10</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-DFS.
+<!-- solution:start -->
+
+### Solution 1: DFS
+
+We can design a function $dfs(root, s)$, which represents the sum of all path numbers from the current node $root$ to the leaf nodes, given that the current path number is $s$. The answer is $dfs(root, 0)$.
+
+The calculation of the function $dfs(root, s)$ is as follows:
+
+-   If the current node $root$ is null, return $0$.
+-   Otherwise, add the value of the current node to $s$, i.e., $s = s \times 10 + root.val$.
+-   If the current node is a leaf node, return $s$.
+-   Otherwise, return $dfs(root.left, s) + dfs(root.right, s)$.
+
+The time complexity is $O(n)$, and the space complexity is $O(\log n)$. Here, $n$ is the number of nodes in the binary tree.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -65,11 +94,11 @@ DFS.
 #         self.left = left
 #         self.right = right
 class Solution:
-    def sumNumbers(self, root: TreeNode) -> int:
-        def dfs(root, presum):
+    def sumNumbers(self, root: Optional[TreeNode]) -> int:
+        def dfs(root, s):
             if root is None:
                 return 0
-            s = 10 * presum + root.val
+            s = s * 10 + root.val
             if root.left is None and root.right is None:
                 return s
             return dfs(root.left, s) + dfs(root.right, s)
@@ -77,7 +106,7 @@ class Solution:
         return dfs(root, 0)
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -100,11 +129,11 @@ class Solution {
         return dfs(root, 0);
     }
 
-    private int dfs(TreeNode root, int presum) {
+    private int dfs(TreeNode root, int s) {
         if (root == null) {
             return 0;
         }
-        int s = presum * 10 + root.val;
+        s = s * 10 + root.val;
         if (root.left == null && root.right == null) {
             return s;
         }
@@ -113,7 +142,62 @@ class Solution {
 }
 ```
 
-### **TypeScript**
+#### C++
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int sumNumbers(TreeNode* root) {
+        function<int(TreeNode*, int)> dfs = [&](TreeNode* root, int s) -> int {
+            if (!root) return 0;
+            s = s * 10 + root->val;
+            if (!root->left && !root->right) return s;
+            return dfs(root->left, s) + dfs(root->right, s);
+        };
+        return dfs(root, 0);
+    }
+};
+```
+
+#### Go
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func sumNumbers(root *TreeNode) int {
+	var dfs func(*TreeNode, int) int
+	dfs = func(root *TreeNode, s int) int {
+		if root == nil {
+			return 0
+		}
+		s = s*10 + root.Val
+		if root.Left == nil && root.Right == nil {
+			return s
+		}
+		return dfs(root.Left, s) + dfs(root.Right, s)
+	}
+	return dfs(root, 0)
+}
+```
+
+#### TypeScript
 
 ```ts
 /**
@@ -131,77 +215,114 @@ class Solution {
  */
 
 function sumNumbers(root: TreeNode | null): number {
-    return dfs(root);
-}
-
-function dfs(root: TreeNode | null, preSum: number = 0): number {
-    if (!root) return 0;
-    preSum = preSum * 10 + root.val;
-    if (!root.left && !root.right) return preSum;
-    return dfs(root.left, preSum) + dfs(root.right, preSum);
+    function dfs(root: TreeNode | null, s: number): number {
+        if (!root) return 0;
+        s = s * 10 + root.val;
+        if (!root.left && !root.right) return s;
+        return dfs(root.left, s) + dfs(root.right, s);
+    }
+    return dfs(root, 0);
 }
 ```
 
-### **C++**
+#### Rust
 
-```cpp
+```rust
+// Definition for a binary tree node.
+// #[derive(Debug, PartialEq, Eq)]
+// pub struct TreeNode {
+//   pub val: i32,
+//   pub left: Option<Rc<RefCell<TreeNode>>>,
+//   pub right: Option<Rc<RefCell<TreeNode>>>,
+// }
+//
+// impl TreeNode {
+//   #[inline]
+//   pub fn new(val: i32) -> Self {
+//     TreeNode {
+//       val,
+//       left: None,
+//       right: None
+//     }
+//   }
+// }
+use std::cell::RefCell;
+use std::rc::Rc;
+impl Solution {
+    fn dfs(node: &Option<Rc<RefCell<TreeNode>>>, mut num: i32) -> i32 {
+        if node.is_none() {
+            return 0;
+        }
+        let node = node.as_ref().unwrap().borrow();
+        num = num * 10 + node.val;
+        if node.left.is_none() && node.right.is_none() {
+            return num;
+        }
+        Self::dfs(&node.left, num) + Self::dfs(&node.right, num)
+    }
+
+    pub fn sum_numbers(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
+        Self::dfs(&root, 0)
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var sumNumbers = function (root) {
+    function dfs(root, s) {
+        if (!root) return 0;
+        s = s * 10 + root.val;
+        if (!root.left && !root.right) return s;
+        return dfs(root.left, s) + dfs(root.right, s);
+    }
+    return dfs(root, 0);
+};
+```
+
+#### C
+
+```c
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
  *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
  * };
  */
-class Solution {
-public:
-    int sumNumbers(TreeNode *root) {
-        return dfs(root, 0);
-    }
 
-    int dfs(TreeNode *root, int presum) {
-        if (!root) return 0;
-        int s = presum * 10 + root->val;
-        if (!root->left && !root->right) return s;
-        return dfs(root->left, s) + dfs(root->right, s);
+int dfs(struct TreeNode* root, int num) {
+    if (!root) {
+        return 0;
     }
-};
-```
-
-### **Go**
-
-```go
-/**
- * Definition for a binary tree node.
- * type TreeNode struct {
- *     Val int
- *     Left *TreeNode
- *     Right *TreeNode
- * }
- */
-func sumNumbers(root *TreeNode) int {
-    var dfs func(root *TreeNode, presum int) int
-    dfs = func(root *TreeNode, presum int) int {
-        if root == nil {
-            return 0
-        }
-        presum = presum * 10 + root.Val
-        if root.Left == nil && root.Right == nil {
-            return presum
-        }
-        return dfs(root.Left, presum) + dfs(root.Right, presum)
+    num = num * 10 + root->val;
+    if (!root->left && !root->right) {
+        return num;
     }
-    return dfs(root, 0)
+    return dfs(root->left, num) + dfs(root->right, num);
+}
+
+int sumNumbers(struct TreeNode* root) {
+    return dfs(root, 0);
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

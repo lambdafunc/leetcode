@@ -1,10 +1,25 @@
-# [1086. 前五科的均分](https://leetcode-cn.com/problems/high-five)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1086.High%20Five/README.md
+rating: 1327
+source: 第 2 场双周赛 Q2
+tags:
+    - 数组
+    - 哈希表
+    - 排序
+    - 堆（优先队列）
+---
+
+<!-- problem:start -->
+
+# [1086. 前五科的均分 🔒](https://leetcode.cn/problems/high-five)
 
 [English Version](/solution/1000-1099/1086.High%20Five/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个不同学生的分数列表 <code>items</code>，其中 <code>items[i] = [ID<sub>i</sub>, score<sub>i</sub>]</code> 表示 <code>ID<sub>i</sub></code> 的学生的一科分数，你需要计算每个学生 <strong>最高的五科 </strong>成绩的 <strong>平均分</strong>。</p>
 
@@ -43,38 +58,39 @@ ID = 2 的学生分数为 93、97、77、100 和 76 。前五科的平均分 (10
 	<li>对于每个 <code>ID<sub>i</sub></code>，<strong>至少</strong> 存在五个分数</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-“桶排序 + 小根堆”实现。
+### 方法一：排序
+
+我们先用一个哈希表或数组 $d$ 记录每个学生的分数列表，然后从小到大遍历学生的编号，对于每个学生，我们将他的分数列表排序，然后取最高的五个分数求平均值即可。
+
+时间复杂度 $O(n \log n)$，空间复杂度 $O(n)$。其中 $n$ 是学生的数量。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def highFive(self, items: List[List[int]]) -> List[List[int]]:
-        s = [None] * 101
-        for i, score in items:
-            if s[i] is None:
-                s[i] = []
-            s[i].append(score)
-        res = []
-        for i, scores in enumerate(s):
-            if scores is None:
-                continue
-            avg = sum(heapq.nlargest(5, scores)) // 5
-            res.append([i, avg])
-        return res
+        d = defaultdict(list)
+        m = 0
+        for i, x in items:
+            d[i].append(x)
+            m = max(m, i)
+        ans = []
+        for i in range(1, m + 1):
+            if xs := d[i]:
+                avg = sum(nlargest(5, xs)) // 5
+                ans.append([i, avg])
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -116,10 +132,80 @@ class Solution {
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<vector<int>> highFive(vector<vector<int>>& items) {
+        vector<int> d[1001];
+        for (auto& item : items) {
+            int i = item[0], x = item[1];
+            d[i].push_back(x);
+        }
+        vector<vector<int>> ans;
+        for (int i = 1; i <= 1000; ++i) {
+            if (!d[i].empty()) {
+                sort(d[i].begin(), d[i].end(), greater<int>());
+                int s = 0;
+                for (int j = 0; j < 5; ++j) {
+                    s += d[i][j];
+                }
+                ans.push_back({i, s / 5});
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func highFive(items [][]int) (ans [][]int) {
+	d := make([][]int, 1001)
+	for _, item := range items {
+		i, x := item[0], item[1]
+		d[i] = append(d[i], x)
+	}
+	for i := 1; i <= 1000; i++ {
+		if len(d[i]) > 0 {
+			sort.Ints(d[i])
+			s := 0
+			for j := len(d[i]) - 1; j >= len(d[i])-5; j-- {
+				s += d[i][j]
+			}
+			ans = append(ans, []int{i, s / 5})
+		}
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+function highFive(items: number[][]): number[][] {
+    const d: number[][] = Array(1001)
+        .fill(0)
+        .map(() => Array(0));
+    for (const [i, x] of items) {
+        d[i].push(x);
+    }
+    const ans: number[][] = [];
+    for (let i = 1; i <= 1000; ++i) {
+        if (d[i].length > 0) {
+            d[i].sort((a, b) => b - a);
+            const s = d[i].slice(0, 5).reduce((a, b) => a + b);
+            ans.push([i, Math.floor(s / 5)]);
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

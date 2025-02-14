@@ -1,6 +1,16 @@
-# [面试题 12. 矩阵中的路径](https://leetcode-cn.com/problems/ju-zhen-zhong-de-lu-jing-lcof/)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9812.%20%E7%9F%A9%E9%98%B5%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 12. 矩阵中的路径](https://leetcode.cn/problems/ju-zhen-zhong-de-lu-jing-lcof/)
 
 ## 题目描述
+
+<!-- description:start -->
 
 <p>给定一个 <code>m x n</code> 二维字符网格 <code>board</code> 和一个字符串单词 <code>word</code> 。如果 <code>word</code> 存在于网格中，返回 <code>true</code> ；否则，返回 <code>false</code> 。</p>
 
@@ -10,7 +20,7 @@
 
 <p>例如，在下面的 3×4 的矩阵中包含单词 "ABCCED"（单词中的字母已标出）。</p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9812.%20%E7%9F%A9%E9%98%B5%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84/images/word2.jpg" style="width: 322px; height: 242px;" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9812.%20%E7%9F%A9%E9%98%B5%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84/images/word2.jpg" style="width: 322px; height: 242px;" /></p>
 
 <p> </p>
 
@@ -40,15 +50,31 @@
 
 <p> </p>
 
-<p><strong>注意：</strong>本题与主站 79 题相同：<a href="https://leetcode-cn.com/problems/word-search/">https://leetcode-cn.com/problems/word-search/</a></p>
+<p><strong>注意：</strong>本题与主站 79 题相同：<a href="https://leetcode.cn/problems/word-search/">https://leetcode.cn/problems/word-search/</a></p>
+
+<!-- description:end -->
 
 ## 解法
 
-深度优先搜索 DFS 解决。
+<!-- solution:start -->
+
+### 方法一：枚举 + DFS
+
+我们可以枚举矩阵的每个位置 $(i, j)$，以该位置为起点，采用深度优先搜索的方法寻找字符串 `word` 的路径。如果找到了一条路径，即可返回 `true`，否则在枚举完所有的位置后，返回 `false`。
+
+那么问题的转换为如何采用深度优先搜索的方法寻找字符串 `word` 的路径。我们可以设计一个函数 $dfs(i, j, k)$，表示从位置 $(i, j)$ 开始，且当前将要匹配的字符为 `word[k]` 的情况下，是否能够找到字符串 `word` 的路径。如果能找到，返回 `true`，否则返回 `false`。
+
+函数 $dfs(i, j, k)$ 的执行流程如下：
+
+-   如果当前字符 `word[k]` 已经匹配到字符串 `word` 的末尾，说明已经找到了字符串 `word` 的路径，返回 `true`。
+-   如果当前位置 $(i, j)$ 超出矩阵边界，或者当前位置的字符与 `word[k]` 不同，说明当前位置不在字符串 `word` 的路径上，返回 `false`。
+-   否则，我们将当前位置的字符标记为已访问（防止重复搜索），然后分别向当前位置的上、下、左、右四个方向继续匹配字符 `word[k + 1]`，只要有一条路径能够匹配到字符串 `word` 的路径，就说明能够找到字符串 `word` 的路径，返回 `true`。在回溯时，我们要将当前位置的字符还原为未访问过的状态。
+
+时间复杂度 $O(m \times n \times 3^k)$，空间复杂度 $O(m \times n)$。其中 $m$ 和 $n$ 分别为矩阵的行数和列数，而 $k$ 为字符串 `word` 的长度。我们需要枚举矩阵中的每个位置，然后对于每个位置，我们最多需要搜索三个方向。
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -56,10 +82,11 @@ class Solution:
         def dfs(i, j, k):
             if k == len(word):
                 return True
-            if i < 0 or i >= m or j < 0 or j >= n or word[k] != board[i][j]:
+            if i < 0 or i >= m or j < 0 or j >= n or board[i][j] != word[k]:
                 return False
-            board[i][j] = ''
-            ans = any(dfs(i + a, j + b, k + 1) for a, b in [[0, -1], [0, 1], [1, 0], [-1, 0]])
+            board[i][j] = ""
+            dirs = (-1, 0, 1, 0, -1)
+            ans = any(dfs(i + a, j + b, k + 1) for a, b in pairwise(dirs))
             board[i][j] = word[k]
             return ans
 
@@ -67,7 +94,7 @@ class Solution:
         return any(dfs(i, j, 0) for i in range(m) for j in range(n))
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -110,45 +137,42 @@ class Solution {
 }
 ```
 
-### **JavaScript**
+#### C++
 
-```js
-/**
- * @param {character[][]} board
- * @param {string} word
- * @return {boolean}
- */
-var exist = function (board, word) {
-    const m = board.length;
-    const n = board[0].length;
-    let dfs = function (i, j, k) {
-        if (k == word.length) {
-            return true;
-        }
-        if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] != word[k]) {
-            return false;
-        }
-        board[i][j] = ' ';
-        let ans = false;
-        let dirs = [-1, 0, 1, 0, -1];
-        for (let l = 0; l < 4; ++l) {
-            ans = ans || dfs(i + dirs[l], j + dirs[l + 1], k + 1);
-        }
-        board[i][j] = word[k];
-        return ans;
-    };
-    for (let i = 0; i < m; ++i) {
-        for (let j = 0; j < n; ++j) {
-            if (dfs(i, j, 0)) {
+```cpp
+class Solution {
+public:
+    bool exist(vector<vector<char>>& board, string word) {
+        int m = board.size(), n = board[0].size();
+        int dirs[5] = {-1, 0, 1, 0, -1};
+        function<bool(int, int, int)> dfs = [&](int i, int j, int k) -> bool {
+            if (k == word.size()) {
                 return true;
             }
+            if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] != word[k]) {
+                return false;
+            }
+            board[i][j] = '.';
+            bool ans = 0;
+            for (int l = 0; l < 4; ++l) {
+                ans |= dfs(i + dirs[l], j + dirs[l + 1], k + 1);
+            }
+            board[i][j] = word[k];
+            return ans;
+        };
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (dfs(i, j, 0)) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
-    return false;
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func exist(board [][]byte, word string) bool {
@@ -181,57 +205,25 @@ func exist(board [][]byte, word string) bool {
 }
 ```
 
-### **C++**
-
-```cpp
-class Solution {
-public:
-    bool exist(vector<vector<char>>& board, string word) {
-        for (int i = 0; i < board.size(); ++i)
-            for (int j = 0; j < board[0].size(); ++j)
-                if (dfs(i, j, 0, board, word))
-                    return 1;
-        return 0;
-    }
-
-    bool dfs(int i, int j, int k, vector<vector<char>>& board, string word) {
-        if (k == word.size()) return 1;
-        if (i < 0 || i >= board.size() || j < 0 || j >= board[0].size() || board[i][j] != word[k]) return 0;
-        vector<int> dirs = {-1, 0, 1, 0, -1};
-        board[i][j] = ' ';
-        bool ans = 0;
-        for (int l = 0; l < 4; ++l)
-            ans = ans || dfs(i + dirs[l], j + dirs[l + 1], k + 1, board, word);
-        board[i][j] = word[k];
-        return ans;
-    }
-};
-```
-
-### **TypeScript**
+#### TypeScript
 
 ```ts
 function exist(board: string[][], word: string): boolean {
     const m = board.length;
     const n = board[0].length;
-    const dfs = (y: number, x: number, i: number) => {
-        if (i === word.length) {
-            return true;
-        }
-        if ((board[y] || [])[x] !== word[i]) {
+    const dfs = (i: number, j: number, k: number) => {
+        if ((board[i] ?? [])[j] !== word[k]) {
             return false;
         }
-        const temp = board[y][x];
-        board[y][x] = '';
-        if (
-            dfs(y + 1, x, i + 1) ||
-            dfs(y, x + 1, i + 1) ||
-            dfs(y - 1, x, i + 1) ||
-            dfs(y, x - 1, i + 1)
-        ) {
+        if (++k === word.length) {
             return true;
         }
-        board[y][x] = temp;
+        const temp = board[i][j];
+        board[i][j] = ' ';
+        if (dfs(i + 1, j, k) || dfs(i, j + 1, k) || dfs(i - 1, j, k) || dfs(i, j - 1, k)) {
+            return true;
+        }
+        board[i][j] = temp;
         return false;
     };
     for (let i = 0; i < m; i++) {
@@ -245,27 +237,34 @@ function exist(board: string[][], word: string): boolean {
 }
 ```
 
-### **Rust**
+#### Rust
 
 ```rust
 impl Solution {
-    fn dfs(board: &mut Vec<Vec<char>>, chars: &Vec<char>, y: usize, x: usize, i: usize) -> bool {
-        if board[y][x] != chars[i] {
+    fn dfs(
+        board: &mut Vec<Vec<char>>,
+        chars: &Vec<char>,
+        i: usize,
+        j: usize,
+        mut k: usize,
+    ) -> bool {
+        if board[i][j] != chars[k] {
             return false;
         }
-        if i + 1 == chars.len() {
+        k += 1;
+        if k == chars.len() {
             return true;
         }
-        let temp = board[y][x];
-        board[y][x] = ' ';
-        if y != 0 && Solution::dfs(board, chars, y - 1, x, i + 1)
-            || x != 0 && Solution::dfs(board, chars, y, x - 1, i + 1)
-            || y != board.len() - 1 && Solution::dfs(board, chars, y + 1, x, i + 1)
-            || x != board[0].len() - 1 && Solution::dfs(board, chars, y, x + 1, i + 1)
+        let temp = board[i][j];
+        board[i][j] = ' ';
+        if (i != 0 && Self::dfs(board, chars, i - 1, j, k))
+            || (j != 0 && Self::dfs(board, chars, i, j - 1, k))
+            || (i != board.len() - 1 && Self::dfs(board, chars, i + 1, j, k))
+            || (j != board[0].len() - 1 && Self::dfs(board, chars, i, j + 1, k))
         {
             return true;
         }
-        board[y][x] = temp;
+        board[i][j] = temp;
         false
     }
 
@@ -275,7 +274,7 @@ impl Solution {
         let chars = word.chars().collect::<Vec<char>>();
         for i in 0..m {
             for j in 0..n {
-                if Solution::dfs(&mut board, &chars, i, j, 0) {
+                if Self::dfs(&mut board, &chars, i, j, 0) {
                     return true;
                 }
             }
@@ -285,10 +284,149 @@ impl Solution {
 }
 ```
 
-### **...**
+#### JavaScript
 
+```js
+/**
+ * @param {character[][]} board
+ * @param {string} word
+ * @return {boolean}
+ */
+var exist = function (board, word) {
+    const m = board.length;
+    const n = board[0].length;
+    const dirs = [-1, 0, 1, 0, -1];
+    const dfs = (i, j, k) => {
+        if (k == word.length) {
+            return true;
+        }
+        if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] != word[k]) {
+            return false;
+        }
+        board[i][j] = ' ';
+        let ans = false;
+        for (let l = 0; l < 4; ++l) {
+            ans = ans || dfs(i + dirs[l], j + dirs[l + 1], k + 1);
+        }
+        board[i][j] = word[k];
+        return ans;
+    };
+    for (let i = 0; i < m; ++i) {
+        for (let j = 0; j < n; ++j) {
+            if (dfs(i, j, 0)) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
 ```
 
+#### C#
+
+```cs
+public class Solution {
+    private char[][] board;
+    private string word;
+    private int m;
+    private int n;
+
+    public bool Exist(char[][] board, string word) {
+        m = board.Length;
+        n = board[0].Length;
+        this.board = board;
+        this.word = word;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (dfs(i, j, 0)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private bool dfs(int i, int j, int k) {
+        if (k == word.Length) {
+            return true;
+        }
+        if (i < 0 || i >= m || j < 0 || j >= n || word[k] != board[i][j]) {
+            return false;
+        }
+        board[i][j] = ' ';
+        int[] dirs = {-1, 0, 1, 0, -1};
+        bool ans = false;
+        for (int l = 0; l < 4; ++l) {
+            ans = ans || dfs(i + dirs[l], j + dirs[l + 1], k + 1);
+        }
+        board[i][j] = word[k];
+        return ans;
+    }
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    private var board: [[Character]]
+    private var word: String
+    private var m: Int
+    private var n: Int
+
+    init() {
+        self.board = []
+        self.word = ""
+        self.m = 0
+        self.n = 0
+    }
+
+    func exist(_ board: [[Character]], _ word: String) -> Bool {
+        self.board = board
+        self.word = word
+        m = board.count
+        n = board[0].count
+
+        for i in 0..<m {
+            for j in 0..<n {
+                if dfs(i, j, 0) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private func dfs(_ i: Int, _ j: Int, _ k: Int) -> Bool {
+        if k == word.count {
+            return true
+        }
+        if i < 0 || i >= m || j < 0 || j >= n || board[i][j] != word[word.index(word.startIndex, offsetBy: k)] {
+            return false
+        }
+
+        let temp = board[i][j]
+        board[i][j] = " "
+        let dirs = [-1, 0, 1, 0, -1]
+        var ans = false
+
+        for l in 0..<4 {
+            let ni = i + dirs[l]
+            let nj = j + dirs[l + 1]
+            if dfs(ni, nj, k + 1) {
+                ans = true
+                break
+            }
+        }
+
+        board[i][j] = temp
+        return ans
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

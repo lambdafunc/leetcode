@@ -1,15 +1,20 @@
 function maxVowels(s: string, k: number): number {
-    const n = s.length;
-    let ans = 0;
-    let preSum = new Array(n).fill(0);
+    const vowels = new Set(['a', 'e', 'i', 'o', 'u']);
     let cnt = 0;
-    for (let i = 0; i < n && ans != k; i++) {
-        let char = s.charAt(i);
-        if (['a', 'e', 'i', 'o', 'u'].includes(char)) {
+    for (let i = 0; i < k; i++) {
+        if (vowels.has(s[i])) {
             cnt++;
         }
-        preSum[i] = cnt;
-        ans = Math.max(i < k ? cnt : preSum[i] - preSum[i - k], ans);
+    }
+    let ans = cnt;
+    for (let i = k; i < s.length; i++) {
+        if (vowels.has(s[i])) {
+            cnt++;
+        }
+        if (vowels.has(s[i - k])) {
+            cnt--;
+        }
+        ans = Math.max(ans, cnt);
     }
     return ans;
-};
+}

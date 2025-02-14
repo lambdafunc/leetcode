@@ -1,15 +1,10 @@
-func largestAltitude(gain []int) int {
-	res, t := 0, 0
-	for _, h := range gain {
-		t += h
-		res = max(res, t)
+func largestAltitude(gain []int) (ans int) {
+	h := 0
+	for _, v := range gain {
+		h += v
+		if ans < h {
+			ans = h
+		}
 	}
-	return res
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return
 }

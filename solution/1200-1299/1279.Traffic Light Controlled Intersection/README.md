@@ -1,14 +1,24 @@
-# [1279. 红绿灯路口](https://leetcode-cn.com/problems/traffic-light-controlled-intersection)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1200-1299/1279.Traffic%20Light%20Controlled%20Intersection/README.md
+tags:
+    - 多线程
+---
+
+<!-- problem:start -->
+
+# [1279. 红绿灯路口 🔒](https://leetcode.cn/problems/traffic-light-controlled-intersection)
 
 [English Version](/solution/1200-1299/1279.Traffic%20Light%20Controlled%20Intersection/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>这是两条路的交叉路口。第一条路是 A 路，车辆可沿&nbsp;1 号方向由北向南行驶，也可沿&nbsp;2 号方向由南向北行驶。第二条路是 B 路，车辆可沿&nbsp;3 号方向由西向东行驶，也可沿 4 号方向由东向西行驶。</p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1279.Traffic%20Light%20Controlled%20Intersection/images/exp.png" style="height:417px; width:600px" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1279.Traffic%20Light%20Controlled%20Intersection/images/exp.png" style="height:417px; width:600px" /></p>
 
 <p>每条路在路口前都有一个红绿灯。红绿灯可以亮起红灯或绿灯。</p>
 
@@ -81,16 +91,72 @@
 	<li><code>arrivalTimes</code> 是非递减的。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **SQL**
+#### Python3
 
-```sql
+```python
+from threading import Lock
 
+
+class TrafficLight:
+    def __init__(self):
+        self.lock = Lock()
+        self.road = 1
+
+    def carArrived(
+        self,
+        carId: int,  # ID of the car
+        # ID of the road the car travels on. Can be 1 (road A) or 2 (road B)
+        roadId: int,
+        direction: int,  # Direction of the car
+        # Use turnGreen() to turn light to green on current road
+        turnGreen: 'Callable[[], None]',
+        # Use crossCar() to make car cross the intersection
+        crossCar: 'Callable[[], None]',
+    ) -> None:
+        self.lock.acquire()
+        if self.road != roadId:
+            self.road = roadId
+            turnGreen()
+        crossCar()
+        self.lock.release()
+```
+
+#### Java
+
+```java
+class TrafficLight {
+    private int road = 1;
+
+    public TrafficLight() {
+    }
+
+    public synchronized void carArrived(int carId, // ID of the car
+        int roadId, // ID of the road the car travels on. Can be 1 (road A) or 2 (road B)
+        int direction, // Direction of the car
+        Runnable turnGreen, // Use turnGreen.run() to turn light to green on current road
+        Runnable crossCar // Use crossCar.run() to make car cross the intersection
+    ) {
+        if (roadId != road) {
+            turnGreen.run();
+            road = roadId;
+        }
+        crossCar.run();
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

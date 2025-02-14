@@ -1,19 +1,40 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0150.Evaluate%20Reverse%20Polish%20Notation/README_EN.md
+tags:
+    - Stack
+    - Array
+    - Math
+---
+
+<!-- problem:start -->
+
 # [150. Evaluate Reverse Polish Notation](https://leetcode.com/problems/evaluate-reverse-polish-notation)
 
 [中文文档](/solution/0100-0199/0150.Evaluate%20Reverse%20Polish%20Notation/README.md)
 
 ## Description
 
-<p>Evaluate the value of an arithmetic expression in <a href="http://en.wikipedia.org/wiki/Reverse_Polish_notation" target="_blank">Reverse Polish Notation</a>.</p>
+<!-- description:start -->
 
-<p>Valid operators are <code>+</code>, <code>-</code>, <code>*</code>, and <code>/</code>. Each operand may be an integer or another expression.</p>
+<p>You are given an array of strings <code>tokens</code> that represents an arithmetic expression in a <a href="http://en.wikipedia.org/wiki/Reverse_Polish_notation" target="_blank">Reverse Polish Notation</a>.</p>
 
-<p><strong>Note</strong> that division between two integers should truncate toward zero.</p>
+<p>Evaluate the expression. Return <em>an integer that represents the value of the expression</em>.</p>
 
-<p>It is guaranteed that the given RPN expression is always valid. That means the expression would always evaluate to a result, and there will not be any division by zero operation.</p>
+<p><strong>Note</strong> that:</p>
+
+<ul>
+	<li>The valid operators are <code>&#39;+&#39;</code>, <code>&#39;-&#39;</code>, <code>&#39;*&#39;</code>, and <code>&#39;/&#39;</code>.</li>
+	<li>Each operand may be an integer or another expression.</li>
+	<li>The division between two integers always <strong>truncates toward zero</strong>.</li>
+	<li>There will not be any division by zero.</li>
+	<li>The input represents a valid arithmetic expression in a reverse polish notation.</li>
+	<li>The answer and all the intermediate calculations can be represented in a <strong>32-bit</strong> integer.</li>
+</ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> tokens = [&quot;2&quot;,&quot;1&quot;,&quot;+&quot;,&quot;3&quot;,&quot;*&quot;]
@@ -21,7 +42,7 @@
 <strong>Explanation:</strong> ((2 + 1) * 3) = 9
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> tokens = [&quot;4&quot;,&quot;13&quot;,&quot;5&quot;,&quot;/&quot;,&quot;+&quot;]
@@ -29,7 +50,7 @@
 <strong>Explanation:</strong> (4 + (13 / 5)) = 6
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> tokens = [&quot;10&quot;,&quot;6&quot;,&quot;9&quot;,&quot;3&quot;,&quot;+&quot;,&quot;-11&quot;,&quot;*&quot;,&quot;/&quot;,&quot;*&quot;,&quot;17&quot;,&quot;+&quot;,&quot;5&quot;,&quot;+&quot;]
@@ -51,14 +72,21 @@
 	<li><code>tokens[i]</code> is either an operator: <code>&quot;+&quot;</code>, <code>&quot;-&quot;</code>, <code>&quot;*&quot;</code>, or <code>&quot;/&quot;</code>, or an integer in the range <code>[-200, 200]</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 import operator
+
 
 class Solution:
     def evalRPN(self, tokens: List[str]) -> int:
@@ -66,7 +94,7 @@ class Solution:
             "+": operator.add,
             "-": operator.sub,
             "*": operator.mul,
-            "/": operator.truediv
+            "/": operator.truediv,
         }
         s = []
         for token in tokens:
@@ -77,27 +105,7 @@ class Solution:
         return s[0]
 ```
 
-```python
-class Solution:
-    def evalRPN(self, tokens: List[str]) -> int:
-        nums = []
-        for t in tokens:
-            if len(t) > 1 or t.isdigit():
-                nums.append(int(t))
-            else:
-                if t == "+":
-                    nums[-2] += nums[-1]
-                elif t == "-":
-                    nums[-2] -= nums[-1]
-                elif t == "*":
-                    nums[-2] *= nums[-1]
-                else:
-                    nums[-2] = int(nums[-2] / nums[-1])
-                nums.pop()
-        return nums[0]
-```
-
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -110,18 +118,18 @@ class Solution {
                 int y = stk.pop();
                 int x = stk.pop();
                 switch (t) {
-                    case "+":
-                        stk.push(x + y);
-                        break;
-                    case "-":
-                        stk.push(x - y);
-                        break;
-                    case "*":
-                        stk.push(x * y);
-                        break;
-                    default:
-                        stk.push(x / y);
-                        break;
+                case "+":
+                    stk.push(x + y);
+                    break;
+                case "-":
+                    stk.push(x - y);
+                    break;
+                case "*":
+                    stk.push(x * y);
+                    break;
+                default:
+                    stk.push(x / y);
+                    break;
                 }
             }
         }
@@ -130,7 +138,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -138,20 +146,21 @@ public:
     int evalRPN(vector<string>& tokens) {
         stack<int> stk;
         for (auto& t : tokens) {
-            if (t.size() > 1 || isdigit(t[0]))
-            {
+            if (t.size() > 1 || isdigit(t[0])) {
                 stk.push(stoi(t));
-            }
-            else
-            {
+            } else {
                 int y = stk.top();
                 stk.pop();
                 int x = stk.top();
                 stk.pop();
-                if (t[0] == '+') stk.push(x + y);
-                else if (t[0] == '-') stk.push(x - y);
-                else if (t[0] == '*') stk.push(x * y);
-                else stk.push(x / y);
+                if (t[0] == '+')
+                    stk.push(x + y);
+                else if (t[0] == '-')
+                    stk.push(x - y);
+                else if (t[0] == '*')
+                    stk.push(x * y);
+                else
+                    stk.push(x / y);
             }
         }
         return stk.top();
@@ -159,7 +168,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func evalRPN(tokens []string) int {
@@ -193,10 +202,133 @@ func popInt(stack *arraystack.Stack) int {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function evalRPN(tokens: string[]): number {
+    const stack = [];
+    for (const token of tokens) {
+        if (/\d/.test(token)) {
+            stack.push(Number(token));
+        } else {
+            const a = stack.pop();
+            const b = stack.pop();
+            switch (token) {
+                case '+':
+                    stack.push(b + a);
+                    break;
+                case '-':
+                    stack.push(b - a);
+                    break;
+                case '*':
+                    stack.push(b * a);
+                    break;
+                case '/':
+                    stack.push(~~(b / a));
+                    break;
+            }
+        }
+    }
+    return stack[0];
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn eval_rpn(tokens: Vec<String>) -> i32 {
+        let mut stack = vec![];
+        for token in tokens {
+            match token.parse() {
+                Ok(num) => stack.push(num),
+                Err(_) => {
+                    let a = stack.pop().unwrap();
+                    let b = stack.pop().unwrap();
+                    stack.push(match token.as_str() {
+                        "+" => b + a,
+                        "-" => b - a,
+                        "*" => b * a,
+                        "/" => b / a,
+                        _ => 0,
+                    });
+                }
+            }
+        }
+        stack[0]
+    }
+}
+```
+
+#### C#
+
+```cs
+using System.Collections.Generic;
+
+public class Solution {
+    public int EvalRPN(string[] tokens) {
+        var stack = new Stack<int>();
+        foreach (var token in tokens)
+        {
+            switch (token)
+            {
+                case "+":
+                    stack.Push(stack.Pop() + stack.Pop());
+                    break;
+                case "-":
+                    stack.Push(-stack.Pop() + stack.Pop());
+                    break;
+                case "*":
+                    stack.Push(stack.Pop() * stack.Pop());
+                    break;
+                case "/":
+                    var right = stack.Pop();
+                    stack.Push(stack.Pop() / right);
+                    break;
+                default:
+                    stack.Push(int.Parse(token));
+                    break;
+            }
+        }
+        return stack.Pop();
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def evalRPN(self, tokens: List[str]) -> int:
+        nums = []
+        for t in tokens:
+            if len(t) > 1 or t.isdigit():
+                nums.append(int(t))
+            else:
+                if t == "+":
+                    nums[-2] += nums[-1]
+                elif t == "-":
+                    nums[-2] -= nums[-1]
+                elif t == "*":
+                    nums[-2] *= nums[-1]
+                else:
+                    nums[-2] = int(nums[-2] / nums[-1])
+                nums.pop()
+        return nums[0]
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

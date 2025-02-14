@@ -1,24 +1,39 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1404.Number%20of%20Steps%20to%20Reduce%20a%20Number%20in%20Binary%20Representation%20to%20One/README_EN.md
+rating: 1396
+source: Weekly Contest 183 Q2
+tags:
+    - Bit Manipulation
+    - String
+---
+
+<!-- problem:start -->
+
 # [1404. Number of Steps to Reduce a Number in Binary Representation to One](https://leetcode.com/problems/number-of-steps-to-reduce-a-number-in-binary-representation-to-one)
 
 [中文文档](/solution/1400-1499/1404.Number%20of%20Steps%20to%20Reduce%20a%20Number%20in%20Binary%20Representation%20to%20One/README.md)
 
 ## Description
 
-<p>Given a number&nbsp;<code>s</code> in their binary representation. Return the number of steps to reduce it to 1 under the following rules:</p>
+<!-- description:start -->
+
+<p>Given the binary representation of an integer as a string <code>s</code>, return <em>the number of steps to reduce it to </em><code>1</code><em> under the following rules</em>:</p>
 
 <ul>
 	<li>
-	<p>If the current number is even, you have to divide it by 2.</p>
+	<p>If the current number is even, you have to divide it by <code>2</code>.</p>
 	</li>
 	<li>
-	<p>If the current number is odd, you have to add 1 to it.</p>
+	<p>If the current number is odd, you have to add <code>1</code> to it.</p>
 	</li>
 </ul>
 
-<p>It&#39;s guaranteed that you can always reach to one for all testcases.</p>
+<p>It is guaranteed that you can always reach one for all test cases.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;1101&quot;
@@ -32,16 +47,16 @@ Step 5) 4 is even, divide by 2 and obtain 2.&nbsp;
 Step 6) 2 is even, divide by 2 and obtain 1.&nbsp; 
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;10&quot;
 <strong>Output:</strong> 1
-<strong>Explanation:</strong> &quot;10&quot; corressponds to number 2 in their decimal representation.
+<strong>Explanation:</strong> &quot;10&quot; corresponds to number 2 in their decimal representation.
 Step 1) 2 is even, divide by 2 and obtain 1.&nbsp; 
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;1&quot;
@@ -57,26 +72,134 @@ Step 1) 2 is even, divide by 2 and obtain 1.&nbsp;
 	<li><code>s[0] == &#39;1&#39;</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Simulation
+
+We simulate operations $1$ and $2$, while using `carry` to record the carry-over.
+
+The time complexity is $O(n)$, where $n$ is the length of the string $s$. The space complexity is $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def numSteps(self, s: str) -> int:
+        carry = False
+        ans = 0
+        for c in s[:0:-1]:
+            if carry:
+                if c == '0':
+                    c = '1'
+                    carry = False
+                else:
+                    c = '0'
+            if c == '1':
+                ans += 1
+                carry = True
+            ans += 1
+        if carry:
+            ans += 1
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public int numSteps(String s) {
+        boolean carry = false;
+        int ans = 0;
+        for (int i = s.length() - 1; i > 0; --i) {
+            char c = s.charAt(i);
+            if (carry) {
+                if (c == '0') {
+                    c = '1';
+                    carry = false;
+                } else {
+                    c = '0';
+                }
+            }
+            if (c == '1') {
+                ++ans;
+                carry = true;
+            }
+            ++ans;
+        }
+        if (carry) {
+            ++ans;
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int numSteps(string s) {
+        int ans = 0;
+        bool carry = false;
+        for (int i = s.size() - 1; i; --i) {
+            char c = s[i];
+            if (carry) {
+                if (c == '0') {
+                    c = '1';
+                    carry = false;
+                } else
+                    c = '0';
+            }
+            if (c == '1') {
+                ++ans;
+                carry = true;
+            }
+            ++ans;
+        }
+        if (carry) ++ans;
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func numSteps(s string) int {
+	ans := 0
+	carry := false
+	for i := len(s) - 1; i > 0; i-- {
+		c := s[i]
+		if carry {
+			if c == '0' {
+				c = '1'
+				carry = false
+			} else {
+				c = '0'
+			}
+		}
+		if c == '1' {
+			ans++
+			carry = true
+		}
+		ans++
+	}
+	if carry {
+		ans++
+	}
+	return ans
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

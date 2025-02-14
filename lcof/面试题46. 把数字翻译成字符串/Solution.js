@@ -3,19 +3,22 @@
  * @return {number}
  */
 var translateNum = function (num) {
-    let res = 0;
-    num = num.toString();
-    function dfs(i) {
-        if (i >= num.length) {
-            res++;
-            return;
+    const s = num.toString();
+    const n = s.length;
+    const f = new Array(n).fill(0);
+    const dfs = i => {
+        if (i >= n - 1) {
+            return 1;
         }
-        dfs(i + 1);
-        let tmp = +(num[i] + num[i + 1]);
-        if (num[i] !== "0" && tmp >= 0 && tmp < 26) {
-            dfs(i + 2);
+        if (f[i]) {
+            return f[i];
         }
-    }
-    dfs(0);
-    return res;
+        let ans = dfs(i + 1);
+        if (s[i] === '1' || (s[i] === '2' && s[i + 1] < '6')) {
+            ans += dfs(i + 2);
+        }
+        f[i] = ans;
+        return ans;
+    };
+    return dfs(0);
 };

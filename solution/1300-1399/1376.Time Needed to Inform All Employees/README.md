@@ -1,10 +1,24 @@
-# [1376. 通知所有员工所需的时间](https://leetcode-cn.com/problems/time-needed-to-inform-all-employees)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1376.Time%20Needed%20to%20Inform%20All%20Employees/README.md
+rating: 1561
+source: 第 179 场周赛 Q3
+tags:
+    - 树
+    - 深度优先搜索
+    - 广度优先搜索
+---
+
+<!-- problem:start -->
+
+# [1376. 通知所有员工所需的时间](https://leetcode.cn/problems/time-needed-to-inform-all-employees)
 
 [English Version](/solution/1300-1399/1376.Time%20Needed%20to%20Inform%20All%20Employees/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>公司里有 <code>n</code> 名员工，每个员工的 ID 都是独一无二的，编号从 <code>0</code> 到 <code>n - 1</code>。公司的总负责人通过 <code>headID</code> 进行标识。</p>
 
@@ -20,49 +34,21 @@
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入：</strong>n = 1, headID = 0, manager = [-1], informTime = [0]
+<pre>
+<strong>输入：</strong>n = 1, headID = 0, manager = [-1], informTime = [0]
 <strong>输出：</strong>0
 <strong>解释：</strong>公司总负责人是该公司的唯一一名员工。
 </pre>
 
 <p><strong>示例 2：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1376.Time%20Needed%20to%20Inform%20All%20Employees/images/graph.png" style="height: 174px; width: 404px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1376.Time%20Needed%20to%20Inform%20All%20Employees/images/graph.png" style="height: 174px; width: 404px;" /></p>
 
-<pre><strong>输入：</strong>n = 6, headID = 2, manager = [2,2,-1,2,2,2], informTime = [0,0,1,0,0,0]
+<pre>
+<strong>输入：</strong>n = 6, headID = 2, manager = [2,2,-1,2,2,2], informTime = [0,0,1,0,0,0]
 <strong>输出：</strong>1
 <strong>解释：</strong>id = 2 的员工是公司的总负责人，也是其他所有员工的直属负责人，他需要 1 分钟来通知所有员工。
 上图显示了公司员工的树结构。
-</pre>
-
-<p><strong>示例 3：</strong></p>
-
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1376.Time%20Needed%20to%20Inform%20All%20Employees/images/1730_example_3_5.png" style="height: 432px; width: 568px;"></p>
-
-<pre><strong>输入：</strong>n = 7, headID = 6, manager = [1,2,3,4,5,6,-1], informTime = [0,6,5,4,3,2,1]
-<strong>输出：</strong>21
-<strong>解释：</strong>总负责人 id = 6。他将在 1 分钟内通知 id = 5 的员工。
-id = 5 的员工将在 2 分钟内通知 id = 4 的员工。
-id = 4 的员工将在 3 分钟内通知 id = 3 的员工。
-id = 3 的员工将在 4 分钟内通知 id = 2 的员工。
-id = 2 的员工将在 5 分钟内通知 id = 1 的员工。
-id = 1 的员工将在 6 分钟内通知 id = 0 的员工。
-所需时间 = 1 + 2 + 3 + 4 + 5 + 6 = 21 。
-</pre>
-
-<p><strong>示例 4：</strong></p>
-
-<pre><strong>输入：</strong>n = 15, headID = 0, manager = [-1,0,0,1,1,2,2,3,3,4,4,5,5,6,6], informTime = [1,1,1,1,1,1,1,0,0,0,0,0,0,0,0]
-<strong>输出：</strong>3
-<strong>解释：</strong>第一分钟总负责人通知员工 1 和 2 。
-第二分钟他们将会通知员工 3, 4, 5 和 6 。
-第三分钟他们将会通知剩下的员工。
-</pre>
-
-<p><strong>示例 5：</strong></p>
-
-<pre><strong>输入：</strong>n = 4, headID = 2, manager = [3,3,-1,2], informTime = [0,0,162,914]
-<strong>输出：</strong>1076
 </pre>
 
 <p>&nbsp;</p>
@@ -81,120 +67,171 @@ id = 1 的员工将在 6 分钟内通知 id = 0 的员工。
 	<li>题目 <strong>保证</strong> 所有员工都可以收到通知。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-找从根节点到叶子节点最长的路径即可。
+### 方法一：DFS
+
+我们先根据 $manager$ 数组构建邻接表 $g$，其中 $g[i]$ 表示员工 $i$ 的所有直接下属。
+
+接下来，我们设计一个函数 $dfs(i)$，表示从员工 $i$ 开始，将消息通知给他的所有下属（包括直接下属、间接下属）所需要的时间，那么答案就是 $dfs(headID)$。
+
+在函数 $dfs(i)$ 中，我们需要遍历 $i$ 的所有直接下属 $j$，对于每个下属，员工 $i$ 需要将消息通知给他，这需要花费 $informTime[i]$ 的时间，而他的所有下属需要将消息通知给他们的下属，这需要花费 $dfs(j)$ 的时间，取 $informTime[i] + dfs(j)$ 的最大值作为函数 $dfs(i)$ 的返回值即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为员工数量。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-    def numOfMinutes(self, n: int, headID: int, manager: List[int], informTime: List[int]) -> int:
-        def dfs(i):
+    def numOfMinutes(
+        self, n: int, headID: int, manager: List[int], informTime: List[int]
+    ) -> int:
+        def dfs(i: int) -> int:
             ans = 0
             for j in g[i]:
-                ans = max(ans, informTime[i] + dfs(j))
+                ans = max(ans, dfs(j) + informTime[i])
             return ans
 
         g = defaultdict(list)
-        for i, m in enumerate(manager):
-            g[m].append(i)
+        for i, x in enumerate(manager):
+            g[x].append(i)
         return dfs(headID)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
-    private Map<Integer, List<Integer>> g;
-    private int[] manager;
+    private List<Integer>[] g;
     private int[] informTime;
 
     public int numOfMinutes(int n, int headID, int[] manager, int[] informTime) {
-        g = new HashMap<>();
-        this.manager = manager;
+        g = new List[n];
+        Arrays.setAll(g, k -> new ArrayList<>());
         this.informTime = informTime;
         for (int i = 0; i < n; ++i) {
-            g.computeIfAbsent(manager[i], k -> new ArrayList<>()).add(i);
+            if (manager[i] >= 0) {
+                g[manager[i]].add(i);
+            }
         }
         return dfs(headID);
     }
 
     private int dfs(int i) {
         int ans = 0;
-        for (int j : g.getOrDefault(i, new ArrayList<>())) {
-            ans = Math.max(ans, informTime[i] + dfs(j));
+        for (int j : g[i]) {
+            ans = Math.max(ans, dfs(j) + informTime[i]);
         }
         return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    unordered_map<int, vector<int>> g;
-    vector<int> manager;
-    vector<int> informTime;
-
     int numOfMinutes(int n, int headID, vector<int>& manager, vector<int>& informTime) {
-        this->manager = manager;
-        this->informTime = informTime;
-        for (int i = 0; i < n; ++i) g[manager[i]].push_back(i);
+        vector<vector<int>> g(n);
+        for (int i = 0; i < n; ++i) {
+            if (manager[i] >= 0) {
+                g[manager[i]].push_back(i);
+            }
+        }
+        function<int(int)> dfs = [&](int i) -> int {
+            int ans = 0;
+            for (int j : g[i]) {
+                ans = max(ans, dfs(j) + informTime[i]);
+            }
+            return ans;
+        };
         return dfs(headID);
-    }
-
-    int dfs(int i) {
-        int ans = 0;
-        for (int j : g[i]) ans = max(ans, informTime[i] + dfs(j));
-        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func numOfMinutes(n int, headID int, manager []int, informTime []int) int {
-	g := make(map[int][]int)
-	for i, m := range manager {
-		g[m] = append(g[m], i)
-	}
-	var dfs func(i int) int
-	dfs = func(i int) int {
-		ans := 0
-		if v, ok := g[i]; ok {
-			for _, j := range v {
-				ans = max(ans, informTime[i]+dfs(j))
-			}
+	g := make([][]int, n)
+	for i, x := range manager {
+		if x != -1 {
+			g[x] = append(g[x], i)
 		}
-		return ans
+	}
+	var dfs func(int) int
+	dfs = func(i int) (ans int) {
+		for _, j := range g[i] {
+			ans = max(ans, dfs(j)+informTime[i])
+		}
+		return
 	}
 	return dfs(headID)
 }
+```
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+#### TypeScript
+
+```ts
+function numOfMinutes(n: number, headID: number, manager: number[], informTime: number[]): number {
+    const g: number[][] = new Array(n).fill(0).map(() => []);
+    for (let i = 0; i < n; ++i) {
+        if (manager[i] !== -1) {
+            g[manager[i]].push(i);
+        }
+    }
+    const dfs = (i: number): number => {
+        let ans = 0;
+        for (const j of g[i]) {
+            ans = Math.max(ans, dfs(j) + informTime[i]);
+        }
+        return ans;
+    };
+    return dfs(headID);
 }
 ```
 
-### **...**
+#### C#
 
-```
+```cs
+public class Solution {
+    private List<int>[] g;
+    private int[] informTime;
 
+    public int NumOfMinutes(int n, int headID, int[] manager, int[] informTime) {
+        g = new List<int>[n];
+        for (int i = 0; i < n; ++i) {
+            g[i] = new List<int>();
+        }
+        this.informTime = informTime;
+        for (int i = 0; i < n; ++i) {
+            if (manager[i] != -1) {
+                g[manager[i]].Add(i);
+            }
+        }
+        return dfs(headID);
+    }
+
+    private int dfs(int i) {
+        int ans = 0;
+        foreach (int j in g[i]) {
+            ans = Math.Max(ans, dfs(j) + informTime[i]);
+        }
+        return ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

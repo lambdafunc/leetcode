@@ -21,19 +21,17 @@ public:
 class Solution {
 public:
     vector<int> postorder(Node* root) {
-        if (!root) return {};
-        stack<Node*> stk;
-        stk.push(root);
         vector<int> ans;
-        while (!stk.empty())
-        {
-            auto& node = stk.top();
-            stk.pop();
-            ans.push_back(node->val);
-            for (auto& child : node->children)
-                stk.push(child);
-        }
-        reverse(ans.begin(), ans.end());
+        function<void(Node*)> dfs = [&](Node* root) {
+            if (!root) {
+                return;
+            }
+            for (auto& child : root->children) {
+                dfs(child);
+            }
+            ans.push_back(root->val);
+        };
+        dfs(root);
         return ans;
     }
 };

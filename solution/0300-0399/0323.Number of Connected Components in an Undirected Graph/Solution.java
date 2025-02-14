@@ -1,28 +1,31 @@
 class Solution {
-    private int[] p;
-    
-    public int countComponents(int n, int[][] edges) {
-        p = new int[n];
-        for (int i = 0; i < n; ++i) {
-            p[i] = i;
-        }
-        for (int[] e : edges) {
-            p[find(e[0])] = find(e[1]);
-        }
+    private List<Integer>[] g;
+    private boolean[] vis;
 
-        int cnt = 0;
-        for (int i = 0; i < n; ++i) {
-            if (i == find(i)) {
-                ++cnt;
-            }
+    public int countComponents(int n, int[][] edges) {
+        g = new List[n];
+        vis = new boolean[n];
+        Arrays.setAll(g, k -> new ArrayList<>());
+        for (var e : edges) {
+            int a = e[0], b = e[1];
+            g[a].add(b);
+            g[b].add(a);
         }
-        return cnt;
+        int ans = 0;
+        for (int i = 0; i < n; ++i) {
+            ans += dfs(i);
+        }
+        return ans;
     }
 
-    private int find(int x) {
-        if (p[x] != x) {
-            p[x] = find(p[x]);
+    private int dfs(int i) {
+        if (vis[i]) {
+            return 0;
         }
-        return p[x];
+        vis[i] = true;
+        for (int j : g[i]) {
+            dfs(j);
+        }
+        return 1;
     }
 }

@@ -1,40 +1,20 @@
 class Solution {
     public boolean checkValidString(String s) {
         int n = s.length();
-        char[] a = s.toCharArray();
-        int left = 0, asterisk = 0;
-        for (int i = 0; i < n; i++) {
-            if (a[i] == '(') {
-                left++;
-            } else if (a[i] == ')') {
-                if (left > 0) {
-                    left--;
-                } else if (asterisk > 0) {
-                    asterisk--;
-                } else {
-                    return false;
+        boolean[][] dp = new boolean[n][n];
+        for (int i = 0; i < n; ++i) {
+            dp[i][i] = s.charAt(i) == '*';
+        }
+        for (int i = n - 2; i >= 0; --i) {
+            for (int j = i + 1; j < n; ++j) {
+                char a = s.charAt(i), b = s.charAt(j);
+                dp[i][j] = (a == '(' || a == '*') && (b == '*' || b == ')')
+                    && (i + 1 == j || dp[i + 1][j - 1]);
+                for (int k = i; k < j && !dp[i][j]; ++k) {
+                    dp[i][j] = dp[i][k] && dp[k + 1][j];
                 }
-            } else {
-                asterisk++;
             }
         }
-        int right = 0;
-        asterisk = 0;
-        for (int i = n - 1; i >= 0; i--) {
-            if (a[i] == ')') {
-                right++;
-            } else if (a[i] == '(') {
-                if (right > 0) {
-                    right--;
-                } else if (asterisk > 0) {
-                    asterisk--;
-                } else {
-                    return false;
-                }
-            } else {
-                asterisk++;
-            }
-        }
-        return true;
+        return dp[0][n - 1];
     }
 }

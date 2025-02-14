@@ -1,10 +1,25 @@
-# [2043. 简易银行系统](https://leetcode-cn.com/problems/simple-bank-system)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2043.Simple%20Bank%20System/README.md
+rating: 1356
+source: 第 263 场周赛 Q2
+tags:
+    - 设计
+    - 数组
+    - 哈希表
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [2043. 简易银行系统](https://leetcode.cn/problems/simple-bank-system)
 
 [English Version](/solution/2000-2099/2043.Simple%20Bank%20System/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>你的任务是为一个很受欢迎的银行设计一款程序，以自动化执行所有传入的交易（转账，存款和取款）。银行共有 <code>n</code> 个账户，编号从 <code>1</code> 到 <code>n</code> 。每个账号的初始余额存储在一个下标从 <strong>0</strong> 开始的整数数组 <code>balance</code>&nbsp;中，其中第 <code>(i + 1)</code> 个账户的初始余额是 <code>balance[i]</code> 。</p>
 
@@ -59,19 +74,29 @@ bank.withdraw(10, 50);   // 返回 false ，交易无效，因为账户 10 并�
 	<li><code>transfer</code>, <code>deposit</code>, <code>withdraw</code> 三个函数，<strong>每个</strong> 最多调用 <code>10<sup>4</sup></code> 次</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：模拟
+
+根据题意，我们可以使用一个数组 `balance` 来模拟银行账户的余额，数组下标从 0 开始，数组的值表示账户的余额。
+
+-   初始化时，我们将 `balance` 数组赋给成员变量 `this.balance`，并将 `balance` 的长度赋给成员变量 `this.n`。
+-   `transfer` 函数中，如果 `account1` 或 `account2` 大于 `n` 或 `balance[account1 - 1]` 小于 `money`，则返回 `false`，否则，将 `balance[account1 - 1]` 减去 `money`，将 `balance[account2 - 1]` 加上 `money`，并返回 `true`。
+-   `deposit` 函数中，如果 `account` 大于 `n`，则返回 `false`，否则，将 `balance[account - 1]` 加上 `money`，并返回 `true`。
+-   `withdraw` 函数中，如果 `account` 大于 `n` 或 `balance[account - 1]` 小于 `money`，则返回 `false`，否则，将 `balance[account - 1]` 减去 `money`，并返回 `true`。
+
+以上操作的时间复杂度均为 $O(1)$，空间复杂度为 $O(n)$。其中，$n$ 为 `balance` 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Bank:
-
     def __init__(self, balance: List[int]):
         self.balance = balance
         self.n = len(balance)
@@ -95,6 +120,7 @@ class Bank:
         self.balance[account - 1] -= money
         return True
 
+
 # Your Bank object will be instantiated and called as such:
 # obj = Bank(balance)
 # param_1 = obj.transfer(account1,account2,money)
@@ -102,9 +128,7 @@ class Bank:
 # param_3 = obj.withdraw(account,money)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Bank {
@@ -151,55 +175,7 @@ class Bank {
  */
 ```
 
-### **TypeScript**
-
-```ts
-class Bank {
-    balance: number[];
-    constructor(balance: number[]) {
-        this.balance = balance;
-    }
-
-    transfer(account1: number, account2: number, money: number): boolean {
-        if (
-            account1 > this.balance.length ||
-            account2 > this.balance.length ||
-            money > this.balance[account1 - 1]
-        )
-            return false;
-        this.balance[account1 - 1] -= money;
-        this.balance[account2 - 1] += money;
-        return true;
-    }
-
-    deposit(account: number, money: number): boolean {
-        if (account > this.balance.length) return false;
-        this.balance[account - 1] += money;
-        return true;
-    }
-
-    withdraw(account: number, money: number): boolean {
-        if (
-            account > this.balance.length ||
-            money > this.balance[account - 1]
-        ) {
-            return false;
-        }
-        this.balance[account - 1] -= money;
-        return true;
-    }
-}
-
-/**
- * Your Bank object will be instantiated and called as such:
- * var obj = new Bank(balance)
- * var param_1 = obj.transfer(account1,account2,money)
- * var param_2 = obj.deposit(account,money)
- * var param_3 = obj.withdraw(account,money)
- */
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Bank {
@@ -241,7 +217,7 @@ public:
  */
 ```
 
-### **Go**
+#### Go
 
 ```go
 type Bank struct {
@@ -287,10 +263,105 @@ func (this *Bank) Withdraw(account int, money int64) bool {
  */
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+class Bank {
+    balance: number[];
+    constructor(balance: number[]) {
+        this.balance = balance;
+    }
+
+    transfer(account1: number, account2: number, money: number): boolean {
+        if (
+            account1 > this.balance.length ||
+            account2 > this.balance.length ||
+            money > this.balance[account1 - 1]
+        )
+            return false;
+        this.balance[account1 - 1] -= money;
+        this.balance[account2 - 1] += money;
+        return true;
+    }
+
+    deposit(account: number, money: number): boolean {
+        if (account > this.balance.length) return false;
+        this.balance[account - 1] += money;
+        return true;
+    }
+
+    withdraw(account: number, money: number): boolean {
+        if (account > this.balance.length || money > this.balance[account - 1]) {
+            return false;
+        }
+        this.balance[account - 1] -= money;
+        return true;
+    }
+}
+
+/**
+ * Your Bank object will be instantiated and called as such:
+ * var obj = new Bank(balance)
+ * var param_1 = obj.transfer(account1,account2,money)
+ * var param_2 = obj.deposit(account,money)
+ * var param_3 = obj.withdraw(account,money)
+ */
 ```
 
+#### Rust
+
+```rust
+struct Bank {
+    balance: Vec<i64>,
+}
+
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl Bank {
+    fn new(balance: Vec<i64>) -> Self {
+        Bank { balance }
+    }
+
+    fn transfer(&mut self, account1: i32, account2: i32, money: i64) -> bool {
+        let (account1, account2, n) = (account1 as usize, account2 as usize, self.balance.len());
+        if n < account1 || n < account2 {
+            return false;
+        }
+        if self.balance[account1 - 1] < money {
+            return false;
+        }
+        self.balance[account1 - 1] -= money;
+        self.balance[account2 - 1] += money;
+        true
+    }
+
+    fn deposit(&mut self, account: i32, money: i64) -> bool {
+        let (account, n) = (account as usize, self.balance.len());
+        if n < account {
+            return false;
+        }
+        self.balance[account - 1] += money;
+        true
+    }
+
+    fn withdraw(&mut self, account: i32, money: i64) -> bool {
+        let (account, n) = (account as usize, self.balance.len());
+        if n < account {
+            return false;
+        }
+        if self.balance[account - 1] < money {
+            return false;
+        }
+        self.balance[account - 1] -= money;
+        true
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

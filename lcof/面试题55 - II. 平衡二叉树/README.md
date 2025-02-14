@@ -1,28 +1,39 @@
-# [面试题 55 - II. 平衡二叉树](https://leetcode-cn.com/problems/ping-heng-er-cha-shu-lcof/)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9855%20-%20II.%20%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 55 - II. 平衡二叉树](https://leetcode.cn/problems/ping-heng-er-cha-shu-lcof/)
 
 ## 题目描述
 
-输入一棵二叉树的根节点，判断该树是不是平衡二叉树。如果某二叉树中任意节点的左右子树的深度相差不超过 1，那么它就是一棵平衡二叉树。
+<!-- description:start -->
 
-**示例 1:**
+<p>输入一棵二叉树的根节点，判断该树是不是平衡二叉树。如果某二叉树中任意节点的左右子树的深度相差不超过1，那么它就是一棵平衡二叉树。</p>
 
-给定二叉树 `[3,9,20,null,null,15,7]`
+<p> </p>
 
-```
+<p><strong>示例 1:</strong></p>
+
+<p>给定二叉树 <code>[3,9,20,null,null,15,7]</code></p>
+
+<pre>
     3
    / \
   9  20
     /  \
-   15   7
-```
+   15   7</pre>
 
-返回 `true`。
+<p>返回 <code>true</code> 。<br />
+<br />
+<strong>示例 2:</strong></p>
 
-**示例 2:**
+<p>给定二叉树 <code>[1,2,2,3,3,null,null,4,4]</code></p>
 
-给定二叉树 `[1,2,2,3,3,null,null,4,4]`
-
-```
+<pre>
        1
       / \
      2   2
@@ -30,19 +41,46 @@
    3   3
   / \
  4   4
-```
+</pre>
 
-返回  `false`。
+<p>返回 <code>false</code> 。</p>
 
-**限制：**
+<p> </p>
 
-- `1 <= 树的结点个数 <= 10000`
+<p><strong>限制：</strong></p>
+
+<ul>
+	<li><code>0 <= 树的结点个数 <= 10000</code></li>
+</ul>
+
+<p>注意：本题与主站 110 题相同：<a href="https://leetcode.cn/problems/balanced-binary-tree/">https://leetcode.cn/problems/balanced-binary-tree/</a></p>
+
+<p> </p>
+
+<!-- description:end -->
 
 ## 解法
 
+<!-- solution:start -->
+
+### 方法一：递归
+
+我们设计一个递归函数 $dfs(root)$，函数返回值为 $root$ 节点的深度，如果 $root$ 节点不平衡，返回值为 $-1$。
+
+函数 $dfs(root)$ 的递归过程如下：
+
+-   如果 $root$ 为空，返回 $0$。
+-   递归计算左右子树的深度，记为 $l$ 和 $r$。
+-   如果 $l$ 或 $r$ 为 $-1$，或者 $l$ 和 $r$ 的差的绝对值大于 $1$，返回 $-1$。
+-   否则，返回 $max(l, r) + 1$。
+
+如果 $dfs(root)$ 返回值不为 $-1$，则说明 $root$ 节点平衡，返回 `true`，否则返回 `false`。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为二叉树的节点数。
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -52,19 +90,21 @@
 #         self.left = None
 #         self.right = None
 
+
 class Solution:
     def isBalanced(self, root: TreeNode) -> bool:
-        def height(root):
+        def dfs(root):
             if root is None:
                 return 0
-            return 1 + max(height(root.left), height(root.right))
+            l, r = dfs(root.left), dfs(root.right)
+            if l == -1 or r == -1 or abs(l - r) > 1:
+                return -1
+            return 1 + max(l, r)
 
-        if root is None:
-            return True
-        return abs(height(root.left) - height(root.right)) <= 1 and self.isBalanced(root.left) and self.isBalanced(root.right)
+        return dfs(root) != -1
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -78,55 +118,24 @@ class Solution:
  */
 class Solution {
     public boolean isBalanced(TreeNode root) {
-        if (root == null) {
-            return true;
-        }
-        return Math.abs(depth(root.left) - depth(root.right)) <= 1 && isBalanced(root.left) && isBalanced(root.right);
+        return dfs(root) != -1;
     }
 
-    private int depth(TreeNode tree) {
-        if (tree == null) {
+    private int dfs(TreeNode root) {
+        if (root == null) {
             return 0;
         }
-        return 1 + Math.max(depth(tree.left), depth(tree.right));
+        int l = dfs(root.left);
+        int r = dfs(root.right);
+        if (l == -1 || r == -1 || Math.abs(l - r) > 1) {
+            return -1;
+        }
+        return 1 + Math.max(l, r);
     }
 }
 ```
 
-### **JavaScript**
-
-```js
-/**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *     this.val = val;
- *     this.left = this.right = null;
- * }
- */
-/**
- * @param {TreeNode} root
- * @return {boolean}
- */
-var isBalanced = function (root) {
-    const depth = root => {
-        if (!root) {
-            return 0;
-        }
-        return 1 + Math.max(depth(root.left), depth(root.right));
-    };
-
-    if (!root) {
-        return true;
-    }
-    return (
-        Math.abs(depth(root.left) - depth(root.right)) <= 1 &&
-        isBalanced(root.left) &&
-        isBalanced(root.right)
-    );
-};
-```
-
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -141,23 +150,23 @@ var isBalanced = function (root) {
 class Solution {
 public:
     bool isBalanced(TreeNode* root) {
-        if (!root) {
-            return true;
-        }
-        return abs(depth(root->left) - depth(root->right)) <= 1 && isBalanced(root->left) && isBalanced(root->right);
-    }
-
-private:
-    int depth(TreeNode* root) {
-        if (!root) {
-            return 0;
-        }
-        return 1 + max(depth(root->left), depth(root->right));
+        function<int(TreeNode*)> dfs = [&](TreeNode* root) -> int {
+            if (!root) {
+                return 0;
+            }
+            int l = dfs(root->left);
+            int r = dfs(root->right);
+            if (l == -1 || r == -1 || abs(l - r) > 1) {
+                return -1;
+            }
+            return 1 + max(l, r);
+        };
+        return dfs(root) != -1;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -169,28 +178,173 @@ private:
  * }
  */
 func isBalanced(root *TreeNode) bool {
-    if (root == nil) {
-        return true
-    }
-    return math.Abs(float64(depth(root.Left)-depth(root.Right))) <= 1 && isBalanced(root.Left) && isBalanced(root.Right)
+	var dfs func(*TreeNode) int
+	dfs = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+		l, r := dfs(root.Left), dfs(root.Right)
+		if l == -1 || r == -1 || abs(l-r) > 1 {
+			return -1
+		}
+		return 1 + max(l, r)
+	}
+	return dfs(root) != -1
 }
 
-func depth(root *TreeNode) int {
-    if (root == nil) {
-        return 0
-    }
-    left, right := depth(root.Left), depth(root.Right)
-    if (left > right) {
-        return 1 + left
-    }
-    return 1 + right
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
 ```
 
-### **...**
+#### Rust
 
+```rust
+// Definition for a binary tree node.
+// #[derive(Debug, PartialEq, Eq)]
+// pub struct TreeNode {
+//   pub val: i32,
+//   pub left: Option<Rc<RefCell<TreeNode>>>,
+//   pub right: Option<Rc<RefCell<TreeNode>>>,
+// }
+//
+// impl TreeNode {
+//   #[inline]
+//   pub fn new(val: i32) -> Self {
+//     TreeNode {
+//       val,
+//       left: None,
+//       right: None
+//     }
+//   }
+// }
+use std::cell::RefCell;
+use std::rc::Rc;
+impl Solution {
+    fn dfs(root: &Option<Rc<RefCell<TreeNode>>>) -> i32 {
+        match root {
+            None => 0,
+            Some(node) => {
+                let node = node.borrow();
+                1 + Self::dfs(&node.left).max(Self::dfs(&node.right))
+            }
+        }
+    }
+    pub fn is_balanced(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
+        match root {
+            None => true,
+            Some(node) => {
+                let mut node = node.borrow_mut();
+                let a = 10;
+                (Self::dfs(&node.left) - Self::dfs(&node.right)).abs() <= 1
+                    && Self::is_balanced(node.left.take())
+                    && Self::is_balanced(node.right.take())
+            }
+        }
+    }
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+var isBalanced = function (root) {
+    const dfs = root => {
+        if (!root) {
+            return 0;
+        }
+        const l = dfs(root.left);
+        const r = dfs(root.right);
+        if (l === -1 || r == -1 || Math.abs(l - r) > 1) {
+            return -1;
+        }
+        return 1 + Math.max(l, r);
+    };
+    return dfs(root) !== -1;
+};
+```
+
+#### C#
+
+```cs
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public bool IsBalanced(TreeNode root) {
+        return dfs(root) != -1;
+    }
+
+    private int dfs(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int l = dfs(root.left);
+        int r = dfs(root.right);
+        if (l == -1 || r == -1 || Math.Abs(l - r) > 1) {
+            return -1;
+        }
+        return 1 + Math.Max(l, r);
+    }
+}
+```
+
+#### Swift
+
+```swift
+/* public class TreeNode {
+*     public var val: Int
+*     public var left: TreeNode?
+*     public var right: TreeNode?
+*     public init(_ val: Int) {
+*         self.val = val
+*         self.left = nil
+*         self.right = nil
+*     }
+* }
+*/
+
+class Solution {
+    func isBalanced(_ root: TreeNode?) -> Bool {
+        return dfs(root) != -1
+    }
+
+    private func dfs(_ root: TreeNode?) -> Int {
+        guard let root = root else {
+            return 0
+        }
+        let leftDepth = dfs(root.left)
+        let rightDepth = dfs(root.right)
+        if leftDepth == -1 || rightDepth == -1 || abs(leftDepth - rightDepth) > 1 {
+            return -1
+        }
+        return 1 + max(leftDepth, rightDepth)
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,26 @@
-# [1338. 数组大小减半](https://leetcode-cn.com/problems/reduce-array-size-to-the-half)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1338.Reduce%20Array%20Size%20to%20The%20Half/README.md
+rating: 1303
+source: 第 174 场周赛 Q2
+tags:
+    - 贪心
+    - 数组
+    - 哈希表
+    - 排序
+    - 堆（优先队列）
+---
+
+<!-- problem:start -->
+
+# [1338. 数组大小减半](https://leetcode.cn/problems/reduce-array-size-to-the-half)
 
 [English Version](/solution/1300-1399/1338.Reduce%20Array%20Size%20to%20The%20Half/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组&nbsp;<code>arr</code>。你可以从中选出一个整数集合，并删除这些整数在数组中的每次出现。</p>
 
@@ -14,7 +30,8 @@
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入：</strong>arr = [3,3,3,3,5,5,5,2,2,7]
+<pre>
+<strong>输入：</strong>arr = [3,3,3,3,5,5,5,2,2,7]
 <strong>输出：</strong>2
 <strong>解释：</strong>选择 {3,7} 使得结果数组为 [5,5,5,2,2]、长度为 5（原数组长度的一半）。
 大小为 2 的可行集合有 {3,5},{3,2},{5,2}。
@@ -23,27 +40,10 @@
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入：</strong>arr = [7,7,7,7,7,7]
+<pre>
+<strong>输入：</strong>arr = [7,7,7,7,7,7]
 <strong>输出：</strong>1
 <strong>解释：</strong>我们只能选择集合 {7}，结果数组为空。
-</pre>
-
-<p><strong>示例 3：</strong></p>
-
-<pre><strong>输入：</strong>arr = [1,9]
-<strong>输出：</strong>1
-</pre>
-
-<p><strong>示例 4：</strong></p>
-
-<pre><strong>输入：</strong>arr = [1000,1000,3,7]
-<strong>输出：</strong>1
-</pre>
-
-<p><strong>示例 5：</strong></p>
-
-<pre><strong>输入：</strong>arr = [1,2,3,4,5,6,7,8,9,10]
-<strong>输出：</strong>5
 </pre>
 
 <p>&nbsp;</p>
@@ -51,121 +51,142 @@
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>1 &lt;= arr.length &lt;= 10^5</code></li>
+	<li><code>1 &lt;= arr.length &lt;= 10<sup>5</sup></code></li>
 	<li><code>arr.length</code>&nbsp;为偶数</li>
-	<li><code>1 &lt;= arr[i] &lt;= 10^5</code></li>
+	<li><code>1 &lt;= arr[i] &lt;= 10<sup>5</sup></code></li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-哈希表计数，按出现的频率倒序。
+### 方法一：计数 + 排序
+
+我们可以用哈希表或数组 $cnt$ 统计数组 $\textit{arr}$ 中每个数字出现的次数，然后将 $cnt$ 中的数字从大到小排序，从大到小遍历 $\textit{cnt}$，每次遍历将当前数字 $x$ 加入答案，并将 $m$ 加上 $x$，如果 $m \geq \frac{n}{2}$，则返回答案。
+
+时间复杂度 $O(n \times \log n)$，空间复杂度 $O(n)$。其中 $n$ 为数组 $\textit{arr}$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def minSetSize(self, arr: List[int]) -> int:
-        couter = Counter(arr)
-        ans = n = 0
-        for _, cnt in couter.most_common():
-            n += cnt
+        cnt = Counter(arr)
+        ans = m = 0
+        for _, v in cnt.most_common():
+            m += v
             ans += 1
-            if n * 2 >= len(arr):
+            if m * 2 >= len(arr):
                 break
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int minSetSize(int[] arr) {
-        Map<Integer, Integer> counter = new HashMap<>();
-        for (int v : arr) {
-            counter.put(v, counter.getOrDefault(v, 0) + 1);
+        int mx = 0;
+        for (int x : arr) {
+            mx = Math.max(mx, x);
         }
-        List<Integer> t = new ArrayList<>();
-        for (int cnt : counter.values()) {
-            t.add(cnt);
+        int[] cnt = new int[mx + 1];
+        for (int x : arr) {
+            ++cnt[x];
         }
-        Collections.sort(t, Collections.reverseOrder());
+        Arrays.sort(cnt);
         int ans = 0;
-        int n = 0;
-        for (int cnt : t) {
-            n += cnt;
-            ++ans;
-            if (n * 2 >= arr.length) {
-                break;
+        int m = 0;
+        for (int i = mx;; --i) {
+            if (cnt[i] > 0) {
+                m += cnt[i];
+                ++ans;
+                if (m * 2 >= arr.length) {
+                    return ans;
+                }
             }
         }
-        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int minSetSize(vector<int>& arr) {
-        unordered_map<int, int> counter;
-        for (int v : arr) ++counter[v];
-        vector<int> t;
-        for (auto& [k, v] : counter) t.push_back(v);
-        sort(t.begin(), t.end(), greater<int>());
+        int mx = ranges::max(arr);
+        int cnt[mx + 1];
+        memset(cnt, 0, sizeof(cnt));
+        for (int& x : arr) {
+            ++cnt[x];
+        }
+        sort(cnt, cnt + mx + 1, greater<int>());
         int ans = 0;
-        int n = 0;
-        for (int cnt : t)
-        {
-            n += cnt;
-            ++ans;
-            if (n * 2 >= arr.size()) break;
+        int m = 0;
+        for (int& x : cnt) {
+            if (x) {
+                m += x;
+                ++ans;
+                if (m * 2 >= arr.size()) {
+                    break;
+                }
+            }
         }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func minSetSize(arr []int) int {
-	counter := make(map[int]int)
-	for _, v := range arr {
-		counter[v]++
+func minSetSize(arr []int) (ans int) {
+	mx := slices.Max(arr)
+	cnt := make([]int, mx+1)
+	for _, x := range arr {
+		cnt[x]++
 	}
-	var t []int
-	for _, v := range counter {
-		t = append(t, v)
-	}
-	sort.Slice(t, func(i, j int) bool {
-		return t[i] > t[j]
-	})
-	ans, n := 0, 0
-	for _, cnt := range t {
-		n += cnt
-		ans++
-		if n*2 >= len(arr) {
-			break
+	sort.Ints(cnt)
+	for i, m := mx, 0; ; i-- {
+		if cnt[i] > 0 {
+			m += cnt[i]
+			ans++
+			if m >= len(arr)/2 {
+				return
+			}
 		}
 	}
-	return ans
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function minSetSize(arr: number[]): number {
+    const cnt = new Map<number, number>();
+    for (const v of arr) {
+        cnt.set(v, (cnt.get(v) ?? 0) + 1);
+    }
+    let [ans, m] = [0, 0];
+    for (const v of Array.from(cnt.values()).sort((a, b) => b - a)) {
+        m += v;
+        ++ans;
+        if (m * 2 >= arr.length) {
+            break;
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

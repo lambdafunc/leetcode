@@ -1,12 +1,24 @@
 class Solution {
+    private Integer[][] f;
+    private int n;
+
     public int countVowelStrings(int n) {
-        int[] cnt = new int[5];
-        Arrays.fill(cnt, 1);
-        for (int i = 2; i <= n; ++i) {
-            for (int j = 3; j >= 0; --j) {
-                cnt[j] += cnt[j + 1];
-            }
+        this.n = n;
+        f = new Integer[n][5];
+        return dfs(0, 0);
+    }
+
+    private int dfs(int i, int j) {
+        if (i >= n) {
+            return 1;
         }
-        return Arrays.stream(cnt).sum();
+        if (f[i][j] != null) {
+            return f[i][j];
+        }
+        int ans = 0;
+        for (int k = j; k < 5; ++k) {
+            ans += dfs(i + 1, k);
+        }
+        return f[i][j] = ans;
     }
 }

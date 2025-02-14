@@ -1,13 +1,11 @@
-SELECT
-	Department.NAME AS Department,
-	Employee.NAME AS Employee,
-	Salary
+# Write your MySQL query statement below
+SELECT d.name AS department, e.name AS employee, salary
 FROM
-	Employee,
-	Department
+    Employee AS e
+    JOIN Department AS d ON e.departmentId = d.id
 WHERE
-	Employee.DepartmentId = Department.Id
-	AND ( Employee.DepartmentId, Salary )
-    IN (SELECT DepartmentId, max( Salary )
+    (d.id, salary) IN (
+        SELECT departmentId, MAX(salary)
         FROM Employee
-        GROUP BY DepartmentId )
+        GROUP BY 1
+    );

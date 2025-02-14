@@ -1,33 +1,20 @@
 class Solution {
- public:
-    int div(int num){
-
-        int temp = num, r;
-
-        while( temp > 0 ){
-
-            r = temp % 10;
-
-            if( r == 0 || num % r != 0){
-                return 0;
-            }
-
-            temp /= 10;
-        }
-
-        return 1;
-    }
-
+public:
     vector<int> selfDividingNumbers(int left, int right) {
-
-        vector<int> ret;
-
-        for(int i = left; i <= right; i++){
-            if( div(i) ){
-                ret.push_back(i);
+        auto check = [&](int x) -> bool {
+            for (int y = x; y; y /= 10) {
+                if (y % 10 == 0 || x % (y % 10)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        vector<int> ans;
+        for (int x = left; x <= right; ++x) {
+            if (check(x)) {
+                ans.push_back(x);
             }
         }
-
-        return ret;
+        return ans;
     }
 };

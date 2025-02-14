@@ -1,176 +1,142 @@
-# [面试题 21. 调整数组顺序使奇数位于偶数前面](https://leetcode-cn.com/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9821.%20%E8%B0%83%E6%95%B4%E6%95%B0%E7%BB%84%E9%A1%BA%E5%BA%8F%E4%BD%BF%E5%A5%87%E6%95%B0%E4%BD%8D%E4%BA%8E%E5%81%B6%E6%95%B0%E5%89%8D%E9%9D%A2/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 21. 调整数组顺序使奇数位于偶数前面](https://leetcode.cn/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/)
 
 ## 题目描述
 
-输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有奇数位于数组的前半部分，所有偶数位于数组的后半部分。
+<!-- description:start -->
 
-**示例：**
+<p>输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有奇数在数组的前半部分，所有偶数在数组的后半部分。</p>
 
-```
-输入：nums = [1,2,3,4]
-输出：[1,3,2,4]
-注：[3,1,2,4] 也是正确的答案之一。
-```
+<p>&nbsp;</p>
 
-**提示：**
+<p><strong>示例：</strong></p>
 
-- `0 <= nums.length <= 50000`
-- `0 <= nums[i] <= 10000`
+<pre>
+<strong>输入：</strong>nums =&nbsp;[1,2,3,4]
+<strong>输出：</strong>[1,3,2,4] 
+<strong>注：</strong>[3,1,2,4] 也是正确的答案之一。</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ol>
+	<li><code>0 &lt;= nums.length &lt;= 50000</code></li>
+	<li><code>0 &lt;= nums[i] &lt;= 10000</code></li>
+</ol>
+
+<!-- description:end -->
 
 ## 解法
 
-**双指针**
+<!-- solution:start -->
 
-定义两个指针，分别指向数组左右边缘。
-- 查看左指针所指向的元素。
-    - 若为 **奇数**，则左指针往右移动。
-    - 若为 **偶数**，则与右指针交换元素，并将右指针往左移动。
-- 重复该过程，直到左指针超过右指针。
+### 方法一：双指针
 
-```txt
-EXCHANGE(n)
-    l = 0
-    r = n.length - 1
-    while l < r
-        if n[l] % 2 == 0
-            t = n[l]
-            n[l] = n[r]
-            n[r] = t
-            r--
-        else 
-            l++
-    return n
-```
+我们定义两个指针 $i$ 和 $j$，其中指针 $i$ 指向当前元素，指针 $j$ 指向当前最后一个奇数的下一个位置。
+
+接下来，我们从左到右遍历数组，当 $nums[i]$ 是奇数时，我们将其与 $nums[j]$ 交换，然后指针 $j$ 向右移动一位。指针 $i$ 每次向右移动一位，直到遍历完整个数组。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 是数组的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def exchange(self, nums: List[int]) -> List[int]:
-        p, q = 0, len(nums) - 1
-        while p < q:
-            if nums[p] & 1 == 1:
-                p += 1
-                continue
-            if nums[q] & 1 == 0:
-                q -= 1
-                continue
-            nums[p], nums[q] = nums[q], nums[p]
+        j = 0
+        for i, x in enumerate(nums):
+            if x & 1:
+                nums[i], nums[j] = nums[j], nums[i]
+                j += 1
         return nums
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int[] exchange(int[] nums) {
-        int p = 0, q = nums.length - 1;
-        while (p < q) {
-            if ((nums[p] & 1) == 1) {
-                ++p;
-                continue;
+        int j = 0;
+        for (int i = 0; i < nums.length; ++i) {
+            if (nums[i] % 2 == 1) {
+                int t = nums[i];
+                nums[i] = nums[j];
+                nums[j++] = t;
             }
-            if ((nums[q] & 1) == 0) {
-                --q;
-                continue;
-            }
-            swap(nums, p, q);
         }
         return nums;
-    }
-
-    private void swap(int[] nums, int p, int q) {
-        int t = nums[p];
-        nums[p] = nums[q];
-        nums[q] = t;
     }
 }
 ```
 
-### **JavaScript**
-
-```js
-/**
- * @param {number[]} nums
- * @return {number[]}
- */
-var exchange = function (nums) {
-    let left = 0;
-    let right = nums.length - 1;
-    while (left < right) {
-        let c = nums[left];
-        nums[left] = nums[right];
-        nums[right] = c;
-        while (nums[left] % 2) {
-            left++;
-        }
-        while (nums[right] % 2 === 0) {
-            right--;
-        }
-    }
-    return nums;
-};
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<int> exchange(vector<int>& nums) {
-        int left = 0, right = nums.size() - 1;
-        while (left < right) {
-            while (left < right && (nums[left] & 1) == 1) {
-                ++left;
+        int j = 0;
+        for (int i = 0; i < nums.size(); ++i) {
+            if (nums[i] & 1) {
+                swap(nums[i], nums[j++]);
             }
-            while (left < right && (nums[right] & 1) == 0) {
-                --right;
-            }
-            swap(nums[left], nums[right]);
         }
         return nums;
     }
 };
 ```
 
-### **TypeScript**
+#### Go
+
+```go
+func exchange(nums []int) []int {
+	j := 0
+	for i, x := range nums {
+		if x&1 == 1 {
+			nums[i], nums[j] = nums[j], nums[i]
+			j++
+		}
+	}
+	return nums
+}
+```
+
+#### TypeScript
 
 ```ts
 function exchange(nums: number[]): number[] {
-    let l = 0;
-    let r = nums.length - 1;
-    while (l < r) {
-        if (nums[l] % 2 === 0) {
-            [nums[l], nums[r]] = [nums[r], nums[l]];
-            r--;
-        } else {
-            l++;
+    let j = 0;
+    for (let i = 0; i < nums.length; ++i) {
+        if (nums[i] & 1) {
+            const t = nums[i];
+            nums[i] = nums[j];
+            nums[j++] = t;
         }
     }
     return nums;
 }
 ```
 
-### **Rust**
+#### Rust
 
 ```rust
 impl Solution {
     pub fn exchange(mut nums: Vec<i32>) -> Vec<i32> {
-        if nums.len() == 0 {
-            return nums;
-        }
-        let mut l = 0;
-        let mut r = nums.len() - 1;
-        while l < r {
-            let num = nums[l];
-            if num % 2 == 0 {
-                nums[l] = nums[r];
-                nums[r] = num;
-                r -= 1;
-            } else {
-                l += 1;
+        let mut j = 0;
+        for i in 0..nums.len() {
+            if nums[i] % 2 == 1 {
+                nums.swap(i, j);
+                j += 1;
             }
         }
         nums
@@ -178,10 +144,68 @@ impl Solution {
 }
 ```
 
-### **...**
+#### JavaScript
 
+```js
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var exchange = function (nums) {
+    let j = 0;
+    for (let i = 0; i < nums.length; ++i) {
+        if (nums[i] & 1) {
+            const t = nums[i];
+            nums[i] = nums[j];
+            nums[j++] = t;
+        }
+    }
+    return nums;
+};
 ```
 
+#### C#
+
+```cs
+public class Solution {
+    public int[] Exchange(int[] nums) {
+        int j = 0;
+        for (int i = 0; i < nums.Length; ++i) {
+            if (nums[i] % 2 == 1) {
+                int t = nums[i];
+                nums[i] = nums[j];
+                nums[j++] = t;
+            }
+        }
+        return nums;
+    }
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func exchange(_ nums: [Int]) -> [Int] {
+        var nums = nums
+        var j = 0
+
+        for i in 0..<nums.count {
+            if nums[i] % 2 == 1 {
+                let temp = nums[i]
+                nums[i] = nums[j]
+                nums[j] = temp
+                j += 1
+            }
+        }
+
+        return nums
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

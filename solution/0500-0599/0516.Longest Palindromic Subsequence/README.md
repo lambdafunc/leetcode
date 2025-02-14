@@ -1,168 +1,188 @@
-# [516. 最长回文子序列](https://leetcode-cn.com/problems/longest-palindromic-subsequence)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0516.Longest%20Palindromic%20Subsequence/README.md
+tags:
+    - 字符串
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [516. 最长回文子序列](https://leetcode.cn/problems/longest-palindromic-subsequence)
 
 [English Version](/solution/0500-0599/0516.Longest%20Palindromic%20Subsequence/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个字符串 <code>s</code> ，找到其中最长的回文子序列，并返回该序列的长度。可以假设 <code>s</code> 的最大长度为 <code>1000</code> 。</p>
+<p>给你一个字符串 <code>s</code> ，找出其中最长的回文子序列，并返回该序列的长度。</p>
 
-<p>&nbsp;</p>
+<p>子序列定义为：不改变剩余字符顺序的情况下，删除某些字符或者不删除任何字符形成的一个序列。</p>
 
-<p><strong>示例 1:</strong><br>
-输入:</p>
+<p> </p>
 
-<pre>&quot;bbbab&quot;
+<p><strong>示例 1：</strong></p>
+
+<pre>
+<strong>输入：</strong>s = "bbbab"
+<strong>输出：</strong>4
+<strong>解释：</strong>一个可能的最长回文子序列为 "bbbb" 。
 </pre>
 
-<p>输出:</p>
+<p><strong>示例 2：</strong></p>
 
-<pre>4
+<pre>
+<strong>输入：</strong>s = "cbbd"
+<strong>输出：</strong>2
+<strong>解释：</strong>一个可能的最长回文子序列为 "bb" 。
 </pre>
 
-<p>一个可能的最长回文子序列为 &quot;bbbb&quot;。</p>
-
-<p><strong>示例 2:</strong><br>
-输入:</p>
-
-<pre>&quot;cbbd&quot;
-</pre>
-
-<p>输出:</p>
-
-<pre>2
-</pre>
-
-<p>一个可能的最长回文子序列为 &quot;bb&quot;。</p>
-
-<p>&nbsp;</p>
+<p> </p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>1 &lt;= s.length &lt;= 1000</code></li>
-	<li><code>s</code> 只包含小写英文字母</li>
+	<li><code>1 <= s.length <= 1000</code></li>
+	<li><code>s</code> 仅由小写英文字母组成</li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-动态规划。
+### 方法一：动态规划
 
-设 `dp[i][j]` 表示字符串 `s[i..j]` 中的最长回文子序列的长度。初始化 `dp[i][i] = 1`(`i∈[0, n-1]`)。
+我们定义 $f[i][j]$ 表示字符串 $s$ 的第 $i$ 个字符到第 $j$ 个字符之间的最长回文子序列的长度。初始时 $f[i][i] = 1$，其余位置的值均为 $0$。
 
-- 对于 `s[i] == s[j]`，`dp[i][j] = dp[i + 1][j - 1] + 2`；
-- 对于 `s[i] != s[j]`，`dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])`。
+如果 $s[i] = s[j]$，那么 $f[i][j] = f[i + 1][j - 1] + 2$；否则 $f[i][j] = \max(f[i + 1][j], f[i][j - 1])$。
+
+由于 $f[i][j]$ 的值与 $f[i + 1][j - 1]$, $f[i + 1][j]$, $f[i][j - 1]$ 有关，所以我们应该从大到小枚举 $i$，从小到大枚举 $j$。
+
+答案即为 $f[0][n - 1]$。
+
+时间复杂度 $O(n^2)$，空间复杂度 $O(n^2)$。其中 $n$ 为字符串 $s$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def longestPalindromeSubseq(self, s: str) -> int:
         n = len(s)
-        dp = [[0] * n for _ in range(n)]
+        f = [[0] * n for _ in range(n)]
         for i in range(n):
-            dp[i][i] = 1
-        for j in range(1, n):
-            for i in range(j - 1, -1, -1):
+            f[i][i] = 1
+        for i in range(n - 1, -1, -1):
+            for j in range(i + 1, n):
                 if s[i] == s[j]:
-                    dp[i][j] = dp[i + 1][j - 1] + 2
+                    f[i][j] = f[i + 1][j - 1] + 2
                 else:
-                    dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])
-        return dp[0][-1]
+                    f[i][j] = max(f[i + 1][j], f[i][j - 1])
+        return f[0][-1]
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int longestPalindromeSubseq(String s) {
         int n = s.length();
-        int[][] dp = new int[n][n];
+        int[][] f = new int[n][n];
         for (int i = 0; i < n; ++i) {
-            dp[i][i] = 1;
+            f[i][i] = 1;
         }
-        for (int j = 1; j < n; ++j) {
-            for (int i = j - 1; i >= 0; --i) {
+        for (int i = n - 1; i >= 0; --i) {
+            for (int j = i + 1; j < n; ++j) {
                 if (s.charAt(i) == s.charAt(j)) {
-                    dp[i][j] = dp[i + 1][j - 1] + 2;
+                    f[i][j] = f[i + 1][j - 1] + 2;
                 } else {
-                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);
+                    f[i][j] = Math.max(f[i + 1][j], f[i][j - 1]);
                 }
             }
         }
-        return dp[0][n - 1];
+        return f[0][n - 1];
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int longestPalindromeSubseq(string s) {
         int n = s.size();
-        vector<vector<int>> dp(n, vector<int>(n, 0));
+        int f[n][n];
+        memset(f, 0, sizeof(f));
         for (int i = 0; i < n; ++i) {
-            dp[i][i] = 1;
+            f[i][i] = 1;
         }
-        for (int j = 1; j < n; ++j) {
-            for (int i = j - 1; i >= 0; --i) {
+        for (int i = n - 1; ~i; --i) {
+            for (int j = i + 1; j < n; ++j) {
                 if (s[i] == s[j]) {
-                    dp[i][j] = dp[i + 1][j - 1] + 2;
+                    f[i][j] = f[i + 1][j - 1] + 2;
                 } else {
-                    dp[i][j] = max(dp[i + 1][j], dp[i][j - 1]);
+                    f[i][j] = max(f[i + 1][j], f[i][j - 1]);
                 }
             }
         }
-        return dp[0][n - 1];
+        return f[0][n - 1];
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func longestPalindromeSubseq(s string) int {
 	n := len(s)
-	dp := make([][]int, n)
-	for i := 0; i < n; i++ {
-		dp[i] = make([]int, n)
-		dp[i][i] = 1
+	f := make([][]int, n)
+	for i := range f {
+		f[i] = make([]int, n)
+		f[i][i] = 1
 	}
-	for j := 1; j < n; j++ {
-		for i := j - 1; i >= 0; i-- {
+	for i := n - 2; i >= 0; i-- {
+		for j := i + 1; j < n; j++ {
 			if s[i] == s[j] {
-				dp[i][j] = dp[i+1][j-1] + 2
+				f[i][j] = f[i+1][j-1] + 2
 			} else {
-				dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+				f[i][j] = max(f[i+1][j], f[i][j-1])
 			}
 		}
 	}
-	return dp[0][n-1]
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return f[0][n-1]
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function longestPalindromeSubseq(s: string): number {
+    const n = s.length;
+    const f: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
+    for (let i = 0; i < n; ++i) {
+        f[i][i] = 1;
+    }
+    for (let i = n - 2; ~i; --i) {
+        for (let j = i + 1; j < n; ++j) {
+            if (s[i] === s[j]) {
+                f[i][j] = f[i + 1][j - 1] + 2;
+            } else {
+                f[i][j] = Math.max(f[i + 1][j], f[i][j - 1]);
+            }
+        }
+    }
+    return f[0][n - 1];
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

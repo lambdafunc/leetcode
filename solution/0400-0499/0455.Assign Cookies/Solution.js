@@ -4,19 +4,17 @@
  * @return {number}
  */
 var findContentChildren = function (g, s) {
-    let len1 = g.length,
-        len2 = s.length;
-    if (len2 === 0) return 0;
     g.sort((a, b) => a - b);
     s.sort((a, b) => a - b);
-    let i = 0,
-        j = 0;
-    while (i < len1 && j < len2) {
-        while (s[j] < g[i]) j++;
-        if (s[j] >= g[i]) {
-            i++;
-            j++;
-        } else break;
+    const m = g.length;
+    const n = s.length;
+    for (let i = 0, j = 0; i < m; ++i) {
+        while (j < n && s[j] < g[i]) {
+            ++j;
+        }
+        if (j++ >= n) {
+            return i;
+        }
     }
-    return i;
+    return m;
 };

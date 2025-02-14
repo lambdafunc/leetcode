@@ -1,29 +1,28 @@
 class Solution {
     public int longestDecomposition(String text) {
-        char[] cs = text.toCharArray();
-        int res = 0;
-        for (int i = 0, j = cs.length - 1; i <= j; ) {
-            boolean flag = true;
+        int ans = 0;
+        for (int i = 0, j = text.length() - 1; i <= j;) {
+            boolean ok = false;
             for (int k = 1; i + k - 1 < j - k + 1; ++k) {
-                if (check(cs, i, j - k + 1, k)) {
-                    res += 2;
+                if (check(text, i, j - k + 1, k)) {
+                    ans += 2;
                     i += k;
                     j -= k;
-                    flag = false;
+                    ok = true;
                     break;
                 }
             }
-            if (flag) {
-                ++res;
+            if (!ok) {
+                ++ans;
                 break;
             }
         }
-        return res;
+        return ans;
     }
 
-    private boolean check(char[] cs, int i, int j, int k) {
+    private boolean check(String s, int i, int j, int k) {
         while (k-- > 0) {
-            if (cs[i++] != cs[j++]) {
+            if (s.charAt(i++) != s.charAt(j++)) {
                 return false;
             }
         }

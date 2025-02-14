@@ -1,11 +1,12 @@
 class Solution {
     public String sortSentence(String s) {
-        String[] words = s.split(" ");
-        String[] arr = new String[words.length];
-        for (String word : words) {
-            int idx = word.charAt(word.length() - 1) - '0' - 1;
-            arr[idx] = word.substring(0, word.length() - 1);
+        String[] ws = s.split(" ");
+        int n = ws.length;
+        String[] ans = new String[n];
+        for (int i = 0; i < n; ++i) {
+            String w = ws[i];
+            ans[w.charAt(w.length() - 1) - '1'] = w.substring(0, w.length() - 1);
         }
-        return String.join(" ", arr);
+        return String.join(" ", ans);
     }
 }

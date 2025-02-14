@@ -1,89 +1,90 @@
-# [662. 二叉树最大宽度](https://leetcode-cn.com/problems/maximum-width-of-binary-tree)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0662.Maximum%20Width%20of%20Binary%20Tree/README.md
+tags:
+    - 树
+    - 深度优先搜索
+    - 广度优先搜索
+    - 二叉树
+---
+
+<!-- problem:start -->
+
+# [662. 二叉树最大宽度](https://leetcode.cn/problems/maximum-width-of-binary-tree)
 
 [English Version](/solution/0600-0699/0662.Maximum%20Width%20of%20Binary%20Tree/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个二叉树，编写一个函数来获取这个树的最大宽度。树的宽度是所有层中的最大宽度。这个二叉树与<strong>满二叉树（full binary tree）</strong>结构相同，但一些节点为空。</p>
+<p>给你一棵二叉树的根节点 <code>root</code> ，返回树的 <strong>最大宽度</strong> 。</p>
 
-<p>每一层的宽度被定义为两个端点（该层最左和最右的非空节点，两端点间的<code>null</code>节点也计入长度）之间的长度。</p>
+<p>树的 <strong>最大宽度</strong> 是所有层中最大的 <strong>宽度</strong> 。</p>
 
-<p><strong>示例 1:</strong></p>
+<div class="original__bRMd">
+<div>
+<p>每一层的 <strong>宽度</strong> 被定义为该层最左和最右的非空节点（即，两个端点）之间的长度。将这个二叉树视作与满二叉树结构相同，两端点间会出现一些延伸到这一层的 <code>null</code> 节点，这些 <code>null</code> 节点也计入长度。</p>
 
+<p>题目数据保证答案将会在&nbsp; <strong>32 位</strong> 带符号整数范围内。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>示例 1：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0662.Maximum%20Width%20of%20Binary%20Tree/images/width1-tree.jpg" style="width: 359px; height: 302px;" />
 <pre>
-<strong>输入:</strong> 
-
-           1
-         /   \
-        3     2
-       / \     \  
-      5   3     9 
-
-<strong>输出:</strong> 4
-<strong>解释:</strong> 最大值出现在树的第 3 层，宽度为 4 (5,3,null,9)。
+<strong>输入：</strong>root = [1,3,2,5,3,null,9]
+<strong>输出：</strong>4
+<strong>解释：</strong>最大宽度出现在树的第 3 层，宽度为 4 (5,3,null,9) 。
 </pre>
 
-<p><strong>示例 2:</strong></p>
-
+<p><strong>示例 2：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0662.Maximum%20Width%20of%20Binary%20Tree/images/maximum-width-of-binary-tree-v3.jpg" style="width: 442px; height: 422px;" />
 <pre>
-<strong>输入:</strong> 
-
-          1
-         /  
-        3    
-       / \       
-      5   3     
-
-<strong>输出:</strong> 2
-<strong>解释:</strong> 最大值出现在树的第 3 层，宽度为 2 (5,3)。
+<strong>输入：</strong>root = [1,3,2,5,null,null,9,6,null,7]
+<strong>输出：</strong>7
+<strong>解释：</strong>最大宽度出现在树的第 4 层，宽度为 7 (6,null,null,null,null,null,7) 。
 </pre>
 
-<p><strong>示例&nbsp;3:</strong></p>
-
+<p><strong>示例 3：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0662.Maximum%20Width%20of%20Binary%20Tree/images/width3-tree.jpg" style="width: 289px; height: 299px;" />
 <pre>
-<strong>输入:</strong> 
-
-          1
-         / \
-        3   2 
-       /        
-      5      
-
-<strong>输出:</strong> 2
-<strong>解释:</strong> 最大值出现在树的第 2 层，宽度为 2 (3,2)。
+<strong>输入：</strong>root = [1,3,2,5]
+<strong>输出：</strong>2
+<strong>解释：</strong>最大宽度出现在树的第 2 层，宽度为 2 (3,2) 。
 </pre>
 
-<p><strong>示例 4:</strong></p>
+<p>&nbsp;</p>
 
-<pre>
-<strong>输入:</strong> 
+<p><strong>提示：</strong></p>
 
-          1
-         / \
-        3   2
-       /     \  
-      5       9 
-     /         \
-    6           7
-<strong>输出:</strong> 8
-<strong>解释:</strong> 最大值出现在树的第 4 层，宽度为 8 (6,null,null,null,null,null,null,7)。
-</pre>
+<ul>
+	<li>树中节点的数目范围是 <code>[1, 3000]</code></li>
+	<li><code>-100 &lt;= Node.val &lt;= 100</code></li>
+</ul>
+</div>
+</div>
 
-<p><strong>注意:</strong> 答案在32位有符号整数的表示范围内。</p>
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-BFS 层序遍历。
+### 方法一：BFS
+
+对节点进行编号，初始根节点编号为 $1$。
+
+对于一个编号为 `i` 的节点，它的左节点编号为 `i<<1`，右节点编号为 `i<<1|1`。
+
+采用 BFS 进行层序遍历，求每层的宽度时，用该层的最大节点编号减去最小节点编号再加一即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 是二叉树的节点数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -93,24 +94,21 @@ BFS 层序遍历。
 #         self.left = left
 #         self.right = right
 class Solution:
-    def widthOfBinaryTree(self, root: TreeNode) -> int:
-        q = deque([(root, 1)])
+    def widthOfBinaryTree(self, root: Optional[TreeNode]) -> int:
         ans = 0
+        q = deque([(root, 1)])
         while q:
-            n = len(q)
             ans = max(ans, q[-1][1] - q[0][1] + 1)
-            for _ in range(n):
-                node, j = q.popleft()
-                if node.left:
-                    q.append((node.left, 2 * j))
-                if node.right:
-                    q.append((node.right, 2 * j + 1))
+            for _ in range(len(q)):
+                root, i = q.popleft()
+                if root.left:
+                    q.append((root.left, i << 1))
+                if root.right:
+                    q.append((root.right, i << 1 | 1))
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -131,17 +129,19 @@ class Solution:
 class Solution {
     public int widthOfBinaryTree(TreeNode root) {
         Deque<Pair<TreeNode, Integer>> q = new ArrayDeque<>();
-        q.offerLast(new Pair<>(root, 1));
+        q.offer(new Pair<>(root, 1));
         int ans = 0;
         while (!q.isEmpty()) {
             ans = Math.max(ans, q.peekLast().getValue() - q.peekFirst().getValue() + 1);
-            for (int i = 0, n = q.size(); i < n; ++i) {
-                Pair<TreeNode, Integer> node = q.pollFirst();
-                if (node.getKey().left != null) {
-                    q.offerLast(new Pair<>(node.getKey().left, node.getValue() * 2));
+            for (int n = q.size(); n > 0; --n) {
+                var p = q.pollFirst();
+                root = p.getKey();
+                int i = p.getValue();
+                if (root.left != null) {
+                    q.offer(new Pair<>(root.left, i << 1));
                 }
-                if (node.getKey().right != null) {
-                    q.offerLast(new Pair<>(node.getKey().right, node.getValue() * 2 + 1));
+                if (root.right != null) {
+                    q.offer(new Pair<>(root.right, i << 1 | 1));
                 }
             }
         }
@@ -150,9 +150,7 @@ class Solution {
 }
 ```
 
-### **C++**
-
-`start * 2` 表示下一层的起点。计算下一层左右子树索引时，减去 `start * 2`，可以防止溢出。
+#### C++
 
 ```cpp
 /**
@@ -170,18 +168,18 @@ class Solution {
 public:
     int widthOfBinaryTree(TreeNode* root) {
         queue<pair<TreeNode*, int>> q;
-        q.emplace(root, 1);
+        q.push({root, 1});
         int ans = 0;
-        while (!q.empty())
-        {
+        while (!q.empty()) {
             ans = max(ans, q.back().second - q.front().second + 1);
-            int start = q.front().second;
-            for (int i = 0, n = q.size(); i < n; ++i)
-            {
-                auto node = q.front();
+            int i = q.front().second;
+            for (int n = q.size(); n; --n) {
+                auto p = q.front();
                 q.pop();
-                if (node.first->left != nullptr) q.emplace(node.first->left, node.second * 2 - start * 2);
-                if (node.first->right != nullptr) q.emplace(node.first->right, node.second * 2 + 1 - start * 2);
+                root = p.first;
+                int j = p.second;
+                if (root->left) q.push({root->left, (j << 1) - (i << 1)});
+                if (root->right) q.push({root->right, (j << 1 | 1) - (i << 1)});
             }
         }
         return ans;
@@ -189,7 +187,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -200,43 +198,188 @@ public:
  *     Right *TreeNode
  * }
  */
-type Node struct {
-	node *TreeNode
-	idx  int
-}
-
 func widthOfBinaryTree(root *TreeNode) int {
-	q := []Node{{root, 1}}
+	q := []pair{{root, 1}}
 	ans := 0
 	for len(q) > 0 {
-		ans = max(ans, q[len(q)-1].idx-q[0].idx+1)
-		n := len(q)
-		for i := 0; i < n; i++ {
-			node := q[0]
+		ans = max(ans, q[len(q)-1].i-q[0].i+1)
+		for n := len(q); n > 0; n-- {
+			p := q[0]
 			q = q[1:]
-			if node.node.Left != nil {
-				q = append(q, Node{node.node.Left, node.idx * 2})
+			root = p.node
+			if root.Left != nil {
+				q = append(q, pair{root.Left, p.i << 1})
 			}
-			if node.node.Right != nil {
-				q = append(q, Node{node.node.Right, node.idx*2 + 1})
+			if root.Right != nil {
+				q = append(q, pair{root.Right, p.i<<1 | 1})
 			}
 		}
 	}
 	return ans
 }
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+type pair struct {
+	node *TreeNode
+	i    int
 }
 ```
 
-### **...**
+<!-- tabs:end -->
 
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：DFS
+
+定义 `dfs(root, depth, i)` 表示从深度为 `depth`，且编号为 `i` 的节点 `root` 开始往下搜索。记录每一层最先访问到的节点的编号。访问到当前层其它节点时，求当前节点编号与当前层最小编号的差再加一，更新当前层的最大宽度。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 是二叉树的节点数。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def widthOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+        def dfs(root, depth, i):
+            if root is None:
+                return
+            if len(t) == depth:
+                t.append(i)
+            else:
+                nonlocal ans
+                ans = max(ans, i - t[depth] + 1)
+            dfs(root.left, depth + 1, i << 1)
+            dfs(root.right, depth + 1, i << 1 | 1)
+
+        ans = 1
+        t = []
+        dfs(root, 0, 1)
+        return ans
 ```
 
+#### Java
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    private int ans = 1;
+    private List<Integer> t = new ArrayList<>();
+
+    public int widthOfBinaryTree(TreeNode root) {
+        dfs(root, 0, 1);
+        return ans;
+    }
+
+    private void dfs(TreeNode root, int depth, int i) {
+        if (root == null) {
+            return;
+        }
+        if (t.size() == depth) {
+            t.add(i);
+        } else {
+            ans = Math.max(ans, i - t.get(depth) + 1);
+        }
+        dfs(root.left, depth + 1, i << 1);
+        dfs(root.right, depth + 1, i << 1 | 1);
+    }
+}
+```
+
+#### C++
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> t;
+    int ans = 1;
+    using ull = unsigned long long;
+
+    int widthOfBinaryTree(TreeNode* root) {
+        dfs(root, 0, 1);
+        return ans;
+    }
+
+    void dfs(TreeNode* root, int depth, ull i) {
+        if (!root) return;
+        if (t.size() == depth) {
+            t.push_back(i);
+        } else {
+            ans = max(ans, (int) (i - t[depth] + 1));
+        }
+        dfs(root->left, depth + 1, i << 1);
+        dfs(root->right, depth + 1, i << 1 | 1);
+    }
+};
+```
+
+#### Go
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func widthOfBinaryTree(root *TreeNode) int {
+	ans := 1
+	t := []int{}
+	var dfs func(root *TreeNode, depth, i int)
+	dfs = func(root *TreeNode, depth, i int) {
+		if root == nil {
+			return
+		}
+		if len(t) == depth {
+			t = append(t, i)
+		} else {
+			ans = max(ans, i-t[depth]+1)
+		}
+		dfs(root.Left, depth+1, i<<1)
+		dfs(root.Right, depth+1, i<<1|1)
+	}
+	dfs(root, 0, 1)
+	return ans
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,27 +1,22 @@
 class Solution:
     def solve(self, board: List[List[str]]) -> None:
-        """
-        Do not return anything, modify board in-place instead.
-        """
+        def dfs(i: int, j: int):
+            if not (0 <= i < m and 0 <= j < n and board[i][j] == "O"):
+                return
+            board[i][j] = "."
+            for a, b in pairwise((-1, 0, 1, 0, -1)):
+                dfs(i + a, j + b)
+
         m, n = len(board), len(board[0])
-        p = list(range(m * n + 1))
-
-        def find(x):
-            if p[x] != x:
-                p[x] = find(p[x])
-            return p[x]
-
+        for i in range(m):
+            dfs(i, 0)
+            dfs(i, n - 1)
+        for j in range(n):
+            dfs(0, j)
+            dfs(m - 1, j)
         for i in range(m):
             for j in range(n):
-                if board[i][j] == 'O':
-                    if i == 0 or j == 0 or i == m - 1 or j == n - 1:
-                        p[find(i * n + j)] = find(m * n)
-                    else:
-                        for x, y in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                            if board[i + x][j + y] == "O":
-                                p[find(i * n + j)] = find((i + x) * n + j + y)
-
-        for i in range(m):
-            for j in range(n):
-                if board[i][j] == 'O' and find(i * n + j) != find(m * n):
-                    board[i][j] = 'X'
+                if board[i][j] == ".":
+                    board[i][j] = "O"
+                elif board[i][j] == "O":
+                    board[i][j] = "X"

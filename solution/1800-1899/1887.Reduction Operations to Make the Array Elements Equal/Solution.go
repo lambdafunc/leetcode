@@ -1,11 +1,11 @@
-func reductionOperations(nums []int) int {
+func reductionOperations(nums []int) (ans int) {
 	sort.Ints(nums)
-	cnt, res, n := 0, 0, len(nums)
-	for i := 1; i < n; i++ {
-		if nums[i] != nums[i-1] {
+	cnt := 0
+	for i, x := range nums[1:] {
+		if x != nums[i] {
 			cnt++
 		}
-		res += cnt
+		ans += cnt
 	}
-	return res
+	return
 }

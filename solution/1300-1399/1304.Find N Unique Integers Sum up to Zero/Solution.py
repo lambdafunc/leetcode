@@ -1,9 +1,9 @@
 class Solution:
     def sumZero(self, n: int) -> List[int]:
-        presum = 0
-        res = []
-        for i in range(1, n):
-            res.append(i)
-            presum += i
-        res.append(-presum)
-        return res
+        ans = []
+        for i in range(n >> 1):
+            ans.append(i + 1)
+            ans.append(-(i + 1))
+        if n & 1:
+            ans.append(0)
+        return ans

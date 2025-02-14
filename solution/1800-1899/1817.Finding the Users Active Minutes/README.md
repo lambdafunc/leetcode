@@ -1,10 +1,23 @@
-# [1817. 查找用户活跃分钟数](https://leetcode-cn.com/problems/finding-the-users-active-minutes)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1817.Finding%20the%20Users%20Active%20Minutes/README.md
+rating: 1360
+source: 第 235 场周赛 Q2
+tags:
+    - 数组
+    - 哈希表
+---
+
+<!-- problem:start -->
+
+# [1817. 查找用户活跃分钟数](https://leetcode.cn/problems/finding-the-users-active-minutes)
 
 [English Version](/solution/1800-1899/1817.Finding%20the%20Users%20Active%20Minutes/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你用户在 LeetCode 的操作日志，和一个整数 <code>k</code> 。日志用一个二维整数数组 <code>logs</code> 表示，其中每个 <code>logs[i] = [ID<sub>i</sub>, time<sub>i</sub>]</code> 表示 ID 为 <code>ID<sub>i</sub></code> 的用户在 <code>time<sub>i</sub></code> 分钟时执行了某个操作。</p>
 
@@ -52,32 +65,114 @@ ID=2 的用户执行操作的分钟分别是：2 和 3 。因此，该用户的�
 	<li><code>k</code> 的取值范围是 <code>[用户的最大用户活跃分钟数, 10<sup>5</sup>]</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：哈希表
+
+我们用哈希表 $d$ 记录每个用户的所有去重操作时间，然后遍历哈希表，统计每个用户的用户活跃分钟数，最后统计每个用户活跃分钟数的分布情况。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为数组 $logs$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def findingUsersActiveMinutes(self, logs: List[List[int]], k: int) -> List[int]:
+        d = defaultdict(set)
+        for i, t in logs:
+            d[i].add(t)
+        ans = [0] * k
+        for ts in d.values():
+            ans[len(ts) - 1] += 1
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int[] findingUsersActiveMinutes(int[][] logs, int k) {
+        Map<Integer, Set<Integer>> d = new HashMap<>();
+        for (var log : logs) {
+            int i = log[0], t = log[1];
+            d.computeIfAbsent(i, key -> new HashSet<>()).add(t);
+        }
+        int[] ans = new int[k];
+        for (var ts : d.values()) {
+            ++ans[ts.size() - 1];
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> findingUsersActiveMinutes(vector<vector<int>>& logs, int k) {
+        unordered_map<int, unordered_set<int>> d;
+        for (auto& log : logs) {
+            int i = log[0], t = log[1];
+            d[i].insert(t);
+        }
+        vector<int> ans(k);
+        for (auto& [_, ts] : d) {
+            ++ans[ts.size() - 1];
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func findingUsersActiveMinutes(logs [][]int, k int) []int {
+	d := map[int]map[int]bool{}
+	for _, log := range logs {
+		i, t := log[0], log[1]
+		if _, ok := d[i]; !ok {
+			d[i] = make(map[int]bool)
+		}
+		d[i][t] = true
+	}
+	ans := make([]int, k)
+	for _, ts := range d {
+		ans[len(ts)-1]++
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+function findingUsersActiveMinutes(logs: number[][], k: number): number[] {
+    const d: Map<number, Set<number>> = new Map();
+    for (const [i, t] of logs) {
+        if (!d.has(i)) {
+            d.set(i, new Set<number>());
+        }
+        d.get(i)!.add(t);
+    }
+    const ans: number[] = Array(k).fill(0);
+    for (const [_, ts] of d) {
+        ++ans[ts.size - 1];
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,8 +1,25 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2109.Adding%20Spaces%20to%20a%20String/README_EN.md
+rating: 1315
+source: Weekly Contest 272 Q2
+tags:
+    - Array
+    - Two Pointers
+    - String
+    - Simulation
+---
+
+<!-- problem:start -->
+
 # [2109. Adding Spaces to a String](https://leetcode.com/problems/adding-spaces-to-a-string)
 
 [中文文档](/solution/2100-2199/2109.Adding%20Spaces%20to%20a%20String/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a <strong>0-indexed</strong> string <code>s</code> and a <strong>0-indexed</strong> integer array <code>spaces</code> that describes the indices in the original string where spaces will be added. Each space should be inserted <strong>before</strong> the character at the given index.</p>
 
@@ -13,7 +30,7 @@
 <p>Return<strong> </strong><em>the modified string <strong>after</strong> the spaces have been added.</em></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;LeetcodeHelpsMeLearn&quot;, spaces = [8,13,15]
@@ -23,7 +40,7 @@ The indices 8, 13, and 15 correspond to the underlined characters in &quot;Leetc
 We then place spaces before those characters.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;icodeinpython&quot;, spaces = [1,5,7,9]
@@ -33,7 +50,7 @@ The indices 1, 5, 7, and 9 correspond to the underlined characters in &quot;i<u>
 We then place spaces before those characters.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;spacing&quot;, spaces = [0,1,2,3,4,5,6]
@@ -53,11 +70,21 @@ We are also able to place spaces before the first character of the string.
 	<li>All the values of <code>spaces</code> are <strong>strictly increasing</strong>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Two Pointers
+
+We can use two pointers $i$ and $j$ to point to the beginning of the string $s$ and the array $\textit{spaces}$, respectively. Then, we iterate through the string $s$ from the beginning to the end. When $i$ equals $\textit{spaces}[j]$, we add a space to the result string, and then increment $j$ by $1$. Next, we add $s[i]$ to the result string, and then increment $i$ by $1$. We continue this process until we have iterated through the entire string $s$.
+
+The time complexity is $O(n + m)$, and the space complexity is $O(n + m)$, where $n$ and $m$ are the lengths of the string $s$ and the array $spaces$, respectively.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -72,7 +99,7 @@ class Solution:
         return ''.join(ans)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -90,17 +117,15 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     string addSpaces(string s, vector<int>& spaces) {
         string ans = "";
-        for (int i = 0, j = 0; i < s.size(); ++i)
-        {
-            if (j < spaces.size() && i == spaces[j])
-            {
+        for (int i = 0, j = 0; i < s.size(); ++i) {
+            if (j < spaces.size() && i == spaces[j]) {
                 ans += ' ';
                 ++j;
             }
@@ -111,7 +136,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func addSpaces(s string, spaces []int) string {
@@ -127,16 +152,24 @@ func addSpaces(s string, spaces []int) string {
 }
 ```
 
-### **TypeScript**
+#### TypeScript
 
 ```ts
-
-```
-
-### **...**
-
-```
-
+function addSpaces(s: string, spaces: number[]): string {
+    const ans: string[] = [];
+    for (let i = 0, j = 0; i < s.length; i++) {
+        if (i === spaces[j]) {
+            ans.push(' ');
+            j++;
+        }
+        ans.push(s[i]);
+    }
+    return ans.join('');
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

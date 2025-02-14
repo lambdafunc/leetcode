@@ -1,10 +1,24 @@
-# [2011. 执行操作后的变量值](https://leetcode-cn.com/problems/final-value-of-variable-after-performing-operations)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2011.Final%20Value%20of%20Variable%20After%20Performing%20Operations/README.md
+rating: 1165
+source: 第 259 场周赛 Q1
+tags:
+    - 数组
+    - 字符串
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [2011. 执行操作后的变量值](https://leetcode.cn/problems/final-value-of-variable-after-performing-operations)
 
 [English Version](/solution/2000-2099/2011.Final%20Value%20of%20Variable%20After%20Performing%20Operations/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>存在一种仅支持 4 种操作和 1 个变量 <code>X</code> 的编程语言：</p>
 
@@ -65,15 +79,21 @@ X--：X 减 1 ，X = 1 - 1 = 0
 	<li><code>operations[i]</code> 将会是 <code>"++X"</code>、<code>"X++"</code>、<code>"--X"</code> 或 <code>"X--"</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：计数
+
+我们遍历数组 $\textit{operations}$，对于每个操作 $\textit{operations}[i]$，如果包含 `'+'`，那么答案加 $1$，否则答案减 $1$。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组 $\textit{operations}$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -81,15 +101,13 @@ class Solution:
         return sum(1 if s[1] == '+' else -1 for s in operations)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int finalValueAfterOperations(String[] operations) {
         int ans = 0;
-        for (String s : operations) {
+        for (var s : operations) {
             ans += (s.charAt(1) == '+' ? 1 : -1);
         }
         return ans;
@@ -97,51 +115,84 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function finalValueAfterOperations(operations: string[]): number {
-    let ans = 0;
-    for (let operation of operations) {
-        ans += operation.includes("+") ? 1 : -1;
-    }
-    return ans;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int finalValueAfterOperations(vector<string>& operations) {
         int ans = 0;
-        for (auto s : operations) ans += (s[1] == '+' ? 1 : -1);
+        for (auto& s : operations) {
+            ans += s[1] == '+' ? 1 : -1;
+        }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func finalValueAfterOperations(operations []string) int {
-    ans := 0
-    for _, s := range operations {
-        if s[1] == '+' {
-            ans += 1
-        } else {
-            ans -= 1
-        }
-    }
-    return ans
+func finalValueAfterOperations(operations []string) (ans int) {
+	for _, s := range operations {
+		if s[1] == '+' {
+			ans += 1
+		} else {
+			ans -= 1
+		}
+	}
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function finalValueAfterOperations(operations: string[]): number {
+    return operations.reduce((acc, op) => acc + (op[1] === '+' ? 1 : -1), 0);
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn final_value_after_operations(operations: Vec<String>) -> i32 {
+        let mut ans = 0;
+        for s in operations.iter() {
+            ans += if s.as_bytes()[1] == b'+' { 1 } else { -1 };
+        }
+        ans
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {string[]} operations
+ * @return {number}
+ */
+var finalValueAfterOperations = function (operations) {
+    return operations.reduce((acc, op) => acc + (op[1] === '+' ? 1 : -1), 0);
+};
+```
+
+#### C
+
+```c
+int finalValueAfterOperations(char** operations, int operationsSize) {
+    int ans = 0;
+    for (int i = 0; i < operationsSize; i++) {
+        ans += operations[i][1] == '+' ? 1 : -1;
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

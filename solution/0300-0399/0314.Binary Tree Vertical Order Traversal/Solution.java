@@ -14,29 +14,28 @@
  * }
  */
 class Solution {
-    public List<List<Integer>> verticalOrder(TreeNode root) {
-        if (root == null) {
-            return Collections.emptyList();
-        }
-        Map<Integer, List<Integer>> offsetVals = new TreeMap<>();
-        Map<TreeNode, Integer> nodeOffsets = new HashMap<>();
-        Deque<TreeNode> q = new ArrayDeque<>();
-        q.offer(root);
-        nodeOffsets.put(root, 0);
+    private TreeMap<Integer, List<int[]>> d = new TreeMap<>();
 
-        while (!q.isEmpty()) {
-            TreeNode node = q.poll();
-            int offset = nodeOffsets.get(node);
-            offsetVals.computeIfAbsent(offset, k -> new ArrayList<>()).add(node.val);
-            if (node.left != null) {
-                q.offer(node.left);
-                nodeOffsets.put(node.left, offset - 1);
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        dfs(root, 0, 0);
+        List<List<Integer>> ans = new ArrayList<>();
+        for (var v : d.values()) {
+            Collections.sort(v, (a, b) -> a[0] - b[0]);
+            List<Integer> t = new ArrayList<>();
+            for (var e : v) {
+                t.add(e[1]);
             }
-            if (node.right != null) {
-                q.offer(node.right);
-                nodeOffsets.put(node.right, offset + 1);
-            }
+            ans.add(t);
         }
-        return new ArrayList<>(offsetVals.values());
+        return ans;
+    }
+
+    private void dfs(TreeNode root, int depth, int offset) {
+        if (root == null) {
+            return;
+        }
+        d.computeIfAbsent(offset, k -> new ArrayList<>()).add(new int[] {depth, root.val});
+        dfs(root.left, depth + 1, offset - 1);
+        dfs(root.right, depth + 1, offset + 1);
     }
 }

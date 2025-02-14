@@ -1,34 +1,26 @@
-class Solution
-{
+class Solution {
 public:
-    vector<int> spiralOrder(vector<vector<int>> &matrix)
-    {
-        vector<int> ans;
-        if (matrix.size() == 0)
-            return ans;
-        int left = 0, top = 0, bottom = matrix.size() - 1, right = matrix[0].size() - 1;
-        while (true)
-        {
-            for (int i = left; i <= right; i++)
-                ans.push_back(matrix[top][i]);
-            top++;
-            if (top > bottom)
-                break;
-            for (int i = top; i <= bottom; i++)
-                ans.push_back(matrix[i][right]);
-            right--;
-            if (right < left)
-                break;
-            for (int i = right; i >= left; i--)
-                ans.push_back(matrix[bottom][i]);
-            bottom--;
-            if (bottom < top)
-                break;
-            for (int i = bottom; i >= top; i--)
-                ans.push_back(matrix[i][left]);
-            left++;
-            if (left > right)
-                break;
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        if (matrix.size() == 0 || matrix[0].size() == 0) {
+            return {};
+        }
+        int m = matrix.size(), n = matrix[0].size();
+        bool vis[m][n];
+        memset(vis, false, sizeof vis);
+        int i = 0, j = 0, k = 0;
+        int dirs[5] = {0, 1, 0, -1, 0};
+        vector<int> ans(m * n);
+        for (int h = 0; h < m * n; ++h) {
+            ans[h] = matrix[i][j];
+            vis[i][j] = true;
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x < 0 || y < 0 || x >= m || y >= n || vis[x][y]) {
+                k = (k + 1) % 4;
+                x = i + dirs[k];
+                y = j + dirs[k + 1];
+            }
+            i = x;
+            j = y;
         }
         return ans;
     }

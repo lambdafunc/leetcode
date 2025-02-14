@@ -1,22 +1,55 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0387.First%20Unique%20Character%20in%20a%20String/README_EN.md
+tags:
+    - Queue
+    - Hash Table
+    - String
+    - Counting
+---
+
+<!-- problem:start -->
+
 # [387. First Unique Character in a String](https://leetcode.com/problems/first-unique-character-in-a-string)
 
 [中文文档](/solution/0300-0399/0387.First%20Unique%20Character%20in%20a%20String/README.md)
 
 ## Description
 
-<p>Given a string <code>s</code>, return <em>the first non-repeating character in it and return its index</em>. If it does not exist, return <code>-1</code>.</p>
+<!-- description:start -->
+
+<p>Given a string <code>s</code>, find the <strong>first</strong> non-repeating character in it and return its index. If it <strong>does not</strong> exist, return <code>-1</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<pre><strong>Input:</strong> s = "leetcode"
-<strong>Output:</strong> 0
-</pre><p><strong>Example 2:</strong></p>
-<pre><strong>Input:</strong> s = "loveleetcode"
-<strong>Output:</strong> 2
-</pre><p><strong>Example 3:</strong></p>
-<pre><strong>Input:</strong> s = "aabb"
-<strong>Output:</strong> -1
-</pre>
+<p><strong class="example">Example 1:</strong></p>
+
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">s = &quot;leetcode&quot;</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">0</span></p>
+
+<p><strong>Explanation:</strong></p>
+
+<p>The character <code>&#39;l&#39;</code> at index 0 is the first character that does not occur at any other index.</p>
+</div>
+
+<p><strong class="example">Example 2:</strong></p>
+
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">s = &quot;loveleetcode&quot;</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">2</span></p>
+</div>
+
+<p><strong class="example">Example 3:</strong></p>
+
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">s = &quot;aabb&quot;</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">-1</span></p>
+</div>
+
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
@@ -25,34 +58,40 @@
 	<li><code>s</code> consists of only lowercase English letters.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def firstUniqChar(self, s: str) -> int:
-        counter = Counter(s)
+        cnt = Counter(s)
         for i, c in enumerate(s):
-            if counter[c] == 1:
+            if cnt[c] == 1:
                 return i
         return -1
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int firstUniqChar(String s) {
-        int[] counter = new int[26];
-        for (char c : s.toCharArray()) {
-            ++counter[c - 'a'];
+        int[] cnt = new int[26];
+        int n = s.length();
+        for (int i = 0; i < n; ++i) {
+            ++cnt[s.charAt(i) - 'a'];
         }
-        for (int i = 0; i < s.length(); ++i) {
-            char c = s.charAt(i);
-            if (counter[c - 'a'] == 1) {
+        for (int i = 0; i < n; ++i) {
+            if (cnt[s.charAt(i) - 'a'] == 1) {
                 return i;
             }
         }
@@ -61,47 +100,37 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function firstUniqChar(s: string): number {
-    let record = new Map();
-    for (let cur of [...s]) {
-        record.set(cur, record.has(cur));
-    }
-    for (let i = 0; i < s.length; i++) {
-        if (!record.get(s[i])) return i;
-    }
-    return -1;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int firstUniqChar(string s) {
-        vector<int> counter(26);
-        for (char& c : s) ++counter[c - 'a'];
-        for (int i = 0; i < s.size(); ++i)
-            if (counter[s[i] - 'a'] == 1)
+        int cnt[26]{};
+        for (char& c : s) {
+            ++cnt[c - 'a'];
+        }
+        int n = s.size();
+        for (int i = 0; i < n; ++i) {
+            if (cnt[s[i] - 'a'] == 1) {
                 return i;
+            }
+        }
         return -1;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func firstUniqChar(s string) int {
-	counter := make([]int, 26)
+	cnt := [26]int{}
 	for _, c := range s {
-		counter[c-'a']++
+		cnt[c-'a']++
 	}
 	for i, c := range s {
-		if counter[c-'a'] == 1 {
+		if cnt[c-'a'] == 1 {
 			return i
 		}
 	}
@@ -109,7 +138,24 @@ func firstUniqChar(s string) int {
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+function firstUniqChar(s: string): number {
+    const cnt = new Array(26).fill(0);
+    for (const c of s) {
+        cnt[c.charCodeAt(0) - 97]++;
+    }
+    for (let i = 0; i < s.length; i++) {
+        if (cnt[s.charCodeAt(i) - 97] === 1) {
+            return i;
+        }
+    }
+    return -1;
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -117,12 +163,12 @@ func firstUniqChar(s string) int {
  * @return {number}
  */
 var firstUniqChar = function (s) {
-    const counter = new Map();
-    for (let c of s) {
-        counter[c] = (counter[c] || 0) + 1;
+    const cnt = new Array(26).fill(0);
+    for (const c of s) {
+        ++cnt[c.charCodeAt() - 'a'.charCodeAt()];
     }
     for (let i = 0; i < s.length; ++i) {
-        if (counter[s[i]] == 1) {
+        if (cnt[s[i].charCodeAt() - 'a'.charCodeAt()] === 1) {
             return i;
         }
     }
@@ -130,10 +176,30 @@ var firstUniqChar = function (s) {
 };
 ```
 
-### **...**
+#### PHP
 
-```
-
+```php
+class Solution {
+    /**
+     * @param String $s
+     * @return Integer
+     */
+    function firstUniqChar($s) {
+        for ($i = 0; $i < strlen($s); $i++) {
+            $hashtable[$s[$i]]++;
+        }
+        for ($i = 0; $i < strlen($s); $i++) {
+            if ($hashtable[$s[$i]] == 1) {
+                return $i;
+            }
+        }
+        return -1;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

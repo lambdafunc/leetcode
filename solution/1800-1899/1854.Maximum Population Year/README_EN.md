@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1854.Maximum%20Population%20Year/README_EN.md
+rating: 1370
+source: Weekly Contest 240 Q1
+tags:
+    - Array
+    - Counting
+    - Prefix Sum
+---
+
+<!-- problem:start -->
+
 # [1854. Maximum Population Year](https://leetcode.com/problems/maximum-population-year)
 
 [中文文档](/solution/1800-1899/1854.Maximum%20Population%20Year/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a 2D integer array <code>logs</code> where each <code>logs[i] = [birth<sub>i</sub>, death<sub>i</sub>]</code> indicates the birth and death years of the <code>i<sup>th</sup></code> person.</p>
 
@@ -11,7 +27,7 @@
 <p>Return <em>the <strong>earliest</strong> year with the <strong>maximum population</strong></em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> logs = [[1993,1999],[2000,2010]]
@@ -19,7 +35,7 @@
 <strong>Explanation:</strong> The maximum population is 1, and 1993 is the earliest year with this population.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> logs = [[1950,1961],[1960,1971],[1970,1981]]
@@ -36,53 +52,142 @@ The earlier year between them is 1960.</pre>
 	<li><code>1950 &lt;= birth<sub>i</sub> &lt; death<sub>i</sub> &lt;= 2050</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Difference Array
+
+We notice that the range of years is $[1950,..2050]$. Therefore, we can map these years to an array $d$ of length $101$, where the index of the array represents the value of the year minus $1950$.
+
+Next, we traverse $logs$. For each person, we increment $d[birth_i - 1950]$ by $1$ and decrement $d[death_i - 1950]$ by $1$. Finally, we traverse the array $d$, find the maximum value of the prefix sum, which is the year with the most population, and add $1950$ to get the answer.
+
+The time complexity is $O(n)$, and the space complexity is $O(C)$. Where $n$ is the length of the array $logs$, and $C$ is the range size of the years, i.e., $2050 - 1950 + 1 = 101$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def maximumPopulation(self, logs: List[List[int]]) -> int:
-        delta = [0] * 2055
-        for birth, death in logs:
-            delta[birth] += 1
-            delta[death] -= 1
-
-        mx = res = cur = 0
-        for i, v in enumerate(delta):
-            cur += v
-            if mx < cur:
-                mx = cur
-                res = i
-        return res
+        d = [0] * 101
+        offset = 1950
+        for a, b in logs:
+            a, b = a - offset, b - offset
+            d[a] += 1
+            d[b] -= 1
+        s = mx = j = 0
+        for i, x in enumerate(d):
+            s += x
+            if mx < s:
+                mx, j = s, i
+        return j + offset
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int maximumPopulation(int[][] logs) {
-        int[] delta = new int[2055];
-        for (int[] log : logs) {
-            ++delta[log[0]];
-            --delta[log[1]];
+        int[] d = new int[101];
+        final int offset = 1950;
+        for (var log : logs) {
+            int a = log[0] - offset;
+            int b = log[1] - offset;
+            ++d[a];
+            --d[b];
         }
-        int res = 0, mx = 0, cur = 0;
-        for (int i = 0; i < delta.length; ++i) {
-            cur += delta[i];
-            if (cur > mx) {
-                mx = cur;
-                res = i;
+        int s = 0, mx = 0;
+        int j = 0;
+        for (int i = 0; i < d.length; ++i) {
+            s += d[i];
+            if (mx < s) {
+                mx = s;
+                j = i;
             }
         }
-        return res;
+        return j + offset;
     }
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int maximumPopulation(vector<vector<int>>& logs) {
+        int d[101]{};
+        const int offset = 1950;
+        for (auto& log : logs) {
+            int a = log[0] - offset;
+            int b = log[1] - offset;
+            ++d[a];
+            --d[b];
+        }
+        int s = 0, mx = 0;
+        int j = 0;
+        for (int i = 0; i < 101; ++i) {
+            s += d[i];
+            if (mx < s) {
+                mx = s;
+                j = i;
+            }
+        }
+        return j + offset;
+    }
+};
+```
+
+#### Go
+
+```go
+func maximumPopulation(logs [][]int) int {
+	d := [101]int{}
+	offset := 1950
+	for _, log := range logs {
+		a, b := log[0]-offset, log[1]-offset
+		d[a]++
+		d[b]--
+	}
+	var s, mx, j int
+	for i, x := range d {
+		s += x
+		if mx < s {
+			mx = s
+			j = i
+		}
+	}
+	return j + offset
+}
+```
+
+#### TypeScript
+
+```ts
+function maximumPopulation(logs: number[][]): number {
+    const d: number[] = new Array(101).fill(0);
+    const offset = 1950;
+    for (const [birth, death] of logs) {
+        d[birth - offset]++;
+        d[death - offset]--;
+    }
+    let j = 0;
+    for (let i = 0, s = 0, mx = 0; i < d.length; ++i) {
+        s += d[i];
+        if (mx < s) {
+            mx = s;
+            j = i;
+        }
+    }
+    return j + offset;
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -90,78 +195,28 @@ class Solution {
  * @return {number}
  */
 var maximumPopulation = function (logs) {
+    const d = new Array(101).fill(0);
     const offset = 1950;
-    const len = 2050 - 1950 + 1;
-    let delta = new Array(len).fill(0);
-    for (let log of logs) {
-        delta[log[0] - offset] += 1;
-        delta[log[1] - offset] -= 1;
+    for (let [a, b] of logs) {
+        a -= offset;
+        b -= offset;
+        d[a]++;
+        d[b]--;
     }
-    let max = 0;
-    let total = 0;
-    let index = 0;
-    for (let i = 0; i < len; i++) {
-        total += delta[i];
-        if (total > max) {
-            max = total;
-            index = i;
+    let j = 0;
+    for (let i = 0, s = 0, mx = 0; i < 101; ++i) {
+        s += d[i];
+        if (mx < s) {
+            mx = s;
+            j = i;
         }
     }
-    return index + offset;
+    return j + offset;
 };
-```
-
-### **C++**
-
-```cpp
-class Solution {
-public:
-    int maximumPopulation(vector<vector<int>>& logs) {
-        vector<int> delta(101, 0);
-        int offset = 1950;
-        for (auto log : logs) {
-            ++delta[log[0] - offset];
-            --delta[log[1] - offset];
-        }
-        int res = 0, mx = 0, cur = 0;
-        for (int i = 0; i < delta.size(); ++i) {
-            cur += delta[i];
-            if (cur > mx) {
-                mx = cur;
-                res = i;
-            }
-        }
-        return res + offset;
-    }
-};
-```
-
-### **Go**
-
-```go
-func maximumPopulation(logs [][]int) int {
-	delta := make([]int, 101)
-	offset := 1950
-	for _, log := range logs {
-		delta[log[0]-offset]++
-		delta[log[1]-offset]--
-	}
-	res, mx, cur := 0, 0, 0
-	for i := 0; i < len(delta); i++ {
-		cur += delta[i]
-		if cur > mx {
-			mx = cur
-			res = i
-		}
-	}
-	return res + offset
-}
-```
-
-### **...**
-
-```
-
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,17 +1,27 @@
-# [92. 反转链表 II](https://leetcode-cn.com/problems/reverse-linked-list-ii)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0000-0099/0092.Reverse%20Linked%20List%20II/README.md
+tags:
+    - 链表
+---
+
+<!-- problem:start -->
+
+# [92. 反转链表 II](https://leetcode.cn/problems/reverse-linked-list-ii)
 
 [English Version](/solution/0000-0099/0092.Reverse%20Linked%20List%20II/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-给你单链表的头指针 <code>head</code> 和两个整数  <code>left</code> 和 <code>right</code> ，其中  <code>left <= right</code> 。请你反转从位置 <code>left</code> 到位置 <code>right</code> 的链表节点，返回 <strong>反转后的链表</strong> 。
+给你单链表的头指针 <code>head</code> 和两个整数 <code>left</code> 和 <code>right</code> ，其中 <code>left <= right</code> 。请你反转从位置 <code>left</code> 到位置 <code>right</code> 的链表节点，返回 <strong>反转后的链表</strong> 。
 
 <p> </p>
 
 <p><strong>示例 1：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0092.Reverse%20Linked%20List%20II/images/rev2ex2.jpg" style="width: 542px; height: 222px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0092.Reverse%20Linked%20List%20II/images/rev2ex2.jpg" style="width: 542px; height: 222px;" />
 <pre>
 <strong>输入：</strong>head = [1,2,3,4,5], left = 2, right = 4
 <strong>输出：</strong>[1,4,3,2,5]
@@ -39,15 +49,21 @@
 
 <p><strong>进阶：</strong> 你可以使用一趟扫描完成反转吗？</p>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：模拟
+
+定义一个虚拟头结点 `dummy`，指向链表的头结点 `head`，然后定义一个指针 `pre` 指向 `dummy`，从虚拟头结点开始遍历链表，遍历到第 `left` 个结点时，将 `pre` 指向该结点，然后从该结点开始遍历 `right - left + 1` 次，将遍历到的结点依次插入到 `pre` 的后面，最后返回 `dummy.next` 即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 为链表的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -56,8 +72,10 @@
 #         self.val = val
 #         self.next = next
 class Solution:
-    def reverseBetween(self, head: ListNode, left: int, right: int) -> ListNode:
-        if head is None or head.next is None or left == right:
+    def reverseBetween(
+        self, head: Optional[ListNode], left: int, right: int
+    ) -> Optional[ListNode]:
+        if head.next is None or left == right:
             return head
         dummy = ListNode(0, head)
         pre = dummy
@@ -74,9 +92,7 @@ class Solution:
         return dummy.next
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -91,7 +107,7 @@ class Solution:
  */
 class Solution {
     public ListNode reverseBetween(ListNode head, int left, int right) {
-        if (head == null || head.next == null || left == right) {
+        if (head.next == null || left == right) {
             return head;
         }
         ListNode dummy = new ListNode(0, head);
@@ -115,7 +131,167 @@ class Solution {
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int left, int right) {
+        if (!head->next || left == right) {
+            return head;
+        }
+        ListNode* dummy = new ListNode(0, head);
+        ListNode* pre = dummy;
+        for (int i = 0; i < left - 1; ++i) {
+            pre = pre->next;
+        }
+        ListNode *p = pre, *q = pre->next;
+        ListNode* cur = q;
+        for (int i = 0; i < right - left + 1; ++i) {
+            ListNode* t = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = t;
+        }
+        p->next = pre;
+        q->next = cur;
+        return dummy->next;
+    }
+};
+```
+
+#### Go
+
+```go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func reverseBetween(head *ListNode, left int, right int) *ListNode {
+	if head.Next == nil || left == right {
+		return head
+	}
+	dummy := &ListNode{0, head}
+	pre := dummy
+	for i := 0; i < left-1; i++ {
+		pre = pre.Next
+	}
+	p, q := pre, pre.Next
+	cur := q
+	for i := 0; i < right-left+1; i++ {
+		t := cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = t
+	}
+	p.Next = pre
+	q.Next = cur
+	return dummy.Next
+}
+```
+
+#### TypeScript
+
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+function reverseBetween(head: ListNode | null, left: number, right: number): ListNode | null {
+    const n = right - left;
+    if (n === 0) {
+        return head;
+    }
+
+    const dummy = new ListNode(0, head);
+    let pre = null;
+    let cur = dummy;
+    for (let i = 0; i < left; i++) {
+        pre = cur;
+        cur = cur.next;
+    }
+    const h = pre;
+    pre = null;
+    for (let i = 0; i <= n; i++) {
+        const next = cur.next;
+        cur.next = pre;
+        pre = cur;
+        cur = next;
+    }
+    h.next.next = cur;
+    h.next = pre;
+    return dummy.next;
+}
+```
+
+#### Rust
+
+```rust
+// Definition for singly-linked list.
+// #[derive(PartialEq, Eq, Clone, Debug)]
+// pub struct ListNode {
+//   pub val: i32,
+//   pub next: Option<Box<ListNode>>
+// }
+//
+// impl ListNode {
+//   #[inline]
+//   fn new(val: i32) -> Self {
+//     ListNode {
+//       next: None,
+//       val
+//     }
+//   }
+// }
+impl Solution {
+    pub fn reverse_between(
+        head: Option<Box<ListNode>>,
+        left: i32,
+        right: i32,
+    ) -> Option<Box<ListNode>> {
+        let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
+        let mut pre = &mut dummy;
+        for _ in 1..left {
+            pre = &mut pre.as_mut().unwrap().next;
+        }
+        let mut cur = pre.as_mut().unwrap().next.take();
+        for _ in 0..right - left + 1 {
+            let mut next = cur.as_mut().unwrap().next.take();
+            cur.as_mut().unwrap().next = pre.as_mut().unwrap().next.take();
+            pre.as_mut().unwrap().next = cur.take();
+            cur = next;
+        }
+        for _ in 0..right - left + 1 {
+            pre = &mut pre.as_mut().unwrap().next;
+        }
+        pre.as_mut().unwrap().next = cur;
+        dummy.unwrap().next
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -132,7 +308,7 @@ class Solution {
  * @return {ListNode}
  */
 var reverseBetween = function (head, left, right) {
-    if (!head || !head.next || left == right) {
+    if (!head.next || left == right) {
         return head;
     }
     const dummy = new ListNode(0, head);
@@ -155,46 +331,7 @@ var reverseBetween = function (head, left, right) {
 };
 ```
 
-### **C++**
-
-```cpp
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-class Solution {
-public:
-    ListNode* reverseBetween(ListNode* head, int left, int right) {
-        if (head == nullptr || head->next == nullptr || left == right) {
-            return head;
-        }
-        ListNode *dummy = new ListNode(0, head);
-        ListNode *pre = dummy;
-        for (int i = 0; i < left - 1; ++i) {
-            pre = pre->next;
-        }
-        ListNode *p = pre, *q = pre->next;
-        ListNode *cur = q;
-        for (int i = 0; i < right - left + 1; ++i) {
-            ListNode *t = cur->next;
-            cur->next = pre;
-            pre = cur;
-            cur = t;
-        }
-        p->next = pre;
-        q->next = cur;
-        return dummy->next;
-    }
-};
-```
-
-### **C#**
+#### C#
 
 ```cs
 /**
@@ -210,21 +347,18 @@ public:
  */
 public class Solution {
     public ListNode ReverseBetween(ListNode head, int left, int right) {
-        if (head == null || head.next == null || left == right)
-        {
+        if (head.next == null || left == right) {
             return head;
         }
         ListNode dummy = new ListNode(0, head);
         ListNode pre = dummy;
-        for (int i = 0; i < left - 1; ++i)
-        {
+        for (int i = 0; i < left - 1; ++i) {
             pre = pre.next;
         }
         ListNode p = pre;
         ListNode q = pre.next;
         ListNode cur = q;
-        for (int i = 0; i < right - left + 1; ++i)
-        {
+        for (int i = 0; i < right - left + 1; ++i) {
             ListNode t = cur.next;
             cur.next = pre;
             pre = cur;
@@ -237,10 +371,8 @@ public class Solution {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

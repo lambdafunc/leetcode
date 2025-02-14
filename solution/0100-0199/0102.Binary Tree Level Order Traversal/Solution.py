@@ -5,15 +5,14 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def levelOrder(self, root: TreeNode) -> List[List[int]]:
-        if root is None:
-            return []
+    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
         ans = []
+        if root is None:
+            return ans
         q = deque([root])
         while q:
-            n = len(q)
             t = []
-            for _ in range(n):
+            for _ in range(len(q)):
                 node = q.popleft()
                 t.append(node.val)
                 if node.left:

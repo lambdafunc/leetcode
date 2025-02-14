@@ -1,8 +1,20 @@
-# [1596. The Most Frequently Ordered Products for Each Customer](https://leetcode.com/problems/the-most-frequently-ordered-products-for-each-customer)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1596.The%20Most%20Frequently%20Ordered%20Products%20for%20Each%20Customer/README_EN.md
+tags:
+    - Database
+---
+
+<!-- problem:start -->
+
+# [1596. The Most Frequently Ordered Products for Each Customer 🔒](https://leetcode.com/problems/the-most-frequently-ordered-products-for-each-customer)
 
 [中文文档](/solution/1500-1599/1596.The%20Most%20Frequently%20Ordered%20Products%20for%20Each%20Customer/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Table: <code>Customers</code></p>
 
@@ -13,7 +25,7 @@
 | customer_id   | int     |
 | name          | varchar |
 +---------------+---------+
-customer_id is the primary key for this table.
+customer_id is the column with unique values for this table.
 This table contains information about the customers.
 </pre>
 
@@ -30,7 +42,7 @@ This table contains information about the customers.
 | customer_id   | int     |
 | product_id    | int     |
 +---------------+---------+
-order_id is the primary key for this table.
+order_id is the column with unique values for this table.
 This table contains information about the orders made by customer_id.
 No customer will order the same product <strong>more than once</strong> in a single day.</pre>
 
@@ -46,20 +58,26 @@ No customer will order the same product <strong>more than once</strong> in a sin
 | product_name  | varchar |
 | price         | int     |
 +---------------+---------+
-product_id is the primary key for this table.
+product_id is the column with unique values for this table.
 This table contains information about the products.
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query to find the most frequently ordered product(s) for each customer.</p>
+<p>Write a solution to find the most frequently ordered product(s) for each customer.</p>
 
-<p>The result table should have the <code>product_id</code> and <code>product_name</code> for each <code>customer_id</code> who ordered at least one order. Return the result table in <strong>any order</strong>.</p>
+<p>The result table should have the <code>product_id</code> and <code>product_name</code> for each <code>customer_id</code> who ordered at least one order.</p>
 
-<p>The query result format is in the following example:</p>
+<p>Return the result table in <strong>any order</strong>.</p>
+
+<p>The result format is in the following example.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-<code>Customers</code>
+<strong>Input:</strong> 
+Customers table:
 +-------------+-------+
 | customer_id | name  |
 +-------------+-------+
@@ -69,8 +87,7 @@ This table contains information about the products.
 | 4           | Jerry |
 | 5           | John  |
 +-------------+-------+
-
-<code>Orders</code>
+Orders table:
 +----------+------------+-------------+------------+
 | order_id | order_date | customer_id | product_id |
 +----------+------------+-------------+------------+
@@ -85,8 +102,7 @@ This table contains information about the products.
 | 9        | 2020-08-07 | 2           | 3          |
 | 10       | 2020-07-15 | 1           | 2          |
 +----------+------------+-------------+------------+
-
-<code>Products</code>
+Products table:
 +------------+--------------+-------+
 | product_id | product_name | price |
 +------------+--------------+-------+
@@ -95,7 +111,7 @@ This table contains information about the products.
 | 3          | screen       | 600   |
 | 4          | hard disk    | 450   |
 +------------+--------------+-------+
-Result table:
+<strong>Output:</strong> 
 +-------------+------------+--------------+
 | customer_id | product_id | product_name |
 +-------------+------------+--------------+
@@ -106,34 +122,51 @@ Result table:
 | 3           | 3          | screen       |
 | 4           | 1          | keyboard     |
 +-------------+------------+--------------+
-
-Alice (customer 1) ordered the mouse three times and the keyboard one time, so the mouse is the most frquently ordered product for them.
-Bob (customer 2) ordered the keyboard, the mouse, and the screen one time, so those are the most frquently ordered products for them.
-Tom (customer 3) only ordered the screen (two times), so that is the most frquently ordered product for them.
-Jerry (customer 4) only ordered the keyboard (one time), so that is the most frquently ordered product for them.
+<strong>Explanation:</strong> 
+Alice (customer 1) ordered the mouse three times and the keyboard one time, so the mouse is the most frequently ordered product for them.
+Bob (customer 2) ordered the keyboard, the mouse, and the screen one time, so those are the most frequently ordered products for them.
+Tom (customer 3) only ordered the screen (two times), so that is the most frequently ordered product for them.
+Jerry (customer 4) only ordered the keyboard (one time), so that is the most frequently ordered product for them.
 John (customer 5) did not order anything, so we do not include them in the result table.
 </pre>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Group By + Window Function
+
+We group the `Orders` table by `customer_id` and `product_id`, and then use the window function `rank()`, which assigns a rank to each `product_id` in each `customer_id` group based on its frequency in descending order. Finally, we select the `product_id` with a rank of $1$ for each `customer_id`, which is the most frequently ordered product for that `customer_id`.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### MySQL
 
-```python
-
-```
-
-### **Java**
-
-```java
-
-```
-
-### **...**
-
-```
-
+```sql
+# Write your MySQL query statement below
+WITH
+    T AS (
+        SELECT
+            customer_id,
+            product_id,
+            RANK() OVER (
+                PARTITION BY customer_id
+                ORDER BY COUNT(1) DESC
+            ) AS rk
+        FROM Orders
+        GROUP BY 1, 2
+    )
+SELECT customer_id, product_id, product_name
+FROM
+    T
+    JOIN Products USING (product_id)
+WHERE rk = 1;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,12 +1,26 @@
-# [1247. 交换字符使得字符串相同](https://leetcode-cn.com/problems/minimum-swaps-to-make-strings-equal)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1200-1299/1247.Minimum%20Swaps%20to%20Make%20Strings%20Equal/README.md
+rating: 1597
+source: 第 161 场周赛 Q1
+tags:
+    - 贪心
+    - 数学
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1247. 交换字符使得字符串相同](https://leetcode.cn/problems/minimum-swaps-to-make-strings-equal)
 
 [English Version](/solution/1200-1299/1247.Minimum%20Swaps%20to%20Make%20Strings%20Equal/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>有两个长度相同的字符串&nbsp;<code>s1</code> 和&nbsp;<code>s2</code>，且它们其中&nbsp;<strong>只含有</strong>&nbsp;字符&nbsp;<code>&quot;x&quot;</code> 和&nbsp;<code>&quot;y&quot;</code>，你需要通过「交换字符」的方式使这两个字符串相同。</p>
+<p>有两个长度相同的字符串&nbsp;<code>s1</code> 和&nbsp;<code>s2</code>，且它们其中&nbsp;<strong>只含有</strong>&nbsp;字符&nbsp;<code>"x"</code> 和&nbsp;<code>"y"</code>，你需要通过「交换字符」的方式使这两个字符串相同。</p>
 
 <p>每次「交换字符」的时候，你都可以在两个字符串中各选一个字符进行交换。</p>
 
@@ -16,32 +30,29 @@
 
 <p>&nbsp;</p>
 
-<p><strong>示例 1：</strong></p>
+<p><strong class="example">示例 1：</strong></p>
 
-<pre><strong>输入：</strong>s1 = &quot;xx&quot;, s2 = &quot;yy&quot;
+<pre>
+<strong>输入：</strong>s1 = "xx", s2 = "yy"
 <strong>输出：</strong>1
 <strong>解释：
-</strong>交换 s1[0] 和 s2[1]，得到 s1 = &quot;yx&quot;，s2 = &quot;yx&quot;。</pre>
+</strong>交换 s1[0] 和 s2[1]，得到 s1 = "yx"，s2 = "yx"。</pre>
 
-<p><strong>示例 2：</strong></p>
+<p><strong class="example">示例 2：</strong></p>
 
-<pre><strong>输入：</strong>s1 = &quot;xy&quot;, s2 = &quot;yx&quot;
+<pre>
+<strong>输入：</strong>s1 = "xy", s2 = "yx"
 <strong>输出：</strong>2
 <strong>解释：
-</strong>交换 s1[0] 和 s2[0]，得到 s1 = &quot;yy&quot;，s2 = &quot;xx&quot; 。
-交换 s1[0] 和 s2[1]，得到 s1 = &quot;xy&quot;，s2 = &quot;xy&quot; 。
-注意，你不能交换 s1[0] 和 s1[1] 使得 s1 变成 &quot;yx&quot;，因为我们只能交换属于两个不同字符串的字符。</pre>
+</strong>交换 s1[0] 和 s2[0]，得到 s1 = "yy"，s2 = "xx" 。
+交换 s1[0] 和 s2[1]，得到 s1 = "xy"，s2 = "xy" 。
+注意，你不能交换 s1[0] 和 s1[1] 使得 s1 变成 "yx"，因为我们只能交换属于两个不同字符串的字符。</pre>
 
-<p><strong>示例 3：</strong></p>
+<p><strong class="example">示例 3：</strong></p>
 
-<pre><strong>输入：</strong>s1 = &quot;xx&quot;, s2 = &quot;xy&quot;
+<pre>
+<strong>输入：</strong>s1 = "xx", s2 = "xy"
 <strong>输出：</strong>-1
-</pre>
-
-<p><strong>示例 4：</strong></p>
-
-<pre><strong>输入：</strong>s1 = &quot;xxyyxyxyxx&quot;, s2 = &quot;xyyxyxxxyx&quot;
-<strong>输出：</strong>4
 </pre>
 
 <p>&nbsp;</p>
@@ -50,53 +61,91 @@
 
 <ul>
 	<li><code>1 &lt;= s1.length, s2.length &lt;= 1000</code></li>
-	<li><code>s1, s2</code>&nbsp;只包含&nbsp;<code>&#39;x&#39;</code>&nbsp;或&nbsp;<code>&#39;y&#39;</code>。</li>
+	<li><code>s1.length == s2.length</code></li>
+	<li><code>s1, s2</code>&nbsp;只包含&nbsp;<code>'x'</code>&nbsp;或&nbsp;<code>'y'</code>。</li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：贪心
+
+根据题目描述，两个字符串 $s_1$ 和 $s_2$ 都只包含字符 $x$ 和 $y$，且长度相同，因此可以将 $s_1$ 和 $s_2$ 中的字符一一对应起来，即 $s_1[i]$ 和 $s_2[i]$。
+
+如果 $s_1[i] = s_2[i]$，则不需要交换，直接跳过即可。如果 $s_1[i] \neq s_2[i]$，则需要交换，我们统计 $s_1[i]$ 和 $s_2[i]$ 的组合情况，即 $s_1[i] = x$ 且 $s_2[i] = y$ 的情况，记为 $xy$，对于 $s_1[i] = y$ 且 $s_2[i] = x$ 的情况，记为 $yx$。
+
+如果 $xy + yx$ 为奇数，则无法完成交换，返回 $-1$。如果 $xy + yx$ 为偶数，则需要交换的次数为 $\left \lfloor \frac{x}{2} \right \rfloor$ + $\left \lfloor \frac{y}{2} \right \rfloor$ + $xy \bmod{2}$ + $yx \bmod{2}$。
+
+时间复杂度 $O(n)$，其中 $n$ 为字符串 $s_1$ 和 $s_2$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def minimumSwap(self, s1: str, s2: str) -> int:
+        xy = yx = 0
+        for a, b in zip(s1, s2):
+            xy += a < b
+            yx += a > b
+        if (xy + yx) % 2:
+            return -1
+        return xy // 2 + yx // 2 + xy % 2 + yx % 2
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int minimumSwap(String s1, String s2) {
         int xy = 0, yx = 0;
-        char[] c1 = s1.toCharArray();
-        char[] c2 = s2.toCharArray();
-        for (int i = 0; i < c1.length; i++) {
-            if (c1[i] > c2[i]) {
-                xy++;
+        for (int i = 0; i < s1.length(); ++i) {
+            char a = s1.charAt(i), b = s2.charAt(i);
+            if (a < b) {
+                ++xy;
             }
-            if (c2[i] > c1[i]) {
-                yx++;
+            if (a > b) {
+                ++yx;
             }
         }
-        if ((xy + yx) % 2 != 0) {
+        if ((xy + yx) % 2 == 1) {
             return -1;
         }
-        return xy % 2 == 0 ? (xy + yx) / 2 : (xy + yx) / 2 + 1;
+        return xy / 2 + yx / 2 + xy % 2 + yx % 2;
     }
 }
 ```
 
-### **Go**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int minimumSwap(string s1, string s2) {
+        int xy = 0, yx = 0;
+        for (int i = 0; i < s1.size(); ++i) {
+            char a = s1[i], b = s2[i];
+            xy += a < b;
+            yx += a > b;
+        }
+        if ((xy + yx) % 2) {
+            return -1;
+        }
+        return xy / 2 + yx / 2 + xy % 2 + yx % 2;
+    }
+};
+```
+
+#### Go
 
 ```go
 func minimumSwap(s1 string, s2 string) int {
 	xy, yx := 0, 0
-	for i, _ := range s1 {
+	for i := range s1 {
 		if s1[i] < s2[i] {
 			xy++
 		}
@@ -104,20 +153,60 @@ func minimumSwap(s1 string, s2 string) int {
 			yx++
 		}
 	}
-	if (xy+yx)%2 != 0 {
+	if (xy+yx)%2 == 1 {
 		return -1
 	}
-	if xy%2 == 0 {
-		return (xy + yx) / 2
-	}
-	return (xy+yx)/2 + 1
+	return xy/2 + yx/2 + xy%2 + yx%2
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function minimumSwap(s1: string, s2: string): number {
+    let xy = 0,
+        yx = 0;
+
+    for (let i = 0; i < s1.length; ++i) {
+        const a = s1[i],
+            b = s2[i];
+        xy += a < b ? 1 : 0;
+        yx += a > b ? 1 : 0;
+    }
+
+    if ((xy + yx) % 2 !== 0) {
+        return -1;
+    }
+
+    return Math.floor(xy / 2) + Math.floor(yx / 2) + (xy % 2) + (yx % 2);
+}
 ```
 
+#### JavaScript
+
+```js
+var minimumSwap = function (s1, s2) {
+    let xy = 0,
+        yx = 0;
+    for (let i = 0; i < s1.length; ++i) {
+        const a = s1[i],
+            b = s2[i];
+        if (a < b) {
+            ++xy;
+        }
+        if (a > b) {
+            ++yx;
+        }
+    }
+    if ((xy + yx) % 2 === 1) {
+        return -1;
+    }
+    return Math.floor(xy / 2) + Math.floor(yx / 2) + (xy % 2) + (yx % 2);
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

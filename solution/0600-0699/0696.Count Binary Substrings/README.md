@@ -1,55 +1,64 @@
-# [696. 计数二进制子串](https://leetcode-cn.com/problems/count-binary-substrings)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0696.Count%20Binary%20Substrings/README.md
+tags:
+    - 双指针
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [696. 计数二进制子串](https://leetcode.cn/problems/count-binary-substrings)
 
 [English Version](/solution/0600-0699/0696.Count%20Binary%20Substrings/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个字符串 <code>s</code>，计算具有相同数量 0 和 1 的非空（连续）子字符串的数量，并且这些子字符串中的所有 0 和所有 1 都是连续的。</p>
+<p>给定一个字符串&nbsp;<code>s</code>，统计并返回具有相同数量 <code>0</code> 和 <code>1</code> 的非空（连续）子字符串的数量，并且这些子字符串中的所有 <code>0</code> 和所有 <code>1</code> 都是成组连续的。</p>
 
-<p>重复出现的子串要计算它们出现的次数。</p>
+<p>重复出现（不同位置）的子串也要统计它们出现的次数。</p>
+&nbsp;
 
-<p> </p>
-
-<p><strong>示例 1 :</strong></p>
-
-<pre>
-<strong>输入:</strong> "00110011"
-<strong>输出:</strong> 6
-<strong>解释:</strong> 有6个子串具有相同数量的连续1和0：“0011”，“01”，“1100”，“10”，“0011” 和 “01”。
-
-请注意，一些重复出现的子串要计算它们出现的次数。
-
-另外，“00110011”不是有效的子串，因为所有的0（和1）没有组合在一起。
-</pre>
-
-<p><strong>示例 2 :</strong></p>
+<p><strong>示例 1：</strong></p>
 
 <pre>
-<strong>输入:</strong> "10101"
-<strong>输出:</strong> 4
-<strong>解释:</strong> 有4个子串：“10”，“01”，“10”，“01”，它们具有相同数量的连续1和0。
+<strong>输入：</strong>s = "00110011"
+<strong>输出：</strong>6
+<strong>解释：</strong>6 个子串满足具有相同数量的连续 1 和 0 ："0011"、"01"、"1100"、"10"、"0011" 和 "01" 。
+注意，一些重复出现的子串（不同位置）要统计它们出现的次数。
+另外，"00110011" 不是有效的子串，因为所有的 0（还有 1 ）没有组合在一起。</pre>
+
+<p><strong>示例 2：</strong></p>
+
+<pre>
+<strong>输入：</strong>s = "10101"
+<strong>输出：</strong>4
+<strong>解释：</strong>有 4 个子串："10"、"01"、"10"、"01" ，具有相同数量的连续 1 和 0 。
 </pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>s.length</code> 在1到50,000之间。</li>
-	<li><code>s</code> 只包含“0”或“1”字符。</li>
+	<li><code>1 &lt;= s.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>s[i]</code> 为 <code>'0'</code> 或 <code>'1'</code></li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -69,9 +78,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -96,7 +103,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -104,11 +111,9 @@ public:
     int countBinarySubstrings(string s) {
         int i = 0, n = s.size();
         vector<int> t;
-        while (i < n)
-        {
+        while (i < n) {
             int cnt = 1;
-            while (i + 1 < n && s[i + 1] == s[i])
-            {
+            while (i + 1 < n && s[i + 1] == s[i]) {
                 ++cnt;
                 ++i;
             }
@@ -122,7 +127,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func countBinarySubstrings(s string) int {
@@ -143,19 +148,10 @@ func countBinarySubstrings(s string) int {
 	}
 	return ans
 }
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-```
-
-### **...**
-
-```
-
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

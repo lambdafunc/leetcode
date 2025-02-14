@@ -1,13 +1,12 @@
 class Solution:
     def maximumNumber(self, num: str, change: List[int]) -> str:
-        find = False
-        nums = list(num)
-        for i, c in enumerate(num):
-            if int(c) < change[int(c)]:
-                nums[i] = str(change[int(c)])
-                find = True
-            elif find and int(c) == change[int(c)]:
-                continue
-            elif find:
+        s = list(num)
+        changed = False
+        for i, c in enumerate(s):
+            d = str(change[int(c)])
+            if changed and d < c:
                 break
-        return ''.join(nums)
+            if d > c:
+                changed = True
+                s[i] = d
+        return "".join(s)

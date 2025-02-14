@@ -1,30 +1,28 @@
 class FindSumPairs {
     private int[] nums1;
     private int[] nums2;
-    private Map<Integer, Integer> counter;
+    private Map<Integer, Integer> cnt = new HashMap<>();
 
     public FindSumPairs(int[] nums1, int[] nums2) {
         this.nums1 = nums1;
         this.nums2 = nums2;
-        counter = new HashMap<>();
-        for (int num : nums2) {
-            counter.put(num, counter.getOrDefault(num, 0) + 1);
+        for (int x : nums2) {
+            cnt.merge(x, 1, Integer::sum);
         }
     }
-    
+
     public void add(int index, int val) {
-        int oldVal = nums2[index];
-        counter.put(oldVal, counter.get(oldVal) - 1);
+        cnt.merge(nums2[index], -1, Integer::sum);
         nums2[index] += val;
-        counter.put(oldVal + val, counter.getOrDefault(oldVal + val, 0) + 1);
+        cnt.merge(nums2[index], 1, Integer::sum);
     }
-    
+
     public int count(int tot) {
-        int res = 0;
-        for (int num : nums1) {
-            res += counter.getOrDefault(tot - num, 0);
+        int ans = 0;
+        for (int x : nums1) {
+            ans += cnt.getOrDefault(tot - x, 0);
         }
-        return res;
+        return ans;
     }
 }
 

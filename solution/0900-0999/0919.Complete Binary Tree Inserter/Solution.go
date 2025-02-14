@@ -11,33 +11,34 @@ type CBTInserter struct {
 }
 
 func Constructor(root *TreeNode) CBTInserter {
-	var q []*TreeNode
-	var tree []*TreeNode
-	q = append(q, root)
+	q := []*TreeNode{root}
+	tree := []*TreeNode{}
 	for len(q) > 0 {
-		node := q[0]
-		tree = append(tree, node)
-		q = q[1:]
-		if node.Left != nil {
-			q = append(q, node.Left)
-		}
-		if node.Right != nil {
-			q = append(q, node.Right)
+		for i := len(q); i > 0; i-- {
+			node := q[0]
+			q = q[1:]
+			tree = append(tree, node)
+			if node.Left != nil {
+				q = append(q, node.Left)
+			}
+			if node.Right != nil {
+				q = append(q, node.Right)
+			}
 		}
 	}
 	return CBTInserter{tree}
 }
 
 func (this *CBTInserter) Insert(val int) int {
-	pidx := (len(this.tree) - 1) >> 1
-	node := &TreeNode{Val: val}
+	p := this.tree[(len(this.tree)-1)/2]
+	node := &TreeNode{val, nil, nil}
 	this.tree = append(this.tree, node)
-	if this.tree[pidx].Left == nil {
-		this.tree[pidx].Left = node
+	if p.Left == nil {
+		p.Left = node
 	} else {
-		this.tree[pidx].Right = node
+		p.Right = node
 	}
-	return this.tree[pidx].Val
+	return p.Val
 }
 
 func (this *CBTInserter) Get_root() *TreeNode {

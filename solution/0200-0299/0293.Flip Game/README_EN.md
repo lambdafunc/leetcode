@@ -1,8 +1,20 @@
-# [293. Flip Game](https://leetcode.com/problems/flip-game)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0293.Flip%20Game/README_EN.md
+tags:
+    - String
+---
+
+<!-- problem:start -->
+
+# [293. Flip Game 🔒](https://leetcode.com/problems/flip-game)
 
 [中文文档](/solution/0200-0299/0293.Flip%20Game/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are playing a Flip Game with your friend.</p>
 
@@ -11,14 +23,14 @@
 <p>Return all possible states of the string <code>currentState</code> after <strong>one valid move</strong>. You may return the answer in <strong>any order</strong>. If there is no valid move, return an empty list <code>[]</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> currentState = &quot;++++&quot;
 <strong>Output:</strong> [&quot;--++&quot;,&quot;+--+&quot;,&quot;++--&quot;]
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> currentState = &quot;+&quot;
@@ -33,49 +45,112 @@
 	<li><code>currentState[i]</code> is either <code>&#39;+&#39;</code> or <code>&#39;-&#39;</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Traversal + Simulation
+
+We traverse the string. If the current character and the next character are both `+`, we change these two characters to `-`, add the result to the result array, and then change these two characters back to `+`.
+
+After the traversal ends, we return the result array.
+
+The time complexity is $O(n^2)$, where $n$ is the length of the string. Ignoring the space complexity of the result array, the space complexity is $O(n)$ or $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
-    def generatePossibleNextMoves(self, s: str) -> List[str]:
-        if not s or len(s) < 2:
-            return []
-        n = len(s)
-        res = []
-        for i in range(n - 1):
-            if s[i] == '+' and s[i + 1] == '+':
-                res.append(s[:i] + "--" + s[i + 2:])
-        return res
+    def generatePossibleNextMoves(self, currentState: str) -> List[str]:
+        s = list(currentState)
+        ans = []
+        for i, (a, b) in enumerate(pairwise(s)):
+            if a == b == "+":
+                s[i] = s[i + 1] = "-"
+                ans.append("".join(s))
+                s[i] = s[i + 1] = "+"
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
-    public List<String> generatePossibleNextMoves(String s) {
-        int n;
-        if (s == null || (n = s.length()) < 2) return Collections.emptyList();
-        List<String> res = new ArrayList<>();
-        for (int i = 0; i < n - 1; ++i) {
-            if (s.charAt(i) == '+' && s.charAt(i + 1) == '+') {
-                StringBuilder sb = new StringBuilder(s);
-                sb.replace(i, i + 2, "--");
-                res.add(sb.toString());
+    public List<String> generatePossibleNextMoves(String currentState) {
+        List<String> ans = new ArrayList<>();
+        char[] s = currentState.toCharArray();
+        for (int i = 0; i < s.length - 1; ++i) {
+            if (s[i] == '+' && s[i + 1] == '+') {
+                s[i] = '-';
+                s[i + 1] = '-';
+                ans.add(new String(s));
+                s[i] = '+';
+                s[i + 1] = '+';
             }
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<string> generatePossibleNextMoves(string s) {
+        vector<string> ans;
+        for (int i = 0; i < s.size() - 1; ++i) {
+            if (s[i] == '+' && s[i + 1] == '+') {
+                s[i] = s[i + 1] = '-';
+                ans.emplace_back(s);
+                s[i] = s[i + 1] = '+';
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func generatePossibleNextMoves(currentState string) (ans []string) {
+	s := []byte(currentState)
+	for i := 0; i < len(s)-1; i++ {
+		if s[i] == '+' && s[i+1] == '+' {
+			s[i], s[i+1] = '-', '-'
+			ans = append(ans, string(s))
+			s[i], s[i+1] = '+', '+'
+		}
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function generatePossibleNextMoves(currentState: string): string[] {
+    const s = currentState.split('');
+    const ans: string[] = [];
+    for (let i = 0; i < s.length - 1; ++i) {
+        if (s[i] === '+' && s[i + 1] === '+') {
+            s[i] = s[i + 1] = '-';
+            ans.push(s.join(''));
+            s[i] = s[i + 1] = '+';
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

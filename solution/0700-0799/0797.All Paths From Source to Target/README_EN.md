@@ -1,48 +1,42 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0797.All%20Paths%20From%20Source%20to%20Target/README_EN.md
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Graph
+    - Backtracking
+---
+
+<!-- problem:start -->
+
 # [797. All Paths From Source to Target](https://leetcode.com/problems/all-paths-from-source-to-target)
 
 [中文文档](/solution/0700-0799/0797.All%20Paths%20From%20Source%20to%20Target/README.md)
 
 ## Description
 
-<p>Given a directed&nbsp;acyclic graph (<strong>DAG</strong>) of <code>n</code> nodes labeled from 0 to n - 1,&nbsp;find all possible paths from node <code>0</code> to node <code>n - 1</code>, and return them in any order.</p>
+<!-- description:start -->
 
-<p>The graph is given as follows:&nbsp;<code>graph[i]</code> is a list of all nodes you can visit from node <code>i</code>&nbsp;(i.e., there is a directed edge from node <code>i</code> to node <code>graph[i][j]</code>).</p>
+<p>Given a directed acyclic graph (<strong>DAG</strong>) of <code>n</code> nodes labeled from <code>0</code> to <code>n - 1</code>, find all possible paths from node <code>0</code> to node <code>n - 1</code> and return them in <strong>any order</strong>.</p>
+
+<p>The graph is given as follows: <code>graph[i]</code> is a list of all nodes you can visit from node <code>i</code> (i.e., there is a directed edge from node <code>i</code> to node <code>graph[i][j]</code>).</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0797.All%20Paths%20From%20Source%20to%20Target/images/all_1.jpg" style="width: 242px; height: 242px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0797.All%20Paths%20From%20Source%20to%20Target/images/all_1.jpg" style="width: 242px; height: 242px;" />
 <pre>
 <strong>Input:</strong> graph = [[1,2],[3],[3],[]]
 <strong>Output:</strong> [[0,1,3],[0,2,3]]
 <strong>Explanation:</strong> There are two paths: 0 -&gt; 1 -&gt; 3 and 0 -&gt; 2 -&gt; 3.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0797.All%20Paths%20From%20Source%20to%20Target/images/all_2.jpg" style="width: 423px; height: 301px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0700-0799/0797.All%20Paths%20From%20Source%20to%20Target/images/all_2.jpg" style="width: 423px; height: 301px;" />
 <pre>
 <strong>Input:</strong> graph = [[4,3,1],[3,2,4],[3],[4],[]]
 <strong>Output:</strong> [[0,4],[0,3,4],[0,1,3,4],[0,1,2,3,4],[0,1,4]]
-</pre>
-
-<p><strong>Example 3:</strong></p>
-
-<pre>
-<strong>Input:</strong> graph = [[1],[]]
-<strong>Output:</strong> [[0,1]]
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> graph = [[1,2,3],[2],[3],[]]
-<strong>Output:</strong> [[0,1,2,3],[0,2,3],[0,3]]
-</pre>
-
-<p><strong>Example 5:</strong></p>
-
-<pre>
-<strong>Input:</strong> graph = [[1,3],[2],[3],[]]
-<strong>Output:</strong> [[0,1,2,3],[0,3]]
 </pre>
 
 <p>&nbsp;</p>
@@ -53,18 +47,21 @@
 	<li><code>2 &lt;= n &lt;= 15</code></li>
 	<li><code>0 &lt;= graph[i][j] &lt; n</code></li>
 	<li><code>graph[i][j] != i</code> (i.e., there will be no self-loops).</li>
+	<li>All the elements of <code>graph[i]</code> are <strong>unique</strong>.</li>
 	<li>The input graph is <strong>guaranteed</strong> to be a <strong>DAG</strong>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-Since there is no ring in the graph, you can simply use DFS or BFS to traverse it.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
-
-BFS.
+#### Python3
 
 ```python
 class Solution:
@@ -83,30 +80,7 @@ class Solution:
         return ans
 ```
 
-DFS:
-
-```python
-class Solution:
-    def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
-        ans = []
-
-        def dfs(t):
-            if t[-1] == len(graph) - 1:
-                ans.append(t.copy())
-                return
-
-            for v in graph[t[-1]]:
-                t.append(v)
-                dfs(t)
-                t.pop()
-
-        dfs([0])
-        return ans
-```
-
-### **Java**
-
-BFS:
+#### Java
 
 ```java
 class Solution {
@@ -133,7 +107,170 @@ class Solution {
 }
 ```
 
-DFS:
+#### C++
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> graph;
+    vector<vector<int>> ans;
+
+    vector<vector<int>> allPathsSourceTarget(vector<vector<int>>& graph) {
+        this->graph = graph;
+        vector<int> path;
+        path.push_back(0);
+        dfs(0, path);
+        return ans;
+    }
+
+    void dfs(int i, vector<int> path) {
+        if (i == graph.size() - 1) {
+            ans.push_back(path);
+            return;
+        }
+        for (int j : graph[i]) {
+            path.push_back(j);
+            dfs(j, path);
+            path.pop_back();
+        }
+    }
+};
+```
+
+#### Go
+
+```go
+func allPathsSourceTarget(graph [][]int) [][]int {
+	var path []int
+	path = append(path, 0)
+	var ans [][]int
+
+	var dfs func(i int)
+	dfs = func(i int) {
+		if i == len(graph)-1 {
+			ans = append(ans, append([]int(nil), path...))
+			return
+		}
+		for _, j := range graph[i] {
+			path = append(path, j)
+			dfs(j)
+			path = path[:len(path)-1]
+		}
+	}
+
+	dfs(0)
+	return ans
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    fn dfs(i: usize, path: &mut Vec<i32>, res: &mut Vec<Vec<i32>>, graph: &Vec<Vec<i32>>) {
+        path.push(i as i32);
+        if i == graph.len() - 1 {
+            res.push(path.clone());
+        }
+        for j in graph[i].iter() {
+            Self::dfs(*j as usize, path, res, graph);
+        }
+        path.pop();
+    }
+
+    pub fn all_paths_source_target(graph: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+        let mut res = Vec::new();
+        Self::dfs(0, &mut vec![], &mut res, &graph);
+        res
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[][]} graph
+ * @return {number[][]}
+ */
+var allPathsSourceTarget = function (graph) {
+    const ans = [];
+    const t = [0];
+
+    const dfs = t => {
+        const cur = t[t.length - 1];
+        if (cur == graph.length - 1) {
+            ans.push([...t]);
+            return;
+        }
+        for (const v of graph[cur]) {
+            t.push(v);
+            dfs(t);
+            t.pop();
+        }
+    };
+
+    dfs(t);
+    return ans;
+};
+```
+
+#### TypeScript
+
+```ts
+function allPathsSourceTarget(graph: number[][]): number[][] {
+    const ans: number[][] = [];
+
+    const dfs = (path: number[]) => {
+        const curr = path.at(-1)!;
+        if (curr === graph.length - 1) {
+            ans.push([...path]);
+            return;
+        }
+
+        for (const v of graph[curr]) {
+            path.push(v);
+            dfs(path);
+            path.pop();
+        }
+    };
+
+    dfs([0]);
+
+    return ans;
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
+        def dfs(t):
+            if t[-1] == len(graph) - 1:
+                ans.append(t[:])
+                return
+            for v in graph[t[-1]]:
+                t.append(v)
+                dfs(t)
+                t.pop()
+
+        ans = []
+        dfs([0])
+        return ans
+```
+
+#### Java
 
 ```java
 class Solution {
@@ -164,101 +301,8 @@ class Solution {
 }
 ```
 
-### **C++**
-
-DFS:
-
-```cpp
-class Solution {
-public:
-    vector<vector<int>> graph;
-    vector<vector<int>> ans;
-
-    vector<vector<int>> allPathsSourceTarget(vector<vector<int>>& graph) {
-        this->graph = graph;
-        vector<int> path;
-        path.push_back(0);
-        dfs(0, path);
-        return ans;
-    }
-
-    void dfs(int i, vector<int> path) {
-        if (i == graph.size() - 1)
-        {
-            ans.push_back(path);
-            return;
-        }
-        for (int j : graph[i])
-        {
-            path.push_back(j);
-            dfs(j, path);
-            path.pop_back();
-        }
-    }
-};
-```
-
-### **Go**
-
-DFS:
-
-```go
-func allPathsSourceTarget(graph [][]int) [][]int {
-	var path []int
-	path = append(path, 0)
-	var ans [][]int
-
-	var dfs func(i int)
-	dfs = func(i int) {
-		if i == len(graph)-1 {
-			ans = append(ans, append([]int(nil), path...))
-			return
-		}
-		for _, j := range graph[i] {
-			path = append(path, j)
-			dfs(j)
-			path = path[:len(path)-1]
-		}
-	}
-
-	dfs(0)
-	return ans
-}
-```
-
-### **JavaScript**
-
-```js
-/**
- * @param {number[][]} graph
- * @return {number[][]}
- */
-var allPathsSourceTarget = function (graph) {
-    const ans = [];
-    const t = [0];
-
-    const dfs = t => {
-        const cur = t[t.length - 1];
-        if (cur == graph.length - 1) {
-            ans.push([...t]);
-            return;
-        }
-        for (const v of graph[cur]) {
-            t.push(v);
-            dfs(t);
-            t.pop();
-        }
-    };
-
-    dfs(t);
-    return ans;
-};
-```
-
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

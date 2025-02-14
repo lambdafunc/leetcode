@@ -1,11 +1,9 @@
 class Solution {
     public List<Integer> powerfulIntegers(int x, int y, int bound) {
-        Set<Integer> s = new HashSet<>();
-        for (int i = 1; i < bound; i *= x) {
-            for (int j = 1; j < bound; j *= y) {
-                if (i + j <= bound) {
-                    s.add(i + j);
-                }
+        Set<Integer> ans = new HashSet<>();
+        for (int a = 1; a <= bound; a *= x) {
+            for (int b = 1; a + b <= bound; b *= y) {
+                ans.add(a + b);
                 if (y == 1) {
                     break;
                 }
@@ -14,6 +12,6 @@ class Solution {
                 break;
             }
         }
-        return new ArrayList<>(s);
+        return new ArrayList<>(ans);
     }
 }

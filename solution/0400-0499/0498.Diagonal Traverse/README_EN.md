@@ -1,20 +1,34 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0498.Diagonal%20Traverse/README_EN.md
+tags:
+    - Array
+    - Matrix
+    - Simulation
+---
+
+<!-- problem:start -->
+
 # [498. Diagonal Traverse](https://leetcode.com/problems/diagonal-traverse)
 
 [中文文档](/solution/0400-0499/0498.Diagonal%20Traverse/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given an <code>m x n</code> matrix <code>mat</code>, return <em>an array of all the elements of the array in a diagonal order</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0498.Diagonal%20Traverse/images/diag1-grid.jpg" style="width: 334px; height: 334px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0498.Diagonal%20Traverse/images/diag1-grid.jpg" style="width: 334px; height: 334px;" />
 <pre>
 <strong>Input:</strong> mat = [[1,2,3],[4,5,6],[7,8,9]]
 <strong>Output:</strong> [1,2,4,7,5,3,6,8,9]
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> mat = [[1,2],[3,4]]
@@ -32,53 +46,59 @@
 	<li><code>-10<sup>5</sup> &lt;= mat[i][j] &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def findDiagonalOrder(self, mat: List[List[int]]) -> List[int]:
         m, n = len(mat), len(mat[0])
-        ans, t = [], []
-        for i in range(m + n):
-            r = 0 if i < n else i - n + 1
-            c = i if i < n else n - 1
-            while r < m and c >= 0:
-                t.append(mat[r][c])
-                r += 1
-                c -= 1
-            if i % 2 == 0:
-                t.reverse()
+        ans = []
+        for k in range(m + n - 1):
+            t = []
+            i = 0 if k < n else k - n + 1
+            j = k if k < n else n - 1
+            while i < m and j >= 0:
+                t.append(mat[i][j])
+                i += 1
+                j -= 1
+            if k % 2 == 0:
+                t = t[::-1]
             ans.extend(t)
-            t.clear()
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int[] findDiagonalOrder(int[][] mat) {
         int m = mat.length, n = mat[0].length;
         int[] ans = new int[m * n];
-        int k = 0;
+        int idx = 0;
         List<Integer> t = new ArrayList<>();
-        for (int i = 0; i < m + n - 1; ++i) {
-            int r = i < n ? 0 : i - n + 1;
-            int c = i < n ? i : n - 1;
-            while (r < m && c >= 0) {
-                t.add(mat[r][c]);
-                ++r;
-                --c;
+        for (int k = 0; k < m + n - 1; ++k) {
+            int i = k < n ? 0 : k - n + 1;
+            int j = k < n ? k : n - 1;
+            while (i < m && j >= 0) {
+                t.add(mat[i][j]);
+                ++i;
+                --j;
             }
-            if (i % 2 == 0) {
+            if (k % 2 == 0) {
                 Collections.reverse(t);
             }
             for (int v : t) {
-                ans[k++] = v;
+                ans[idx++] = v;
             }
             t.clear();
         }
@@ -87,7 +107,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -96,18 +116,12 @@ public:
         int m = mat.size(), n = mat[0].size();
         vector<int> ans;
         vector<int> t;
-        for (int i = 0; i < m + n; ++i)
-        {
-            int r = i < n ? 0 : i - n + 1;
-            int c = i < n ? i : n - 1;
-            while (r < m && c >= 0)
-            {
-                t.push_back(mat[r][c]);
-                ++r;
-                --c;
-            }
-            if (i % 2 == 0) reverse(t.begin(), t.end());
-            for (int v : t) ans.push_back(v);
+        for (int k = 0; k < m + n - 1; ++k) {
+            int i = k < n ? 0 : k - n + 1;
+            int j = k < n ? k : n - 1;
+            while (i < m && j >= 0) t.push_back(mat[i++][j--]);
+            if (k % 2 == 0) reverse(t.begin(), t.end());
+            for (int& v : t) ans.push_back(v);
             t.clear();
         }
         return ans;
@@ -115,24 +129,24 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func findDiagonalOrder(mat [][]int) []int {
 	m, n := len(mat), len(mat[0])
 	var ans []int
-	for i := 0; i < m+n; i++ {
+	for k := 0; k < m+n-1; k++ {
 		var t []int
-		r, c := i-n+1, n-1
-		if i < n {
-			r, c = 0, i
+		i, j := k-n+1, n-1
+		if k < n {
+			i, j = 0, k
 		}
-		for r < m && c >= 0 {
-			t = append(t, mat[r][c])
-			r += 1
-			c -= 1
+		for i < m && j >= 0 {
+			t = append(t, mat[i][j])
+			i++
+			j--
 		}
-		if i%2 == 0 {
+		if k%2 == 0 {
 			p, q := 0, len(t)-1
 			for p < q {
 				t[p], t[q] = t[q], t[p]
@@ -148,10 +162,84 @@ func findDiagonalOrder(mat [][]int) []int {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function findDiagonalOrder(mat: number[][]): number[] {
+    const res = [];
+    const m = mat.length;
+    const n = mat[0].length;
+    let i = 0;
+    let j = 0;
+    let mark = true;
+    while (res.length !== n * m) {
+        if (mark) {
+            while (i >= 0 && j < n) {
+                res.push(mat[i][j]);
+                i--;
+                j++;
+            }
+            if (j === n) {
+                j--;
+                i++;
+            }
+            i++;
+        } else {
+            while (i < m && j >= 0) {
+                res.push(mat[i][j]);
+                i++;
+                j--;
+            }
+            if (i === m) {
+                i--;
+                j++;
+            }
+            j++;
+        }
+        mark = !mark;
+    }
+    return res;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn find_diagonal_order(mat: Vec<Vec<i32>>) -> Vec<i32> {
+        let (m, n) = (mat.len(), mat[0].len());
+        let (mut i, mut j) = (0, 0);
+        (0..m * n)
+            .map(|_| {
+                let res = mat[i][j];
+                if (i + j) % 2 == 0 {
+                    if j == n - 1 {
+                        i += 1;
+                    } else if i == 0 {
+                        j += 1;
+                    } else {
+                        i -= 1;
+                        j += 1;
+                    }
+                } else {
+                    if i == m - 1 {
+                        j += 1;
+                    } else if j == 0 {
+                        i += 1;
+                    } else {
+                        i += 1;
+                        j -= 1;
+                    }
+                }
+                res
+            })
+            .collect()
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

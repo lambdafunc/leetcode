@@ -1,22 +1,23 @@
 class Solution {
-    public void rotate(int[] nums, int k) {
-        int[] res = new int[nums.length];
-        int leftInit = 0;
-        if (nums.length < k) {
-            k = k % nums.length;
+    public int minFallingPathSum(int[][] grid) {
+        int n = grid.length;
+        int[][] f = new int[n + 1][n];
+        final int inf = 1 << 30;
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                int x = inf;
+                for (int k = 0; k < n; ++k) {
+                    if (k != j) {
+                        x = Math.min(x, f[i - 1][k]);
+                    }
+                }
+                f[i][j] = grid[i - 1][j] + (x == inf ? 0 : x);
+            }
         }
-        for (int i = nums.length - k; i < nums.length; i++) {
-            res[leftInit] = nums[i];
-            leftInit++;
+        int ans = inf;
+        for (int x : f[n]) {
+            ans = Math.min(ans, x);
         }
-        int rightInit = 0;
-        for (int i = k; i < nums.length; i++) {
-            res[i] = nums[rightInit];
-            rightInit++;
-        }
-        for (int i = 0; i < nums.length; i++) {
-            nums[i] = res[i];
-        }
-
+        return ans;
     }
 }

@@ -1,11 +1,14 @@
 class Solution:
     def numUniqueEmails(self, emails: List[str]) -> int:
-        ans = 0
         s = set()
         for email in emails:
-            local, domain = email.split('@')
-            local = local.replace('.', '')
-            if '+' in local:
-                local = local[:local.find('+')]
-            s.add(local + '@' + domain)
+            local, domain = email.split("@")
+            t = []
+            for c in local:
+                if c == ".":
+                    continue
+                if c == "+":
+                    break
+                t.append(c)
+            s.add("".join(t) + "@" + domain)
         return len(s)

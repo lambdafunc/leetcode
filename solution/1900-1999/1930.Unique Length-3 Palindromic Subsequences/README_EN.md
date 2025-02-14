@@ -1,8 +1,25 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1930.Unique%20Length-3%20Palindromic%20Subsequences/README_EN.md
+rating: 1533
+source: Weekly Contest 249 Q2
+tags:
+    - Bit Manipulation
+    - Hash Table
+    - String
+    - Prefix Sum
+---
+
+<!-- problem:start -->
+
 # [1930. Unique Length-3 Palindromic Subsequences](https://leetcode.com/problems/unique-length-3-palindromic-subsequences)
 
 [中文文档](/solution/1900-1999/1930.Unique%20Length-3%20Palindromic%20Subsequences/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given a string <code>s</code>, return <em>the number of <strong>unique palindromes of length three</strong> that are a <strong>subsequence</strong> of </em><code>s</code>.</p>
 
@@ -17,7 +34,7 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;aabca&quot;
@@ -28,7 +45,7 @@
 - &quot;aca&quot; (subsequence of &quot;<u>a</u>ab<u>ca</u>&quot;)
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;adc&quot;
@@ -36,7 +53,7 @@
 <strong>Explanation:</strong> There are no palindromic subsequences of length 3 in &quot;adc&quot;.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;bbcbaba&quot;
@@ -56,85 +73,173 @@
 	<li><code>s</code> consists of only lowercase English letters.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Enumerate Both End Characters + Hash Table
+
+Since the string contains only lowercase letters, we can directly enumerate all pairs of end characters. For each pair of end characters $c$, we find their first and last occurrence positions $l$ and $r$ in the string. If $r - l > 1$, it means we have found a palindromic subsequence that meets the conditions. We then count the number of unique characters between $[l+1,..r-1]$, which gives the number of palindromic subsequences with $c$ as the end characters, and add it to the answer.
+
+After enumerating all pairs, we get the answer.
+
+The time complexity is $O(n \times |\Sigma|)$, where $n$ is the length of the string and $\Sigma$ is the size of the character set. In this problem, $|\Sigma| = 26$. The space complexity is $O(|\Sigma|)$ or $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def countPalindromicSubsequence(self, s: str) -> int:
-        res = 0
-        for i in range(26):
-            c = chr(ord('a') + i)
-            if c in s:
-                l, r = s.index(c), s.rindex(c)
-                chars = {s[j] for j in range(l + 1, r)}
-                res += len(chars)
-        return res
+        ans = 0
+        for c in ascii_lowercase:
+            l, r = s.find(c), s.rfind(c)
+            if r - l > 1:
+                ans += len(set(s[l + 1 : r]))
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int countPalindromicSubsequence(String s) {
-        int res = 0;
+        int ans = 0;
         for (char c = 'a'; c <= 'z'; ++c) {
             int l = s.indexOf(c), r = s.lastIndexOf(c);
-            Set<Character> chars = new HashSet<>();
+            int mask = 0;
             for (int i = l + 1; i < r; ++i) {
-                chars.add(s.charAt(i));
+                int j = s.charAt(i) - 'a';
+                if ((mask >> j & 1) == 0) {
+                    mask |= 1 << j;
+                    ++ans;
+                }
             }
-            res += chars.size();
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int countPalindromicSubsequence(string s) {
-        int res = 0;
+        int ans = 0;
         for (char c = 'a'; c <= 'z'; ++c) {
             int l = s.find_first_of(c), r = s.find_last_of(c);
-            unordered_set<char> chars;
+            int mask = 0;
             for (int i = l + 1; i < r; ++i) {
-                chars.insert(s[i]);
+                int j = s[i] - 'a';
+                if (mask >> j & 1 ^ 1) {
+                    mask |= 1 << j;
+                    ++ans;
+                }
             }
-            res += chars.size();
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func countPalindromicSubsequence(s string) int {
-	res := 0
+func countPalindromicSubsequence(s string) (ans int) {
 	for c := 'a'; c <= 'z'; c++ {
 		l, r := strings.Index(s, string(c)), strings.LastIndex(s, string(c))
-		chars := make(map[byte]bool)
+		mask := 0
 		for i := l + 1; i < r; i++ {
-			chars[s[i]] = true
+			j := int(s[i] - 'a')
+			if mask>>j&1 == 0 {
+				mask |= 1 << j
+				ans++
+			}
 		}
-		res += len(chars)
 	}
-	return res
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function countPalindromicSubsequence(s: string): number {
+    let ans = 0;
+    const a = 'a'.charCodeAt(0);
+    for (let ch = 0; ch < 26; ++ch) {
+        const c = String.fromCharCode(ch + a);
+        const l = s.indexOf(c);
+        const r = s.lastIndexOf(c);
+        let mask = 0;
+        for (let i = l + 1; i < r; ++i) {
+            const j = s.charCodeAt(i) - a;
+            if (((mask >> j) & 1) ^ 1) {
+                mask |= 1 << j;
+                ++ans;
+            }
+        }
+    }
+    return ans;
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var countPalindromicSubsequence = function (s) {
+    let ans = 0;
+    const a = 'a'.charCodeAt(0);
+    for (let ch = 0; ch < 26; ++ch) {
+        const c = String.fromCharCode(ch + a);
+        const l = s.indexOf(c);
+        const r = s.lastIndexOf(c);
+        let mask = 0;
+        for (let i = l + 1; i < r; ++i) {
+            const j = s.charCodeAt(i) - a;
+            if (((mask >> j) & 1) ^ 1) {
+                mask |= 1 << j;
+                ++ans;
+            }
+        }
+    }
+    return ans;
+};
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int CountPalindromicSubsequence(string s) {
+        int ans = 0;
+        for (char c = 'a'; c <= 'z'; ++c) {
+            int l = s.IndexOf(c), r = s.LastIndexOf(c);
+            int mask = 0;
+            for (int i = l + 1; i < r; ++i) {
+                int j = s[i] - 'a';
+                if ((mask >> j & 1) == 0) {
+                    mask |= 1 << j;
+                    ++ans;
+                }
+            }
+        }
+        return ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

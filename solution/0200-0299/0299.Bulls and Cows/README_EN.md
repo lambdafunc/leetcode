@@ -1,8 +1,22 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0299.Bulls%20and%20Cows/README_EN.md
+tags:
+    - Hash Table
+    - String
+    - Counting
+---
+
+<!-- problem:start -->
+
 # [299. Bulls and Cows](https://leetcode.com/problems/bulls-and-cows)
 
 [中文文档](/solution/0200-0299/0299.Bulls%20and%20Cows/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are playing the <strong><a href="https://en.wikipedia.org/wiki/Bulls_and_Cows" target="_blank">Bulls and Cows</a></strong> game with your friend.</p>
 
@@ -18,7 +32,7 @@
 <p>The hint should be formatted as <code>&quot;xAyB&quot;</code>, where <code>x</code> is the number of bulls and <code>y</code> is the number of cows. Note that both <code>secret</code> and <code>guess</code> may contain duplicate digits.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> secret = &quot;1807&quot;, guess = &quot;7810&quot;
@@ -28,7 +42,7 @@
   |
 &quot;<u>7</u>8<u>10</u>&quot;</pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> secret = &quot;1123&quot;, guess = &quot;0111&quot;
@@ -40,20 +54,6 @@
 Note that only one of the two unmatched 1s is counted as a cow since the non-bull digits can only be rearranged to allow one 1 to be a bull.
 </pre>
 
-<p><strong>Example 3:</strong></p>
-
-<pre>
-<strong>Input:</strong> secret = &quot;1&quot;, guess = &quot;0&quot;
-<strong>Output:</strong> &quot;0A0B&quot;
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> secret = &quot;1&quot;, guess = &quot;1&quot;
-<strong>Output:</strong> &quot;1A0B&quot;
-</pre>
-
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
@@ -63,31 +63,44 @@ Note that only one of the two unmatched 1s is counted as a cow since the non-bul
 	<li><code>secret</code> and <code>guess</code> consist of digits only.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Counting
+
+We create two counters, $cnt1$ and $cnt2$, to count the occurrence of each digit in the secret number and the friend's guess respectively. At the same time, we create a variable $x$ to count the number of bulls.
+
+Then we iterate through the secret number and the friend's guess. If the current digit is the same, we increment $x$ by one. Otherwise, we increment the count of the current digit in the secret number and the friend's guess respectively.
+
+Finally, we iterate through each digit in $cnt1$, take the minimum count of the current digit in $cnt1$ and $cnt2$, and add this minimum value to the variable $y$.
+
+In the end, we return the values of $x$ and $y$.
+
+The time complexity is $O(n)$, where $n$ is the length of the secret number and the friend's guess. The space complexity is $O(|\Sigma|)$, where $|\Sigma|$ is the size of the character set. In this problem, the character set is digits, so $|\Sigma| = 10$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def getHint(self, secret: str, guess: str) -> str:
-        x = y = 0
-        cnt1 = [0] * 10
-        cnt2 = [0] * 10
-        for i in range(len(secret)):
-            if secret[i] == guess[i]:
+        cnt1, cnt2 = Counter(), Counter()
+        x = 0
+        for a, b in zip(secret, guess):
+            if a == b:
                 x += 1
             else:
-                cnt1[int(secret[i])] += 1
-                cnt2[int(guess[i])] += 1
-
-        for i in range(10):
-            y += min(cnt1[i], cnt2[i])
-        return f'{x}A{y}B'
+                cnt1[a] += 1
+                cnt2[b] += 1
+        y = sum(min(cnt1[c], cnt2[c]) for c in cnt1)
+        return f"{x}A{y}B"
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -112,40 +125,41 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     string getHint(string secret, string guess) {
         int x = 0, y = 0;
-        vector<int> cnt1(10);
-        vector<int> cnt2(10);
-        for (int i = 0; i < secret.size(); ++i)
-        {
+        int cnt1[10]{};
+        int cnt2[10]{};
+        for (int i = 0; i < secret.size(); ++i) {
             int a = secret[i] - '0', b = guess[i] - '0';
-            if (a == b) ++x;
-            else
-            {
+            if (a == b) {
+                ++x;
+            } else {
                 ++cnt1[a];
                 ++cnt2[b];
             }
         }
-        for (int i = 0; i < 10; ++i) y += min(cnt1[i], cnt2[i]);
+        for (int i = 0; i < 10; ++i) {
+            y += min(cnt1[i], cnt2[i]);
+        }
         return to_string(x) + "A" + to_string(y) + "B";
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func getHint(secret string, guess string) string {
 	x, y := 0, 0
-	cnt1 := make([]int, 10)
-	cnt2 := make([]int, 10)
-	for i := 0; i < len(secret); i++ {
-		a, b := secret[i]-'0', guess[i]-'0'
+	cnt1 := [10]int{}
+	cnt2 := [10]int{}
+	for i, c := range secret {
+		a, b := int(c-'0'), int(guess[i]-'0')
 		if a == b {
 			x++
 		} else {
@@ -153,24 +167,69 @@ func getHint(secret string, guess string) string {
 			cnt2[b]++
 		}
 	}
-	for i := 0; i < 10; i++ {
-		y += min(cnt1[i], cnt2[i])
+	for i, c := range cnt1 {
+		y += min(c, cnt2[i])
+
 	}
 	return fmt.Sprintf("%dA%dB", x, y)
 }
+```
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+#### TypeScript
+
+```ts
+function getHint(secret: string, guess: string): string {
+    const cnt1: number[] = Array(10).fill(0);
+    const cnt2: number[] = Array(10).fill(0);
+    let x: number = 0;
+    for (let i = 0; i < secret.length; ++i) {
+        if (secret[i] === guess[i]) {
+            ++x;
+        } else {
+            ++cnt1[+secret[i]];
+            ++cnt2[+guess[i]];
+        }
+    }
+    let y: number = 0;
+    for (let i = 0; i < 10; ++i) {
+        y += Math.min(cnt1[i], cnt2[i]);
+    }
+    return `${x}A${y}B`;
 }
 ```
 
-### **...**
+#### PHP
 
-```
-
+```php
+class Solution {
+    /**
+     * @param String $secret
+     * @param String $guess
+     * @return String
+     */
+    function getHint($secret, $guess) {
+        $cnt1 = array_fill(0, 10, 0);
+        $cnt2 = array_fill(0, 10, 0);
+        $x = 0;
+        for ($i = 0; $i < strlen($secret); ++$i) {
+            if ($secret[$i] === $guess[$i]) {
+                ++$x;
+            } else {
+                ++$cnt1[(int) $secret[$i]];
+                ++$cnt2[(int) $guess[$i]];
+            }
+        }
+        $y = 0;
+        for ($i = 0; $i < 10; ++$i) {
+            $y += min($cnt1[$i], $cnt2[$i]);
+        }
+        return "{$x}A{$y}B";
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

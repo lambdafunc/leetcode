@@ -1,13 +1,30 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1913.Maximum%20Product%20Difference%20Between%20Two%20Pairs/README_EN.md
+rating: 1144
+source: Weekly Contest 247 Q1
+tags:
+    - Array
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [1913. Maximum Product Difference Between Two Pairs](https://leetcode.com/problems/maximum-product-difference-between-two-pairs)
 
 [中文文档](/solution/1900-1999/1913.Maximum%20Product%20Difference%20Between%20Two%20Pairs/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>The <strong>product difference</strong> between two pairs <code>(a, b)</code> and <code>(c, d)</code> is defined as <code>(a * b) - (c * d)</code>.</p>
 
 <ul>
-	<li>For example, the product difference between <code>(5, 6)</code> and <code>(2, 7)</code> is <code>(5 * 6) - (2 * 7) = 16</code>.</li>
+
+    <li>For example, the product difference between <code>(5, 6)</code> and <code>(2, 7)</code> is <code>(5 * 6) - (2 * 7) = 16</code>.</li>
+
 </ul>
 
 <p>Given an integer array <code>nums</code>, choose four <strong>distinct</strong> indices <code>w</code>, <code>x</code>, <code>y</code>, and <code>z</code> such that the <strong>product difference</strong> between pairs <code>(nums[w], nums[x])</code> and <code>(nums[y], nums[z])</code> is <strong>maximized</strong>.</p>
@@ -16,7 +33,7 @@
 
 <p>&nbsp;</p>
 
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 
@@ -30,7 +47,7 @@ The product difference is (6 * 7) - (2 * 4) = 34.
 
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 
@@ -49,15 +66,24 @@ The product difference is (9 * 8) - (2 * 4) = 64.
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>4 &lt;= nums.length &lt;= 10<sup>4</sup></code></li>
-	<li><code>1 &lt;= nums[i] &lt;= 10<sup>4</sup></code></li>
+
+    <li><code>4 &lt;= nums.length &lt;= 10<sup>4</sup></code></li>
+
+    <li><code>1 &lt;= nums[i] &lt;= 10<sup>4</sup></code></li>
+
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -66,7 +92,7 @@ class Solution:
         return nums[-1] * nums[-2] - nums[0] * nums[1]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -78,7 +104,30 @@ class Solution {
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int maxProductDifference(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        int n = nums.size();
+        return nums[n - 1] * nums[n - 2] - nums[0] * nums[1];
+    }
+};
+```
+
+#### Go
+
+```go
+func maxProductDifference(nums []int) int {
+	sort.Ints(nums)
+	n := len(nums)
+	return nums[n-1]*nums[n-2] - nums[0]*nums[1]
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -93,33 +142,8 @@ var maxProductDifference = function (nums) {
 };
 ```
 
-### **C++**
-
-```cpp
-class Solution {
-public:
-    int maxProductDifference(vector<int>& nums) {
-        sort(nums.begin(), nums.end());
-        int n = nums.size();
-        return nums[n - 1] * nums[n - 2] - nums[0] * nums[1];
-    }
-};
-```
-
-### **Go**
-
-```go
-func maxProductDifference(nums []int) int {
-	sort.Ints(nums)
-	n := len(nums)
-	return nums[n-1]*nums[n-2] - nums[0]*nums[1]
-}
-```
-
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

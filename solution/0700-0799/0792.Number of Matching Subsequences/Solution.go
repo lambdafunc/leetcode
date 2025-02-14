@@ -1,19 +1,18 @@
-func numMatchingSubseq(s string, words []string) int {
-	buckets := make([][]string, 26)
-	for _, word := range words {
-		buckets[word[0]-'a'] = append(buckets[word[0]-'a'], word)
+func numMatchingSubseq(s string, words []string) (ans int) {
+	d := [26][]string{}
+	for _, w := range words {
+		d[w[0]-'a'] = append(d[w[0]-'a'], w)
 	}
-	res := 0
 	for _, c := range s {
-		old := buckets[c-'a']
-		buckets[c-'a'] = nil
-		for _, t := range old {
+		q := d[c-'a']
+		d[c-'a'] = nil
+		for _, t := range q {
 			if len(t) == 1 {
-				res++
+				ans++
 			} else {
-				buckets[t[1]-'a'] = append(buckets[t[1]-'a'], t[1:])
+				d[t[1]-'a'] = append(d[t[1]-'a'], t[1:])
 			}
 		}
 	}
-	return res
+	return
 }

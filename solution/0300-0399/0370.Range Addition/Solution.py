@@ -1,10 +1,8 @@
 class Solution:
     def getModifiedArray(self, length: int, updates: List[List[int]]) -> List[int]:
-        delta = [0] * length
-        for start, end, inc in updates:
-            delta[start] += inc
-            if end + 1 < length:
-                delta[end + 1] -= inc
-        for i in range(1, length):
-            delta[i] += delta[i - 1]
-        return delta
+        d = [0] * length
+        for l, r, c in updates:
+            d[l] += c
+            if r + 1 < length:
+                d[r + 1] -= c
+        return list(accumulate(d))

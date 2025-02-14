@@ -1,28 +1,41 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1352.Product%20of%20the%20Last%20K%20Numbers/README_EN.md
+rating: 1473
+source: Weekly Contest 176 Q2
+tags:
+    - Design
+    - Array
+    - Math
+    - Data Stream
+    - Prefix Sum
+---
+
+<!-- problem:start -->
+
 # [1352. Product of the Last K Numbers](https://leetcode.com/problems/product-of-the-last-k-numbers)
 
 [中文文档](/solution/1300-1399/1352.Product%20of%20the%20Last%20K%20Numbers/README.md)
 
 ## Description
 
-<p>Implement the class <code>ProductOfNumbers</code>&nbsp;that supports two methods:</p>
+<!-- description:start -->
 
-<p>1.<code>&nbsp;add(int num)</code></p>
+<p>Design an algorithm that accepts a stream of integers and retrieves the product of the last <code>k</code> integers of the stream.</p>
 
-<ul>
-	<li>Adds the number <code>num</code> to the back of the current list of numbers.</li>
-</ul>
-
-<p>2.<code> getProduct(int k)</code></p>
+<p>Implement the <code>ProductOfNumbers</code> class:</p>
 
 <ul>
-	<li>Returns the product of the last <code>k</code> numbers in the current list.</li>
-	<li>You can assume that always the current list has <strong>at least</strong> <code>k</code> numbers.</li>
+	<li><code>ProductOfNumbers()</code> Initializes the object with an empty stream.</li>
+	<li><code>void add(int num)</code> Appends the integer <code>num</code> to the stream.</li>
+	<li><code>int getProduct(int k)</code> Returns the product of the last <code>k</code> numbers in the current list. You can assume that always the current list has at least <code>k</code> numbers.</li>
 </ul>
 
-<p>At any time, the product of any contiguous sequence of numbers will fit into a single 32-bit integer without overflowing.</p>
+<p>The test cases are generated so that, at any time, the product of any contiguous sequence of numbers will fit into a single 32-bit integer without overflowing.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example:</strong></p>
+<p><strong class="example">Example:</strong></p>
 
 <pre>
 <strong>Input</strong>
@@ -50,34 +63,45 @@ productOfNumbers.getProduct(2); // return 32. The product of the last 2 numbers 
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li>There will be at most <code>40000</code>&nbsp;operations considering both <code>add</code> and <code>getProduct</code>.</li>
-	<li><code>0 &lt;= num&nbsp;&lt;=&nbsp;100</code></li>
-	<li><code>1 &lt;= k &lt;= 40000</code></li>
+	<li><code>0 &lt;= num &lt;= 100</code></li>
+	<li><code>1 &lt;= k &lt;= 4 * 10<sup>4</sup></code></li>
+	<li>At most <code>4 * 10<sup>4</sup></code> calls will be made to <code>add</code> and <code>getProduct</code>.</li>
+	<li>The product of the stream at any point in time will fit in a <strong>32-bit</strong> integer.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Prefix Product
+
+We initialize an array $s$, where $s[i]$ represents the product of the first $i$ numbers.
+
+When calling `add(num)`, we judge whether `num` is $0$. If it is, we set $s$ to `[1]`. Otherwise, we multiply the last element of $s$ by `num` and add the result to the end of $s$.
+
+When calling `getProduct(k)`, we now judge whether the length of $s$ is less than or equal to $k$. If it is, we return $0$. Otherwise, we return the last element of $s$ divided by the $k + 1$th element from the end of $s$. That is, $s[-1] / s[-k - 1]$.
+
+The time complexity is $O(1)$, and the space complexity is $O(n)$. Where $n$ is the number of times `add` is called.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class ProductOfNumbers:
-
     def __init__(self):
-        self.pre_product = []
+        self.s = [1]
 
     def add(self, num: int) -> None:
         if num == 0:
-            self.pre_product = []
+            self.s = [1]
             return
-        if not self.pre_product:
-            self.pre_product.append(1)
-        self.pre_product.append(num * self.pre_product[-1])
+        self.s.append(self.s[-1] * num)
 
     def getProduct(self, k: int) -> int:
-        n = len(self.pre_product)
-        return 0 if n <= k else self.pre_product[n - 1] // self.pre_product[n - k - 1]
+        return 0 if len(self.s) <= k else self.s[-1] // self.s[-k - 1]
 
 
 # Your ProductOfNumbers object will be instantiated and called as such:
@@ -86,29 +110,28 @@ class ProductOfNumbers:
 # param_2 = obj.getProduct(k)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class ProductOfNumbers {
-    private List<Integer> preProduct;
+    private List<Integer> s = new ArrayList<>();
 
     public ProductOfNumbers() {
-        preProduct = new ArrayList<>();
+        s.add(1);
     }
 
     public void add(int num) {
         if (num == 0) {
-            preProduct.clear();
+            s.clear();
+            s.add(1);
             return;
         }
-        if (preProduct.isEmpty()) {
-            preProduct.add(1);
-        }
-        preProduct.add(num * preProduct.get(preProduct.size() - 1));
+        s.add(s.get(s.size() - 1) * num);
     }
 
     public int getProduct(int k) {
-        return preProduct.size() <= k ? 0 : preProduct.get(preProduct.size() - 1) / preProduct.get(preProduct.size() - 1 - k);
+        int n = s.size();
+        return n <= k ? 0 : s.get(n - 1) / s.get(n - k - 1);
     }
 }
 
@@ -120,10 +143,78 @@ class ProductOfNumbers {
  */
 ```
 
-### **...**
+#### C++
 
+```cpp
+class ProductOfNumbers {
+public:
+    ProductOfNumbers() {
+        s.push_back(1);
+    }
+
+    void add(int num) {
+        if (num == 0) {
+            s.clear();
+            s.push_back(1);
+            return;
+        }
+        s.push_back(s.back() * num);
+    }
+
+    int getProduct(int k) {
+        int n = s.size();
+        return n <= k ? 0 : s.back() / s[n - k - 1];
+    }
+
+private:
+    vector<int> s;
+};
+
+/**
+ * Your ProductOfNumbers object will be instantiated and called as such:
+ * ProductOfNumbers* obj = new ProductOfNumbers();
+ * obj->add(num);
+ * int param_2 = obj->getProduct(k);
+ */
 ```
 
+#### Go
+
+```go
+type ProductOfNumbers struct {
+	s []int
+}
+
+func Constructor() ProductOfNumbers {
+	return ProductOfNumbers{[]int{1}}
+}
+
+func (this *ProductOfNumbers) Add(num int) {
+	if num == 0 {
+		this.s = []int{1}
+		return
+	}
+	this.s = append(this.s, this.s[len(this.s)-1]*num)
+}
+
+func (this *ProductOfNumbers) GetProduct(k int) int {
+	n := len(this.s)
+	if n <= k {
+		return 0
+	}
+	return this.s[len(this.s)-1] / this.s[len(this.s)-k-1]
+}
+
+/**
+ * Your ProductOfNumbers object will be instantiated and called as such:
+ * obj := Constructor();
+ * obj.Add(num);
+ * param_2 := obj.GetProduct(k);
+ */
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,23 @@
-# [1760. 袋子里最少数目的球](https://leetcode-cn.com/problems/minimum-limit-of-balls-in-a-bag)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1760.Minimum%20Limit%20of%20Balls%20in%20a%20Bag/README.md
+rating: 1939
+source: 第 228 场周赛 Q3
+tags:
+    - 数组
+    - 二分查找
+---
+
+<!-- problem:start -->
+
+# [1760. 袋子里最少数目的球](https://leetcode.cn/problems/minimum-limit-of-balls-in-a-bag)
 
 [English Version](/solution/1700-1799/1760.Minimum%20Limit%20of%20Balls%20in%20a%20Bag/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组 <code>nums</code> ，其中 <code>nums[i]</code> 表示第 <code>i</code> 个袋子里球的数目。同时给你一个整数 <code>maxOperations</code> 。</p>
 
@@ -66,118 +79,194 @@
 	<li><code>1 <= maxOperations, nums[i] <= 10<sup>9</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-二分查找。
+### 方法一：二分查找
 
-题目可以转换为：对某个开销值，看它能不能在 maxOperations 次操作内得到。二分枚举开销值，找到最小的开销值即可。
+本题需要我们最小化开销，即最小化单个袋子里球数目的最大值。随着最大值的增大，操作次数会减少，越容易满足条件。
+
+因此，我们可以二分枚举单个袋子里球数目的最大值，判断是否能在 $\textit{maxOperations}$ 次操作内得到。
+
+具体地，我们定义二分查找的左边界 $l = 1$，右边界 $r = \max(\textit{nums})$。然后我们不断二分枚举中间值 $\textit{mid} = \frac{l + r}{2}$，对于每个 $\textit{mid}$，我们计算在这个 $\textit{mid}$ 下，需要的操作次数。如果操作次数小于等于 $\textit{maxOperations}$，说明 $\textit{mid}$ 满足条件，我们将右边界 $r$ 更新为 $\textit{mid}$，否则将左边界 $l$ 更新为 $\textit{mid} + 1$。
+
+最后，我们返回左边界 $l$ 即可。
+
+时间复杂度 $O(n \times \log M)$，其中 $n$ 和 $M$ 分别是数组 $\textit{nums}$ 的长度和最大值。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def minimumSize(self, nums: List[int], maxOperations: int) -> int:
-        left, right = 1, max(nums)
-        while left < right:
-            mid = (left + right) >> 1
-            ops = sum([(num - 1) // mid for num in nums])
-            if ops <= maxOperations:
-                right = mid
-            else:
-                left = mid + 1
-        return left
+        def check(mx: int) -> bool:
+            return sum((x - 1) // mx for x in nums) <= maxOperations
+
+        return bisect_left(range(1, max(nums) + 1), True, key=check) + 1
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int minimumSize(int[] nums, int maxOperations) {
-        int left = 1, right = 1000000000;
-        while (left < right) {
-            int mid = (left + right) >>> 1;
-            long ops = 0;
-            for (int num : nums) {
-                ops += (num - 1) / mid;
+        int l = 1, r = Arrays.stream(nums).max().getAsInt();
+        while (l < r) {
+            int mid = (l + r) >> 1;
+            long s = 0;
+            for (int x : nums) {
+                s += (x - 1) / mid;
             }
-            if (ops <= maxOperations) {
-                right = mid;
+            if (s <= maxOperations) {
+                r = mid;
             } else {
-                left = mid + 1;
+                l = mid + 1;
             }
         }
-        return left;
+        return l;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int minimumSize(vector<int>& nums, int maxOperations) {
-        int left = 1, right = *max_element(nums.begin(), nums.end());
-        while (left < right) {
-            int mid = left + (right - left >> 1);
-            long long ops = 0;
-            for (int num : nums) {
-                ops += (num - 1) / mid;
+        int l = 1, r = ranges::max(nums);
+        while (l < r) {
+            int mid = (l + r) >> 1;
+            long long s = 0;
+            for (int x : nums) {
+                s += (x - 1) / mid;
             }
-            if (ops <= maxOperations) {
-                right = mid;
+            if (s <= maxOperations) {
+                r = mid;
             } else {
-                left = mid + 1;
+                l = mid + 1;
             }
         }
-        return left;
+        return l;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func minimumSize(nums []int, maxOperations int) int {
-	left, right := 1, max(nums)
-	for left < right {
-		mid := (left + right) >> 1
-		var ops int
-		for _, num := range nums {
-			ops += (num - 1) / mid
+	r := slices.Max(nums)
+	return 1 + sort.Search(r, func(mx int) bool {
+		mx++
+		s := 0
+		for _, x := range nums {
+			s += (x - 1) / mx
 		}
-		if ops <= maxOperations {
-			right = mid
-		} else {
-			left = mid + 1
-		}
-	}
-	return left
-}
-
-func max(nums []int) int {
-	res := 0
-	for _, num := range nums {
-		if res < num {
-			res = num
-		}
-	}
-	return res
+		return s <= maxOperations
+	})
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function minimumSize(nums: number[], maxOperations: number): number {
+    let [l, r] = [1, Math.max(...nums)];
+    while (l < r) {
+        const mid = (l + r) >> 1;
+        const s = nums.map(x => ((x - 1) / mid) | 0).reduce((a, b) => a + b);
+        if (s <= maxOperations) {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
+    }
+    return l;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn minimum_size(nums: Vec<i32>, max_operations: i32) -> i32 {
+        let mut l = 1;
+        let mut r = *nums.iter().max().unwrap();
+
+        while l < r {
+            let mid = (l + r) / 2;
+            let mut s: i64 = 0;
+
+            for &x in &nums {
+                s += ((x - 1) / mid) as i64;
+            }
+
+            if s <= max_operations as i64 {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+
+        l
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ * @param {number} maxOperations
+ * @return {number}
+ */
+var minimumSize = function (nums, maxOperations) {
+    let [l, r] = [1, Math.max(...nums)];
+    while (l < r) {
+        const mid = (l + r) >> 1;
+        const s = nums.map(x => ((x - 1) / mid) | 0).reduce((a, b) => a + b);
+        if (s <= maxOperations) {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
+    }
+    return l;
+};
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int MinimumSize(int[] nums, int maxOperations) {
+        int l = 1, r = nums.Max();
+        while (l < r) {
+            int mid = (l + r) >> 1;
+            long s = 0;
+            foreach (int x in nums) {
+                s += (x - 1) / mid;
+            }
+            if (s <= maxOperations) {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return l;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

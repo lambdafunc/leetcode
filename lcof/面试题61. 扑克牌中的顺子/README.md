@@ -1,198 +1,149 @@
-# [面试题 61. 扑克牌中的顺子](https://leetcode-cn.com/problems/bu-ke-pai-zhong-de-shun-zi-lcof/)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9861.%20%E6%89%91%E5%85%8B%E7%89%8C%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%AD%90/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 61. 扑克牌中的顺子](https://leetcode.cn/problems/bu-ke-pai-zhong-de-shun-zi-lcof/)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-从扑克牌中随机抽 5 张牌，判断是不是一个顺子，即这 5 张牌是不是连续的。2 ～ 10 为数字本身，A 为 1，J 为 11，Q 为 12，K 为 13，而大、小王为 0 ，可以看成任意数字。A 不能视为 14。
+<p>从<strong>若干副扑克牌</strong>中随机抽 <code>5</code> 张牌，判断是不是一个顺子，即这5张牌是不是连续的。2～10为数字本身，A为1，J为11，Q为12，K为13，而大、小王为 0 ，可以看成任意数字。A 不能视为 14。</p>
 
-**示例  1:**
+<p>&nbsp;</p>
 
-```
-输入: [1,2,3,4,5]
-输出: True
-```
+<p><strong>示例&nbsp;1:</strong></p>
 
-**示例  2:**
+<pre>
+<strong>输入:</strong> [1,2,3,4,5]
+<strong>输出:</strong> True</pre>
 
-```
-输入: [0,0,1,2,5]
-输出: True
-```
+<p>&nbsp;</p>
 
-**限制：**
+<p><strong>示例&nbsp;2:</strong></p>
 
-- 数组长度为 5
-- 数组的数取值为 `[0, 13]`
+<pre>
+<strong>输入:</strong> [0,0,1,2,5]
+<strong>输出:</strong> True</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>限制：</strong></p>
+
+<p>数组长度为 5&nbsp;</p>
+
+<p>数组的数取值为 [0, 13] .</p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-顺子不成立的核心条件：
+### 方法一：遍历
 
-- 存在重复。
-- 最大值与最小值的差距超过 4（最大最小值比较不包括 0 在内）。
+我们首先明确顺子不成立的核心条件：
 
-解决方案：
+1. 存在非 $0$ 的重复。
+2. 最大值与最小值的差距超过 4（最大最小值比较不包括 $0$ 在内）。
 
-- 数组计数
-    - 用数组 `t` 记录是否存在重复的数，存在则直接返回 `false`。
-    - 遍历数组，忽略大小王(0)，求出数组的最大、最小值。若最后差值超过 4，则无法构成顺子，例如：`5,6,(0),8,10`。
+因此，我们可以用一个哈希表或数组 `vis` 记录数字是否出现过，用 `mi` 和 `mx` 记录最大值和最小值。遍历数组，忽略大小王（$0$），求出数组的最大、最小值。若最后差值超过 $4$，则无法构成顺子。
 
-- 排序
-    - 声明一个起始指针，初始化为 0。
-    - 对数组进行排序，并遍历数组：
-        - 若遍历元素为 0，将起始指针向右移。
-        - 若遍历元素与相邻元素相同（忽略 0），则绝对不成立，`return false`。
-    - 遍历结束，比较最大值（数组末尾元素）与起始指针所指向的元素，若是两者值相差大于 4，则顺子不成立。
-        > 起始指针所做的便是找到除 0 之外，数组当中的最小值。
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为数组长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def isStraight(self, nums: List[int]) -> bool:
-        t = [False for _ in range(14)]
-        max_val, min_val = 0, 14
-        for num in nums:
-            if num == 0:
+        vis = set()
+        mi, mx = inf, -inf
+        for x in nums:
+            if x == 0:
                 continue
-            if t[num]:
+            if x in vis:
                 return False
-            t[num] = True
-            max_val = max(max_val, num)
-            min_val = min(min_val, num)
-        return max_val - min_val <= 4
-
-
+            vis.add(x)
+            mi = min(mi, x)
+            mx = max(mx, x)
+        return mx - mi <= 4
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public boolean isStraight(int[] nums) {
-        boolean[] t = new boolean[14];
-        int maxVal = Integer.MIN_VALUE, minVal = Integer.MAX_VALUE;
-        for (int num : nums) {
-            if (num == 0) {
+        boolean[] vis = new boolean[14];
+        int mi = 20, mx = -1;
+        for (int x : nums) {
+            if (x == 0) {
                 continue;
             }
-            if (t[num]) {
+            if (vis[x]) {
                 return false;
             }
-            t[num] = true;
-            maxVal = Math.max(maxVal, num);
-            minVal = Math.min(minVal, num);
+            vis[x] = true;
+            mi = Math.min(mi, x);
+            mx = Math.max(mx, x);
         }
-        return maxVal - minVal <= 4;
+        return mx - mi <= 4;
     }
 }
 ```
 
-### **JavaScript**
-
-```js
-/**
- * @param {number[]} nums
- * @return {boolean}
- */
-var isStraight = function (nums) {
-    let zeroCnt = 0;
-    nums.sort((a, b) => a - b);
-    for (let i = 0; i < nums.length - 1; i++) {
-        if (nums[i] === 0) zeroCnt++;
-        else {
-            if (nums[i] === nums[i + 1]) return false;
-            else if (nums[i] === nums[i + 1] - 1) {
-                continue;
-            } else if (nums[i] >= nums[i + 1] - zeroCnt - 1) {
-                zeroCnt--;
-            } else {
-                return false;
-            }
-        }
-        if (zeroCnt < 0) return false;
-    }
-    return true;
-};
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool isStraight(vector<int>& nums) {
-        if (nums.size() != 5) {
-            return false;
-        }
-
-        std::sort(nums.begin(), nums.end());
-        int zeroNum = 0;
-        for (int i = 0; i < nums.size(); i++) {
-            if (nums[i] != 0) {
-                // 这题的用例中，会出现超过两个0的情况
-                break;
+        bool vis[14]{};
+        int mi = 20, mx = -1;
+        for (int& x : nums) {
+            if (x == 0) {
+                continue;
             }
-            zeroNum++;
-        }
-
-        for (int i = zeroNum; i < nums.size()-1; i++) {
-            if (nums[i] == nums[i+1]) {
+            if (vis[x]) {
                 return false;
             }
+            vis[x] = true;
+            mi = min(mi, x);
+            mx = max(mx, x);
         }
-
-        return nums[4] - nums[zeroNum] <= 4;
+        return mx - mi <= 4;
     }
 };
-
 ```
 
-### **Go**
+#### Go
 
 ```go
 func isStraight(nums []int) bool {
-	m := make(map[int]struct{})
-	mi, ma := 14, 0
-	for _, num := range nums {
-		if num == 0 {
+	vis := map[int]bool{}
+	mi, mx := 20, -1
+	for _, x := range nums {
+		if x == 0 {
 			continue
 		}
-		if _, exist := m[num]; exist {
+		if vis[x] {
 			return false
 		}
-		mi = min(mi, num)
-		ma = max(ma, num)
-		m[num] = struct{}{}
+		vis[x] = true
+		mi = min(mi, x)
+		mx = max(mx, x)
 	}
-	return ma-mi < 5
-}
-
-func max(x, y int) int {
-	if x > y {
-		return x
-	}
-	return y
-}
-
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
+	return mx-mi <= 4
 }
 ```
 
-### **TypeScript**
+#### TypeScript
 
 ```ts
 function isStraight(nums: number[]): boolean {
@@ -209,7 +160,7 @@ function isStraight(nums: number[]): boolean {
 }
 ```
 
-### **Rust**
+#### Rust
 
 ```rust
 impl Solution {
@@ -228,10 +179,81 @@ impl Solution {
 }
 ```
 
-### **...**
+#### JavaScript
 
+```js
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+var isStraight = function (nums) {
+    const vis = new Array(14).fill(false);
+    let mi = 20;
+    let mx = -1;
+    for (const x of nums) {
+        if (x == 0) {
+            continue;
+        }
+        if (vis[x]) {
+            return false;
+        }
+        vis[x] = true;
+        mi = Math.min(mi, x);
+        mx = Math.max(mx, x);
+    }
+    return mx - mi <= 4;
+};
 ```
+
+#### C#
+
+```cs
+public class Solution {
+    public bool IsStraight(int[] nums) {
+        bool[] vis = new bool[14];
+        int mi = 20, mx = -1;
+        foreach(int x in nums) {
+            if (x == 0) {
+                continue;
+            }
+            if (vis[x]) {
+                return false;
+            }
+            vis[x] = true;
+            mi = Math.Min(mi, x);
+            mx = Math.Max(mx, x);
+        }
+        return mx - mi <= 4;
+    }
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func isStraight(_ nums: [Int]) -> Bool {
+        var vis = Array(repeating: false, count: 14)
+        var mi = 20, mx = -1
+        for x in nums {
+            if x == 0 {
+                continue
+            }
+            if vis[x] {
+                return false
+            }
+            vis[x] = true
+            mi = min(mi, x)
+            mx = max(mx, x)
+        }
+        return mx - mi <= 4
+    }
+}
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

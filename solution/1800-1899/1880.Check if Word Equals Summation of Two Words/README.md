@@ -1,10 +1,22 @@
-# [1880. 检查某单词是否等于两单词之和](https://leetcode-cn.com/problems/check-if-word-equals-summation-of-two-words)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1880.Check%20if%20Word%20Equals%20Summation%20of%20Two%20Words/README.md
+rating: 1187
+source: 第 243 场周赛 Q1
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1880. 检查某单词是否等于两单词之和](https://leetcode.cn/problems/check-if-word-equals-summation-of-two-words)
 
 [English Version](/solution/1800-1899/1880.Check%20if%20Word%20Equals%20Summation%20of%20Two%20Words/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>字母的 <strong>字母值</strong> 取决于字母在字母表中的位置，<strong>从 0 开始</strong> 计数。即，<code>'a' -&gt; 0</code>、<code>'b' -&gt; 1</code>、<code>'c' -&gt; 2</code>，以此类推。</p>
 
@@ -61,70 +73,122 @@ targetWord 的数值为 "aaaa" -&gt; "0000" -&gt; 0
 	<li><code>firstWord</code>、<code>secondWord</code> 和 <code>targetWord</code> 仅由从 <code>'a'</code> 到 <code>'j'</code> （<strong>含 </strong><code>'a'</code> 和 <code>'j'</code><strong> </strong>）的小写英文字母组成<strong>。</strong></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：字符串转数字
+
+我们定义一个函数 $\textit{f}(s)$，用来计算字符串 $s$ 的数值。对于字符串 $s$ 中的每个字符 $c$，我们将其转换为对应的数字 $x$，然后将 $x$ 依次连接起来，最后转换为整数。
+
+最后，我们只需要判断 $\textit{f}(\textit{firstWord}) + \textit{f}(\textit{secondWord})$ 是否等于 $\textit{f}(\textit{targetWord})$ 即可。
+
+时间复杂度 $O(L)$，其中 $L$ 为题目中所有字符串的长度之和。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def isSumEqual(self, firstWord: str, secondWord: str, targetWord: str) -> bool:
-        def convert(word):
-            res = 0
-            for c in word:
-                res *= 10
-                res += (ord(c) - ord('a'))
-            return res
-        return convert(firstWord) + convert(secondWord) == convert(targetWord)
+        def f(s: str) -> int:
+            ans, a = 0, ord("a")
+            for c in map(ord, s):
+                x = c - a
+                ans = ans * 10 + x
+            return ans
+
+        return f(firstWord) + f(secondWord) == f(targetWord)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public boolean isSumEqual(String firstWord, String secondWord, String targetWord) {
-        return convert(firstWord) + convert(secondWord) == convert(targetWord);
+        return f(firstWord) + f(secondWord) == f(targetWord);
     }
 
-    private int convert(String word) {
-        int res = 0;
-        for (char c : word.toCharArray()) {
-            res *= 10;
-            res += (c - 'a');
+    private int f(String s) {
+        int ans = 0;
+        for (char c : s.toCharArray()) {
+            ans = ans * 10 + (c - 'a');
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool isSumEqual(string firstWord, string secondWord, string targetWord) {
-        return convert(firstWord) + convert(secondWord) == convert(targetWord);
-    }
-private:
-    int convert(string word) {
-        int res = 0;
-        for (char c : word) {
-            res *= 10;
-            res += (c - 'a');
-        }
-        return res;
+        auto f = [](string& s) -> int {
+            int ans = 0;
+            for (char c : s) {
+                ans = ans * 10 + (c - 'a');
+            }
+            return ans;
+        };
+        return f(firstWord) + f(secondWord) == f(targetWord);
     }
 };
 ```
 
-### **JavaScript**
+#### Go
+
+```go
+func isSumEqual(firstWord string, secondWord string, targetWord string) bool {
+	f := func(s string) (ans int) {
+		for _, c := range s {
+			ans = ans*10 + int(c-'a')
+		}
+		return
+	}
+	return f(firstWord)+f(secondWord) == f(targetWord)
+}
+```
+
+#### TypeScript
+
+```ts
+function isSumEqual(firstWord: string, secondWord: string, targetWord: string): boolean {
+    const f = (s: string): number => {
+        let ans = 0;
+        for (const c of s) {
+            ans = ans * 10 + c.charCodeAt(0) - 97;
+        }
+        return ans;
+    };
+    return f(firstWord) + f(secondWord) == f(targetWord);
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn is_sum_equal(first_word: String, second_word: String, target_word: String) -> bool {
+        fn f(s: &str) -> i64 {
+            let mut ans = 0;
+            let a = 'a' as i64;
+            for c in s.chars() {
+                let x = c as i64 - a;
+                ans = ans * 10 + x;
+            }
+            ans
+        }
+        f(&first_word) + f(&second_word) == f(&target_word)
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -134,30 +198,36 @@ private:
  * @return {boolean}
  */
 var isSumEqual = function (firstWord, secondWord, targetWord) {
-    let carry = 0;
-    let n1 = firstWord.length,
-        n2 = secondWord.length;
-    let n3 = targetWord.length;
-    for (let i = 0; i < n3; i++) {
-        let num1 = getNum(firstWord.charAt(n1 - 1 - i));
-        let num2 = getNum(secondWord.charAt(n2 - 1 - i));
-        let sum = carry + num1 + num2;
-        if (getNum(targetWord.charAt(n3 - 1 - i)) != sum % 10) return false;
-        carry = parseInt(sum / 10);
-    }
-    return true;
+    const f = s => {
+        let ans = 0;
+        for (const c of s) {
+            ans = ans * 10 + c.charCodeAt(0) - 97;
+        }
+        return ans;
+    };
+    return f(firstWord) + f(secondWord) == f(targetWord);
 };
+```
 
-function getNum(char) {
-    if (!char) return 0;
-    return char.charCodeAt() - "a".charCodeAt();
+#### C
+
+```c
+int f(const char* s) {
+    int ans = 0;
+    while (*s) {
+        ans = ans * 10 + (*s - 'a');
+        s++;
+    }
+    return ans;
+}
+
+bool isSumEqual(char* firstWord, char* secondWord, char* targetWord) {
+    return f(firstWord) + f(secondWord) == f(targetWord);
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1376.Time%20Needed%20to%20Inform%20All%20Employees/README_EN.md
+rating: 1561
+source: Weekly Contest 179 Q3
+tags:
+    - Tree
+    - Depth-First Search
+    - Breadth-First Search
+---
+
+<!-- problem:start -->
+
 # [1376. Time Needed to Inform All Employees](https://leetcode.com/problems/time-needed-to-inform-all-employees)
 
 [中文文档](/solution/1300-1399/1376.Time%20Needed%20to%20Inform%20All%20Employees/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A company has <code>n</code> employees with a unique ID for each employee from <code>0</code> to <code>n - 1</code>. The head of the company is the one with <code>headID</code>.</p>
 
@@ -15,7 +31,7 @@
 <p>Return <em>the number of minutes</em> needed to inform all the employees about the urgent news.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 1, headID = 0, manager = [-1], informTime = [0]
@@ -23,44 +39,13 @@
 <strong>Explanation:</strong> The head of the company is the only employee in the company.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1376.Time%20Needed%20to%20Inform%20All%20Employees/images/graph.png" style="width: 404px; height: 174px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1376.Time%20Needed%20to%20Inform%20All%20Employees/images/graph.png" style="width: 404px; height: 174px;" />
 <pre>
 <strong>Input:</strong> n = 6, headID = 2, manager = [2,2,-1,2,2,2], informTime = [0,0,1,0,0,0]
 <strong>Output:</strong> 1
 <strong>Explanation:</strong> The head of the company with id = 2 is the direct manager of all the employees in the company and needs 1 minute to inform them all.
 The tree structure of the employees in the company is shown.
-</pre>
-
-<p><strong>Example 3:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1376.Time%20Needed%20to%20Inform%20All%20Employees/images/1730_example_3_5.png" style="width: 568px; height: 432px;" />
-<pre>
-<strong>Input:</strong> n = 7, headID = 6, manager = [1,2,3,4,5,6,-1], informTime = [0,6,5,4,3,2,1]
-<strong>Output:</strong> 21
-<strong>Explanation:</strong> The head has id = 6. He will inform employee with id = 5 in 1 minute.
-The employee with id = 5 will inform the employee with id = 4 in 2 minutes.
-The employee with id = 4 will inform the employee with id = 3 in 3 minutes.
-The employee with id = 3 will inform the employee with id = 2 in 4 minutes.
-The employee with id = 2 will inform the employee with id = 1 in 5 minutes.
-The employee with id = 1 will inform the employee with id = 0 in 6 minutes.
-Needed time = 1 + 2 + 3 + 4 + 5 + 6 = 21.
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> n = 15, headID = 0, manager = [-1,0,0,1,1,2,2,3,3,4,4,5,5,6,6], informTime = [1,1,1,1,1,1,1,0,0,0,0,0,0,0,0]
-<strong>Output:</strong> 3
-<strong>Explanation:</strong> The first minute the head will inform employees 1 and 2.
-The second minute they will inform employees 3, 4, 5 and 6.
-The third minute they will inform the rest of employees.
-</pre>
-
-<p><strong>Example 5:</strong></p>
-
-<pre>
-<strong>Input:</strong> n = 4, headID = 2, manager = [3,3,-1,2], informTime = [0,0,162,914]
-<strong>Output:</strong> 1076
 </pre>
 
 <p>&nbsp;</p>
@@ -78,112 +63,171 @@ The third minute they will inform the rest of employees.
 	<li>It is <strong>guaranteed</strong> that all the employees can be informed.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: DFS
+
+We first build an adjacent list $g$ according to the $manager$ array, where $g[i]$ represents all direct subordinates of employee $i$.
+
+Next, we design a function $dfs(i)$, which means the time required for employee $i$ to notify all his subordinates (including direct subordinates and indirect subordinates), and then the answer is $dfs(headID)$.
+
+In function $dfs(i)$, we need to traverse all direct subordinates $j$ of $i$. For each subordinate, employee $i$ needs to notify him, which takes $informTime[i]$ time, and his subordinates need to notify their subordinates, which takes $dfs(j)$ time. We take the maximum value of $informTime[i] + dfs(j)$ as the return value of function $dfs(i)$.
+
+The time complexity is $O(n)$, and the space complexity is $O(n)$. Where $n$ is the number of employees.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
-    def numOfMinutes(self, n: int, headID: int, manager: List[int], informTime: List[int]) -> int:
-        def dfs(i):
+    def numOfMinutes(
+        self, n: int, headID: int, manager: List[int], informTime: List[int]
+    ) -> int:
+        def dfs(i: int) -> int:
             ans = 0
             for j in g[i]:
-                ans = max(ans, informTime[i] + dfs(j))
+                ans = max(ans, dfs(j) + informTime[i])
             return ans
 
         g = defaultdict(list)
-        for i, m in enumerate(manager):
-            g[m].append(i)
+        for i, x in enumerate(manager):
+            g[x].append(i)
         return dfs(headID)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
-    private Map<Integer, List<Integer>> g;
-    private int[] manager;
+    private List<Integer>[] g;
     private int[] informTime;
 
     public int numOfMinutes(int n, int headID, int[] manager, int[] informTime) {
-        g = new HashMap<>();
-        this.manager = manager;
+        g = new List[n];
+        Arrays.setAll(g, k -> new ArrayList<>());
         this.informTime = informTime;
         for (int i = 0; i < n; ++i) {
-            g.computeIfAbsent(manager[i], k -> new ArrayList<>()).add(i);
+            if (manager[i] >= 0) {
+                g[manager[i]].add(i);
+            }
         }
         return dfs(headID);
     }
 
     private int dfs(int i) {
         int ans = 0;
-        for (int j : g.getOrDefault(i, new ArrayList<>())) {
-            ans = Math.max(ans, informTime[i] + dfs(j));
+        for (int j : g[i]) {
+            ans = Math.max(ans, dfs(j) + informTime[i]);
         }
         return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    unordered_map<int, vector<int>> g;
-    vector<int> manager;
-    vector<int> informTime;
-
     int numOfMinutes(int n, int headID, vector<int>& manager, vector<int>& informTime) {
-        this->manager = manager;
-        this->informTime = informTime;
-        for (int i = 0; i < n; ++i) g[manager[i]].push_back(i);
+        vector<vector<int>> g(n);
+        for (int i = 0; i < n; ++i) {
+            if (manager[i] >= 0) {
+                g[manager[i]].push_back(i);
+            }
+        }
+        function<int(int)> dfs = [&](int i) -> int {
+            int ans = 0;
+            for (int j : g[i]) {
+                ans = max(ans, dfs(j) + informTime[i]);
+            }
+            return ans;
+        };
         return dfs(headID);
-    }
-
-    int dfs(int i) {
-        int ans = 0;
-        for (int j : g[i]) ans = max(ans, informTime[i] + dfs(j));
-        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func numOfMinutes(n int, headID int, manager []int, informTime []int) int {
-	g := make(map[int][]int)
-	for i, m := range manager {
-		g[m] = append(g[m], i)
-	}
-	var dfs func(i int) int
-	dfs = func(i int) int {
-		ans := 0
-		if v, ok := g[i]; ok {
-			for _, j := range v {
-				ans = max(ans, informTime[i]+dfs(j))
-			}
+	g := make([][]int, n)
+	for i, x := range manager {
+		if x != -1 {
+			g[x] = append(g[x], i)
 		}
-		return ans
+	}
+	var dfs func(int) int
+	dfs = func(i int) (ans int) {
+		for _, j := range g[i] {
+			ans = max(ans, dfs(j)+informTime[i])
+		}
+		return
 	}
 	return dfs(headID)
 }
+```
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+#### TypeScript
+
+```ts
+function numOfMinutes(n: number, headID: number, manager: number[], informTime: number[]): number {
+    const g: number[][] = new Array(n).fill(0).map(() => []);
+    for (let i = 0; i < n; ++i) {
+        if (manager[i] !== -1) {
+            g[manager[i]].push(i);
+        }
+    }
+    const dfs = (i: number): number => {
+        let ans = 0;
+        for (const j of g[i]) {
+            ans = Math.max(ans, dfs(j) + informTime[i]);
+        }
+        return ans;
+    };
+    return dfs(headID);
 }
 ```
 
-### **...**
+#### C#
 
-```
+```cs
+public class Solution {
+    private List<int>[] g;
+    private int[] informTime;
 
+    public int NumOfMinutes(int n, int headID, int[] manager, int[] informTime) {
+        g = new List<int>[n];
+        for (int i = 0; i < n; ++i) {
+            g[i] = new List<int>();
+        }
+        this.informTime = informTime;
+        for (int i = 0; i < n; ++i) {
+            if (manager[i] != -1) {
+                g[manager[i]].Add(i);
+            }
+        }
+        return dfs(headID);
+    }
+
+    private int dfs(int i) {
+        int ans = 0;
+        foreach (int j in g[i]) {
+            ans = Math.Max(ans, dfs(j) + informTime[i]);
+        }
+        return ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

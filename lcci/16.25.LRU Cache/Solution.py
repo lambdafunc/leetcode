@@ -1,12 +1,12 @@
 class Node:
-    def __init__(self, key=0, value=0):
+    def __init__(self, key=0, val=0):
         self.key = key
-        self.value = value
+        self.val = val
         self.prev = None
         self.next = None
 
-class LRUCache:
 
+class LRUCache:
     def __init__(self, capacity: int):
         self.cache = {}
         self.head = Node()
@@ -21,12 +21,12 @@ class LRUCache:
             return -1
         node = self.cache[key]
         self.move_to_head(node)
-        return node.value
+        return node.val
 
     def put(self, key: int, value: int) -> None:
         if key in self.cache:
             node = self.cache[key]
-            node.value = value
+            node.val = value
             self.move_to_head(node)
         else:
             node = Node(key, value)
@@ -37,20 +37,20 @@ class LRUCache:
                 node = self.remove_tail()
                 self.cache.pop(node.key)
                 self.size -= 1
-    
+
     def move_to_head(self, node):
         self.remove_node(node)
         self.add_to_head(node)
-    
+
     def remove_node(self, node):
         node.prev.next = node.next
         node.next.prev = node.prev
-    
+
     def add_to_head(self, node):
         node.next = self.head.next
-        self.head.next.prev = node
-        self.head.next = node
         node.prev = self.head
+        self.head.next = node
+        node.next.prev = node
 
     def remove_tail(self):
         node = self.tail.prev

@@ -1,10 +1,22 @@
-# [2042. 检查句子中的数字是否递增](https://leetcode-cn.com/problems/check-if-numbers-are-ascending-in-a-sentence)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/README.md
+rating: 1257
+source: 第 263 场周赛 Q1
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [2042. 检查句子中的数字是否递增](https://leetcode.cn/problems/check-if-numbers-are-ascending-in-a-sentence)
 
 [English Version](/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>句子是由若干 <strong>token</strong> 组成的一个列表，<strong>token</strong> 间用 <strong>单个</strong> 空格分隔，句子没有前导或尾随空格。每个 token 要么是一个由数字 <code>0-9</code> 组成的不含前导零的 <strong>正整数</strong>&nbsp;，要么是一个由小写英文字母组成的 <strong>单词</strong> 。</p>
 
@@ -20,7 +32,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="example-1" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/images/example1.png" style="width: 637px; height: 48px;" /></p>
+<p><img alt="example-1" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/images/example1.png" style="width: 637px; height: 48px;" /></p>
 
 <pre>
 <strong>输入：</strong>s = "1 box has 3 blue 4 red 6 green and 12 yellow marbles"
@@ -39,7 +51,7 @@
 
 <p><strong>示例 3：</strong></p>
 
-<p><img alt="example-3" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/images/example3.png" style="width: 794px; height: 48px;" /></p>
+<p><img alt="example-3" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2042.Check%20if%20Numbers%20Are%20Ascending%20in%20a%20Sentence/images/example3.png" style="width: 794px; height: 48px;" /></p>
 
 <pre>
 <strong>输入：</strong>s = "sunset is at 7 51 pm overnight lows will be in the low 50 and 60 s"
@@ -70,44 +82,49 @@
 	<li><code>s</code> 不含前导或尾随空格</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：模拟
+
+我们可以将字符串 $s$ 按空格分割成若干个单词。然后遍历每个单词，判断其是否为数字，若是数字，则将其转换为整数，与前一个数字比较，若不严格递增，返回 `false`，否则，将当前数字赋值给前一个数字，继续遍历。
+
+遍历结束，说明字符串中的数字严格递增，返回 `true`。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为字符串 $s$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def areNumbersAscending(self, s: str) -> bool:
-        curr = 0
-        for t in s.split(' '):
+        pre = 0
+        for t in s.split():
             if t[0].isdigit():
-                if curr >= int(t):
+                if (cur := int(t)) <= pre:
                     return False
-                curr = int(t)
+                pre = cur
         return True
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public boolean areNumbersAscending(String s) {
-        int curr = 0;
-        for (String t : s.split(" ")) {
-            char c = t.charAt(0);
-            if (Character.isDigit(c)) {
-                int x = Integer.parseInt(t);
-                if (curr >= x) {
+        int pre = 0;
+        for (var t : s.split(" ")) {
+            if (t.charAt(0) <= '9') {
+                int cur = Integer.parseInt(t);
+                if (pre >= cur) {
                     return false;
                 }
-                curr = x;
+                pre = cur;
             }
         }
         return true;
@@ -115,39 +132,22 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function areNumbersAscending(s: string): boolean {
-    let strs = s.split(" ");
-    let prev = Number.MIN_SAFE_INTEGER;
-    for (let str of strs) {
-        let num = Number(str);
-        if (!isNaN(num)) {
-            if (num <= prev) return false;
-            prev = num;
-        }
-    }
-    return true;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool areNumbersAscending(string s) {
-        int curr = 0;
+        int pre = 0;
         istringstream is(s);
         string t;
-        while (is >> t)
-        {
-            if (isdigit(t[0]))
-            {
-                int x = stoi(t);
-                if (curr >= x) return false;
-                curr = x;
+        while (is >> t) {
+            if (isdigit(t[0])) {
+                int cur = stoi(t);
+                if (pre >= cur) {
+                    return false;
+                }
+                pre = cur;
             }
         }
         return true;
@@ -155,28 +155,90 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func areNumbersAscending(s string) bool {
-	curr := 0
+	pre := 0
 	for _, t := range strings.Split(s, " ") {
-		if unicode.IsDigit(rune(t[0])) {
-			x, _ := strconv.Atoi(t)
-			if curr >= x {
+		if t[0] <= '9' {
+			cur, _ := strconv.Atoi(t)
+			if pre >= cur {
 				return false
 			}
-			curr = x
+			pre = cur
 		}
 	}
 	return true
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function areNumbersAscending(s: string): boolean {
+    let pre = -1;
+    for (const cur of s.split(' ')) {
+        if (cur[0] <= '9') {
+            const num = Number(cur);
+            if (num <= pre) {
+                return false;
+            }
+            pre = num;
+        }
+    }
+    return true;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn are_numbers_ascending(s: String) -> bool {
+        let mut pre = -1;
+        for cur in s.split(' ') {
+            if cur.as_bytes()[0] <= b'9' {
+                let num = cur.parse::<i32>().unwrap();
+                if num <= pre {
+                    return false;
+                }
+                pre = num;
+            }
+        }
+        true
+    }
+}
+```
+
+#### C
+
+```c
+bool areNumbersAscending(char* s) {
+    int pre = -1;
+    int cur = 0;
+    for (int i = 0; s[i]; i++) {
+        if (isdigit(s[i])) {
+            cur = cur * 10 + s[i] - '0';
+        } else {
+            if (cur != 0) {
+                if (cur <= pre) {
+                    return 0;
+                }
+                pre = cur;
+                cur = 0;
+            }
+        }
+    }
+    if (cur != 0 && cur <= pre) {
+        return 0;
+    }
+    return 1;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

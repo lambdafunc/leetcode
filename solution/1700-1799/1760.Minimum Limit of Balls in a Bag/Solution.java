@@ -1,18 +1,18 @@
 class Solution {
     public int minimumSize(int[] nums, int maxOperations) {
-        int left = 1, right = 1000000000;
-        while (left < right) {
-            int mid = (left + right) >>> 1;
-            long ops = 0;
-            for (int num : nums) {
-                ops += (num - 1) / mid;
+        int l = 1, r = Arrays.stream(nums).max().getAsInt();
+        while (l < r) {
+            int mid = (l + r) >> 1;
+            long s = 0;
+            for (int x : nums) {
+                s += (x - 1) / mid;
             }
-            if (ops <= maxOperations) {
-                right = mid;
+            if (s <= maxOperations) {
+                r = mid;
             } else {
-                left = mid + 1;
+                l = mid + 1;
             }
         }
-        return left;
+        return l;
     }
 }

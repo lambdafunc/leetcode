@@ -1,22 +1,15 @@
-using System.Collections.Generic;
-
 public class Solution {
     public int LengthOfLongestSubstring(string s) {
-        var hashSet = new HashSet<char>();
-        var maxLength = 0;
-        int i = 0, j = 0;
-        while (i < s.Length)
-        {
-            while (hashSet.Contains(s[i]))
-            {
-                hashSet.Remove(s[j++]);
+        int n = s.Length;
+        int ans = 0;
+        var cnt = new int[128];
+        for (int l = 0, r = 0; r < n; ++r) {
+            ++cnt[s[r]];
+            while (cnt[s[r]] > 1) {
+                --cnt[s[l++]];
             }
-            hashSet.Add(s[i++]);
-            if (i - j > maxLength)
-            {
-                maxLength = i - j;
-            }
+            ans = Math.Max(ans, r - l + 1);
         }
-        return maxLength;
+        return ans;
     }
 }

@@ -1,91 +1,78 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0900-0999/0988.Smallest%20String%20Starting%20From%20Leaf/README_EN.md
+tags:
+    - Tree
+    - Depth-First Search
+    - String
+    - Backtracking
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
 # [988. Smallest String Starting From Leaf](https://leetcode.com/problems/smallest-string-starting-from-leaf)
 
 [中文文档](/solution/0900-0999/0988.Smallest%20String%20Starting%20From%20Leaf/README.md)
 
 ## Description
 
-<p>Given the <code>root</code> of a binary tree, each node has a value from <code>0</code> to <code>25</code> representing the letters <code>&#39;a&#39;</code> to <code>&#39;z&#39;</code>: a value of <code>0</code> represents <code>&#39;a&#39;</code>, a value of <code>1</code> represents <code>&#39;b&#39;</code>, and so on.</p>
+<!-- description:start -->
 
-<p>Find the lexicographically smallest string that starts at a leaf of this tree and ends at the root.</p>
+<p>You are given the <code>root</code> of a binary tree where each node has a value in the range <code>[0, 25]</code> representing the letters <code>&#39;a&#39;</code> to <code>&#39;z&#39;</code>.</p>
 
-<p><em>(As a reminder, any shorter prefix of a string is lexicographically smaller: for example, <code>&quot;ab&quot;</code> is lexicographically smaller than <code>&quot;aba&quot;</code>.&nbsp; A leaf of a node is a node that has no children.)</em></p>
+<p>Return <em>the <strong>lexicographically smallest</strong> string that starts at a leaf of this tree and ends at the root</em>.</p>
 
-<div>
+<p>As a reminder, any shorter prefix of a string is <strong>lexicographically smaller</strong>.</p>
 
-<div>
+<ul>
+	<li>For example, <code>&quot;ab&quot;</code> is lexicographically smaller than <code>&quot;aba&quot;</code>.</li>
+</ul>
+
+<p>A leaf of a node is a node that has no children.</p>
 
 <p>&nbsp;</p>
-
-<ol>
-
-</ol>
-
-</div>
-
-</div>
-
-<div>
-
-<p><strong>Example 1:</strong></p>
-
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0988.Smallest%20String%20Starting%20From%20Leaf/images/tree1.png" style="width: 160px; height: 107px;" /></strong></p>
-
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0988.Smallest%20String%20Starting%20From%20Leaf/images/tree1.png" style="width: 534px; height: 358px;" />
 <pre>
-
-<strong>Input: </strong><span id="example-input-1-1">[0,1,2,3,4,3,4]</span>
-
-<strong>Output: </strong><span id="example-output-1">&quot;dba&quot;</span>
-
+<strong>Input:</strong> root = [0,1,2,3,4,3,4]
+<strong>Output:</strong> &quot;dba&quot;
 </pre>
 
-<div>
-
-<p><strong>Example 2:</strong></p>
-
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0988.Smallest%20String%20Starting%20From%20Leaf/images/tree2.png" style="width: 160px; height: 107px;" /></strong></p>
-
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0988.Smallest%20String%20Starting%20From%20Leaf/images/tree2.png" style="width: 534px; height: 358px;" />
 <pre>
-
-<strong>Input: </strong><span id="example-input-2-1">[25,1,3,1,3,0,2]</span>
-
-<strong>Output: </strong><span id="example-output-2">&quot;adz&quot;</span>
-
+<strong>Input:</strong> root = [25,1,3,1,3,0,2]
+<strong>Output:</strong> &quot;adz&quot;
 </pre>
 
-<div>
-
-<p><strong>Example 3:</strong></p>
-
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0988.Smallest%20String%20Starting%20From%20Leaf/images/tree3.png" style="height: 170px; width: 172px;" /></strong></p>
-
+<p><strong class="example">Example 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0988.Smallest%20String%20Starting%20From%20Leaf/images/tree3.png" style="height: 490px; width: 468px;" />
 <pre>
-
-<strong>Input: </strong><span id="example-input-3-1">[2,2,1,null,1,0,null,0]</span>
-
-<strong>Output: </strong><span id="example-output-3">&quot;abc&quot;</span>
-
+<strong>Input:</strong> root = [2,2,1,null,1,0,null,0]
+<strong>Output:</strong> &quot;abc&quot;
 </pre>
 
 <p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><strong>Note:</strong></p>
+<ul>
+	<li>The number of nodes in the tree is in the range <code>[1, 8500]</code>.</li>
+	<li><code>0 &lt;= Node.val &lt;= 25</code></li>
+</ul>
 
-<ol>
-	<li>The number of nodes in the given tree will be between <code>1</code> and <code>8500</code>.</li>
-	<li>Each node in the tree will have a value between <code>0</code> and <code>25</code>.</li>
-</ol>
-
-</div>
-
-</div>
-
-</div>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -112,7 +99,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -159,7 +146,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -186,8 +173,7 @@ public:
     void dfs(TreeNode* root, string& path) {
         if (!root) return;
         path += 'a' + root->val;
-        if (!root->left && !root->right)
-        {
+        if (!root->left && !root->right) {
             string t = path;
             reverse(t.begin(), t.end());
             if (ans == "" || t < ans) ans = t;
@@ -199,7 +185,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -233,10 +219,8 @@ func smallestFromLeaf(root *TreeNode) string {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

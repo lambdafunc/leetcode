@@ -1,10 +1,22 @@
-# [1374. 生成每种字符都是奇数个的字符串](https://leetcode-cn.com/problems/generate-a-string-with-characters-that-have-odd-counts)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1374.Generate%20a%20String%20With%20Characters%20That%20Have%20Odd%20Counts/README.md
+rating: 1164
+source: 第 179 场周赛 Q1
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1374. 生成每种字符都是奇数个的字符串](https://leetcode.cn/problems/generate-a-string-with-characters-that-have-odd-counts)
 
 [English Version](/solution/1300-1399/1374.Generate%20a%20String%20With%20Characters%20That%20Have%20Odd%20Counts/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数 <code>n</code>，请你返回一个含<em> <code>n</code> </em>个字符的字符串，其中每种字符在该字符串中都恰好出现 <strong>奇数次</strong> <em><strong>。</strong></em></p>
 
@@ -40,32 +52,83 @@
 	<li><code>1 &lt;= n &lt;= 500</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：构造
+
+如果 $n$ 为奇数，那么直接构造 $n$ 个 `'a'` 即可。
+
+如果 $n$ 为偶数，那么构造 $n-1$ 个 `'a'` 和 $1$ 个 `'b'` 即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为字符串长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def generateTheString(self, n: int) -> str:
+        return 'a' * n if n & 1 else 'a' * (n - 1) + 'b'
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public String generateTheString(int n) {
+        return (n % 2 == 1) ? "a".repeat(n) : "a".repeat(n - 1) + "b";
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    string generateTheString(int n) {
+        string ans(n, 'a');
+        if (n % 2 == 0) {
+            ans[0] = 'b';
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func generateTheString(n int) string {
+	ans := strings.Repeat("a", n-1)
+	if n%2 == 0 {
+		ans += "b"
+	} else {
+		ans += "a"
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+function generateTheString(n: number): string {
+    const ans = Array(n).fill('a');
+    if (n % 2 === 0) {
+        ans[0] = 'b';
+    }
+    return ans.join('');
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,93 +1,128 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0796.Rotate%20String/README_EN.md
+tags:
+    - String
+    - String Matching
+---
+
+<!-- problem:start -->
+
 # [796. Rotate String](https://leetcode.com/problems/rotate-string)
 
 [中文文档](/solution/0700-0799/0796.Rotate%20String/README.md)
 
 ## Description
 
-<p>We are given two strings, <code>A</code> and <code>B</code>.</p>
+<!-- description:start -->
 
-<p>A <em>shift on <code>A</code></em> consists of taking string <code>A</code> and moving the leftmost character to the rightmost position. For example, if <code>A = &#39;abcde&#39;</code>, then it will be <code>&#39;bcdea&#39;</code> after one shift on <code>A</code>. Return <code>True</code> if and only if <code>A</code> can become <code>B</code> after some number of shifts on <code>A</code>.</p>
+<p>Given two strings <code>s</code> and <code>goal</code>, return <code>true</code> <em>if and only if</em> <code>s</code> <em>can become</em> <code>goal</code> <em>after some number of <strong>shifts</strong> on</em> <code>s</code>.</p>
 
-<pre>
-
-<strong>Example 1:</strong>
-
-<strong>Input:</strong> A = &#39;abcde&#39;, B = &#39;cdeab&#39;
-
-<strong>Output:</strong> true
-
-
-
-<strong>Example 2:</strong>
-
-<strong>Input:</strong> A = &#39;abcde&#39;, B = &#39;abced&#39;
-
-<strong>Output:</strong> false
-
-</pre>
-
-<p><strong>Note:</strong></p>
+<p>A <strong>shift</strong> on <code>s</code> consists of moving the leftmost character of <code>s</code> to the rightmost position.</p>
 
 <ul>
-	<li><code>A</code> and <code>B</code> will have length at most <code>100</code>.</li>
+	<li>For example, if <code>s = &quot;abcde&quot;</code>, then it will be <code>&quot;bcdea&quot;</code> after one shift.</li>
 </ul>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+<pre><strong>Input:</strong> s = "abcde", goal = "cdeab"
+<strong>Output:</strong> true
+</pre><p><strong class="example">Example 2:</strong></p>
+<pre><strong>Input:</strong> s = "abcde", goal = "abced"
+<strong>Output:</strong> false
+</pre>
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= s.length, goal.length &lt;= 100</code></li>
+	<li><code>s</code> and <code>goal</code> consist of lowercase English letters.</li>
+</ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def rotateString(self, s: str, goal: str) -> bool:
-        if len(s) != len(goal):
-            return False
-        return goal in s + s
+        return len(s) == len(goal) and goal in s + s
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public boolean rotateString(String s, String goal) {
-        if (s.length() != goal.length()) {
-            return false;
-        }
-        return (s + s).contains(goal);
+        return s.length() == goal.length() && (s + s).contains(goal);
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool rotateString(string s, string goal) {
-        if (s.size() != goal.size()) {
-            return false;
-        }
-        return !!strstr((s + s).data(), goal.data());
+        return s.size() == goal.size() && strstr((s + s).data(), goal.data());
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func rotateString(s string, goal string) bool {
-	if len(s) != len(goal) {
-		return false
-	}
-	return strings.Contains(s+s, goal)
+	return len(s) == len(goal) && strings.Contains(s+s, goal)
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function rotateString(s: string, goal: string): boolean {
+    return s.length === goal.length && (goal + goal).includes(s);
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn rotate_string(s: String, goal: String) -> bool {
+        s.len() == goal.len() && (s.clone() + &s).contains(&goal)
+    }
+}
+```
+
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param String $s
+     * @param String $goal
+     * @return Boolean
+     */
+    function rotateString($s, $goal) {
+        return strlen($goal) === strlen($s) && strpos($s . $s, $goal) !== false;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

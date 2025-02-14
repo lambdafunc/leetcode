@@ -1,32 +1,21 @@
 func bestTeamScore(scores []int, ages []int) int {
 	n := len(ages)
-	var nums [][]int
-	for i := 0; i < n; i++ {
-		nums = append(nums, []int{scores[i], ages[i]})
+	arr := make([][2]int, n)
+	for i := range ages {
+		arr[i] = [2]int{scores[i], ages[i]}
 	}
-	sort.Slice(nums, func(i, j int) bool {
-		if nums[i][1] == nums[j][1] {
-			return nums[i][0] < nums[j][0]
-		}
-		return nums[i][1] < nums[j][1]
+	sort.Slice(arr, func(i, j int) bool {
+		a, b := arr[i], arr[j]
+		return a[0] < b[0] || a[0] == b[0] && a[1] < b[1]
 	})
-	dp := make([]int, n)
-	res := 0
-	for i := 0; i < n; i++ {
-		dp[i] = nums[i][0]
+	f := make([]int, n)
+	for i := range arr {
 		for j := 0; j < i; j++ {
-			if nums[j][0] <= nums[i][0] {
-				dp[i] = max(dp[i], dp[j]+nums[i][0])
+			if arr[i][1] >= arr[j][1] {
+				f[i] = max(f[i], f[j])
 			}
 		}
-		res = max(res, dp[i])
+		f[i] += arr[i][0]
 	}
-	return res
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return slices.Max(f)
 }

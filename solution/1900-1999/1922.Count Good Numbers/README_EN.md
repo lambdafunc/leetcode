@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1922.Count%20Good%20Numbers/README_EN.md
+rating: 1674
+source: Weekly Contest 248 Q3
+tags:
+    - Recursion
+    - Math
+---
+
+<!-- problem:start -->
+
 # [1922. Count Good Numbers](https://leetcode.com/problems/count-good-numbers)
 
 [中文文档](/solution/1900-1999/1922.Count%20Good%20Numbers/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A digit string is <strong>good</strong> if the digits <strong>(0-indexed)</strong> at <strong>even</strong> indices are <strong>even</strong> and the digits at <strong>odd</strong> indices are <strong>prime</strong> (<code>2</code>, <code>3</code>, <code>5</code>, or <code>7</code>).</p>
 
@@ -15,7 +30,7 @@
 <p>A <strong>digit string</strong> is a string consisting of digits <code>0</code> through <code>9</code> that may contain leading zeros.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 1
@@ -23,14 +38,14 @@
 <strong>Explanation:</strong> The good numbers of length 1 are &quot;0&quot;, &quot;2&quot;, &quot;4&quot;, &quot;6&quot;, &quot;8&quot;.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 4
 <strong>Output:</strong> 400
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 50
@@ -44,30 +59,26 @@
 	<li><code>1 &lt;= n &lt;= 10<sup>15</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def countGoodNumbers(self, n: int) -> int:
-        mod = 10 ** 9 + 7
-
-        def myPow(x, n):
-            res = 1
-            while n:
-                if (n & 1) == 1:
-                    res = res * x % mod
-                x = x * x % mod
-                n >>= 1
-            return res
-
-        return myPow(5, (n + 1) >> 1) * myPow(4, n >> 1) % mod
+        mod = 10**9 + 7
+        return pow(5, (n + 1) >> 1, mod) * pow(4, n >> 1, mod) % mod
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -91,7 +102,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 int MOD = 1000000007;
@@ -117,7 +128,7 @@ private:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 const mod int64 = 1e9 + 7
@@ -139,10 +150,8 @@ func myPow(x, n int64) int64 {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

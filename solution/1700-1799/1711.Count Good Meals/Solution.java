@@ -1,18 +1,16 @@
 class Solution {
-
-    private static final int MOD = 1000000007;
+    private static final int MOD = (int) 1e9 + 7;
 
     public int countPairs(int[] deliciousness) {
-        int limit = Arrays.stream(deliciousness).max().getAsInt() * 2;
-        int pairs = 0;
-        Map<Integer, Integer> freq = new HashMap<>();
+        int mx = Arrays.stream(deliciousness).max().getAsInt() << 1;
+        int ans = 0;
+        Map<Integer, Integer> cnt = new HashMap<>();
         for (int d : deliciousness) {
-            for (int sum = 1; sum <= limit; sum <<= 1) {
-                int count = freq.getOrDefault(sum - d, 0);
-                pairs = (pairs + count) % MOD;
+            for (int s = 1; s <= mx; s <<= 1) {
+                ans = (ans + cnt.getOrDefault(s - d, 0)) % MOD;
             }
-            freq.merge(d, 1, Integer::sum);
+            cnt.merge(d, 1, Integer::sum);
         }
-        return pairs;
+        return ans;
     }
 }

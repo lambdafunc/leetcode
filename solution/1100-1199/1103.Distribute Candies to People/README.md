@@ -1,10 +1,23 @@
-# [1103. 分糖果 II](https://leetcode-cn.com/problems/distribute-candies-to-people)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1103.Distribute%20Candies%20to%20People/README.md
+rating: 1287
+source: 第 143 场周赛 Q1
+tags:
+    - 数学
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [1103. 分糖果 II](https://leetcode.cn/problems/distribute-candies-to-people)
 
 [English Version](/solution/1100-1199/1103.Distribute%20Candies%20to%20People/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>排排坐，分糖果。</p>
 
@@ -51,33 +64,35 @@
 	<li><code>1 &lt;= num_people &lt;= 1000</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-直接暴力模拟发糖即可。
+### 方法一：模拟
+
+我们可以直接模拟每一个人分到糖果的过程，按照题目描述的规则模拟即可。
+
+时间复杂度 $O(\max(\sqrt{candies}, num\_people))$，空间复杂度 $O(num\_people)$。其中 $candies$ 为糖果数量。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def distributeCandies(self, candies: int, num_people: int) -> List[int]:
         ans = [0] * num_people
         i = 0
-        while candies > 0:
+        while candies:
             ans[i % num_people] += min(candies, i + 1)
             candies -= min(candies, i + 1)
             i += 1
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -92,15 +107,14 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<int> distributeCandies(int candies, int num_people) {
         vector<int> ans(num_people);
-        for (int i = 0; candies > 0; ++i)
-        {
+        for (int i = 0; candies > 0; ++i) {
             ans[i % num_people] += min(candies, i + 1);
             candies -= min(candies, i + 1);
         }
@@ -109,7 +123,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func distributeCandies(candies int, num_people int) []int {
@@ -120,19 +134,23 @@ func distributeCandies(candies int, num_people int) []int {
 	}
 	return ans
 }
+```
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+#### TypeScript
+
+```ts
+function distributeCandies(candies: number, num_people: number): number[] {
+    const ans: number[] = Array(num_people).fill(0);
+    for (let i = 0; candies > 0; ++i) {
+        ans[i % num_people] += Math.min(candies, i + 1);
+        candies -= Math.min(candies, i + 1);
+    }
+    return ans;
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,9 +1,9 @@
 class Solution:
     def reductionOperations(self, nums: List[int]) -> int:
         nums.sort()
-        cnt, res, n = 0, 0, len(nums)
-        for i in range(1, n):
-            if nums[i] != nums[i - 1]:
+        ans = cnt = 0
+        for a, b in pairwise(nums):
+            if a != b:
                 cnt += 1
-            res += cnt
-        return res
+            ans += cnt
+        return ans

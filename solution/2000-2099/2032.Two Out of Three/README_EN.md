@@ -1,13 +1,29 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2032.Two%20Out%20of%20Three/README_EN.md
+rating: 1269
+source: Weekly Contest 262 Q1
+tags:
+    - Bit Manipulation
+    - Array
+    - Hash Table
+---
+
+<!-- problem:start -->
+
 # [2032. Two Out of Three](https://leetcode.com/problems/two-out-of-three)
 
 [中文文档](/solution/2000-2099/2032.Two%20Out%20of%20Three/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 Given three integer arrays <code>nums1</code>, <code>nums2</code>, and <code>nums3</code>, return <em>a <strong>distinct</strong> array containing all the values that are present in <strong>at least two</strong> out of the three arrays. You may return the values in <strong>any</strong> order</em>.
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums1 = [1,1,3,2], nums2 = [2,3], nums3 = [3]
@@ -17,7 +33,7 @@ Given three integer arrays <code>nums1</code>, <code>nums2</code>, and <code>num
 - 2, in nums1 and nums2.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums1 = [3,1], nums2 = [2,3], nums3 = [1,2]
@@ -28,7 +44,7 @@ Given three integer arrays <code>nums1</code>, <code>nums2</code>, and <code>num
 - 1, in nums1 and nums3.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums1 = [1,2,2], nums2 = [4,3,3], nums3 = [5]
@@ -44,25 +60,32 @@ Given three integer arrays <code>nums1</code>, <code>nums2</code>, and <code>num
 	<li><code>1 &lt;= nums1[i], nums2[j], nums3[k] &lt;= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Array + Enumeration
+
+We can first put each element of the arrays into an array, then enumerate each number $i$ from $1$ to $100$, and check whether $i$ appears in at least two arrays. If so, add $i$ to the answer array.
+
+The time complexity is $O(n_1 + n_2 + n_3)$, and the space complexity is $O(n_1 + n_2 + n_3)$. Here, $n_1, n_2, n_3$ are the lengths of the arrays `nums1`, `nums2`, and `nums3`, respectively.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
-    def twoOutOfThree(self, nums1: List[int], nums2: List[int], nums3: List[int]) -> List[int]:
+    def twoOutOfThree(
+        self, nums1: List[int], nums2: List[int], nums3: List[int]
+    ) -> List[int]:
         s1, s2, s3 = set(nums1), set(nums2), set(nums3)
-        ans = []
-        for i in range(1, 101):
-            a, b, c = i in s1, i in s2, i in s3
-            if a + b + c > 1:
-                ans.append(i)
-        return ans
+        return [i for i in range(1, 101) if (i in s1) + (i in s2) + (i in s3) > 1]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -87,65 +110,108 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<int> twoOutOfThree(vector<int>& nums1, vector<int>& nums2, vector<int>& nums3) {
+        auto get = [](vector<int>& nums) {
+            vector<int> cnt(101);
+            for (int& v : nums) cnt[v] = 1;
+            return cnt;
+        };
         auto s1 = get(nums1), s2 = get(nums2), s3 = get(nums3);
         vector<int> ans;
-        for (int i = 1; i <= 100; ++i)
-            if (s1[i] + s2[i] + s3[i] > 1)
-                ans.push_back(i);
+        for (int i = 1; i <= 100; ++i) {
+            if (s1[i] + s2[i] + s3[i] > 1) {
+                ans.emplace_back(i);
+            }
+        }
         return ans;
-    }
-
-    vector<int> get(vector<int>& nums) {
-        vector<int> s(101);
-        for (int num : nums) s[num] = 1;
-        return s;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func twoOutOfThree(nums1 []int, nums2 []int, nums3 []int) []int {
+func twoOutOfThree(nums1 []int, nums2 []int, nums3 []int) (ans []int) {
+	get := func(nums []int) (s [101]int) {
+		for _, v := range nums {
+			s[v] = 1
+		}
+		return
+	}
 	s1, s2, s3 := get(nums1), get(nums2), get(nums3)
-	var ans []int
 	for i := 1; i <= 100; i++ {
-		a, b, c := 0, 0, 0
-		if s1[i] {
-			a++
-		}
-		if s2[i] {
-			b++
-		}
-		if s3[i] {
-			c++
-		}
-		if a+b+c > 1 {
+		if s1[i]+s2[i]+s3[i] > 1 {
 			ans = append(ans, i)
 		}
 	}
-	return ans
-}
-
-func get(nums []int) map[int]bool {
-	s := make(map[int]bool, 101)
-	for _, num := range nums {
-		s[num] = true
-	}
-	return s
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function twoOutOfThree(nums1: number[], nums2: number[], nums3: number[]): number[] {
+    const count = new Array(101).fill(0);
+    new Set(nums1).forEach(v => count[v]++);
+    new Set(nums2).forEach(v => count[v]++);
+    new Set(nums3).forEach(v => count[v]++);
+    const ans = [];
+    count.forEach((v, i) => {
+        if (v >= 2) {
+            ans.push(i);
+        }
+    });
+    return ans;
+}
 ```
 
+#### Rust
+
+```rust
+use std::collections::HashSet;
+impl Solution {
+    pub fn two_out_of_three(nums1: Vec<i32>, nums2: Vec<i32>, nums3: Vec<i32>) -> Vec<i32> {
+        let mut count = vec![0; 101];
+        nums1
+            .into_iter()
+            .collect::<HashSet<i32>>()
+            .iter()
+            .for_each(|&v| {
+                count[v as usize] += 1;
+            });
+        nums2
+            .into_iter()
+            .collect::<HashSet<i32>>()
+            .iter()
+            .for_each(|&v| {
+                count[v as usize] += 1;
+            });
+        nums3
+            .into_iter()
+            .collect::<HashSet<i32>>()
+            .iter()
+            .for_each(|&v| {
+                count[v as usize] += 1;
+            });
+        let mut ans = Vec::new();
+        count.iter().enumerate().for_each(|(i, v)| {
+            if *v >= 2 {
+                ans.push(i as i32);
+            }
+        });
+        ans
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

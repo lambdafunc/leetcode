@@ -1,8 +1,26 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1481.Least%20Number%20of%20Unique%20Integers%20after%20K%20Removals/README_EN.md
+rating: 1284
+source: Weekly Contest 193 Q2
+tags:
+    - Greedy
+    - Array
+    - Hash Table
+    - Counting
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [1481. Least Number of Unique Integers after K Removals](https://leetcode.com/problems/least-number-of-unique-integers-after-k-removals)
 
 [中文文档](/solution/1400-1499/1481.Least%20Number%20of%20Unique%20Integers%20after%20K%20Removals/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given an array of integers&nbsp;<code>arr</code>&nbsp;and an integer <code>k</code>.&nbsp;Find the <em>least number of unique integers</em>&nbsp;after removing <strong>exactly</strong> <code>k</code> elements<b>.</b></p>
 
@@ -12,7 +30,7 @@
 
 <p>&nbsp;</p>
 
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 
@@ -24,7 +42,7 @@
 
 </pre>
 
-<strong>Example 2:</strong>
+<strong class="example">Example 2:</strong>
 
 <pre>
 
@@ -39,113 +57,140 @@
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>1 &lt;= arr.length&nbsp;&lt;= 10^5</code></li>
-	<li><code>1 &lt;= arr[i] &lt;= 10^9</code></li>
-	<li><code>0 &lt;= k&nbsp;&lt;= arr.length</code></li>
+
+    <li><code>1 &lt;= arr.length&nbsp;&lt;= 10^5</code></li>
+
+    <li><code>1 &lt;= arr[i] &lt;= 10^9</code></li>
+
+    <li><code>0 &lt;= k&nbsp;&lt;= arr.length</code></li>
+
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Hash Table + Sorting
+
+We use the hash table $cnt$ to count the number of times each integer in the array $arr$ appears, and then sort the values in $cnt$ in ascending order, and record them in the array $nums$.
+
+Next, we traverse the array $nums$. For the current value that we traverse to $nums[i]$, we subtract $k$ by $nums[i]$. If $k \lt 0$, it means that we have removed $k$ elements, and the minimum number of different integers in the array is the length of $nums$ minus the index $i$ that we traverse to at the current time. Return directly.
+
+If we traverse to the end, it means that we have removed all the elements, and the minimum number of different integers in the array is $0$.
+
+The time complexity is $O(n \times \log n)$, and the space complexity is $O(n)$, where $n$ is the length of the array $arr$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def findLeastNumOfUniqueInts(self, arr: List[int], k: int) -> int:
-        counter = Counter(arr)
-        t = sorted(counter.items(), key=lambda x: x[1])
-        for v, cnt in t:
-            if k >= cnt:
-                k -= cnt
-                counter.pop(v)
-            else:
-                break
-        return len(counter)
+        cnt = Counter(arr)
+        for i, v in enumerate(sorted(cnt.values())):
+            k -= v
+            if k < 0:
+                return len(cnt) - i
+        return 0
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int findLeastNumOfUniqueInts(int[] arr, int k) {
-        Map<Integer, Integer> counter = new HashMap<>();
-        for (int v : arr) {
-            counter.put(v, counter.getOrDefault(v, 0) + 1);
+        Map<Integer, Integer> cnt = new HashMap<>();
+        for (int x : arr) {
+            cnt.merge(x, 1, Integer::sum);
         }
-        List<Map.Entry<Integer, Integer>> t = new ArrayList<>(counter.entrySet());
-        Collections.sort(t, Comparator.comparingInt(Map.Entry::getValue));
-        for (Map.Entry<Integer, Integer> e : t) {
-            int v = e.getKey();
-            int cnt = e.getValue();
-            if (k >= cnt) {
-                k -= cnt;
-                counter.remove(v);
-            } else {
-                break;
+        List<Integer> nums = new ArrayList<>(cnt.values());
+        Collections.sort(nums);
+        for (int i = 0, m = nums.size(); i < m; ++i) {
+            k -= nums.get(i);
+            if (k < 0) {
+                return m - i;
             }
         }
-        return counter.size();
+        return 0;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int findLeastNumOfUniqueInts(vector<int>& arr, int k) {
-        unordered_map<int, int> counter;
-        for (int v : arr) ++counter[v];
-        vector<pair<int, int>> t(counter.begin(), counter.end());
-        sort(t.begin(), t.end(), [](const auto& a, const auto& b) {return a.second < b.second;});
-        for (auto [v, cnt] : t)
-        {
-            if (k >= cnt)
-            {
-                k -= cnt;
-                counter.erase(v);
-            }
-            else break;
+        unordered_map<int, int> cnt;
+        for (int& x : arr) {
+            ++cnt[x];
         }
-        return counter.size();
+        vector<int> nums;
+        for (auto& [_, c] : cnt) {
+            nums.push_back(c);
+        }
+        sort(nums.begin(), nums.end());
+        for (int i = 0, m = nums.size(); i < m; ++i) {
+            k -= nums[i];
+            if (k < 0) {
+                return m - i;
+            }
+        }
+        return 0;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func findLeastNumOfUniqueInts(arr []int, k int) int {
-	counter := make(map[int]int)
-	for _, v := range arr {
-		counter[v]++
+	cnt := map[int]int{}
+	for _, x := range arr {
+		cnt[x]++
 	}
-	var t [][]int
-	for v, cnt := range counter {
-		t = append(t, []int{v, cnt})
+	nums := make([]int, 0, len(cnt))
+	for _, v := range cnt {
+		nums = append(nums, v)
 	}
-	sort.Slice(t, func(i, j int) bool {
-		return t[i][1] < t[j][1]
-	})
-	for _, e := range t {
-		v, cnt := e[0], e[1]
-		if k >= cnt {
-			k -= cnt
-			delete(counter, v)
-		} else {
-			break
+	sort.Ints(nums)
+	for i, v := range nums {
+		k -= v
+		if k < 0 {
+			return len(nums) - i
 		}
 	}
-	return len(counter)
+	return 0
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+function findLeastNumOfUniqueInts(arr: number[], k: number): number {
+    const cnt: Map<number, number> = new Map();
+    for (const x of arr) {
+        cnt.set(x, (cnt.get(x) ?? 0) + 1);
+    }
 
+    const nums = [...cnt.values()].sort((a, b) => a - b);
+
+    for (let i = 0; i < nums.length; ++i) {
+        k -= nums[i];
+        if (k < 0) {
+            return nums.length - i;
+        }
+    }
+    return 0;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

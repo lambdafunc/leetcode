@@ -1,10 +1,23 @@
-# [1335. 工作计划的最低难度](https://leetcode-cn.com/problems/minimum-difficulty-of-a-job-schedule)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1335.Minimum%20Difficulty%20of%20a%20Job%20Schedule/README.md
+rating: 2034
+source: 第 173 场周赛 Q4
+tags:
+    - 数组
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [1335. 工作计划的最低难度](https://leetcode.cn/problems/minimum-difficulty-of-a-job-schedule)
 
 [English Version](/solution/1300-1399/1335.Minimum%20Difficulty%20of%20a%20Job%20Schedule/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>你需要制定一份&nbsp;<code>d</code>&nbsp;天的工作计划表。工作之间存在依赖，要想执行第&nbsp;<code>i</code>&nbsp;项工作，你必须完成全部&nbsp;<code>j</code>&nbsp;项工作（&nbsp;<code>0 &lt;= j &lt; i</code>）。</p>
 
@@ -18,7 +31,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1335.Minimum%20Difficulty%20of%20a%20Job%20Schedule/images/untitled.png" style="height: 304px; width: 365px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1335.Minimum%20Difficulty%20of%20a%20Job%20Schedule/images/untitled.png" style="height: 304px; width: 365px;"></p>
 
 <pre><strong>输入：</strong>jobDifficulty = [6,5,4,3,2,1], d = 2
 <strong>输出：</strong>7
@@ -63,32 +76,148 @@
 	<li><code>1 &lt;= d &lt;= 10</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：动态规划
+
+我们定义 $f[i][j]$ 表示完成前 $i$ 项工作，且一共用了 $j$ 天的最小难度。初始时 $f[0][0] = 0$，其余 $f[i][j]$ 均为 $\infty$。
+
+考虑第 $j$ 天的工作安排，我们可以枚举第 $j$ 天完成的工作 $[k,..i]$，那么有状态转移方程：
+
+$$
+f[i][j] = \min_{k \in [1,i]} \{f[k-1][j-1] + \max_{k \leq t \leq i} \{jobDifficulty[t-1]\}\}
+$$
+
+最终答案即为 $f[n][d]$。
+
+时间复杂度 $O(n^2 \times d)$，空间复杂度 $O(n \times d)$。其中 $n$ 和 $d$ 分别为工作数量和需要计划的天数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def minDifficulty(self, jobDifficulty: List[int], d: int) -> int:
+        n = len(jobDifficulty)
+        f = [[inf] * (d + 1) for _ in range(n + 1)]
+        f[0][0] = 0
+        for i in range(1, n + 1):
+            for j in range(1, min(d + 1, i + 1)):
+                mx = 0
+                for k in range(i, 0, -1):
+                    mx = max(mx, jobDifficulty[k - 1])
+                    f[i][j] = min(f[i][j], f[k - 1][j - 1] + mx)
+        return -1 if f[n][d] >= inf else f[n][d]
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int minDifficulty(int[] jobDifficulty, int d) {
+        final int inf = 1 << 30;
+        int n = jobDifficulty.length;
+        int[][] f = new int[n + 1][d + 1];
+        for (var g : f) {
+            Arrays.fill(g, inf);
+        }
+        f[0][0] = 0;
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 1; j <= Math.min(d, i); ++j) {
+                int mx = 0;
+                for (int k = i; k > 0; --k) {
+                    mx = Math.max(mx, jobDifficulty[k - 1]);
+                    f[i][j] = Math.min(f[i][j], f[k - 1][j - 1] + mx);
+                }
+            }
+        }
+        return f[n][d] >= inf ? -1 : f[n][d];
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int minDifficulty(vector<int>& jobDifficulty, int d) {
+        int n = jobDifficulty.size();
+        int f[n + 1][d + 1];
+        memset(f, 0x3f, sizeof(f));
+        f[0][0] = 0;
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 1; j <= min(d, i); ++j) {
+                int mx = 0;
+                for (int k = i; k; --k) {
+                    mx = max(mx, jobDifficulty[k - 1]);
+                    f[i][j] = min(f[i][j], f[k - 1][j - 1] + mx);
+                }
+            }
+        }
+        return f[n][d] == 0x3f3f3f3f ? -1 : f[n][d];
+    }
+};
 ```
 
+#### Go
+
+```go
+func minDifficulty(jobDifficulty []int, d int) int {
+	n := len(jobDifficulty)
+	f := make([][]int, n+1)
+	const inf = 1 << 30
+	for i := range f {
+		f[i] = make([]int, d+1)
+		for j := range f[i] {
+			f[i][j] = inf
+		}
+	}
+	f[0][0] = 0
+	for i := 1; i <= n; i++ {
+		for j := 1; j <= min(d, i); j++ {
+			mx := 0
+			for k := i; k > 0; k-- {
+				mx = max(mx, jobDifficulty[k-1])
+				f[i][j] = min(f[i][j], f[k-1][j-1]+mx)
+			}
+		}
+	}
+	if f[n][d] == inf {
+		return -1
+	}
+	return f[n][d]
+}
+```
+
+#### TypeScript
+
+```ts
+function minDifficulty(jobDifficulty: number[], d: number): number {
+    const n = jobDifficulty.length;
+    const inf = 1 << 30;
+    const f: number[][] = new Array(n + 1).fill(0).map(() => new Array(d + 1).fill(inf));
+    f[0][0] = 0;
+    for (let i = 1; i <= n; ++i) {
+        for (let j = 1; j <= Math.min(d, i); ++j) {
+            let mx = 0;
+            for (let k = i; k > 0; --k) {
+                mx = Math.max(mx, jobDifficulty[k - 1]);
+                f[i][j] = Math.min(f[i][j], f[k - 1][j - 1] + mx);
+            }
+        }
+    }
+    return f[n][d] < inf ? f[n][d] : -1;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

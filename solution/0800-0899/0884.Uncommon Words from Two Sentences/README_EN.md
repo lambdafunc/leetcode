@@ -1,168 +1,169 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0884.Uncommon%20Words%20from%20Two%20Sentences/README_EN.md
+tags:
+    - Hash Table
+    - String
+    - Counting
+---
+
+<!-- problem:start -->
+
 # [884. Uncommon Words from Two Sentences](https://leetcode.com/problems/uncommon-words-from-two-sentences)
 
 [中文文档](/solution/0800-0899/0884.Uncommon%20Words%20from%20Two%20Sentences/README.md)
 
 ## Description
 
-<p>We are given two sentences <code>A</code> and <code>B</code>.&nbsp; (A <em>sentence</em>&nbsp;is a string of space separated words.&nbsp; Each <em>word</em> consists only of lowercase letters.)</p>
+<!-- description:start -->
 
-<p>A word is <em>uncommon</em>&nbsp;if it appears exactly once in one of the sentences, and does not appear in the other sentence.</p>
+<p>A <strong>sentence</strong> is a string of single-space separated words where each word consists only of lowercase letters.</p>
 
-<p>Return a list of all uncommon words.&nbsp;</p>
+<p>A word is <strong>uncommon</strong> if it appears exactly once in one of the sentences, and <strong>does not appear</strong> in the other sentence.</p>
 
-<p>You may return the list in any order.</p>
-
-<p>&nbsp;</p>
-
-<ol>
-
-</ol>
-
-<div>
-
-<p><strong>Example 1:</strong></p>
-
-<pre>
-
-<strong>Input: </strong>A = <span id="example-input-1-1">&quot;this apple is sweet&quot;</span>, B = <span id="example-input-1-2">&quot;this apple is sour&quot;</span>
-
-<strong>Output: </strong><span id="example-output-1">[&quot;sweet&quot;,&quot;sour&quot;]</span>
-
-</pre>
-
-<div>
-
-<p><strong>Example 2:</strong></p>
-
-<pre>
-
-<strong>Input: </strong>A = <span id="example-input-2-1">&quot;apple apple&quot;</span>, B = <span id="example-input-2-2">&quot;banana&quot;</span>
-
-<strong>Output: </strong><span id="example-output-2">[&quot;banana&quot;]</span>
-
-</pre>
+<p>Given two <strong>sentences</strong> <code>s1</code> and <code>s2</code>, return <em>a list of all the <strong>uncommon words</strong></em>. You may return the answer in <strong>any order</strong>.</p>
 
 <p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
-<p><strong>Note:</strong></p>
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">s1 = &quot;this apple is sweet&quot;, s2 = &quot;this apple is sour&quot;</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">[&quot;sweet&quot;,&quot;sour&quot;]</span></p>
+
+<p><strong>Explanation:</strong></p>
+
+<p>The word <code>&quot;sweet&quot;</code> appears only in <code>s1</code>, while the word <code>&quot;sour&quot;</code> appears only in <code>s2</code>.</p>
+</div>
+
+<p><strong class="example">Example 2:</strong></p>
+
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">s1 = &quot;apple apple&quot;, s2 = &quot;banana&quot;</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">[&quot;banana&quot;]</span></p>
+</div>
+
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
 <ul>
-    <li><code>1 &lt;= s1.length, s2.length &lt;= 200</code></li>
-    <li><code>s1</code> and <code>s2</code> consist of lowercase English letters and spaces.</li>
-    <li><code>s1</code> and <code>s2</code> do not have leading or trailing spaces.</li>
-    <li>All the words in <code>s1</code> and <code>s2</code> are separated by a single space.</li>
+	<li><code>1 &lt;= s1.length, s2.length &lt;= 200</code></li>
+	<li><code>s1</code> and <code>s2</code> consist of lowercase English letters and spaces.</li>
+	<li><code>s1</code> and <code>s2</code> do not have leading or trailing spaces.</li>
+	<li>All the words in <code>s1</code> and <code>s2</code> are separated by a single space.</li>
 </ul>
 
-</div>
-
-</div>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Hash Table
+
+According to the problem description, as long as a word appears once, it meets the requirements of the problem. Therefore, we use a hash table `cnt` to record all words and their occurrence counts.
+
+Then we traverse the hash table, and take out all strings that appear only once.
+
+The time complexity is $O(m + n)$, and the space complexity is $O(m + n)$. Here, $m$ and $n$ are the lengths of strings `s1` and `s2`, respectively.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def uncommonFromSentences(self, s1: str, s2: str) -> List[str]:
-        c = Counter(s1.split()) + Counter(s2.split())
-        return [w for w, n in c.items() if n == 1]
+        cnt = Counter(s1.split()) + Counter(s2.split())
+        return [s for s, v in cnt.items() if v == 1]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
-
     public String[] uncommonFromSentences(String s1, String s2) {
-        Map<String, Integer> counter = new HashMap<>();
-        add(s1, counter);
-        add(s2, counter);
+        Map<String, Integer> cnt = new HashMap<>();
+        for (String s : s1.split(" ")) {
+            cnt.merge(s, 1, Integer::sum);
+        }
+        for (String s : s2.split(" ")) {
+            cnt.merge(s, 1, Integer::sum);
+        }
         List<String> ans = new ArrayList<>();
-        for (Map.Entry<String, Integer> e : counter.entrySet()) {
+        for (var e : cnt.entrySet()) {
             if (e.getValue() == 1) {
                 ans.add(e.getKey());
             }
         }
         return ans.toArray(new String[0]);
     }
-
-    private void add(String s, Map<String, Integer> counter) {
-        for (String w : s.split(" ")) {
-            counter.put(w, counter.getOrDefault(w, 0) + 1);
-        }
-    }
 }
-
 ```
 
-### **TypeScript**
-
-```ts
-function uncommonFromSentences(s1: string, s2: string): string[] {
-    let hashMap: Map<string, number> = new Map();
-    for (let str of [...s1.split(' '), ...s2.split(' ')]) {
-        hashMap.set(str, (hashMap.get(str) || 0) + 1);
-    }
-    let ans: Array<string> = [];
-    for (let [key, count] of hashMap.entries()) {
-        if (count == 1) {
-            ans.push(key);
-        }
-    }
-    return ans;
-};
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<string> uncommonFromSentences(string s1, string s2) {
-        unordered_map<string, int> counter;
-
-        auto add = [&](const string& s) {
+        unordered_map<string, int> cnt;
+        auto add = [&](string& s) {
             stringstream ss(s);
-            string word;
-            while (ss >> word) ++counter[move(word)];
+            string w;
+            while (ss >> w) ++cnt[move(w)];
         };
-
         add(s1);
         add(s2);
         vector<string> ans;
-        for (auto& [word, n] : counter)
-            if (n == 1)
-                ans.push_back(word);
+        for (auto& [s, v] : cnt)
+            if (v == 1) ans.emplace_back(s);
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func uncommonFromSentences(s1 string, s2 string) []string {
-	counter := make(map[string]int)
-	add := func(s string) {
-		for _, w := range strings.Split(s, " ") {
-			counter[w]++
+func uncommonFromSentences(s1 string, s2 string) (ans []string) {
+	cnt := map[string]int{}
+	for _, s := range strings.Split(s1, " ") {
+		cnt[s]++
+	}
+	for _, s := range strings.Split(s2, " ") {
+		cnt[s]++
+	}
+	for s, v := range cnt {
+		if v == 1 {
+			ans = append(ans, s)
 		}
 	}
-	add(s1)
-	add(s2)
-	var ans []string
-	for word, n := range counter {
-		if n == 1 {
-			ans = append(ans, word)
-		}
-	}
-	return ans
+	return
 }
 ```
 
-### **Rust**
+#### TypeScript
+
+```ts
+function uncommonFromSentences(s1: string, s2: string): string[] {
+    const cnt: Map<string, number> = new Map();
+    for (const s of [...s1.split(' '), ...s2.split(' ')]) {
+        cnt.set(s, (cnt.get(s) || 0) + 1);
+    }
+    const ans: Array<string> = [];
+    for (const [s, v] of cnt.entries()) {
+        if (v == 1) {
+            ans.push(s);
+        }
+    }
+    return ans;
+}
+```
+
+#### Rust
 
 ```rust
 use std::collections::HashMap;
@@ -179,7 +180,7 @@ impl Solution {
         let mut res = Vec::new();
         for (k, v) in map {
             if v {
-                res.push(String::from(k))
+                res.push(String::from(k));
             }
         }
         res
@@ -187,10 +188,31 @@ impl Solution {
 }
 ```
 
-### **...**
+#### JavaScript
 
-```
-
+```js
+/**
+ * @param {string} s1
+ * @param {string} s2
+ * @return {string[]}
+ */
+var uncommonFromSentences = function (s1, s2) {
+    const cnt = new Map();
+    for (const s of [...s1.split(' '), ...s2.split(' ')]) {
+        cnt.set(s, (cnt.get(s) || 0) + 1);
+    }
+    const ans = [];
+    for (const [s, v] of cnt.entries()) {
+        if (v == 1) {
+            ans.push(s);
+        }
+    }
+    return ans;
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,24 @@
-# [2000. 反转单词前缀](https://leetcode-cn.com/problems/reverse-prefix-of-word)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2000.Reverse%20Prefix%20of%20Word/README.md
+rating: 1199
+source: 第 258 场周赛 Q1
+tags:
+    - 栈
+    - 双指针
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [2000. 反转单词前缀](https://leetcode.cn/problems/reverse-prefix-of-word)
 
 [English Version](/solution/2000-2099/2000.Reverse%20Prefix%20of%20Word/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个下标从 <strong>0</strong> 开始的字符串 <code>word</code> 和一个字符 <code>ch</code> 。找出 <code>ch</code> 第一次出现的下标 <code>i</code> ，<strong>反转 </strong><code>word</code> 中从下标 <code>0</code> 开始、直到下标 <code>i</code> 结束（含下标 <code>i</code> ）的那段字符。如果 <code>word</code> 中不存在字符 <code>ch</code> ，则无需进行任何操作。</p>
 
@@ -50,57 +64,65 @@
 	<li><code>ch</code> 是一个小写英文字母</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：模拟
+
+我们先找到字符 $ch$ 第一次出现的下标 $i$，然后反转从下标 $0$ 开始、直到下标 $i$ 结束（含下标 $i$）的那段字符，最后将反转后的字符串与下标 $i + 1$ 开始的字符串拼接即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为字符串 $word$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def reversePrefix(self, word: str, ch: str) -> str:
         i = word.find(ch)
-        return word if i == -1 else word[i::-1] + word[i + 1:]
+        return word if i == -1 else word[i::-1] + word[i + 1 :]
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
-
     public String reversePrefix(String word, char ch) {
-        int i = word.indexOf(ch);
-        return i == -1
-            ? word
-            : new StringBuilder(word.substring(0, i + 1))
-                .reverse()
-                .append(word.substring(i + 1))
-                .toString();
+        int j = word.indexOf(ch);
+        if (j == -1) {
+            return word;
+        }
+        char[] cs = word.toCharArray();
+        for (int i = 0; i < j; ++i, --j) {
+            char t = cs[i];
+            cs[i] = cs[j];
+            cs[j] = t;
+        }
+        return String.valueOf(cs);
     }
 }
-
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     string reversePrefix(string word, char ch) {
         int i = word.find(ch);
-        if (i != string::npos) reverse(word.begin(), word.begin() + i + 1);
+        if (i != string::npos) {
+            reverse(word.begin(), word.begin() + i + 1);
+        }
         return word;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func reversePrefix(word string, ch byte) string {
@@ -117,19 +139,21 @@ func reversePrefix(word string, ch byte) string {
 }
 ```
 
-### **TypeScript**
+#### TypeScript
 
 ```ts
 function reversePrefix(word: string, ch: string): string {
-    let idx = word.indexOf(ch) + 1;
-    if (!idx) return word;
-    return [...word.substring(0, idx)].reverse().join('') + word.substring(idx);
-};
+    const i = word.indexOf(ch) + 1;
+    if (!i) {
+        return word;
+    }
+    return [...word.slice(0, i)].reverse().join('') + word.slice(i);
+}
 ```
 
-### **Rust**
+#### Rust
 
-```rs
+```rust
 impl Solution {
     pub fn reverse_prefix(word: String, ch: char) -> String {
         match word.find(ch) {
@@ -140,10 +164,36 @@ impl Solution {
 }
 ```
 
-### **...**
+#### PHP
 
-```
-
+```php
+class Solution {
+    /**
+     * @param String $word
+     * @param String $ch
+     * @return String
+     */
+    function reversePrefix($word, $ch) {
+        $len = strlen($word);
+        $rs = '';
+        for ($i = 0; $i < $len; $i++) {
+            $rs = $rs . $word[$i];
+            if ($word[$i] == $ch) {
+                break;
+            }
+        }
+        if (strlen($rs) == $len && $rs[$len - 1] != $ch) {
+            return $word;
+        }
+        $rs = strrev($rs);
+        $rs = $rs . substr($word, strlen($rs));
+        return $rs;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,31 +1,29 @@
 function numEnclaves(grid: number[][]): number {
-    let res = 0;
-    const m = grid.length;
-    const n = grid[0].length;
-    const dfs = (y: number, x: number) => {
-        if (x < 0 || x >= n || y < 0 || y >= m || grid[y][x] === 0) {
-            return;
+    const [m, n] = [grid.length, grid[0].length];
+    const dirs: number[] = [-1, 0, 1, 0, -1];
+    const dfs = (i: number, j: number) => {
+        grid[i][j] = 0;
+        for (let k = 0; k < 4; ++k) {
+            const x = i + dirs[k];
+            const y = j + dirs[k + 1];
+            if (x >= 0 && x < m && y >= 0 && y <= n && grid[x][y] === 1) {
+                dfs(x, y);
+            }
         }
-        grid[y][x] = 0;
-        dfs(y + 1, x);
-        dfs(y, x + 1);
-        dfs(y - 1, x);
-        dfs(y, x - 1);
     };
-    for (let i = 0; i < n; i++) {
-        dfs(0, i);
-        dfs(m - 1, i);
-    }
-    for (let i = 0; i < m; i++) {
-        dfs(i, 0);
-        dfs(i, n - 1);
-    }
-    for (let i = 1; i < m - 1; i++) {
-        for (let j = 1; j < n - 1; j++) {
+    for (let j = 0; j < n; ++j) {
+        for (let i of [0, m - 1]) {
             if (grid[i][j] === 1) {
-                res++;
+                dfs(i, j);
             }
         }
     }
-    return res;
+    for (let i = 0; i < m; ++i) {
+        for (let j of [0, n - 1]) {
+            if (grid[i][j] === 1) {
+                dfs(i, j);
+            }
+        }
+    }
+    return grid.flat().reduce((acc, cur) => acc + cur, 0);
 }

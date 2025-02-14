@@ -1,10 +1,28 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1442.Count%20Triplets%20That%20Can%20Form%20Two%20Arrays%20of%20Equal%20XOR/README_EN.md
+rating: 1524
+source: Weekly Contest 188 Q2
+tags:
+    - Bit Manipulation
+    - Array
+    - Hash Table
+    - Math
+    - Prefix Sum
+---
+
+<!-- problem:start -->
+
 # [1442. Count Triplets That Can Form Two Arrays of Equal XOR](https://leetcode.com/problems/count-triplets-that-can-form-two-arrays-of-equal-xor)
 
 [中文文档](/solution/1400-1499/1442.Count%20Triplets%20That%20Can%20Form%20Two%20Arrays%20of%20Equal%20XOR/README.md)
 
 ## Description
 
-<p>Given an array of&nbsp;integers <code>arr</code>.</p>
+<!-- description:start -->
+
+<p>Given an array of integers <code>arr</code>.</p>
 
 <p>We want to select three indices <code>i</code>, <code>j</code> and <code>k</code> where <code>(0 &lt;= i &lt; j &lt;= k &lt; arr.length)</code>.</p>
 
@@ -20,73 +38,40 @@
 <p>Return <em>the number of triplets</em> (<code>i</code>, <code>j</code> and <code>k</code>) Where <code>a == b</code>.</p>
 
 <p>&nbsp;</p>
-
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
 <strong>Input:</strong> arr = [2,3,1,6,7]
-
 <strong>Output:</strong> 4
-
 <strong>Explanation:</strong> The triplets are (0,1,2), (0,2,2), (2,3,4) and (2,4,4)
-
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
 <strong>Input:</strong> arr = [1,1,1,1,1]
-
 <strong>Output:</strong> 10
-
-</pre>
-
-<p><strong>Example 3:</strong></p>
-
-<pre>
-
-<strong>Input:</strong> arr = [2,3]
-
-<strong>Output:</strong> 0
-
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-
-<strong>Input:</strong> arr = [1,3,5,7,9]
-
-<strong>Output:</strong> 3
-
-</pre>
-
-<p><strong>Example 5:</strong></p>
-
-<pre>
-
-<strong>Input:</strong> arr = [7,11,12,9,5,2,7,17,22]
-
-<strong>Output:</strong> 8
-
 </pre>
 
 <p>&nbsp;</p>
-
 <p><strong>Constraints:</strong></p>
 
 <ul>
 	<li><code>1 &lt;= arr.length &lt;= 300</code></li>
-	<li><code>1 &lt;= arr[i] &lt;= 10^8</code></li>
+	<li><code>1 &lt;= arr[i] &lt;= 10<sup>8</sup></code></li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -105,7 +90,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -132,7 +117,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -142,12 +127,9 @@ public:
         vector<int> pre(n + 1);
         for (int i = 0; i < n; ++i) pre[i + 1] = pre[i] ^ arr[i];
         int ans = 0;
-        for (int i = 0; i < n - 1; ++i)
-        {
-            for (int j = i + 1; j < n; ++j)
-            {
-                for (int k = j; k < n; ++k)
-                {
+        for (int i = 0; i < n - 1; ++i) {
+            for (int j = i + 1; j < n; ++j) {
+                for (int k = j; k < n; ++k) {
                     int a = pre[j] ^ pre[i], b = pre[k + 1] ^ pre[j];
                     if (a == b) ++ans;
                 }
@@ -158,7 +140,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func countTriplets(arr []int) int {
@@ -182,10 +164,8 @@ func countTriplets(arr []int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

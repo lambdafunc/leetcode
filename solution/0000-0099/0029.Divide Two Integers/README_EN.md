@@ -1,46 +1,45 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0000-0099/0029.Divide%20Two%20Integers/README_EN.md
+tags:
+    - Bit Manipulation
+    - Math
+---
+
+<!-- problem:start -->
+
 # [29. Divide Two Integers](https://leetcode.com/problems/divide-two-integers)
 
 [中文文档](/solution/0000-0099/0029.Divide%20Two%20Integers/README.md)
 
 ## Description
 
-<p>Given two integers <code>dividend</code> and <code>divisor</code>, divide two integers without using multiplication, division, and mod operator.</p>
+<!-- description:start -->
 
-<p>Return the quotient after dividing <code>dividend</code> by <code>divisor</code>.</p>
+<p>Given two integers <code>dividend</code> and <code>divisor</code>, divide two integers <strong>without</strong> using multiplication, division, and mod operator.</p>
 
-<p>The integer division should truncate toward zero, which means losing its fractional part. For example, <code>truncate(8.345) = 8</code> and <code>truncate(-2.7335) = -2</code>.</p>
+<p>The integer division should truncate toward zero, which means losing its fractional part. For example, <code>8.345</code> would be truncated to <code>8</code>, and <code>-2.7335</code> would be truncated to <code>-2</code>.</p>
 
-<p><strong>Note: </strong>Assume we are dealing with an environment that could only store integers within the <strong>32-bit</strong> signed integer range: <code>[&minus;2<sup>31</sup>, 2<sup>31</sup> &minus; 1]</code>. For this problem, assume that your function <strong>returns </strong><code>2<sup>31</sup> &minus; 1</code><strong> when the division result overflows</strong>.</p>
+<p>Return <em>the <strong>quotient</strong> after dividing </em><code>dividend</code><em> by </em><code>divisor</code>.</p>
+
+<p><strong>Note: </strong>Assume we are dealing with an environment that could only store integers within the <strong>32-bit</strong> signed integer range: <code>[&minus;2<sup>31</sup>, 2<sup>31</sup> &minus; 1]</code>. For this problem, if the quotient is <strong>strictly greater than</strong> <code>2<sup>31</sup> - 1</code>, then return <code>2<sup>31</sup> - 1</code>, and if the quotient is <strong>strictly less than</strong> <code>-2<sup>31</sup></code>, then return <code>-2<sup>31</sup></code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> dividend = 10, divisor = 3
 <strong>Output:</strong> 3
-<strong>Explanation:</strong> 10/3 = truncate(3.33333..) = 3.
+<strong>Explanation:</strong> 10/3 = 3.33333.. which is truncated to 3.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> dividend = 7, divisor = -3
 <strong>Output:</strong> -2
-<strong>Explanation:</strong> 7/-3 = truncate(-2.33333..) = -2.
-</pre>
-
-<p><strong>Example 3:</strong></p>
-
-<pre>
-<strong>Input:</strong> dividend = 0, divisor = 1
-<strong>Output:</strong> 0
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> dividend = 1, divisor = 1
-<strong>Output:</strong> 1
+<strong>Explanation:</strong> 7/-3 = -2.33333.. which is truncated to -2.
 </pre>
 
 <p>&nbsp;</p>
@@ -51,132 +50,250 @@
 	<li><code>divisor != 0</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Simulation + Fast Power
+
+Division is essentially subtraction. The problem requires us to calculate the integer result after dividing two numbers, which is actually calculating how many divisors and a number less than the divisor constitute the dividend. However, only one subtraction can be done in one loop, which is too inefficient and will lead to timeout. This can be optimized by using the idea of fast power.
+
+It should be noted that since the problem explicitly requires that only 32-bit signed integers can be used at most, the divisor and dividend need to be converted to negative numbers for calculation. Because converting to positive numbers may cause overflow, such as when the dividend is `INT32_MIN`, it will be greater than `INT32_MAX` when converted to a positive number.
+
+Assuming the dividend is $a$ and the divisor is $b$, the time complexity is $O(\log a \times \log b)$, and the space complexity is $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def divide(self, a: int, b: int) -> int:
-        INT_MAX = (1 << 31) - 1
-        INT_MIN = -(1 << 31)
-        sign = -1 if a * b < 0 else 1
-        a = abs(a)
-        b = abs(b)
-        tot = 0
-        while a >= b:
-            cnt = 0
-            while a >= (b << (cnt + 1)):
-                cnt += 1
-            tot += 1 << cnt
-            a -= b << cnt
-        return sign * tot if INT_MIN <= sign * tot <= INT_MAX else INT_MAX
+        if b == 1:
+            return a
+        if a == -(2**31) and b == -1:
+            return 2**31 - 1
+        sign = (a > 0 and b > 0) or (a < 0 and b < 0)
+        a = -a if a > 0 else a
+        b = -b if b > 0 else b
+        ans = 0
+        while a <= b:
+            x = b
+            cnt = 1
+            while x >= (-(2**30)) and a <= (x << 1):
+                x <<= 1
+                cnt <<= 1
+            a -= x
+            ans += cnt
+        return ans if sign else -ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int divide(int a, int b) {
-        int sign = 1;
-        if ((a < 0) != (b < 0)) {
-            sign = -1;
+        if (b == 1) {
+            return a;
         }
-        long x = Math.abs((long) a);
-        long y = Math.abs((long) b);
-        long tot = 0;
-        while (x >= y) {
-            int cnt = 0;
-            while (x >= (y << (cnt + 1))) {
-                cnt++;
+        if (a == Integer.MIN_VALUE && b == -1) {
+            return Integer.MAX_VALUE;
+        }
+        boolean sign = (a > 0 && b > 0) || (a < 0 && b < 0);
+        a = a > 0 ? -a : a;
+        b = b > 0 ? -b : b;
+        int ans = 0;
+        while (a <= b) {
+            int x = b;
+            int cnt = 1;
+            while (x >= (Integer.MIN_VALUE >> 1) && a <= (x << 1)) {
+                x <<= 1;
+                cnt <<= 1;
             }
-            tot += 1L << cnt;
-            x -= y << cnt;
+            ans += cnt;
+            a -= x;
         }
-        long ans = sign * tot;
-        if (ans >= Integer.MIN_VALUE && ans <= Integer.MAX_VALUE) {
-            return (int) ans;
-        }
-        return Integer.MAX_VALUE;
+        return sign ? ans : -ans;
     }
 }
 ```
 
-### **Go**
-
-```go
-func divide(a int, b int) int {
-	sign := 1
-	if a*b < 0 {
-		sign = -1
-	}
-
-	a = abs(a)
-	b = abs(b)
-
-	tot := 0
-	for a >= b {
-		cnt := 0
-		for a >= (b << (cnt + 1)) {
-			cnt++
-		}
-		tot += 1 << cnt
-		a -= b << cnt
-	}
-
-	ans := sign * tot
-	if ans >= math.MinInt32 && ans <= math.MaxInt32 {
-		return ans
-	}
-	return math.MaxInt32
-}
-
-func abs(a int) int {
-	if a < 0 {
-		return -a
-	}
-	return a
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int divide(int a, int b) {
-        int sign = 1;
-        if (a < 0 ^ b < 0) {
-            sign = -1;
+        if (b == 1) {
+            return a;
         }
-
-        auto x = abs(static_cast<long long>(a));
-        auto y = abs(static_cast<long long>(b));
-        auto tot = 0ll;
-        while (x >= y) {
-            int cnt = 0;
-            while (x >= (y << (cnt + 1))) {
-                ++cnt;
+        if (a == INT_MIN && b == -1) {
+            return INT_MAX;
+        }
+        bool sign = (a > 0 && b > 0) || (a < 0 && b < 0);
+        a = a > 0 ? -a : a;
+        b = b > 0 ? -b : b;
+        int ans = 0;
+        while (a <= b) {
+            int x = b;
+            int cnt = 1;
+            while (x >= (INT_MIN >> 1) && a <= (x << 1)) {
+                x <<= 1;
+                cnt <<= 1;
             }
-            tot += 1ll << cnt;
-            x -= y << cnt;
+            ans += cnt;
+            a -= x;
         }
-
-        auto ans = sign * tot;
-        if (ans >= INT32_MIN && ans <= INT32_MAX) {
-            return static_cast<int>(ans);
-        }
-        return INT32_MAX;
+        return sign ? ans : -ans;
     }
 };
 ```
 
-### **...**
+#### Go
 
+```go
+func divide(a int, b int) int {
+	if b == 1 {
+		return a
+	}
+	if a == math.MinInt32 && b == -1 {
+		return math.MaxInt32
+	}
+
+	sign := (a > 0 && b > 0) || (a < 0 && b < 0)
+	if a > 0 {
+		a = -a
+	}
+	if b > 0 {
+		b = -b
+	}
+	ans := 0
+
+	for a <= b {
+		x := b
+		cnt := 1
+		for x >= (math.MinInt32>>1) && a <= (x<<1) {
+			x <<= 1
+			cnt <<= 1
+		}
+		ans += cnt
+		a -= x
+	}
+
+	if sign {
+		return ans
+	}
+	return -ans
+}
 ```
 
+#### TypeScript
+
+```ts
+function divide(a: number, b: number): number {
+    if (b === 1) {
+        return a;
+    }
+    if (a === -(2 ** 31) && b === -1) {
+        return 2 ** 31 - 1;
+    }
+
+    const sign: boolean = (a > 0 && b > 0) || (a < 0 && b < 0);
+    a = a > 0 ? -a : a;
+    b = b > 0 ? -b : b;
+    let ans: number = 0;
+
+    while (a <= b) {
+        let x: number = b;
+        let cnt: number = 1;
+
+        while (x >= -(2 ** 30) && a <= x << 1) {
+            x <<= 1;
+            cnt <<= 1;
+        }
+
+        ans += cnt;
+        a -= x;
+    }
+
+    return sign ? ans : -ans;
+}
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int Divide(int a, int b) {
+        if (b == 1) {
+            return a;
+        }
+        if (a == int.MinValue && b == -1) {
+            return int.MaxValue;
+        }
+        bool sign = (a > 0 && b > 0) || (a < 0 && b < 0);
+        a = a > 0 ? -a : a;
+        b = b > 0 ? -b : b;
+        int ans = 0;
+        while (a <= b) {
+            int x = b;
+            int cnt = 1;
+            while (x >= (int.MinValue >> 1) && a <= (x << 1)) {
+                x <<= 1;
+                cnt <<= 1;
+            }
+            ans += cnt;
+            a -= x;
+        }
+        return sign ? ans : -ans;
+    }
+}
+```
+
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param integer $a
+     * @param integer $b
+     * @return integer
+     */
+
+    function divide($a, $b) {
+        if ($b == 0) {
+            throw new Exception('Can not divide by 0');
+        } elseif ($a == 0) {
+            return 0;
+        }
+        if ($a == -2147483648 && $b == -1) {
+            return 2147483647;
+        }
+        $sign = $a < 0 != $b < 0;
+
+        $a = abs($a);
+        $b = abs($b);
+        $ans = 0;
+        while ($a >= $b) {
+            $x = $b;
+            $cnt = 1;
+            while ($a >= $x << 1) {
+                $x <<= 1;
+                $cnt <<= 1;
+            }
+            $a -= $x;
+            $ans += $cnt;
+        }
+
+        return $sign ? -$ans : $ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

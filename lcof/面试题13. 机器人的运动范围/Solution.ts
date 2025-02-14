@@ -1,20 +1,14 @@
 function movingCount(m: number, n: number, k: number): number {
-    const set = new Set();
-    const dfs = (y: number, x: number) => {
-        if (y === m || x === n || set.has(`${y},${x}`)) {
-            return;
-        }
-        let count = 0;
-        const str = `${y}${x}`;
-        for (const c of str) {
-            count += Number(c);
-        }
-        if (count <= k) {
-            set.add(`${y},${x}`);
-            dfs(y + 1, x);
-            dfs(y, x + 1);
-        }
+    const vis: boolean[] = Array(m * n).fill(false);
+    const f = (x: number): number => {
+        return ((x / 10) | 0) + (x % 10);
     };
-    dfs(0, 0);
-    return set.size;
+    const dfs = (i: number, j: number): number => {
+        if (i >= m || j >= n || vis[i * n + j] || f(i) + f(j) > k) {
+            return 0;
+        }
+        vis[i * n + j] = true;
+        return 1 + dfs(i + 1, j) + dfs(i, j + 1);
+    };
+    return dfs(0, 0);
 }
