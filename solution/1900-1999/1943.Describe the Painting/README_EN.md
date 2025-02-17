@@ -1,8 +1,25 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1943.Describe%20the%20Painting/README_EN.md
+rating: 1969
+source: Biweekly Contest 57 Q3
+tags:
+    - Array
+    - Hash Table
+    - Prefix Sum
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [1943. Describe the Painting](https://leetcode.com/problems/describe-the-painting)
 
 [中文文档](/solution/1900-1999/1943.Describe%20the%20Painting/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>There is a long and thin painting that can be represented by a number line. The painting was painted with multiple overlapping segments where each segment was painted with a <strong>unique</strong> color. You are given a 2D integer array <code>segments</code>, where <code>segments[i] = [start<sub>i</sub>, end<sub>i</sub>, color<sub>i</sub>]</code> represents the <strong>half-closed segment</strong> <code>[start<sub>i</sub>, end<sub>i</sub>)</code> with <code>color<sub>i</sub></code> as the color.</p>
 
@@ -18,11 +35,13 @@
 
 <ul>
 	<li>For example, the painting created with <code>segments = [[1,4,5],[1,7,7]]</code> can be described by <code>painting = [[1,4,12],[4,7,7]]</code> because:
-	<ul>
-		<li><code>[1,4)</code> is colored <code>{5,7}</code> (with a sum of <code>12</code>) from both the first and second segments.</li>
-		<li><code>[4,7)</code> is colored <code>{7}</code> from only the second segment.</li>
-	</ul>
-	</li>
+
+    <ul>
+    	<li><code>[1,4)</code> is colored <code>{5,7}</code> (with a sum of <code>12</code>) from both the first and second segments.</li>
+    	<li><code>[4,7)</code> is colored <code>{7}</code> from only the second segment.</li>
+    </ul>
+    </li>
+
 </ul>
 
 <p>Return <em>the 2D array </em><code>painting</code><em> describing the finished painting (excluding any parts that are <strong>not </strong>painted). You may return the segments in <strong>any order</strong></em>.</p>
@@ -30,8 +49,8 @@
 <p>A <strong>half-closed segment</strong> <code>[a, b)</code> is the section of the number line between points <code>a</code> and <code>b</code> <strong>including</strong> point <code>a</code> and <strong>not including</strong> point <code>b</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1943.Describe%20the%20Painting/images/1.png" style="width: 529px; height: 241px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1943.Describe%20the%20Painting/images/1.png" style="width: 529px; height: 241px;" />
 <pre>
 <strong>Input:</strong> segments = [[1,4,5],[4,7,7],[1,7,9]]
 <strong>Output:</strong> [[1,4,14],[4,7,16]]
@@ -40,8 +59,8 @@
 - [4,7) is colored {7,9} (with a sum of 16) from the second and third segments.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1943.Describe%20the%20Painting/images/2.png" style="width: 532px; height: 219px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1943.Describe%20the%20Painting/images/2.png" style="width: 532px; height: 219px;" />
 <pre>
 <strong>Input:</strong> segments = [[1,7,9],[6,8,15],[8,10,7]]
 <strong>Output:</strong> [[1,6,9],[6,7,24],[7,8,15],[8,10,7]]
@@ -52,8 +71,8 @@
 - [8,10) is colored 7 from the third segment.
 </pre>
 
-<p><strong>Example 3:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1943.Describe%20the%20Painting/images/c1.png" style="width: 529px; height: 289px;" />
+<p><strong class="example">Example 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1943.Describe%20the%20Painting/images/c1.png" style="width: 529px; height: 289px;" />
 <pre>
 <strong>Input:</strong> segments = [[1,4,5],[1,4,7],[4,7,1],[4,7,11]]
 <strong>Output:</strong> [[1,4,12],[4,7,12]]
@@ -74,11 +93,17 @@ Note that returning a single segment [1,7) is incorrect because the mixed color 
 	<li>Each <code>color<sub>i</sub></code> is distinct.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -91,14 +116,10 @@ class Solution:
         n = len(s)
         for i in range(1, n):
             s[i][1] += s[i - 1][1]
-        ans = []
-        for i in range(n - 1):
-            if s[i][1]:
-                ans.append([s[i][0], s[i + 1][0], s[i][1]])
-        return ans
+        return [[s[i][0], s[i + 1][0], s[i][1]] for i in range(n - 1) if s[i][1]]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -129,26 +150,24 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<vector<long long>> splitPainting(vector<vector<int>>& segments) {
         map<int, long long> d;
-        for (auto& e : segments)
-        {
+        for (auto& e : segments) {
             int l = e[0], r = e[1], c = e[2];
             d[l] += c;
             d[r] -= c;
         }
         vector<vector<long long>> ans;
         long long i, j, cur = 0;
-        for (auto& it : d)
-        {
-            if (it == *d.begin()) i = it.first;
-            else
-            {
+        for (auto& it : d) {
+            if (it == *d.begin())
+                i = it.first;
+            else {
                 j = it.first;
                 if (cur > 0) ans.push_back({i, j, cur});
                 i = j;
@@ -160,10 +179,8 @@ public:
 };
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

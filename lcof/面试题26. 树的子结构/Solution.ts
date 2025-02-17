@@ -13,21 +13,17 @@
  */
 
 function isSubStructure(A: TreeNode | null, B: TreeNode | null): boolean {
-    if (A == null || B == null) {
+    if (!A || !B) {
         return false;
     }
-    if (A.val == B.val && exam(A.left, B.left) && exam(A.right, B.right)) {
-        return true;
-    }
-    return isSubStructure(A.left, B) || isSubStructure(A.right, B);
-}
-
-function exam(A: TreeNode | null, B: TreeNode | null) {
-    if (B == null) {
-        return true;
-    }
-    if (A == null) {
-        return false;
-    }
-    return A.val === B.val && exam(A.left, B.left) && exam(A.right, B.right);
+    const dfs = (A: TreeNode | null, B: TreeNode | null): boolean => {
+        if (!B) {
+            return true;
+        }
+        if (!A || A.val !== B.val) {
+            return false;
+        }
+        return dfs(A.left, B.left) && dfs(A.right, B.right);
+    };
+    return dfs(A, B) || isSubStructure(A.left, B) || isSubStructure(A.right, B);
 }

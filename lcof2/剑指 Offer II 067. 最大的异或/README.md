@@ -1,8 +1,15 @@
-# [剑指 Offer II 067. 最大的异或](https://leetcode-cn.com/problems/ms70jA)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20067.%20%E6%9C%80%E5%A4%A7%E7%9A%84%E5%BC%82%E6%88%96/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 067. 最大的异或](https://leetcode.cn/problems/ms70jA)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给定一个整数数组 <code>nums</code> ，返回<em> </em><code>nums[i] XOR nums[j]</code> 的最大运算结果，其中 <code>0 &le; i &le; j &lt; n</code> 。</p>
 
@@ -62,19 +69,19 @@
 
 <p>&nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 421&nbsp;题相同：&nbsp;<a href="https://leetcode-cn.com/problems/maximum-xor-of-two-numbers-in-an-array/">https://leetcode-cn.com/problems/maximum-xor-of-two-numbers-in-an-array/</a></p>
+<p><meta charset="UTF-8" />注意：本题与主站 421&nbsp;题相同：&nbsp;<a href="https://leetcode.cn/problems/maximum-xor-of-two-numbers-in-an-array/">https://leetcode.cn/problems/maximum-xor-of-two-numbers-in-an-array/</a></p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-哈希表或前缀树实现。
+### 方法一：哈希表
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -98,61 +105,7 @@ class Solution:
         return max
 ```
 
-```python
-class Trie:
-    def __init__(self):
-        self.left = None
-        self.right = None
-
-class Solution:
-    def findMaximumXOR(self, nums: List[int]) -> int:
-        self.root = Trie()
-        self.highest = 30
-
-        def add(num):
-            node = self.root
-            for i in range(self.highest, -1, -1):
-                bit = (num >> i) & 1
-                if bit == 0:
-                    if node.left is None:
-                        node.left = Trie()
-                    node = node.left
-                else:
-                    if node.right is None:
-                        node.right = Trie()
-                    node = node.right
-
-        def cal(num):
-            node = self.root
-            res = 0
-            for i in range(self.highest, -1, -1):
-                bit = (num >> i) & 1
-                if bit == 0:
-                    if node.right:
-                        res = res * 2 + 1
-                        node = node.right
-                    else:
-                        res = res * 2
-                        node = node.left
-                else:
-                    if node.left:
-                        res = res * 2 + 1
-                        node = node.left
-                    else:
-                        res = res * 2
-                        node = node.right
-            return res
-
-        res = 0
-        for i in range(1, len(nums)):
-            add(nums[i - 1])
-            res = max(res, cal(nums[i]))
-        return res
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -183,230 +136,235 @@ class Solution {
 }
 ```
 
-前缀树。
-
-```java
-class Solution {
-    private static final int HIGHEST = 30;
-    private Trie root;
-
-    public int findMaximumXOR(int[] nums) {
-        int res = 0;
-        root = new Trie();
-        for (int i = 1; i < nums.length; ++i) {
-            add(nums[i - 1]);
-            res = Math.max(res, cal(nums[i]));
-        }
-        return res;
-    }
-
-    private int cal(int num) {
-        Trie node = root;
-        int res = 0;
-        for (int i = HIGHEST; i >= 0; --i) {
-            int bit = (num >> i) & 1;
-            if (bit == 0) {
-                if (node.right != null) {
-                    res = res * 2 + 1;
-                    node = node.right;
-                } else {
-                    res = res * 2;
-                    node = node.left;
-                }
-            } else {
-                if (node.left != null) {
-                    res = res * 2 + 1;
-                    node = node.left;
-                } else {
-                    res = res * 2;
-                    node = node.right;
-                }
-            }
-        }
-        return res;
-    }
-
-    private void add(int num) {
-        Trie node = root;
-        for (int i = HIGHEST; i >= 0; --i) {
-            int bit = (num >> i) & 1;
-            if (bit == 0) {
-                if (node.left == null) {
-                    node.left = new Trie();
-                }
-                node = node.left;
-            } else {
-                if (node.right == null) {
-                    node.right = new Trie();
-                }
-                node = node.right;
-            }
-        }
-    }
-}
-
-class Trie {
-    public Trie left;
-    public Trie right;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Trie {
 public:
-    Trie* left;
-    Trie* right;
+    vector<Trie*> children;
+    string v;
+    Trie()
+        : children(2) {}
+
+    void insert(int x) {
+        Trie* node = this;
+        for (int i = 30; ~i; --i) {
+            int v = (x >> i) & 1;
+            if (!node->children[v]) node->children[v] = new Trie();
+            node = node->children[v];
+        }
+    }
+
+    int search(int x) {
+        Trie* node = this;
+        int res = 0;
+        for (int i = 30; ~i; --i) {
+            int v = (x >> i) & 1;
+            if (node->children[v ^ 1]) {
+                res = res << 1 | 1;
+                node = node->children[v ^ 1];
+            } else {
+                res <<= 1;
+                node = node->children[v];
+            }
+        }
+        return res;
+    }
 };
 
 class Solution {
 public:
-    int highest = 30;
-    Trie* root;
-
     int findMaximumXOR(vector<int>& nums) {
-        root = new Trie();
-        int res = 0;
-        for (int i = 1; i < nums.size(); ++i)
-        {
-            add(nums[i - 1]);
-            res = max(res, cal(nums[i]));
+        Trie* trie = new Trie();
+        int ans = 0;
+        for (int v : nums) {
+            trie->insert(v);
+            ans = max(ans, trie->search(v));
         }
-        return res;
-    }
-
-    int cal(int num) {
-        Trie* node = root;
-        int res = 0;
-        for (int i = highest; i >= 0; --i)
-        {
-            int bit = (num >> i) & 1;
-            if (bit == 0)
-            {
-                if (node->right)
-                {
-                    res = res * 2 + 1;
-                    node = node->right;
-                }
-                else
-                {
-                    res = res * 2;
-                    node = node->left;
-                }
-            }
-            else
-            {
-                if (node->left)
-                {
-                    res = res * 2 + 1;
-                    node = node->left;
-                }
-                else
-                {
-                    res = res * 2;
-                    node = node->right;
-                }
-            }
-        }
-        return res;
-    }
-
-    void add(int num) {
-        Trie* node = root;
-        for (int i = highest; i >= 0; --i)
-        {
-            int bit = (num >> i) & 1;
-            if (bit == 0)
-            {
-                if (!node->left) node->left = new Trie();
-                node = node->left;
-            }
-            else
-            {
-                if (!node->right) node->right = new Trie();
-                node = node->right;
-            }
-        }
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-const highest = 30
-
-type trie struct {
-	left, right *trie
+type Trie struct {
+	children [26]*Trie
 }
 
-func (root *trie) add(num int) {
-	node := root
-	for i := highest; i >= 0; i-- {
-		bit := (num >> i) & 1
-		if bit == 0 {
-			if node.left == nil {
-				node.left = &trie{}
-			}
-			node = node.left
-		} else {
-			if node.right == nil {
-				node.right = &trie{}
-			}
-			node = node.right
+func newTrie() *Trie {
+	return &Trie{}
+}
+
+func (this *Trie) insert(x int) {
+	node := this
+	for i := 30; i >= 0; i-- {
+		v := (x >> i) & 1
+		if node.children[v] == nil {
+			node.children[v] = newTrie()
 		}
+		node = node.children[v]
 	}
 }
 
-func (root *trie) cal(num int) int {
-	node := root
+func (this *Trie) search(x int) int {
+	node := this
 	res := 0
-	for i := highest; i >= 0; i-- {
-		bit := (num >> i) & 1
-		if bit == 0 {
-			if node.right != nil {
-				res = res*2 + 1
-				node = node.right
-			} else {
-				res = res * 2
-				node = node.left
-			}
+	for i := 30; i >= 0; i-- {
+		v := (x >> i) & 1
+		if node.children[v^1] != nil {
+			res = res<<1 | 1
+			node = node.children[v^1]
 		} else {
-			if node.left != nil {
-				res = res*2 + 1
-				node = node.left
-			} else {
-				res = res * 2
-				node = node.right
-			}
+			res <<= 1
+			node = node.children[v]
 		}
 	}
 	return res
 }
 
 func findMaximumXOR(nums []int) int {
-	root := &trie{}
-	res := 0
-	for i := 1; i < len(nums); i++ {
-		root.add(nums[i-1])
-		res = max(res, root.cal(nums[i]))
+	trie := newTrie()
+	ans := 0
+	for _, v := range nums {
+		trie.insert(v)
+		ans = max(ans, trie.search(v))
 	}
-	return res
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return ans
 }
 ```
 
-### **...**
+#### Swift
 
-```
+```swift
+class Solution {
+    func findMaximumXOR(_ numbers: [Int]) -> Int {
+        var max = 0
+        var mask = 0
 
+        for i in stride(from: 30, through: 0, by: -1) {
+            let current = 1 << i
+            mask ^= current
+            var set = Set<Int>()
+            for num in numbers {
+                set.insert(mask & num)
+            }
+            let flag = max | current
+            for prefix in set {
+                if set.contains(prefix ^ flag) {
+                    max = flag
+                    break
+                }
+            }
+        }
+        return max
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start-->
+
+### 方法二：前缀树
+
+题目是求两个元素的异或最大值，可以从最高位开始考虑。
+
+我们把数组中的每个元素 $x$ 看作一个 $32$ 位的 $01$ 串，按二进制从高位到低位的顺序，插入前缀树（最低位为叶子节点）。
+
+搜索 $x$ 时，尽量走相反的 $01$ 字符指针的策略，因为异或运算的法则是相同得 $0$，不同得 $1$，所以我们尽可能往与 $x$ 当前位相反的字符方向走，才能得到能和 $x$ 产生最大值的结果。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Trie:
+    def __init__(self):
+        self.children = [None] * 2
+
+    def insert(self, x):
+        node = self
+        for i in range(30, -1, -1):
+            v = (x >> i) & 1
+            if node.children[v] is None:
+                node.children[v] = Trie()
+            node = node.children[v]
+
+    def search(self, x):
+        node = self
+        res = 0
+        for i in range(30, -1, -1):
+            v = (x >> i) & 1
+            if node.children[v ^ 1]:
+                res = res << 1 | 1
+                node = node.children[v ^ 1]
+            else:
+                res <<= 1
+                node = node.children[v]
+        return res
+
+
+class Solution:
+    def findMaximumXOR(self, nums: List[int]) -> int:
+        trie = Trie()
+        for v in nums:
+            trie.insert(v)
+        return max(trie.search(v) for v in nums)
+```
+
+#### Java
+
+```java
+class Trie {
+    Trie[] children = new Trie[2];
+
+    void insert(int x) {
+        Trie node = this;
+        for (int i = 30; i >= 0; --i) {
+            int v = (x >> i) & 1;
+            if (node.children[v] == null) {
+                node.children[v] = new Trie();
+            }
+            node = node.children[v];
+        }
+    }
+
+    int search(int x) {
+        Trie node = this;
+        int res = 0;
+        for (int i = 30; i >= 0; --i) {
+            int v = (x >> i) & 1;
+            if (node.children[v ^ 1] != null) {
+                res = res << 1 | 1;
+                node = node.children[v ^ 1];
+            } else {
+                res <<= 1;
+                node = node.children[v];
+            }
+        }
+        return res;
+    }
+}
+
+class Solution {
+    public int findMaximumXOR(int[] nums) {
+        Trie trie = new Trie();
+        int ans = 0;
+        for (int v : nums) {
+            trie.insert(v);
+            ans = Math.max(ans, trie.search(v));
+        }
+        return ans;
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

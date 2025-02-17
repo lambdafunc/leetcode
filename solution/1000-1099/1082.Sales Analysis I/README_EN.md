@@ -1,10 +1,22 @@
-# [1082. Sales Analysis I](https://leetcode.com/problems/sales-analysis-i)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1082.Sales%20Analysis%20I/README_EN.md
+tags:
+    - Database
+---
+
+<!-- problem:start -->
+
+# [1082. Sales Analysis I 🔒](https://leetcode.com/problems/sales-analysis-i)
 
 [中文文档](/solution/1000-1099/1082.Sales%20Analysis%20I/README.md)
 
 ## Description
 
-<p>Table:&nbsp;<code>Product</code></p>
+<!-- description:start -->
+
+<p>Table: <code>Product</code></p>
 
 <pre>
 +--------------+---------+
@@ -14,10 +26,11 @@
 | product_name | varchar |
 | unit_price   | int     |
 +--------------+---------+
-product_id is the primary key of this table.
+product_id is the primary key (column with unique values) of this table.
+Each row of this table indicates the name and the price of each product.
 </pre>
 
-<p>Table:&nbsp;<code>Sales</code></p>
+<p>Table: <code>Sales</code></p>
 
 <pre>
 +-------------+---------+
@@ -29,18 +42,25 @@ product_id is the primary key of this table.
 | sale_date   | date    |
 | quantity    | int     |
 | price       | int     |
-+------ ------+---------+
-This table has no primary key, it can have repeated rows.
-product_id is a foreign key to Product table.
++-------------+---------+
+This table can have repeated rows.
+product_id is a foreign key (reference column) to the Product table.
+Each row of this table contains some information about one sale.
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query that reports the best&nbsp;<strong>seller</strong>&nbsp;by total sales price, If there is a tie, report them all.</p>
+<p>Write a solution that reports the best <strong>seller</strong> by total sales price, If there is a tie, report them all.</p>
 
-<p>The query result format is in the following example:</p>
+<p>Return the result table in <strong>any order</strong>.</p>
+
+<p>The&nbsp;result format is in the following example.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
+<strong>Input:</strong> 
 Product table:
 +------------+--------------+------------+
 | product_id | product_name | unit_price |
@@ -49,8 +69,7 @@ Product table:
 | 2          | G4           | 800        |
 | 3          | iPhone       | 1400       |
 +------------+--------------+------------+
-
-<code>Sales </code>table:
+Sales table:
 +-----------+------------+----------+------------+----------+-------+
 | seller_id | product_id | buyer_id | sale_date  | quantity | price |
 +-----------+------------+----------+------------+----------+-------+
@@ -59,24 +78,71 @@ Product table:
 | 2         | 2          | 3        | 2019-06-02 | 1        | 800   |
 | 3         | 3          | 4        | 2019-05-13 | 2        | 2800  |
 +-----------+------------+----------+------------+----------+-------+
-
-Result table:
+<strong>Output:</strong> 
 +-------------+
 | seller_id   |
 +-------------+
 | 1           |
 | 3           |
 +-------------+
-Both sellers with id 1 and 3 sold products with the most total price of 2800.</pre>
+<strong>Explanation:</strong> Both sellers with id 1 and 3 sold products with the most total price of 2800.
+</pre>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **SQL**
+#### MySQL
 
 ```sql
-
+# Write your MySQL query statement below
+SELECT seller_id
+FROM Sales
+GROUP BY seller_id
+HAVING
+    SUM(price) >= ALL(
+        SELECT SUM(price)
+        FROM Sales
+        GROUP BY seller_id
+    );
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### MySQL
+
+```sql
+# Write your MySQL query statement below
+WITH
+    T AS (
+        SELECT
+            seller_id,
+            SUM(price) AS tot,
+            RANK() OVER (ORDER BY SUM(price) DESC) AS rk
+        FROM Sales
+        GROUP BY seller_id
+    )
+SELECT seller_id
+FROM T
+WHERE rk = 1;
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

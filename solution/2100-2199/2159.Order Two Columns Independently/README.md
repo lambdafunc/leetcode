@@ -1,12 +1,22 @@
-# [2159. Order Two Columns Independently](https://leetcode-cn.com/problems/order-two-columns-independently)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2159.Order%20Two%20Columns%20Independently/README.md
+tags:
+    - 数据库
+---
+
+<!-- problem:start -->
+
+# [2159. 分别排序两列 🔒](https://leetcode.cn/problems/order-two-columns-independently)
 
 [English Version](/solution/2100-2199/2159.Order%20Two%20Columns%20Independently/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>Table: <code>Data</code></p>
+<p>表：<code>Data</code></p>
 
 <pre>
 +-------------+------+
@@ -15,26 +25,27 @@
 | first_col   | int  |
 | second_col  | int  |
 +-------------+------+
-There is no primary key for this table and it may contain duplicates.
+该表可能包含重复数据。
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query to independently:</p>
+<p>编写解决方案，使：</p>
 
 <ul>
-	<li>order <code>first_col</code> in <strong>ascending order</strong>.</li>
-	<li>order <code>second_col</code> in <strong>descending order</strong>.</li>
+	<li><code>first_col</code> 按照<strong> 升序 </strong>排列。</li>
+	<li><code>second_col</code> 按照 <strong>降序 </strong>排列。</li>
 </ul>
 
-<p>The query result format is in the following example.</p>
+<p>返回的结果格式如下。</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+
+<p><strong>示例 1：</strong></p>
 
 <pre>
-<strong>Input:</strong> 
-Data table:
+<strong>输入：</strong>
+Data 表：
 +-----------+------------+
 | first_col | second_col |
 +-----------+------------+
@@ -43,7 +54,7 @@ Data table:
 | 3         | 1          |
 | 1         | 4          |
 +-----------+------------+
-<strong>Output:</strong> 
+<strong>输出：</strong>
 +-----------+------------+
 | first_col | second_col |
 +-----------+------------+
@@ -54,18 +65,41 @@ Data table:
 +-----------+------------+
 </pre>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **SQL**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### MySQL
 
 ```sql
-
+# Write your MySQL query statement below
+WITH
+    S AS (
+        SELECT
+            first_col,
+            ROW_NUMBER() OVER (ORDER BY first_col) AS rk
+        FROM Data
+    ),
+    T AS (
+        SELECT
+            second_col,
+            ROW_NUMBER() OVER (ORDER BY second_col DESC) AS rk
+        FROM Data
+    )
+SELECT first_col, second_col
+FROM
+    S
+    JOIN T USING (rk);
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

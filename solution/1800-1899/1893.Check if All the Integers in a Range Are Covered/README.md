@@ -1,10 +1,24 @@
-# [1893. 检查是否区域内所有整数都被覆盖](https://leetcode-cn.com/problems/check-if-all-the-integers-in-a-range-are-covered)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1893.Check%20if%20All%20the%20Integers%20in%20a%20Range%20Are%20Covered/README.md
+rating: 1307
+source: 第 54 场双周赛 Q1
+tags:
+    - 数组
+    - 哈希表
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [1893. 检查是否区域内所有整数都被覆盖](https://leetcode.cn/problems/check-if-all-the-integers-in-a-range-are-covered)
 
 [English Version](/solution/1800-1899/1893.Check%20if%20All%20the%20Integers%20in%20a%20Range%20Are%20Covered/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个二维整数数组 <code>ranges</code> 和两个整数 <code>left</code> 和 <code>right</code> 。每个 <code>ranges[i] = [start<sub>i</sub>, end<sub>i</sub>]</code> 表示一个从 <code>start<sub>i</sub></code> 到 <code>end<sub>i</sub></code> 的 <strong>闭区间</strong> 。</p>
 
@@ -43,17 +57,27 @@
 	<li><code>1 <= left <= right <= 50</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-利用差分数组进行区间更新。
+### 方法一：差分数组
+
+我们可以使用差分数组的思想，创建一个长度为 $52$ 的差分数组 $\textit{diff}$。
+
+接下来，我们遍历数组 $\textit{ranges}$，对于每个区间 $[l, r]$，我们令 $\textit{diff}[l]$ 自增 $1$，而 $\textit{diff}[r + 1]$ 自减 $1$。
+
+接着，我们遍历差分数组 $\textit{diff}$，维护一个前缀和 $s$，对于每个位置 $i$，我们令 $s$ 自增 $\textit{diff}[i]$，如果 $s \le 0$ 且 $left \le i \le right$，则说明区间 $[left, right]$ 中有一个整数 $i$ 没有被覆盖，返回 $\textit{false}$。
+
+如果遍历完差分数组 $\textit{diff}$ 后都没有返回 $\textit{false}$，则说明区间 $[left, right]$ 中的每个整数都被 $\textit{ranges}$ 中至少一个区间覆盖，返回 $\textit{true}$。
+
+时间复杂度 $O(n + M)$，空间复杂度 $O(M)$。其中 $n$ 是数组 $\textit{ranges}$ 的长度，而 $M$ 是区间的最大值，本题中 $M \le 50$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -62,30 +86,29 @@ class Solution:
         for l, r in ranges:
             diff[l] += 1
             diff[r + 1] -= 1
-        cur = 0
-        for i, df in enumerate(diff):
-            cur += df
-            if left <= i <= right and cur == 0:
+        s = 0
+        for i, x in enumerate(diff):
+            s += x
+            if s <= 0 and left <= i <= right:
                 return False
         return True
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public boolean isCovered(int[][] ranges, int left, int right) {
         int[] diff = new int[52];
         for (int[] range : ranges) {
-            diff[range[0]]++;
-            diff[range[1] + 1]--;
+            int l = range[0], r = range[1];
+            ++diff[l];
+            --diff[r + 1];
         }
-        int cur = 0;
-        for (int i = 0; i < 52; i++) {
-            cur += diff[i];
-            if (left <= i && i <= right && cur == 0) {
+        int s = 0;
+        for (int i = 0; i < diff.length; ++i) {
+            s += diff[i];
+            if (s <= 0 && left <= i && i <= right) {
                 return false;
             }
         }
@@ -94,39 +117,44 @@ class Solution {
 }
 ```
 
-### **TypeScript**
+#### C++
 
-```ts
-function isCovered(ranges: number[][], left: number, right: number): boolean {
-    let diff = new Array(52).fill(0);
-    for (let [start, end] of ranges) {
-        ++diff[start];
-        --diff[end + 1];
-    }
-    let cur = 0;
-    for (let i = 1; i <= 50; i++) {
-        cur += diff[i];
-        if (i >= left && i <= right && cur <= 0) {
-            return false;
+```cpp
+class Solution {
+public:
+    bool isCovered(vector<vector<int>>& ranges, int left, int right) {
+        vector<int> diff(52);
+        for (auto& range : ranges) {
+            int l = range[0], r = range[1];
+            ++diff[l];
+            --diff[r + 1];
         }
+        int s = 0;
+        for (int i = 0; i < diff.size(); ++i) {
+            s += diff[i];
+            if (s <= 0 && left <= i && i <= right) {
+                return false;
+            }
+        }
+        return true;
     }
-    return true;
-}
+};
 ```
 
-### **Go**
+#### Go
 
 ```go
 func isCovered(ranges [][]int, left int, right int) bool {
-	diff := make([]int, 52)
-	for _, rg := range ranges {
-		diff[rg[0]]++
-		diff[rg[1]+1]--
+	diff := [52]int{}
+	for _, e := range ranges {
+		l, r := e[0], e[1]
+		diff[l]++
+		diff[r+1]--
 	}
-	cur := 0
-	for i, df := range diff {
-		cur += df
-		if i >= left && i <= right && cur == 0 {
+	s := 0
+	for i, x := range diff {
+		s += x
+		if s <= 0 && left <= i && i <= right {
 			return false
 		}
 	}
@@ -134,33 +162,54 @@ func isCovered(ranges [][]int, left int, right int) bool {
 }
 ```
 
-### **C++**
+#### TypeScript
 
-```cpp
-class Solution {
-public:
-    bool isCovered(vector<vector<int>>& ranges, int left, int right) {
-        vector<int> d(52);
-        for (auto& e : ranges)
-        {
-            ++d[e[0]];
-            --d[e[1] + 1];
-        }
-        int s = 0;
-        for (int i = 0; i < d.size(); ++i)
-        {
-            s += d[i];
-            if (left <= i && i <= right && s == 0) return false;
-        }
-        return true;
+```ts
+function isCovered(ranges: number[][], left: number, right: number): boolean {
+    const diff: number[] = Array(52).fill(0);
+    for (const [l, r] of ranges) {
+        ++diff[l];
+        --diff[r + 1];
     }
+    let s = 0;
+    for (let i = 0; i < diff.length; ++i) {
+        s += diff[i];
+        if (s <= 0 && left <= i && i <= right) {
+            return false;
+        }
+    }
+    return true;
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[][]} ranges
+ * @param {number} left
+ * @param {number} right
+ * @return {boolean}
+ */
+var isCovered = function (ranges, left, right) {
+    const diff = Array(52).fill(0);
+    for (const [l, r] of ranges) {
+        ++diff[l];
+        --diff[r + 1];
+    }
+    let s = 0;
+    for (let i = 0; i < diff.length; ++i) {
+        s += diff[i];
+        if (s <= 0 && left <= i && i <= right) {
+            return false;
+        }
+    }
+    return true;
 };
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

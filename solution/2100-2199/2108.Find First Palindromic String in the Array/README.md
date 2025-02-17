@@ -1,10 +1,24 @@
-# [2108. 找出数组中的第一个回文字符串](https://leetcode-cn.com/problems/find-first-palindromic-string-in-the-array)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2108.Find%20First%20Palindromic%20String%20in%20the%20Array/README.md
+rating: 1215
+source: 第 272 场周赛 Q1
+tags:
+    - 数组
+    - 双指针
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [2108. 找出数组中的第一个回文字符串](https://leetcode.cn/problems/find-first-palindromic-string-in-the-array)
 
 [English Version](/solution/2100-2199/2108.Find%20First%20Palindromic%20String%20in%20the%20Array/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个字符串数组 <code>words</code> ，找出并返回数组中的 <strong>第一个回文字符串</strong> 。如果不存在满足要求的字符串，返回一个 <strong>空字符串</strong><em> </em><code>""</code> 。</p>
 
@@ -44,113 +58,138 @@
 	<li><code>words[i]</code> 仅由小写英文字母组成</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：模拟
+
+我们遍历数组 `words`，对于每个字符串 `w`，判断其是否为回文字符串，如果是，则返回 `w`，否则继续遍历。
+
+判断一个字符串是否为回文字符串，可以使用双指针，分别指向字符串的首尾，向中间移动，判断对应的字符是否相等。如果遍历完整个字符串，都没有发现不相等的字符，则该字符串为回文字符串。
+
+时间复杂度 $O(L)$，其中 $L$ 为数组 `words` 中所有字符串的长度之和。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def firstPalindrome(self, words: List[str]) -> str:
-        def check(s):
-            i, j = 0, len(s) - 1
-            while i < j:
-                if s[i] != s[j]:
-                    return False
-                i += 1
-                j -= 1
-            return True
-
-        for word in words:
-            if check(word):
-                return word
-        return ''
+        return next((w for w in words if w == w[::-1]), "")
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public String firstPalindrome(String[] words) {
-        for (String word : words) {
-            if (check(word)) {
-                return word;
+        for (var w : words) {
+            boolean ok = true;
+            for (int i = 0, j = w.length() - 1; i < j && ok; ++i, --j) {
+                if (w.charAt(i) != w.charAt(j)) {
+                    ok = false;
+                }
+            }
+            if (ok) {
+                return w;
             }
         }
         return "";
     }
-
-    private boolean check(String s) {
-        for (int i = 0, j = s.length() - 1; i < j; ++i, --j) {
-            if (s.charAt(i) != s.charAt(j)) {
-                return false;
-            }
-        }
-        return true;
-    }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     string firstPalindrome(vector<string>& words) {
-        for (auto& word : words)
-            if (check(word)) return word;
+        for (auto& w : words) {
+            bool ok = true;
+            for (int i = 0, j = w.size() - 1; i < j; ++i, --j) {
+                if (w[i] != w[j]) {
+                    ok = false;
+                }
+            }
+            if (ok) {
+                return w;
+            }
+        }
         return "";
-    }
-
-    bool check(string s) {
-        for (int i = 0, j = s.size() - 1; i < j; ++i, --j)
-            if (s[i] != s[j]) return false;
-        return true;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func firstPalindrome(words []string) string {
-	check := func(s string) bool {
-		for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
-			if s[i] != s[j] {
-				return false
+	for _, w := range words {
+		ok := true
+		for i, j := 0, len(w)-1; i < j && ok; i, j = i+1, j-1 {
+			if w[i] != w[j] {
+				ok = false
 			}
 		}
-		return true
-	}
-
-	for _, word := range words {
-		if check(word) {
-			return word
+		if ok {
+			return w
 		}
 	}
 	return ""
 }
 ```
 
-### **TypeScript**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### TypeScript
 
 ```ts
-
+function firstPalindrome(words: string[]): string {
+    return words.find(w => w === w.split('').reverse().join('')) || '';
+}
 ```
 
-### **...**
+#### Rust
 
+```rust
+impl Solution {
+    pub fn first_palindrome(words: Vec<String>) -> String {
+        for w in words {
+            if w == w.chars().rev().collect::<String>() {
+                return w;
+            }
+        }
+        String::new()
+    }
+}
 ```
 
+#### C
+
+```c
+char* firstPalindrome(char** words, int wordsSize) {
+    for (int i = 0; i < wordsSize; ++i) {
+        char* w = words[i];
+        int len = strlen(w);
+        bool ok = true;
+        for (int j = 0, k = len - 1; j < k && ok; ++j, --k) {
+            if (w[j] != w[k]) {
+                ok = false;
+            }
+        }
+        if (ok) {
+            return w;
+        }
+    }
+    return "";
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

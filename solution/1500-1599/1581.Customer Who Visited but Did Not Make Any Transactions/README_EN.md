@@ -1,8 +1,20 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1581.Customer%20Who%20Visited%20but%20Did%20Not%20Make%20Any%20Transactions/README_EN.md
+tags:
+    - Database
+---
+
+<!-- problem:start -->
+
 # [1581. Customer Who Visited but Did Not Make Any Transactions](https://leetcode.com/problems/customer-who-visited-but-did-not-make-any-transactions)
 
 [中文文档](/solution/1500-1599/1581.Customer%20Who%20Visited%20but%20Did%20Not%20Make%20Any%20Transactions/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Table: <code>Visits</code></p>
 
@@ -13,7 +25,7 @@
 | visit_id    | int     |
 | customer_id | int     |
 +-------------+---------+
-visit_id is the primary key for this table.
+visit_id is the column with unique values for this table.
 This table contains information about the customers who visited the mall.
 </pre>
 
@@ -29,20 +41,24 @@ This table contains information about the customers who visited the mall.
 | visit_id       | int     |
 | amount         | int     |
 +----------------+---------+
-transaction_id is the primary key for this table.
+transaction_id is column with unique values for this table.
 This table contains information about the transactions made during the visit_id.
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query to find the IDs of the users who visited without making&nbsp;any transactions and the number of times they made these types of visits.</p>
+<p>Write a&nbsp;solution to find the IDs of the users who visited without making any transactions and the number of times they made these types of visits.</p>
 
 <p>Return the result table sorted in <strong>any order</strong>.</p>
 
-<p>The query result format is in the following example:</p>
+<p>The&nbsp;result format is in the following example.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-<code>Visits</code>
+<strong>Input:</strong> 
+Visits
 +----------+-------------+
 | visit_id | customer_id |
 +----------+-------------+
@@ -54,8 +70,7 @@ This table contains information about the transactions made during the visit_id.
 | 7        | 54          |
 | 8        | 54          |
 +----------+-------------+
-
-<code>Transactions</code>
+Transactions
 +----------------+----------+--------+
 | transaction_id | visit_id | amount |
 +----------------+----------+--------+
@@ -65,8 +80,7 @@ This table contains information about the transactions made during the visit_id.
 | 12             | 1        | 910    |
 | 13             | 2        | 970    |
 +----------------+----------+--------+
-
-Result table:
+<strong>Output:</strong> 
 +-------------+----------------+
 | customer_id | count_no_trans |
 +-------------+----------------+
@@ -74,34 +88,63 @@ Result table:
 | 30          | 1              |
 | 96          | 1              |
 +-------------+----------------+
+<strong>Explanation:</strong> 
 Customer with id = 23 visited the mall once and made one transaction during the visit with id = 12.
 Customer with id = 9 visited the mall once and made one transaction during the visit with id = 13.
 Customer with id = 30 visited the mall once and did not make any transactions.
 Customer with id = 54 visited the mall three times. During 2 visits they did not make any transactions, and during one visit they made 3 transactions.
 Customer with id = 96 visited the mall once and did not make any transactions.
-As we can see, users with IDs 30 and 96 visited the mall one time without making any transactions. Also user 54 visited the mall twice and did not make any transactions.
+As we can see, users with IDs 30 and 96 visited the mall one time without making any transactions. Also, user 54 visited the mall twice and did not make any transactions.
 </pre>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Subquery + Grouping
+
+We can use a subquery to first find all `visit_id`s that have not made any transactions, and then group by `customer_id` to count the number of times each customer has not made any transactions.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### MySQL
 
-```python
-
-```
-
-### **Java**
-
-```java
-
-```
-
-### **...**
-
-```
-
+```sql
+# Write your MySQL query statement below
+SELECT customer_id, COUNT(1) AS count_no_trans
+FROM Visits
+WHERE visit_id NOT IN (SELECT visit_id FROM Transactions)
+GROUP BY 1;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2: Left Join + Grouping
+
+We can also use a left join to join the `Visits` table and the `Transactions` table on `visit_id`, and then filter out the records where `amount` is `NULL`. After that, we can group by `customer_id` to count the number of times each customer has not made any transactions.
+
+<!-- tabs:start -->
+
+#### MySQL
+
+```sql
+# Write your MySQL query statement below
+SELECT customer_id, COUNT(1) AS count_no_trans
+FROM
+    Visits
+    LEFT JOIN Transactions USING (visit_id)
+WHERE amount IS NULL
+GROUP BY 1;
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

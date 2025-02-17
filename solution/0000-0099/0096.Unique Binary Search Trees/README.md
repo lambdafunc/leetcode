@@ -1,105 +1,183 @@
-# [96. 不同的二叉搜索树](https://leetcode-cn.com/problems/unique-binary-search-trees)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0000-0099/0096.Unique%20Binary%20Search%20Trees/README.md
+tags:
+    - 树
+    - 二叉搜索树
+    - 数学
+    - 动态规划
+    - 二叉树
+---
+
+<!-- problem:start -->
+
+# [96. 不同的二叉搜索树](https://leetcode.cn/problems/unique-binary-search-trees)
 
 [English Version](/solution/0000-0099/0096.Unique%20Binary%20Search%20Trees/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个整数 <em>n</em>，求以&nbsp;1 ...&nbsp;<em>n</em>&nbsp;为节点组成的二叉搜索树有多少种？</p>
+<p>给你一个整数 <code>n</code> ，求恰由 <code>n</code> 个节点组成且节点值从 <code>1</code> 到 <code>n</code> 互不相同的 <strong>二叉搜索树</strong> 有多少种？返回满足题意的二叉搜索树的种数。</p>
 
-<p><strong>示例:</strong></p>
+<p> </p>
 
-<pre><strong>输入:</strong> 3
-<strong>输出:</strong> 5
-<strong>解释:
-</strong>给定 <em>n</em> = 3, 一共有 5 种不同结构的二叉搜索树:
+<p><strong>示例 1：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0096.Unique%20Binary%20Search%20Trees/images/uniquebstn3.jpg" style="width: 600px; height: 148px;" />
+<pre>
+<strong>输入：</strong>n = 3
+<strong>输出：</strong>5
+</pre>
 
-   1         3     3      2      1
-    \       /     /      / \      \
-     3     2     1      1   3      2
-    /     /       \                 \
-   2     1         2                 3</pre>
+<p><strong>示例 2：</strong></p>
+
+<pre>
+<strong>输入：</strong>n = 1
+<strong>输出：</strong>1
+</pre>
+
+<p> </p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 <= n <= 19</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-假设 n 个节点存在二叉搜索树的个数是 `G(n)`，1 为根节点，2 为根节点，...，n 为根节点，当 1 为根节点时，其左子树节点个数为 0，右子树节点个数为 n-1，同理当 2 为根节点时，其左子树节点个数为 1，右子树节点为 n-2，所以可得 `G(n) = G(0) * G(n-1) + G(1) * (n-2) + ... + G(n-1) * G(0)`。
+### 方法一：动态规划
+
+我们定义 $f[i]$ 表示 $[1, i]$ 能产生的二叉搜索树的个数，初始时 $f[0] = 1$，答案为 $f[n]$。
+
+我们可以枚举节点数 $i$，那么左子树节点数 $j \in [0, i - 1]$，右子树节点数 $k = i - j - 1$，左子树节点数和右子树节点数的组合数为 $f[j] \times f[k]$，因此 $f[i] = \sum_{j = 0}^{i - 1} f[j] \times f[i - j - 1]$。
+
+最后返回 $f[n]$ 即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为节点数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def numTrees(self, n: int) -> int:
-        dp = [0] * (n + 1)
-        dp[0] = 1
-        for i in range(1, n + 1):
+        f = [1] + [0] * n
+        for i in range(n + 1):
             for j in range(i):
-                dp[i] += dp[j] * dp[i - j - 1]
-        return dp[-1]
+                f[i] += f[j] * f[i - j - 1]
+        return f[n]
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int numTrees(int n) {
-        int[] dp = new int[n + 1];
-        dp[0] = 1;
+        int[] f = new int[n + 1];
+        f[0] = 1;
         for (int i = 1; i <= n; ++i) {
             for (int j = 0; j < i; ++j) {
-                dp[i] += dp[j] * dp[i - j - 1];
+                f[i] += f[j] * f[i - j - 1];
             }
         }
-        return dp[n];
+        return f[n];
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int numTrees(int n) {
-        vector<int> dp(n + 1);
-        dp[0] = 1;
+        vector<int> f(n + 1);
+        f[0] = 1;
         for (int i = 1; i <= n; ++i) {
             for (int j = 0; j < i; ++j) {
-                dp[i] += dp[j] * dp[i - j - 1];
+                f[i] += f[j] * f[i - j - 1];
             }
         }
-        return dp[n];
+        return f[n];
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func numTrees(n int) int {
-	dp := make([]int, n+1)
-	dp[0] = 1
+	f := make([]int, n+1)
+	f[0] = 1
 	for i := 1; i <= n; i++ {
 		for j := 0; j < i; j++ {
-			dp[i] += dp[j] * dp[i-j-1]
+			f[i] += f[j] * f[i-j-1]
 		}
 	}
-	return dp[n]
+	return f[n]
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function numTrees(n: number): number {
+    const f: number[] = Array(n + 1).fill(0);
+    f[0] = 1;
+    for (let i = 1; i <= n; ++i) {
+        for (let j = 0; j < i; ++j) {
+            f[i] += f[j] * f[i - j - 1];
+        }
+    }
+    return f[n];
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn num_trees(n: i32) -> i32 {
+        let n = n as usize;
+        let mut f = vec![0; n + 1];
+        f[0] = 1;
+        for i in 1..=n {
+            for j in 0..i {
+                f[i] += f[j] * f[i - j - 1];
+            }
+        }
+        f[n] as i32
+    }
+}
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int NumTrees(int n) {
+        int[] f = new int[n + 1];
+        f[0] = 1;
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 0; j < i; ++j) {
+                f[i] += f[j] * f[i - j - 1];
+            }
+        }
+        return f[n];
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,16 +1,28 @@
-# [1309. 解码字母到整数映射](https://leetcode-cn.com/problems/decrypt-string-from-alphabet-to-integer-mapping)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1309.Decrypt%20String%20from%20Alphabet%20to%20Integer%20Mapping/README.md
+rating: 1257
+source: 第 170 场周赛 Q1
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1309. 解码字母到整数映射](https://leetcode.cn/problems/decrypt-string-from-alphabet-to-integer-mapping)
 
 [English Version](/solution/1300-1399/1309.Decrypt%20String%20from%20Alphabet%20to%20Integer%20Mapping/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给你一个字符串&nbsp;<code>s</code>，它由数字（<code>&#39;0&#39;</code> - <code>&#39;9&#39;</code>）和&nbsp;<code>&#39;#&#39;</code>&nbsp;组成。我们希望按下述规则将&nbsp;<code>s</code>&nbsp;映射为一些小写英文字符：</p>
+<p>给你一个字符串&nbsp;<code>s</code>，它由数字（<code>'0'</code> - <code>'9'</code>）和&nbsp;<code>'#'</code>&nbsp;组成。我们希望按下述规则将&nbsp;<code>s</code>&nbsp;映射为一些小写英文字符：</p>
 
 <ul>
-	<li>字符（<code>&#39;a&#39;</code> - <code>&#39;i&#39;</code>）分别用（<code>&#39;1&#39;</code> -&nbsp;<code>&#39;9&#39;</code>）表示。</li>
-	<li>字符（<code>&#39;j&#39;</code> - <code>&#39;z&#39;</code>）分别用（<code>&#39;10#&#39;</code>&nbsp;-&nbsp;<code>&#39;26#&#39;</code>）表示。&nbsp;</li>
+	<li>字符（<code>'a'</code> - <code>'i'</code>）分别用（<code>'1'</code> -&nbsp;<code>'9'</code>）表示。</li>
+	<li>字符（<code>'j'</code> - <code>'z'</code>）分别用（<code>'10#'</code>&nbsp;-&nbsp;<code>'26#'</code>）表示。&nbsp;</li>
 </ul>
 
 <p>返回映射之后形成的新字符串。</p>
@@ -21,27 +33,17 @@
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入：</strong>s = &quot;10#11#12&quot;
-<strong>输出：</strong>&quot;jkab&quot;
-<strong>解释：</strong>&quot;j&quot; -&gt; &quot;10#&quot; , &quot;k&quot; -&gt; &quot;11#&quot; , &quot;a&quot; -&gt; &quot;1&quot; , &quot;b&quot; -&gt; &quot;2&quot;.
+<pre>
+<strong>输入：</strong>s = "10#11#12"
+<strong>输出：</strong>"jkab"
+<strong>解释：</strong>"j" -&gt; "10#" , "k" -&gt; "11#" , "a" -&gt; "1" , "b" -&gt; "2".
 </pre>
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入：</strong>s = &quot;1326#&quot;
-<strong>输出：</strong>&quot;acz&quot;
-</pre>
-
-<p><strong>示例 3：</strong></p>
-
-<pre><strong>输入：</strong>s = &quot;25#&quot;
-<strong>输出：</strong>&quot;y&quot;
-</pre>
-
-<p><strong>示例 4：</strong></p>
-
-<pre><strong>输入：</strong>s = &quot;12345678910#11#12#13#14#15#16#17#18#19#20#21#22#23#24#25#26#&quot;
-<strong>输出：</strong>&quot;abcdefghijklmnopqrstuvwxyz&quot;
+<pre>
+<strong>输入：</strong>s = "1326#"
+<strong>输出：</strong>"acz"
 </pre>
 
 <p>&nbsp;</p>
@@ -50,69 +52,177 @@
 
 <ul>
 	<li><code>1 &lt;= s.length &lt;= 1000</code></li>
-	<li><code>s[i]</code> 只包含数字（<code>&#39;0&#39;</code>-<code>&#39;9&#39;</code>）和&nbsp;<code>&#39;#&#39;</code>&nbsp;字符。</li>
+	<li><code>s[i]</code> 只包含数字（<code>'0'</code>-<code>'9'</code>）和&nbsp;<code>'#'</code>&nbsp;字符。</li>
 	<li><code>s</code>&nbsp;是映射始终存在的有效字符串。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：模拟
+
+我们直接模拟即可。
+
+遍历字符串 $s$，对于当前遍历到的下标 $i$，如果 $i + 2 < n$ 且 $s[i + 2]$ 为 `#`，则将 $s[i]$ 和 $s[i + 1]$ 组成的字符串转换为整数，加上 `a` 的 ASCII 码值减去 1，然后转换为字符，添加到结果数组中，并将 $i$ 增加 3；否则，将 $s[i]$ 转换为整数，加上 `a` 的 ASCII 码值减去 1，然后转换为字符，添加到结果数组中，并将 $i$ 增加 1。
+
+最后将结果数组转换为字符串返回即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为字符串 $s$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def freqAlphabets(self, s: str) -> str:
-        def get(s):
-            return chr(ord('a') + int(s) - 1)
-
+        ans = []
         i, n = 0, len(s)
-        res = []
         while i < n:
-            if i + 2 < n and s[i + 2] == '#':
-                res.append(get(s[i: i + 2]))
+            if i + 2 < n and s[i + 2] == "#":
+                ans.append(chr(int(s[i : i + 2]) + ord("a") - 1))
                 i += 3
             else:
-                res.append(get(s[i]))
+                ans.append(chr(int(s[i]) + ord("a") - 1))
                 i += 1
-        return ''.join(res)
+        return "".join(ans)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public String freqAlphabets(String s) {
         int i = 0, n = s.length();
-        StringBuilder res = new StringBuilder();
+        StringBuilder ans = new StringBuilder();
         while (i < n) {
             if (i + 2 < n && s.charAt(i + 2) == '#') {
-                res.append(get(s.substring(i, i + 2)));
+                ans.append((char) ('a' + Integer.parseInt(s.substring(i, i + 2)) - 1));
                 i += 3;
             } else {
-                res.append(get(s.substring(i, i + 1)));
-                i += 1;
+                ans.append((char) ('a' + Integer.parseInt(s.substring(i, i + 1)) - 1));
+                i++;
             }
         }
-        return res.toString();
-    }
-
-    private char get(String s) {
-        return (char) ('a' + Integer.parseInt(s) - 1);
+        return ans.toString();
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    string freqAlphabets(string s) {
+        string ans = "";
+        int i = 0, n = s.size();
+        while (i < n) {
+            if (i + 2 < n && s[i + 2] == '#') {
+                ans += char(stoi(s.substr(i, 2)) + 'a' - 1);
+                i += 3;
+            } else {
+                ans += char(s[i] - '0' + 'a' - 1);
+                i += 1;
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func freqAlphabets(s string) string {
+	var ans []byte
+	for i, n := 0, len(s); i < n; {
+		if i+2 < n && s[i+2] == '#' {
+			num := (int(s[i])-'0')*10 + int(s[i+1]) - '0'
+			ans = append(ans, byte(num+int('a')-1))
+			i += 3
+		} else {
+			num := int(s[i]) - '0'
+			ans = append(ans, byte(num+int('a')-1))
+			i += 1
+		}
+	}
+	return string(ans)
+}
+```
+
+#### TypeScript
+
+```ts
+function freqAlphabets(s: string): string {
+    const ans: string[] = [];
+    for (let i = 0, n = s.length; i < n; ) {
+        if (i + 2 < n && s[i + 2] === '#') {
+            ans.push(String.fromCharCode(96 + +s.slice(i, i + 2)));
+            i += 3;
+        } else {
+            ans.push(String.fromCharCode(96 + +s[i]));
+            i++;
+        }
+    }
+    return ans.join('');
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn freq_alphabets(s: String) -> String {
+        let s = s.as_bytes();
+        let mut ans = String::new();
+        let mut i = 0;
+        let n = s.len();
+        while i < n {
+            if i + 2 < n && s[i + 2] == b'#' {
+                let num = (s[i] - b'0') * 10 + (s[i + 1] - b'0');
+                ans.push((96 + num) as char);
+                i += 3;
+            } else {
+                let num = s[i] - b'0';
+                ans.push((96 + num) as char);
+                i += 1;
+            }
+        }
+        ans
+    }
+}
+```
+
+#### C
+
+```c
+char* freqAlphabets(char* s) {
+    int n = strlen(s);
+    int i = 0;
+    int j = 0;
+    char* ans = malloc(sizeof(s) * n);
+    while (i < n) {
+        int t;
+        if (i + 2 < n && s[i + 2] == '#') {
+            t = (s[i] - '0') * 10 + s[i + 1];
+            i += 3;
+        } else {
+            t = s[i];
+            i += 1;
+        }
+        ans[j++] = 'a' + t - '1';
+    }
+    ans[j] = '\0';
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,49 +1,59 @@
-# [441. 排列硬币](https://leetcode-cn.com/problems/arranging-coins)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0441.Arranging%20Coins/README.md
+tags:
+    - 数学
+    - 二分查找
+---
+
+<!-- problem:start -->
+
+# [441. 排列硬币](https://leetcode.cn/problems/arranging-coins)
 
 [English Version](/solution/0400-0499/0441.Arranging%20Coins/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>你总共有&nbsp;<em>n&nbsp;</em>枚硬币，你需要将它们摆成一个阶梯形状，第&nbsp;<em>k&nbsp;</em>行就必须正好有&nbsp;<em>k&nbsp;</em>枚硬币。</p>
+<p>你总共有&nbsp;<code>n</code><em>&nbsp;</em>枚硬币，并计划将它们按阶梯状排列。对于一个由 <code>k</code> 行组成的阶梯，其第 <code>i</code><em> </em>行必须正好有 <code>i</code><em> </em>枚硬币。阶梯的最后一行 <strong>可能</strong> 是不完整的。</p>
 
-<p>给定一个数字&nbsp;<em>n</em>，找出可形成完整阶梯行的总行数。</p>
+<p>给你一个数字&nbsp;<code>n</code><em> </em>，计算并返回可形成 <strong>完整阶梯行</strong> 的总行数。</p>
 
-<p><em>n&nbsp;</em>是一个非负整数，并且在32位有符号整型的范围内。</p>
+<p>&nbsp;</p>
 
-<p><strong>示例 1:</strong></p>
-
+<p><strong>示例 1：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0441.Arranging%20Coins/images/arrangecoins1-grid.jpg" style="width: 253px; height: 253px;" />
 <pre>
-n = 5
-
-硬币可排列成以下几行:
-&curren;
-&curren; &curren;
-&curren; &curren;
-
-因为第三行不完整，所以返回2.
+<strong>输入：</strong>n = 5
+<strong>输出：</strong>2
+<strong>解释：</strong>因为第三行不完整，所以返回 2 。
 </pre>
 
-<p><strong>示例 2:</strong></p>
-
+<p><strong>示例 2：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0441.Arranging%20Coins/images/arrangecoins2-grid.jpg" style="width: 333px; height: 333px;" />
 <pre>
-n = 8
-
-硬币可排列成以下几行:
-&curren;
-&curren; &curren;
-&curren; &curren; &curren;
-&curren; &curren;
-
-因为第四行不完整，所以返回3.
+<strong>输入：</strong>n = 8
+<strong>输出：</strong>3
+<strong>解释：</strong>因为第四行不完整，所以返回 3 。
 </pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 &lt;= n &lt;= 2<sup>31</sup> - 1</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-1. 数学推导
+### 方法一：数学推导
 
 `(1 + x) * x / 2 <= n`，求解 x。
 
@@ -51,13 +61,9 @@ n = 8
 
 由于 2n 可能溢出，故转换为 `x <= sqrt(2) * sqrt(n + 1/8) - 1/2`。
 
-2. 二分查找
-
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -65,23 +71,7 @@ class Solution:
         return int(math.sqrt(2) * math.sqrt(n + 0.125) - 0.5)
 ```
 
-```python
-class Solution:
-    def arrangeCoins(self, n: int) -> int:
-        left, right = 1, n
-        while left < right:
-            mid = (left + right + 1) >> 1
-            s = ((1 + mid) * mid) >> 1
-            if n < s:
-                right = mid - 1
-            else:
-                left = mid
-        return left
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -91,25 +81,7 @@ class Solution {
 }
 ```
 
-```java
-class Solution {
-    public int arrangeCoins(int n) {
-        long left = 1, right = n;
-        while (left < right) {
-            long mid = (left + right + 1) >> 1;
-            long s = ((1 + mid) * mid) >> 1;
-            if (n < s) {
-                right = mid - 1;
-            } else {
-                left = mid;
-            }
-        }
-        return (int) left;
-    }
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 using LL = long;
@@ -118,40 +90,82 @@ class Solution {
 public:
     int arrangeCoins(int n) {
         LL left = 1, right = n;
-        while (left < right)
-        {
+        while (left < right) {
             LL mid = left + right + 1 >> 1;
             LL s = (1 + mid) * mid >> 1;
-            if (n < s) right = mid - 1;
-            else left = mid;
+            if (n < s)
+                right = mid - 1;
+            else
+                left = mid;
         }
         return left;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func arrangeCoins(n int) int {
 	left, right := 1, n
 	for left < right {
 		mid := (left + right + 1) >> 1
-		s := (1 + mid) * mid >> 1
-		if n < s {
-			right = mid - 1
-		} else {
+		if (1+mid)*mid/2 <= n {
 			left = mid
+		} else {
+			right = mid - 1
 		}
 	}
 	return left
 }
 ```
 
-### **...**
+<!-- tabs:end -->
 
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：二分查找
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def arrangeCoins(self, n: int) -> int:
+        left, right = 1, n
+        while left < right:
+            mid = (left + right + 1) >> 1
+            if (1 + mid) * mid // 2 <= n:
+                left = mid
+            else:
+                right = mid - 1
+        return left
 ```
 
+#### Java
+
+```java
+class Solution {
+    public int arrangeCoins(int n) {
+        long left = 1, right = n;
+        while (left < right) {
+            long mid = (left + right + 1) >>> 1;
+            if ((1 + mid) * mid / 2 <= n) {
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return (int) left;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

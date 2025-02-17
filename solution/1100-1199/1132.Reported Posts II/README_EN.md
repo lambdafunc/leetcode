@@ -1,8 +1,20 @@
-# [1132. Reported Posts II](https://leetcode.com/problems/reported-posts-ii)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1132.Reported%20Posts%20II/README_EN.md
+tags:
+    - Database
+---
+
+<!-- problem:start -->
+
+# [1132. Reported Posts II 🔒](https://leetcode.com/problems/reported-posts-ii)
 
 [中文文档](/solution/1100-1199/1132.Reported%20Posts%20II/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Table: <code>Actions</code></p>
 
@@ -12,13 +24,16 @@
 +---------------+---------+
 | user_id       | int     |
 | post_id       | int     |
-| action_date   | date    |
+| action_date   | date    | 
 | action        | enum    |
 | extra         | varchar |
 +---------------+---------+
-There is no primary key for this table, it may have duplicate rows.
-The action column is an ENUM type of (&#39;view&#39;, &#39;like&#39;, &#39;reaction&#39;, &#39;comment&#39;, &#39;report&#39;, &#39;share&#39;).
-The extra column has optional information about the action such as a reason for report or a type of reaction. </pre>
+This table may have duplicate rows.
+The action column is an ENUM (category) type of (&#39;view&#39;, &#39;like&#39;, &#39;reaction&#39;, &#39;comment&#39;, &#39;report&#39;, &#39;share&#39;).
+The extra column has optional information about the action, such as a reason for the report or a type of reaction.
+</pre>
+
+<p>&nbsp;</p>
 
 <p>Table: <code>Removals</code></p>
 
@@ -29,17 +44,21 @@ The extra column has optional information about the action such as a reason for 
 | post_id       | int     |
 | remove_date   | date    | 
 +---------------+---------+
-post_id is the primary key of this table.
-Each row in this table indicates that some post was removed as a result of being reported or as a result of an admin review.
+post_id is the primary key (column with unique values) of this table.
+Each row in this table indicates that some post was removed due to being reported or as a result of an admin review.
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query to find the average for daily percentage&nbsp;of posts that got removed after being reported as spam,&nbsp;<strong>rounded to 2 decimal places</strong>.</p>
+<p>Write a solution to find the average daily percentage of posts that got removed after being reported as spam, <strong>rounded to 2 decimal places</strong>.</p>
 
-<p>The query result format is in the following example:</p>
+<p>The&nbsp;result format is in the following example.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
+<strong>Input:</strong> 
 Actions table:
 +---------+---------+-------------+--------+--------+
 | user_id | post_id | action_date | action | extra  |
@@ -58,7 +77,6 @@ Actions table:
 | 5       | 5       | 2019-07-03  | view   | null   |
 | 5       | 5       | 2019-07-03  | report | racism |
 +---------+---------+-------------+--------+--------+
-
 Removals table:
 +---------+-------------+
 | post_id | remove_date |
@@ -66,26 +84,49 @@ Removals table:
 | 2       | 2019-07-20  |
 | 3       | 2019-07-18  |
 +---------+-------------+
-
-Result table:
+<strong>Output:</strong> 
 +-----------------------+
 | average_daily_percent |
 +-----------------------+
 | 75.00                 |
 +-----------------------+
-The percentage for 2019-07-04 is 50% because only one post of two spam reported posts was removed.
+<strong>Explanation:</strong> 
+The percentage for 2019-07-04 is 50% because only one post of two spam reported posts were removed.
 The percentage for 2019-07-02 is 100% because one post was reported as spam and it was removed.
 The other days had no spam reports so the average is (50 + 100) / 2 = 75%
-Note that the output is only one number and that we do not care about the remove dates.</pre>
+Note that the output is only one number and that we do not care about the remove dates.
+</pre>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **SQL**
+#### MySQL
 
 ```sql
-
+# Write your MySQL query statement below
+WITH
+    T AS (
+        SELECT
+            COUNT(DISTINCT t2.post_id) / COUNT(DISTINCT t1.post_id) * 100 AS percent
+        FROM
+            Actions AS t1
+            LEFT JOIN Removals AS t2 ON t1.post_id = t2.post_id
+        WHERE extra = 'spam'
+        GROUP BY action_date
+    )
+SELECT ROUND(AVG(percent), 2) AS average_daily_percent
+FROM T;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

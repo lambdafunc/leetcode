@@ -3,16 +3,14 @@ class Solution {
         if (arr.length < m * k) {
             return false;
         }
-        for (int i = 0; i <= arr.length - m * k; i++) {
-            boolean match = true;
-            for (int j = i + m; j < i + m * k; j++) {
-                if (arr[j] != arr[j - m]) {
-                    match = false;
-                    break;
+        int cnt = 0, target = (k - 1) * m;
+        for (int i = m; i < arr.length; ++i) {
+            if (arr[i] == arr[i - m]) {
+                if (++cnt == target) {
+                    return true;
                 }
-            }
-            if (match) {
-                return true;
+            } else {
+                cnt = 0;
             }
         }
         return false;

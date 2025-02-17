@@ -1,8 +1,22 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0457.Circular%20Array%20Loop/README_EN.md
+tags:
+    - Array
+    - Hash Table
+    - Two Pointers
+---
+
+<!-- problem:start -->
+
 # [457. Circular Array Loop](https://leetcode.com/problems/circular-array-loop)
 
 [中文文档](/solution/0400-0499/0457.Circular%20Array%20Loop/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are playing a game involving a <strong>circular</strong> array of non-zero integers <code>nums</code>. Each <code>nums[i]</code> denotes the number of indices forward/backward you must move if you are located at index <code>i</code>:</p>
 
@@ -24,34 +38,32 @@
 <p>Return <code>true</code><em> if there is a <strong>cycle</strong> in </em><code>nums</code><em>, or </em><code>false</code><em> otherwise</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0457.Circular%20Array%20Loop/images/img1.jpg" style="width: 402px; height: 289px;" />
 <pre>
 <strong>Input:</strong> nums = [2,-1,1,2,2]
 <strong>Output:</strong> true
-<strong>Explanation:</strong>
-There is a cycle from index 0 -&gt; 2 -&gt; 3 -&gt; 0 -&gt; ...
-The cycle&#39;s length is 3.
+<strong>Explanation:</strong> The graph shows how the indices are connected. White nodes are jumping forward, while red is jumping backward.
+We can see the cycle 0 --&gt; 2 --&gt; 3 --&gt; 0 --&gt; ..., and all of its nodes are white (jumping in the same direction).
 </pre>
 
-<p><strong>Example 2:</strong></p>
-
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0457.Circular%20Array%20Loop/images/img2.jpg" style="width: 402px; height: 390px;" />
 <pre>
-<strong>Input:</strong> nums = [-1,2]
+<strong>Input:</strong> nums = [-1,-2,-3,-4,-5,6]
 <strong>Output:</strong> false
-<strong>Explanation:</strong>
-The sequence from index 1 -&gt; 1 -&gt; 1 -&gt; ... is not a cycle because the sequence&#39;s length is 1.
-By definition the sequence&#39;s length must be strictly greater than 1 to be a cycle.
+<strong>Explanation:</strong> The graph shows how the indices are connected. White nodes are jumping forward, while red is jumping backward.
+The only cycle is of size 1, so we return false.
 </pre>
 
-<p><strong>Example 3:</strong></p>
-
+<p><strong class="example">Example 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0457.Circular%20Array%20Loop/images/img3.jpg" style="width: 497px; height: 242px;" />
 <pre>
-<strong>Input:</strong> nums = [-2,1,-1,-2,-2]
-<strong>Output:</strong> false
-<strong>Explanation:</strong>
-The sequence from index 1 -&gt; 2 -&gt; 1 -&gt; ... is not a cycle because nums[1] is positive, but nums[2] is negative.
-Every nums[seq[j]] must be either all positive or all negative.
+<strong>Input:</strong> nums = [1,-1,5,1,4]
+<strong>Output:</strong> true
+<strong>Explanation:</strong> The graph shows how the indices are connected. White nodes are jumping forward, while red is jumping backward.
+We can see the cycle 0 --&gt; 1 --&gt; 0 --&gt; ..., and while it is of size &gt; 1, it has a node jumping forward and a node jumping backward, so <strong>it is not a cycle</strong>.
+We can see the cycle 3 --&gt; 4 --&gt; 3 --&gt; ..., and all of its nodes are white (jumping in the same direction).
 </pre>
 
 <p>&nbsp;</p>
@@ -66,11 +78,17 @@ Every nums[seq[j]] must be either all positive or all negative.
 <p>&nbsp;</p>
 <p><strong>Follow up:</strong> Could you solve it in <code>O(n)</code> time complexity and <code>O(1)</code> extra space complexity?</p>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -97,7 +115,7 @@ class Solution:
         return False
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -137,7 +155,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -171,7 +189,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func circularArrayLoop(nums []int) bool {
@@ -204,10 +222,8 @@ func next(nums []int, i int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

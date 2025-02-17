@@ -1,10 +1,23 @@
-# [1513. 仅含 1 的子串数](https://leetcode-cn.com/problems/number-of-substrings-with-only-1s)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1513.Number%20of%20Substrings%20With%20Only%201s/README.md
+rating: 1351
+source: 第 197 场周赛 Q2
+tags:
+    - 数学
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1513. 仅含 1 的子串数](https://leetcode.cn/problems/number-of-substrings-with-only-1s)
 
 [English Version](/solution/1500-1599/1513.Number%20of%20Substrings%20With%20Only%201s/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个二进制字符串 <code>s</code>（仅由 &#39;0&#39; 和 &#39;1&#39; 组成的字符串）。</p>
 
@@ -52,32 +65,110 @@
 	<li><code>1 &lt;= s.length &lt;= 10^5</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：遍历计数
+
+我们遍历字符串 $s$，用变量 $cnt$ 记录当前连续的 1 的个数，用变量 $ans$ 记录答案。当遍历到字符 $s[i]$ 时，如果 $s[i] = 1$，则 $cnt$ 自增 1，否则 $cnt$ 置 0。此时 $ans$ 自增 $cnt$。
+
+遍历结束，返回 $ans$ 即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 为字符串 $s$ 的长度。
+
+相似题目：
+
+-   [413. 等差数列划分](https://github.com/doocs/leetcode/blob/main/solution/0400-0499/0413.Arithmetic%20Slices/README.md)
+-   [2348. 全 0 子数组的数目](https://github.com/doocs/leetcode/blob/main/solution/2300-2399/2348.Number%20of%20Zero-Filled%20Subarrays/README.md)
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def numSub(self, s: str) -> int:
+        ans = cnt = 0
+        for c in s:
+            if c == "1":
+                cnt += 1
+            else:
+                cnt = 0
+            ans += cnt
+        return ans % (10**9 + 7)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int numSub(String s) {
+        final int mod = (int) 1e9 + 7;
+        int ans = 0, cnt = 0;
+        for (int i = 0; i < s.length(); ++i) {
+            cnt = s.charAt(i) == '1' ? cnt + 1 : 0;
+            ans = (ans + cnt) % mod;
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int numSub(string s) {
+        int ans = 0, cnt = 0;
+        const int mod = 1e9 + 7;
+        for (char& c : s) {
+            cnt = c == '1' ? cnt + 1 : 0;
+            ans = (ans + cnt) % mod;
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func numSub(s string) (ans int) {
+	const mod = 1e9 + 7
+	cnt := 0
+	for _, c := range s {
+		if c == '1' {
+			cnt++
+		} else {
+			cnt = 0
+		}
+		ans = (ans + cnt) % mod
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function numSub(s: string): number {
+    const mod = 10 ** 9 + 7;
+    let ans = 0;
+    let cnt = 0;
+    for (const c of s) {
+        cnt = c == '1' ? cnt + 1 : 0;
+        ans = (ans + cnt) % mod;
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

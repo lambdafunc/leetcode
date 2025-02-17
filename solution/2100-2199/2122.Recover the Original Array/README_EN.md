@@ -1,8 +1,26 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2122.Recover%20the%20Original%20Array/README_EN.md
+rating: 2158
+source: Weekly Contest 273 Q4
+tags:
+    - Array
+    - Hash Table
+    - Two Pointers
+    - Enumeration
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [2122. Recover the Original Array](https://leetcode.com/problems/recover-the-original-array)
 
 [中文文档](/solution/2100-2199/2122.Recover%20the%20Original%20Array/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Alice had a <strong>0-indexed</strong> array <code>arr</code> consisting of <code>n</code> <strong>positive</strong> integers. She chose an arbitrary <strong>positive integer</strong> <code>k</code> and created two new <strong>0-indexed</strong> integer arrays <code>lower</code> and <code>higher</code> in the following manner:</p>
 
@@ -18,7 +36,7 @@
 <p><strong>Note:</strong> The test cases are generated such that there exists <strong>at least one</strong> valid array <code>arr</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [2,10,6,4,8,12]
@@ -29,7 +47,7 @@ Combining lower and higher gives us [2,6,10,4,8,12], which is a permutation of n
 Another valid possibility is that arr = [5,7,9] and k = 3. In that case, lower = [2,4,6] and higher = [8,10,12]. 
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,1,3,3]
@@ -41,7 +59,7 @@ Note that arr cannot be [1,3] because in that case, the only possible way to obt
 This is invalid since k must be positive.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [5,435]
@@ -60,11 +78,17 @@ The only possible combination is arr = [220] and k = 215. Using them, we get low
 	<li>The test cases are generated such that there exists <strong>at least one</strong> valid array <code>arr</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -94,7 +118,7 @@ class Solution:
         return []
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -136,23 +160,21 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<int> recoverArray(vector<int>& nums) {
         sort(nums.begin(), nums.end());
-        for (int i = 1, n = nums.size(); i < n; ++i)
-        {
+        for (int i = 1, n = nums.size(); i < n; ++i) {
             int d = nums[i] - nums[0];
             if (d == 0 || d % 2 == 1) continue;
             vector<bool> vis(n);
             vis[i] = true;
             vector<int> ans;
             ans.push_back((nums[0] + nums[i]) >> 1);
-            for (int l = 1, r = i + 1; r < n; ++l, ++r)
-            {
+            for (int l = 1, r = i + 1; r < n; ++l, ++r) {
                 while (l < n && vis[l]) ++l;
                 while (r < n && nums[r] - nums[l] < d) ++r;
                 if (r == n || nums[r] - nums[l] > d) break;
@@ -166,7 +188,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func recoverArray(nums []int) []int {
@@ -200,16 +222,8 @@ func recoverArray(nums []int) []int {
 }
 ```
 
-### **TypeScript**
-
-```ts
-
-```
-
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

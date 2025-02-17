@@ -1,10 +1,23 @@
-# [2167. 移除所有载有违禁货物车厢所需的最少时间](https://leetcode-cn.com/problems/minimum-time-to-remove-all-cars-containing-illegal-goods)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2167.Minimum%20Time%20to%20Remove%20All%20Cars%20Containing%20Illegal%20Goods/README.md
+rating: 2219
+source: 第 279 场周赛 Q4
+tags:
+    - 字符串
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [2167. 移除所有载有违禁货物车厢所需的最少时间](https://leetcode.cn/problems/minimum-time-to-remove-all-cars-containing-illegal-goods)
 
 [English Version](/solution/2100-2199/2167.Minimum%20Time%20to%20Remove%20All%20Cars%20Containing%20Illegal%20Goods/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个下标从 <strong>0</strong> 开始的二进制字符串 <code>s</code> ，表示一个列车车厢序列。<code>s[i] = '0'</code> 表示第 <code>i</code> 节车厢 <strong>不</strong> 含违禁货物，而 <code>s[i] = '1'</code> 表示第 <code>i</code> 节车厢含违禁货物。</p>
 
@@ -72,38 +85,101 @@
 	<li><code>s[i]</code> 为 <code>'0'</code> 或 <code>'1'</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def minimumTime(self, s: str) -> int:
+        n = len(s)
+        pre = [0] * (n + 1)
+        suf = [0] * (n + 1)
+        for i, c in enumerate(s):
+            pre[i + 1] = pre[i] if c == '0' else min(pre[i] + 2, i + 1)
+        for i in range(n - 1, -1, -1):
+            suf[i] = suf[i + 1] if s[i] == '0' else min(suf[i + 1] + 2, n - i)
+        return min(a + b for a, b in zip(pre[1:], suf[1:]))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int minimumTime(String s) {
+        int n = s.length();
+        int[] pre = new int[n + 1];
+        int[] suf = new int[n + 1];
+        for (int i = 0; i < n; ++i) {
+            pre[i + 1] = s.charAt(i) == '0' ? pre[i] : Math.min(pre[i] + 2, i + 1);
+        }
+        for (int i = n - 1; i >= 0; --i) {
+            suf[i] = s.charAt(i) == '0' ? suf[i + 1] : Math.min(suf[i + 1] + 2, n - i);
+        }
+        int ans = Integer.MAX_VALUE;
+        for (int i = 1; i <= n; ++i) {
+            ans = Math.min(ans, pre[i] + suf[i]);
+        }
+        return ans;
+    }
+}
 ```
 
-### **TypeScript**
+#### C++
 
-```ts
-
+```cpp
+class Solution {
+public:
+    int minimumTime(string s) {
+        int n = s.size();
+        vector<int> pre(n + 1);
+        vector<int> suf(n + 1);
+        for (int i = 0; i < n; ++i) pre[i + 1] = s[i] == '0' ? pre[i] : min(pre[i] + 2, i + 1);
+        for (int i = n - 1; ~i; --i) suf[i] = s[i] == '0' ? suf[i + 1] : min(suf[i + 1] + 2, n - i);
+        int ans = INT_MAX;
+        for (int i = 1; i <= n; ++i) ans = min(ans, pre[i] + suf[i]);
+        return ans;
+    }
+};
 ```
 
-### **...**
+#### Go
 
-```
-
+```go
+func minimumTime(s string) int {
+	n := len(s)
+	pre := make([]int, n+1)
+	suf := make([]int, n+1)
+	for i, c := range s {
+		pre[i+1] = pre[i]
+		if c == '1' {
+			pre[i+1] = min(pre[i]+2, i+1)
+		}
+	}
+	for i := n - 1; i >= 0; i-- {
+		suf[i] = suf[i+1]
+		if s[i] == '1' {
+			suf[i] = min(suf[i+1]+2, n-i)
+		}
+	}
+	ans := 0x3f3f3f3f
+	for i := 1; i <= n; i++ {
+		ans = min(ans, pre[i]+suf[i])
+	}
+	return ans
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

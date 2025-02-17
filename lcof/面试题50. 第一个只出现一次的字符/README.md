@@ -1,104 +1,97 @@
-# [面试题 50. 第一个只出现一次的字符](https://leetcode-cn.com/problems/di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-lcof/)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9850.%20%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%B8%80%E6%AC%A1%E7%9A%84%E5%AD%97%E7%AC%A6/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 50. 第一个只出现一次的字符](https://leetcode.cn/problems/di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-lcof/)
 
 ## 题目描述
 
-在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。
+<!-- description:start -->
 
-**示例 1:**
+<p>在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。 s 只包含小写字母。</p>
 
-```
-输入: s = "abaccdeff"
-输出: 'b'
-```
+<p><strong>示例 1:</strong></p>
 
-**示例 2:**
+<pre>
+输入：s = "abaccdeff"
+输出：'b'
+</pre>
 
-```
+<p><strong>示例 2:</strong></p>
+
+<pre>
 输入：s = "" 
 输出：' '
-```
+</pre>
 
-**限制：**
+<p>&nbsp;</p>
 
-- `0 <= s 的长度 <= 50000`
+<p><strong>限制：</strong></p>
+
+<p><code>0 &lt;= s 的长度 &lt;= 50000</code></p>
+
+<!-- description:end -->
 
 ## 解法
 
-对字符串进行两次遍历：
+<!-- solution:start -->
 
-第一遍，先用 hash 表（或数组）统计字符串中每个字符出现的次数。
+### 方法一：数组或哈希表
 
-第二遍，只要遍历到一个只出现一次的字符，那么就返回该字符，否则在遍历结束后返回空格。
+我们可以使用哈希表或数组 $cnt$ 来统计每个字符出现的次数，然后再遍历一遍字符串，找到第一个出现次数为 $1$ 的字符。
+
+时间复杂度 $O(n)$，空间复杂度 $O(C)$。其中 $n$ 为字符串长度；而 $C$ 为字符集大小，本题中 $C=26$。
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def firstUniqChar(self, s: str) -> str:
-        counter = Counter(s)
+        cnt = Counter(s)
         for c in s:
-            if counter[c] == 1:
+            if cnt[c] == 1:
                 return c
-        return ' '
+        return " "
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public char firstUniqChar(String s) {
-        int n;
-        if ((n = s.length()) == 0) return ' ';
-        int[] counter = new int[26];
-        for (int i = 0; i < n; ++i) {
-            int index = s.charAt(i) - 'a';
-            ++counter[index];
+        int[] cnt = new int[26];
+        for (int i = 0; i < s.length(); ++i) {
+            ++cnt[s.charAt(i) - 'a'];
         }
-        for (int i = 0; i < n; ++i) {
-            int index = s.charAt(i) - 'a';
-            if (counter[index] == 1) return s.charAt(i);
+        for (int i = 0; i < s.length(); ++i) {
+            char c = s.charAt(i);
+            if (cnt[c - 'a'] == 1) {
+                return c;
+            }
         }
         return ' ';
     }
 }
 ```
 
-### **JavaScript**
-
-```js
-/**
- * @param {string} s
- * @return {character}
- */
-var firstUniqChar = function (s) {
-    if (s.length == 0) return " ";
-    let counter = new Array(26).fill(0);
-    for (let i = 0; i < s.length; ++i) {
-        const index = s[i].charCodeAt() - "a".charCodeAt();
-        ++counter[index];
-    }
-    for (let i = 0; i < s.length; ++i) {
-        const index = s[i].charCodeAt() - "a".charCodeAt();
-        if (counter[index] == 1) return s[i];
-    }
-    return " ";
-};
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     char firstUniqChar(string s) {
-        unordered_map<char, bool> um;
-        for (char c : s) {
-            um[c] = um.find(c) == um.end();
+        int cnt[26]{};
+        for (char& c : s) {
+            ++cnt[c - 'a'];
         }
-        for (char c : s) {
-            if (um[c]) {
+        for (char& c : s) {
+            if (cnt[c - 'a'] == 1) {
                 return c;
             }
         }
@@ -107,16 +100,33 @@ public:
 };
 ```
 
-### **TypeScript**
+#### Go
+
+```go
+func firstUniqChar(s string) byte {
+	cnt := [26]int{}
+	for _, c := range s {
+		cnt[c-'a']++
+	}
+	for _, c := range s {
+		if cnt[c-'a'] == 1 {
+			return byte(c)
+		}
+	}
+	return ' '
+}
+```
+
+#### TypeScript
 
 ```ts
 function firstUniqChar(s: string): string {
-    const map = new Map();
+    const cnt: number[] = Array(26).fill(0);
     for (const c of s) {
-        map.set(c, !map.has(c));
+        cnt[c.charCodeAt(0) - 97]++;
     }
     for (const c of s) {
-        if (map.get(c)) {
+        if (cnt[c.charCodeAt(0) - 97] === 1) {
             return c;
         }
     }
@@ -124,26 +134,18 @@ function firstUniqChar(s: string): string {
 }
 ```
 
-### **Rust**
+#### Rust
 
 ```rust
-use std::collections::HashMap;
-
 impl Solution {
     pub fn first_uniq_char(s: String) -> char {
-        let mut map = HashMap::new();
-        let s = s.chars().collect::<Vec<char>>();
-        for c in s.iter() {
-            match map.contains_key(c) {
-                true => map.insert(c, false),
-                false => map.insert(c, true),
-            };
+        let mut cnt = [0; 26];
+        for c in s.chars() {
+            cnt[(c as usize) - ('a' as usize)] += 1;
         }
-        for c in s.iter() {
-            if let Some(is_single) = map.get(c) {
-                if *is_single {
-                    return *c;
-                }
+        for c in s.chars() {
+            if cnt[(c as usize) - ('a' as usize)] == 1 {
+                return c;
             }
         }
         ' '
@@ -151,10 +153,71 @@ impl Solution {
 }
 ```
 
-### **...**
+#### JavaScript
 
+```js
+/**
+ * @param {string} s
+ * @return {character}
+ */
+var firstUniqChar = function (s) {
+    const cnt = Array(26).fill(0);
+    for (const c of s) {
+        cnt[c.charCodeAt(0) - 97]++;
+    }
+    for (const c of s) {
+        if (cnt[c.charCodeAt(0) - 97] === 1) {
+            return c;
+        }
+    }
+    return ' ';
+};
 ```
 
+#### C#
+
+```cs
+public class Solution {
+    public char FirstUniqChar(string s) {
+        var cnt = new int[26];
+        foreach(var c in s) {
+            cnt[c - 'a'] ++;
+        }
+        foreach(var c in s) {
+            if (cnt[c - 'a'] == 1) {
+                return c;
+            }
+        }
+        return ' ';
+    }
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func firstUniqChar(_ s: String) -> Character {
+        var count = [Int](repeating: 0, count: 26)
+        let aAsciiValue = Int(Character("a").asciiValue!)
+
+        for char in s {
+            count[Int(char.asciiValue!) - aAsciiValue] += 1
+        }
+
+        for char in s {
+            if count[Int(char.asciiValue!) - aAsciiValue] == 1 {
+                return char
+            }
+        }
+
+        return " "
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

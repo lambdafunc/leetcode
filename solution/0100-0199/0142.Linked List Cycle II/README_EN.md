@@ -1,34 +1,48 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0142.Linked%20List%20Cycle%20II/README_EN.md
+tags:
+    - Hash Table
+    - Linked List
+    - Two Pointers
+---
+
+<!-- problem:start -->
+
 # [142. Linked List Cycle II](https://leetcode.com/problems/linked-list-cycle-ii)
 
 [中文文档](/solution/0100-0199/0142.Linked%20List%20Cycle%20II/README.md)
 
 ## Description
 
-<p>Given a linked list, return the node where the cycle begins. If there is no cycle, return <code>null</code>.</p>
+<!-- description:start -->
 
-<p>There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the&nbsp;<code>next</code>&nbsp;pointer. Internally, <code>pos</code>&nbsp;is used to denote the index of the node that&nbsp;tail&#39;s&nbsp;<code>next</code>&nbsp;pointer is connected to.&nbsp;<strong>Note that&nbsp;<code>pos</code>&nbsp;is not passed as a parameter</strong>.</p>
+<p>Given the <code>head</code> of a linked list, return <em>the node where the cycle begins. If there is no cycle, return </em><code>null</code>.</p>
 
-<p><strong>Notice</strong> that you <strong>should not modify</strong> the linked list.</p>
+<p>There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the <code>next</code> pointer. Internally, <code>pos</code> is used to denote the index of the node that tail&#39;s <code>next</code> pointer is connected to (<strong>0-indexed</strong>). It is <code>-1</code> if there is no cycle. <strong>Note that</strong> <code>pos</code> <strong>is not passed as a parameter</strong>.</p>
+
+<p><strong>Do not modify</strong> the linked list.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0142.Linked%20List%20Cycle%20II/images/circularlinkedlist.png" style="height: 145px; width: 450px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0142.Linked%20List%20Cycle%20II/images/circularlinkedlist.png" style="height: 145px; width: 450px;" />
 <pre>
 <strong>Input:</strong> head = [3,2,0,-4], pos = 1
 <strong>Output:</strong> tail connects to node index 1
 <strong>Explanation:</strong> There is a cycle in the linked list, where tail connects to the second node.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0142.Linked%20List%20Cycle%20II/images/circularlinkedlist_test2.png" style="height: 105px; width: 201px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0142.Linked%20List%20Cycle%20II/images/circularlinkedlist_test2.png" style="height: 105px; width: 201px;" />
 <pre>
 <strong>Input:</strong> head = [1,2], pos = 0
 <strong>Output:</strong> tail connects to node index 0
 <strong>Explanation:</strong> There is a cycle in the linked list, where tail connects to the first node.
 </pre>
 
-<p><strong>Example 3:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0142.Linked%20List%20Cycle%20II/images/circularlinkedlist_test3.png" style="height: 65px; width: 65px;" />
+<p><strong class="example">Example 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0142.Linked%20List%20Cycle%20II/images/circularlinkedlist_test3.png" style="height: 65px; width: 65px;" />
 <pre>
 <strong>Input:</strong> head = [1], pos = -1
 <strong>Output:</strong> no cycle
@@ -47,11 +61,35 @@
 <p>&nbsp;</p>
 <p><strong>Follow up:</strong> Can you solve it using <code>O(1)</code> (i.e. constant) memory?</p>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Two Pointers
+
+We first use the fast and slow pointers to judge whether the linked list has a ring. If there is a ring, the fast and slow pointers will definitely meet, and the meeting node must be in the ring.
+
+If there is no ring, the fast pointer will reach the tail of the linked list first, and return `null` directly.
+
+If there is a ring, we then define an answer pointer $ans$ to point to the head of the linked list, and then let $ans$ and the slow pointer move forward together, moving one step at a time, until $ans$ and the slow pointer meet, and the meeting node is the ring entrance node.
+
+Why can this find the entrance node of the ring?
+
+Let's assume that the distance from the head node of the linked list to the entrance of the ring is $x$, the distance from the entrance of the ring to the meeting node is $y$, and the distance from the meeting node to the entrance of the ring is $z$. Then the distance traveled by the slow pointer is $x + y$, and the distance traveled by the fast pointer is $x + y + k \times (y + z)$, where $k$ is the number of times the fast pointer goes around the ring.
+
+<p><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0142.Linked%20List%20Cycle%20II/images/linked-list-cycle-ii.png" /></p>
+
+Because the speed of the fast pointer is twice that of the slow pointer, it is $2 \times (x + y) = x + y + k \times (y + z)$, which can be deduced that $x + y = k \times (y + z)$, that is $x = (k - 1) \times (y + z) + z$.
+
+That is to say, if we define an answer pointer $ans$ to point to the head of the linked list, and the $ans$ and the slow pointer move forward together, they will definitely meet at the ring entrance.
+
+The time complexity is $O(n)$, where $n$ is the number of nodes in the linked list. The space complexity is $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -60,22 +98,22 @@
 #         self.val = x
 #         self.next = None
 
+
 class Solution:
-    def detectCycle(self, head: ListNode) -> ListNode:
-        slow = fast = head
-        has_cycle = False
-        while not has_cycle and fast and fast.next:
-            slow, fast = slow.next, fast.next.next
-            has_cycle = slow == fast
-        if not has_cycle:
-            return None
-        p = head
-        while p != slow:
-            p, slow = p.next, slow.next
-        return p
+    def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        fast = slow = head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                ans = head
+                while ans != slow:
+                    ans = ans.next
+                    slow = slow.next
+                return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -91,27 +129,86 @@ class Solution:
  */
 public class Solution {
     public ListNode detectCycle(ListNode head) {
-        ListNode slow = head, fast = head;
-        boolean hasCycle = false;
-        while (!hasCycle && fast != null && fast.next != null) {
+        ListNode fast = head, slow = head;
+        while (fast != null && fast.next != null) {
             slow = slow.next;
             fast = fast.next.next;
-            hasCycle = slow == fast;
+            if (slow == fast) {
+                ListNode ans = head;
+                while (ans != slow) {
+                    ans = ans.next;
+                    slow = slow.next;
+                }
+                return ans;
+            }
         }
-        if (!hasCycle) {
-            return null;
-        }
-        ListNode p = head;
-        while (p != slow) {
-            p = p.next;
-            slow = slow.next;
-        }
-        return p;
+        return null;
     }
 }
 ```
 
-### **TypeScript**
+#### C++
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* detectCycle(ListNode* head) {
+        ListNode* fast = head;
+        ListNode* slow = head;
+        while (fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+            if (slow == fast) {
+                ListNode* ans = head;
+                while (ans != slow) {
+                    ans = ans->next;
+                    slow = slow->next;
+                }
+                return ans;
+            }
+        }
+        return nullptr;
+    }
+};
+```
+
+#### Go
+
+```go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func detectCycle(head *ListNode) *ListNode {
+	fast, slow := head, head
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+		if slow == fast {
+			ans := head
+			for ans != slow {
+				ans = ans.Next
+				slow = slow.Next
+			}
+			return ans
+		}
+	}
+	return nil
+}
+```
+
+#### TypeScript
 
 ```ts
 /**
@@ -127,62 +224,24 @@ public class Solution {
  */
 
 function detectCycle(head: ListNode | null): ListNode | null {
-    let slow = head,
-        fast = head;
-    while (fast) {
+    let [slow, fast] = [head, head];
+    while (fast && fast.next) {
         slow = slow.next;
-        if (!fast.next) return null;
         fast = fast.next.next;
-
-        if (fast == slow) {
-            let cur = head;
-            while (cur != slow) {
+        if (slow === fast) {
+            let ans = head;
+            while (ans !== slow) {
+                ans = ans.next;
                 slow = slow.next;
-                cur = cur.next;
             }
-            return cur;
+            return ans;
         }
     }
     return null;
 }
 ```
 
-### **C++**
-
-```cpp
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
-class Solution {
-public:
-    ListNode *detectCycle(ListNode *head) {
-        ListNode* slow = head;
-        ListNode* fast = head;
-        bool hasCycle = false;
-        while (!hasCycle && fast && fast->next) {
-            slow = slow->next;
-            fast = fast->next->next;
-            hasCycle = slow == fast;
-        }
-        if (!hasCycle) {
-            return nullptr;
-        }
-        ListNode* p = head;
-        while (p != slow) {
-            p = p->next;
-            slow = slow->next;
-        }
-        return p;
-    }
-};
-```
-
-### **JavaScript**
+#### JavaScript
 
 ```js
 /**
@@ -198,58 +257,25 @@ public:
  * @return {ListNode}
  */
 var detectCycle = function (head) {
-    let slow = head;
-    let fast = head;
-    let hasCycle = false;
-    while (!hasCycle && fast && fast.next) {
+    let [slow, fast] = [head, head];
+    while (fast && fast.next) {
         slow = slow.next;
         fast = fast.next.next;
-        hasCycle = slow == fast;
+        if (slow === fast) {
+            let ans = head;
+            while (ans !== slow) {
+                ans = ans.next;
+                slow = slow.next;
+            }
+            return ans;
+        }
     }
-    if (!hasCycle) {
-        return null;
-    }
-    let p = head;
-    while (p != slow) {
-        p = p.next;
-        slow = slow.next;
-    }
-    return p;
+    return null;
 };
 ```
 
-### **Go**
-
-```go
-/**
- * Definition for singly-linked list.
- * type ListNode struct {
- *     Val int
- *     Next *ListNode
- * }
- */
-func detectCycle(head *ListNode) *ListNode {
-    slow, fast := head, head
-    hasCycle := false
-    for !hasCycle && fast != nil && fast.Next != nil {
-        slow, fast = slow.Next, fast.Next.Next
-        hasCycle = slow == fast
-    }
-    if !hasCycle {
-        return nil
-    }
-    p := head
-    for p != slow {
-        p, slow = p.Next, slow.Next
-    }
-    return p
-}
-```
-
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

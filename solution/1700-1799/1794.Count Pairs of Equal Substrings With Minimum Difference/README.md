@@ -1,10 +1,22 @@
-# [1794. 统计距离最小的子串对个数](https://leetcode-cn.com/problems/count-pairs-of-equal-substrings-with-minimum-difference)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1794.Count%20Pairs%20of%20Equal%20Substrings%20With%20Minimum%20Difference/README.md
+tags:
+    - 贪心
+    - 哈希表
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1794. 统计距离最小的子串对个数 🔒](https://leetcode.cn/problems/count-pairs-of-equal-substrings-with-minimum-difference)
 
 [English Version](/solution/1700-1799/1794.Count%20Pairs%20of%20Equal%20Substrings%20With%20Minimum%20Difference/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>输入数据为两个字符串<code>firstString</code> 和 <code>secondString</code>，两个字符串下标均从0开始，且均只包含小写的英文字符，请计算满足下列要求的下标四元组<code>(i,j,a,b)</code>的个数：</p>
 
@@ -44,32 +56,147 @@
 	<li>两个输入字符串均只包含小写英文字符.</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：贪心 + 哈希表
+
+题目实际上要我们找到一个最小的下标 $i$ 和一个最大的下标 $j$，使得 $firstString[i]$ 与 $secondString[j]$ 相等，且 $i - j$ 的值是所有满足条件的下标对中最小的。
+
+因此，我们先用哈希表 $last$ 记录 $secondString$ 中每个字符最后一次出现的下标，然后遍历 $firstString$，对于每个字符 $c$，如果 $c$ 在 $secondString$ 中出现过，则计算 $i - last[c]$，如果 $i - last[c]$ 的值小于当前最小值，则更新最小值，同时更新答案为 1；如果 $i - last[c]$ 的值等于当前最小值，则答案加 1。
+
+时间复杂度 $O(m + n)$，空间复杂度 $O(C)$。其中 $m$ 和 $n$ 分别是 $firstString$ 和 $secondString$ 的长度，而 $C$ 是字符集的大小。本题中 $C = 26$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def countQuadruples(self, firstString: str, secondString: str) -> int:
+        last = {c: i for i, c in enumerate(secondString)}
+        ans, mi = 0, inf
+        for i, c in enumerate(firstString):
+            if c in last:
+                t = i - last[c]
+                if mi > t:
+                    mi = t
+                    ans = 1
+                elif mi == t:
+                    ans += 1
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int countQuadruples(String firstString, String secondString) {
+        int[] last = new int[26];
+        for (int i = 0; i < secondString.length(); ++i) {
+            last[secondString.charAt(i) - 'a'] = i + 1;
+        }
+        int ans = 0, mi = 1 << 30;
+        for (int i = 0; i < firstString.length(); ++i) {
+            int j = last[firstString.charAt(i) - 'a'];
+            if (j > 0) {
+                int t = i - j;
+                if (mi > t) {
+                    mi = t;
+                    ans = 1;
+                } else if (mi == t) {
+                    ++ans;
+                }
+            }
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int countQuadruples(string firstString, string secondString) {
+        int last[26] = {0};
+        for (int i = 0; i < secondString.size(); ++i) {
+            last[secondString[i] - 'a'] = i + 1;
+        }
+        int ans = 0, mi = 1 << 30;
+        for (int i = 0; i < firstString.size(); ++i) {
+            int j = last[firstString[i] - 'a'];
+            if (j) {
+                int t = i - j;
+                if (mi > t) {
+                    mi = t;
+                    ans = 1;
+                } else if (mi == t) {
+                    ++ans;
+                }
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func countQuadruples(firstString string, secondString string) (ans int) {
+	last := [26]int{}
+	for i, c := range secondString {
+		last[c-'a'] = i + 1
+	}
+	mi := 1 << 30
+	for i, c := range firstString {
+		j := last[c-'a']
+		if j > 0 {
+			t := i - j
+			if mi > t {
+				mi = t
+				ans = 1
+			} else if mi == t {
+				ans++
+			}
+		}
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function countQuadruples(firstString: string, secondString: string): number {
+    const last: number[] = new Array(26).fill(0);
+    for (let i = 0; i < secondString.length; ++i) {
+        last[secondString.charCodeAt(i) - 97] = i + 1;
+    }
+    let [ans, mi] = [0, Infinity];
+    for (let i = 0; i < firstString.length; ++i) {
+        const j = last[firstString.charCodeAt(i) - 97];
+        if (j) {
+            const t = i - j;
+            if (mi > t) {
+                mi = t;
+                ans = 1;
+            } else if (mi === t) {
+                ++ans;
+            }
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,22 +1,38 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0284.Peeking%20Iterator/README_EN.md
+tags:
+    - Design
+    - Array
+    - Iterator
+---
+
+<!-- problem:start -->
+
 # [284. Peeking Iterator](https://leetcode.com/problems/peeking-iterator)
 
 [中文文档](/solution/0200-0299/0284.Peeking%20Iterator/README.md)
 
 ## Description
 
-<p>Design an iterator that supports the <code>peek</code> operation on a list in addition to the <code>hasNext</code> and the <code>next</code> operations.</p>
+<!-- description:start -->
+
+<p>Design an iterator that supports the <code>peek</code> operation on an existing iterator in addition to the <code>hasNext</code> and the <code>next</code> operations.</p>
 
 <p>Implement the <code>PeekingIterator</code> class:</p>
 
 <ul>
-	<li><code>PeekingIterator(int[] nums)</code> Initializes the object with the given integer array <code>nums</code>.</li>
+	<li><code>PeekingIterator(Iterator&lt;int&gt; nums)</code> Initializes the object with the given integer iterator <code>iterator</code>.</li>
 	<li><code>int next()</code> Returns the next element in the array and moves the pointer to the next element.</li>
-	<li><code>bool hasNext()</code> Returns <code>true</code> if there are still elements in the array.</li>
+	<li><code>boolean hasNext()</code> Returns <code>true</code> if there are still elements in the array.</li>
 	<li><code>int peek()</code> Returns the next element in the array <strong>without</strong> moving the pointer.</li>
 </ul>
 
+<p><strong>Note:</strong> Each language may have a different implementation of the constructor and <code>Iterator</code>, but they all support the <code>int next()</code> and <code>boolean hasNext()</code> functions.</p>
+
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input</strong>
@@ -47,11 +63,17 @@ peekingIterator.hasNext(); // return False
 <p>&nbsp;</p>
 <strong>Follow up:</strong> How would you extend your design to be generic and work with all types, not just integer?
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Below is the interface for Iterator, which is already defined for you.
@@ -74,6 +96,7 @@ peekingIterator.hasNext(); // return False
 #         Returns the next element in the iteration.
 #         :rtype: int
 #         """
+
 
 class PeekingIterator:
     def __init__(self, iterator):
@@ -120,7 +143,7 @@ class PeekingIterator:
 #     iter.next()         # Should return the same value as [val].
 ```
 
-### **Java**
+#### Java
 
 ```java
 // Java Iterator interface reference:
@@ -131,41 +154,41 @@ class PeekingIterator implements Iterator<Integer> {
     private boolean hasPeeked;
     private Integer peekedElement;
 
-	public PeekingIterator(Iterator<Integer> iterator) {
-	    // initialize any member here.
-	    this.iterator = iterator;
-	}
+    public PeekingIterator(Iterator<Integer> iterator) {
+        // initialize any member here.
+        this.iterator = iterator;
+    }
 
     // Returns the next element in the iteration without advancing the iterator.
-	public Integer peek() {
+    public Integer peek() {
         if (!hasPeeked) {
             peekedElement = iterator.next();
             hasPeeked = true;
         }
         return peekedElement;
-	}
+    }
 
-	// hasNext() and next() should behave the same as in the Iterator interface.
-	// Override them if needed.
-	@Override
-	public Integer next() {
-	    if (!hasPeeked) {
+    // hasNext() and next() should behave the same as in the Iterator interface.
+    // Override them if needed.
+    @Override
+    public Integer next() {
+        if (!hasPeeked) {
             return iterator.next();
         }
         Integer result = peekedElement;
         hasPeeked = false;
         peekedElement = null;
         return result;
-	}
+    }
 
-	@Override
-	public boolean hasNext() {
-	    return hasPeeked || iterator.hasNext();
-	}
+    @Override
+    public boolean hasNext() {
+        return hasPeeked || iterator.hasNext();
+    }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /*
@@ -189,41 +212,42 @@ class PeekingIterator implements Iterator<Integer> {
 
 class PeekingIterator : public Iterator {
 public:
-	PeekingIterator(const vector<int>& nums) : Iterator(nums) {
-	    // Initialize any member here.
-	    // **DO NOT** save a copy of nums and manipulate it directly.
-	    // You should only use the Iterator interface methods.
-	    hasPeeked = false;
-	}
+    PeekingIterator(const vector<int>& nums)
+        : Iterator(nums) {
+        // Initialize any member here.
+        // **DO NOT** save a copy of nums and manipulate it directly.
+        // You should only use the Iterator interface methods.
+        hasPeeked = false;
+    }
 
     // Returns the next element in the iteration without advancing the iterator.
-	int peek() {
-        if (!hasPeeked)
-        {
+    int peek() {
+        if (!hasPeeked) {
             peekedElement = Iterator::next();
             hasPeeked = true;
         }
         return peekedElement;
-	}
+    }
 
-	// hasNext() and next() should behave the same as in the Iterator interface.
-	// Override them if needed.
-	int next() {
-	    if (!hasPeeked) return Iterator::next();
+    // hasNext() and next() should behave the same as in the Iterator interface.
+    // Override them if needed.
+    int next() {
+        if (!hasPeeked) return Iterator::next();
         hasPeeked = false;
         return peekedElement;
-	}
+    }
 
-	bool hasNext() const {
-	    return hasPeeked || Iterator::hasNext();
-	}
+    bool hasNext() const {
+        return hasPeeked || Iterator::hasNext();
+    }
+
 private:
     bool hasPeeked;
     int peekedElement;
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /*   Below is the interface for Iterator, which is already defined for you.
@@ -272,10 +296,8 @@ func (this *PeekingIterator) peek() int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

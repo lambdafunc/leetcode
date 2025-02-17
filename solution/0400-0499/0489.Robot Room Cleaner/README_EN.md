@@ -1,102 +1,101 @@
-# [489. Robot Room Cleaner](https://leetcode.com/problems/robot-room-cleaner)
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0489.Robot%20Room%20Cleaner/README_EN.md
+tags:
+    - Backtracking
+    - Interactive
+---
+
+<!-- problem:start -->
+
+# [489. Robot Room Cleaner 🔒](https://leetcode.com/problems/robot-room-cleaner)
 
 [中文文档](/solution/0400-0499/0489.Robot%20Room%20Cleaner/README.md)
 
 ## Description
 
-<p>Given a robot cleaner in a room modeled as a grid.</p>
+<!-- description:start -->
 
-<p>Each cell in the grid can be empty or blocked.</p>
+<p>You are controlling a robot that is located somewhere in a room. The room is modeled as an <code>m x n</code> binary grid where <code>0</code> represents a wall and <code>1</code> represents an empty slot.</p>
 
-<p>The robot cleaner with 4 given APIs can move forward, turn left or turn right. Each turn it made is 90 degrees.</p>
+<p>The robot starts at an unknown location in the room that is guaranteed to be empty, and you do not have access to the grid, but you can move the robot using the given API <code>Robot</code>.</p>
 
-<p>When it tries to move into a blocked cell, its bumper sensor detects the obstacle and it stays on the current cell.</p>
+<p>You are tasked to use the robot to clean the entire room (i.e., clean every empty cell in the room). The robot with the four given APIs can move forward, turn left, or turn right. Each turn is <code>90</code> degrees.</p>
 
-<p>Design an algorithm to clean the entire room using only the 4 given APIs shown below.</p>
+<p>When the robot tries to move into a wall cell, its bumper sensor detects the obstacle, and it stays on the current cell.</p>
+
+<p>Design an algorithm to clean the entire room using the following APIs:</p>
 
 <pre>
-
 interface Robot {
-
-&nbsp; // returns true if next cell is open and robot moves into the cell.
-
-&nbsp; // returns false if next cell is obstacle and robot stays on the current cell.
-
-&nbsp; boolean move();
-
-
+  // returns true if next cell is open and robot moves into the cell.
+  // returns false if next cell is obstacle and robot stays on the current cell.
+  boolean move();
 
   // Robot will stay on the same cell after calling turnLeft/turnRight.
-
-&nbsp; // Each turn will be 90 degrees.
-
-&nbsp; void turnLeft();
-
-&nbsp; void turnRight();
-
-
+  // Each turn will be 90 degrees.
+  void turnLeft();
+  void turnRight();
 
   // Clean the current cell.
-
   void clean();
-
 }
-
 </pre>
 
-<p><strong>Example:</strong></p>
+<p><strong>Note</strong> that the initial direction of the robot will be facing up. You can assume all four edges of the grid are all surrounded by a wall.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>Custom testing:</strong></p>
+
+<p>The input is only given to initialize the room and the robot&#39;s position internally. You must solve this problem &quot;blindfolded&quot;. In other words, you must control the robot using only the four mentioned APIs without knowing the room layout and the initial robot&#39;s position.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0489.Robot%20Room%20Cleaner/images/lc-grid.jpg" style="width: 500px; height: 314px;" />
+<pre>
+<strong>Input:</strong> room = [[1,1,1,1,1,0,1,1],[1,1,1,1,1,0,1,1],[1,0,1,1,1,1,1,1],[0,0,0,1,0,0,0,0],[1,1,1,1,1,1,1,1]], row = 1, col = 3
+<strong>Output:</strong> Robot cleaned all rooms.
+<strong>Explanation:</strong> All grids in the room are marked by either 0 or 1.
+0 means the cell is blocked, while 1 means the cell is accessible.
+The robot initially starts at the position of row=1, col=3.
+From the top left corner, its position is one row below and three columns right.
+</pre>
+
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
-<strong>Input:</strong>
-
-room = [
-
-  [1,1,1,1,1,0,1,1],
-
-  [1,1,1,1,1,0,1,1],
-
-  [1,0,1,1,1,1,1,1],
-
-  [0,0,0,1,0,0,0,0],
-
-  [1,1,1,1,1,1,1,1]
-
-],
-
-row = 1,
-
-col = 3
-
-
-
-<strong>Explanation:</strong>
-
-All grids in the room are marked by either 0 or 1.
-
-0 means the cell is blocked, while 1 means the cell is accessible.
-
-The robot initially starts at the position of row=1, col=3.
-
-From the top left corner, its position is one row below and three columns right.
-
+<strong>Input:</strong> room = [[1]], row = 0, col = 0
+<strong>Output:</strong> Robot cleaned all rooms.
 </pre>
 
-<p><strong>Notes:</strong></p>
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<ol>
-	<li>The input is only given to initialize the room and the robot&#39;s position internally.&nbsp;You must solve this problem &quot;blindfolded&quot;. In other words, you must control the robot using only the mentioned 4 APIs, without knowing the room layout and the initial robot&#39;s position.</li>
-	<li>The robot&#39;s initial position will always be in an accessible cell.</li>
-	<li>The initial direction of the robot will be facing up.</li>
-	<li>All accessible cells are connected, which means the all cells marked as 1 will be accessible by the robot.</li>
-	<li>Assume all four edges of the grid are all surrounded by wall.</li>
-</ol>
+<ul>
+	<li><code>m == room.length</code></li>
+	<li><code>n == room[i].length</code></li>
+	<li><code>1 &lt;= m &lt;= 100</code></li>
+	<li><code>1 &lt;= n &lt;= 200</code></li>
+	<li><code>room[i][j]</code> is either <code>0</code> or <code>1</code>.</li>
+	<li><code>0 &lt;= row &lt;&nbsp;m</code></li>
+	<li><code>0 &lt;= col &lt; n</code></li>
+	<li><code>room[row][col] == 1</code></li>
+	<li>All the empty cells can be visited from the starting position.</li>
+</ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # """
@@ -131,36 +130,35 @@ From the top left corner, its position is one row below and three columns right.
 #        :rtype void
 #        """
 
+
 class Solution:
     def cleanRoom(self, robot):
         """
         :type robot: Robot
         :rtype: None
         """
-        def back():
-            robot.turnRight()
-            robot.turnRight()
-            robot.move()
-            robot.turnRight()
-            robot.turnRight()
 
         def dfs(i, j, d):
             vis.add((i, j))
             robot.clean()
             for k in range(4):
                 nd = (d + k) % 4
-                x, y = i + dirs[nd][0], j + dirs[nd][1]
+                x, y = i + dirs[nd], j + dirs[nd + 1]
                 if (x, y) not in vis and robot.move():
                     dfs(x, y, nd)
-                    back()
+                    robot.turnRight()
+                    robot.turnRight()
+                    robot.move()
+                    robot.turnRight()
+                    robot.turnRight()
                 robot.turnRight()
 
+        dirs = (-1, 0, 1, 0, -1)
         vis = set()
-        dirs = [(-1, 0), (0, 1), (1, 0), (0, -1)]
         dfs(0, 0, 0)
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -182,40 +180,36 @@ class Solution:
  */
 
 class Solution {
-    private Set<String> vis;
-    private int[][] dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+    private int[] dirs = {-1, 0, 1, 0, -1};
+    private Set<List<Integer>> vis = new HashSet<>();
+    private Robot robot;
 
     public void cleanRoom(Robot robot) {
-        vis = new HashSet<>();
-        dfs(0, 0, 0, robot);
+        this.robot = robot;
+        dfs(0, 0, 0);
     }
 
-    private void dfs(int i, int j, int d, Robot robot) {
-        vis.add(i + "," + j);
+    private void dfs(int i, int j, int d) {
         robot.clean();
+        vis.add(List.of(i, j));
         for (int k = 0; k < 4; ++k) {
             int nd = (d + k) % 4;
-            int x = i + dirs[nd][0];
-            int y = j + dirs[nd][1];
-            if (!vis.contains(x + "," + y) && robot.move()) {
-                dfs(x, y, nd, robot);
-                back(robot);
+            int x = i + dirs[nd], y = j + dirs[nd + 1];
+            if (!vis.contains(List.of(x, y)) && robot.move()) {
+                dfs(x, y, nd);
+                robot.turnRight();
+                robot.turnRight();
+                robot.move();
+                robot.turnRight();
+                robot.turnRight();
             }
             robot.turnRight();
         }
     }
-
-    private void back(Robot robot) {
-        robot.turnRight();
-        robot.turnRight();
-        robot.move();
-        robot.turnRight();
-        robot.turnRight();
-    }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -239,41 +233,32 @@ class Solution {
 
 class Solution {
 public:
-    vector<vector<int>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-
     void cleanRoom(Robot& robot) {
-        unordered_set<string> vis;
-        dfs(0, 0, 0, vis, robot);
-    }
-
-    void dfs(int i, int j, int d, unordered_set<string>& vis, Robot& robot) {
-        vis.insert(to_string(i) + "," + to_string(j));
-        robot.clean();
-        for (int k = 0; k < 4; ++k)
-        {
-            int nd = (d + k) % 4;
-            int x = i + dirs[nd][0];
-            int y = j + dirs[nd][1];
-            if (!vis.count(to_string(x) + "," + to_string(y)) && robot.move())
-            {
-                dfs(x, y, nd, vis, robot);
-                back(robot);
+        int dirs[5] = {-1, 0, 1, 0, -1};
+        set<pair<int, int>> vis;
+        function<void(int, int, int)> dfs = [&](int i, int j, int d) {
+            robot.clean();
+            vis.insert({i, j});
+            for (int k = 0; k < 4; ++k) {
+                int nd = (d + k) % 4;
+                int x = i + dirs[nd], y = j + dirs[nd + 1];
+                if (!vis.count({x, y}) && robot.move()) {
+                    dfs(x, y, nd);
+                    robot.turnRight();
+                    robot.turnRight();
+                    robot.move();
+                    robot.turnRight();
+                    robot.turnRight();
+                }
+                robot.turnRight();
             }
-            robot.turnRight();
-        }
-    }
-
-    void back(Robot& robot) {
-        robot.turnRight();
-        robot.turnRight();
-        robot.move();
-        robot.turnRight();
-        robot.turnRight();
+        };
+        dfs(0, 0, 0);
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -296,25 +281,22 @@ public:
  */
 
 func cleanRoom(robot *Robot) {
-	vis := make(map[string]bool)
-	dirs := [][]int{{-1, 0}, {0, 1}, {1, 0}, {0, -1}}
-	back := func() {
-		robot.TurnRight()
-		robot.TurnRight()
-		robot.Move()
-		robot.TurnRight()
-		robot.TurnRight()
-	}
-	var dfs func(i, j, d int)
+	vis := map[[2]int]bool{}
+	dirs := [5]int{-1, 0, 1, 0, -1}
+	var dfs func(int, int, int)
 	dfs = func(i, j, d int) {
-		vis[strconv.Itoa(i)+","+strconv.Itoa(j)] = true
+		vis[[2]int{i, j}] = true
 		robot.Clean()
 		for k := 0; k < 4; k++ {
 			nd := (d + k) % 4
-			x, y := i+dirs[nd][0], j+dirs[nd][1]
-			if !vis[strconv.Itoa(x)+","+strconv.Itoa(y)] && robot.Move() {
+			x, y := i+dirs[nd], j+dirs[nd+1]
+			if !vis[[2]int{x, y}] && robot.Move() {
 				dfs(x, y, nd)
-				back()
+				robot.TurnRight()
+				robot.TurnRight()
+				robot.Move()
+				robot.TurnRight()
+				robot.TurnRight()
 			}
 			robot.TurnRight()
 		}
@@ -323,10 +305,54 @@ func cleanRoom(robot *Robot) {
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+/**
+ * class Robot {
+ *      // Returns true if the cell in front is open and robot moves into the cell.
+ *      // Returns false if the cell in front is blocked and robot stays in the current cell.
+ * 		move(): boolean {}
+ *
+ *      // Robot will stay in the same cell after calling turnLeft/turnRight.
+ *      // Each turn will be 90 degrees.
+ * 		turnRight() {}
+ *
+ *      // Robot will stay in the same cell after calling turnLeft/turnRight.
+ *      // Each turn will be 90 degrees.
+ * 		turnLeft() {}
+ *
+ * 		// Clean the current cell.
+ * 		clean(): {}
+ * }
+ */
 
+function cleanRoom(robot: Robot) {
+    const dirs = [-1, 0, 1, 0, -1];
+    const vis = new Set<string>();
+    const dfs = (i: number, j: number, d: number) => {
+        vis.add(`${i}-${j}`);
+        robot.clean();
+        for (let k = 0; k < 4; ++k) {
+            const nd = (d + k) % 4;
+            const [x, y] = [i + dirs[nd], j + dirs[nd + 1]];
+            if (!vis.has(`${x}-${y}`) && robot.move()) {
+                dfs(x, y, nd);
+                robot.turnRight();
+                robot.turnRight();
+                robot.move();
+                robot.turnRight();
+                robot.turnRight();
+            }
+            robot.turnRight();
+        }
+    };
+    dfs(0, 0, 0);
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

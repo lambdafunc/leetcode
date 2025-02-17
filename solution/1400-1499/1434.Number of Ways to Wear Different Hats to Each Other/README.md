@@ -1,10 +1,25 @@
-# [1434. 每个人戴不同帽子的方案数](https://leetcode-cn.com/problems/number-of-ways-to-wear-different-hats-to-each-other)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1434.Number%20of%20Ways%20to%20Wear%20Different%20Hats%20to%20Each%20Other/README.md
+rating: 2273
+source: 第 25 场双周赛 Q4
+tags:
+    - 位运算
+    - 数组
+    - 动态规划
+    - 状态压缩
+---
+
+<!-- problem:start -->
+
+# [1434. 每个人戴不同帽子的方案数](https://leetcode.cn/problems/number-of-ways-to-wear-different-hats-to-each-other)
 
 [English Version](/solution/1400-1499/1434.Number%20of%20Ways%20to%20Wear%20Different%20Hats%20to%20Each%20Other/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>总共有 <code>n</code>&nbsp;个人和 <code>40</code> 种不同的帽子，帽子编号从 <code>1</code> 到 <code>40</code> 。</p>
 
@@ -61,32 +76,196 @@
 	<li><code>hats[i]</code>&nbsp;包含一个数字互不相同的整数列表。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：状态压缩动态规划
+
+我们注意到 $n$ 不超过 $10$，因此我们考虑使用状态压缩动态规划的方法求解。
+
+我们定义 $f[i][j]$ 表示在前 $i$ 个帽子中，当前被分配的人的状态为 $j$ 时的方案数。其中 $j$ 是一个二进制数，表示当前被分配的人的集合。初始时 $f[0][0]=1$，答案为 $f[m][2^n - 1]$，其中 $m$ 是帽子的最大编号，而 $n$ 是人的数量。
+
+考虑 $f[i][j]$，如果第 $i$ 个帽子不分配给任何人，那么 $f[i][j]=f[i-1][j]$；如果第 $i$ 个帽子分配给了喜欢它的人 $k$，那么 $f[i][j]=f[i-1][j \oplus 2^k]$。这里 $\oplus$ 表示异或运算。因此我们可以得到状态转移方程：
+
+$$
+f[i][j]=f[i-1][j]+ \sum_{k \in like[i]} f[i-1][j \oplus 2^k]
+$$
+
+其中 $like[i]$ 表示喜欢第 $i$ 个帽子的人的集合。
+
+最终的答案即为 $f[m][2^n - 1]$，注意答案可能很大，需要对 $10^9 + 7$ 取模。
+
+时间复杂度 $O(m \times 2^n \times n)$，空间复杂度 $O(m \times 2^n)$。其中 $m$ 是帽子的最大编号，本题中 $m \leq 40$；而 $n$ 是人的数量，本题中 $n \leq 10$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def numberWays(self, hats: List[List[int]]) -> int:
+        g = defaultdict(list)
+        for i, h in enumerate(hats):
+            for v in h:
+                g[v].append(i)
+        mod = 10**9 + 7
+        n = len(hats)
+        m = max(max(h) for h in hats)
+        f = [[0] * (1 << n) for _ in range(m + 1)]
+        f[0][0] = 1
+        for i in range(1, m + 1):
+            for j in range(1 << n):
+                f[i][j] = f[i - 1][j]
+                for k in g[i]:
+                    if j >> k & 1:
+                        f[i][j] = (f[i][j] + f[i - 1][j ^ (1 << k)]) % mod
+        return f[m][-1]
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int numberWays(List<List<Integer>> hats) {
+        int n = hats.size();
+        int m = 0;
+        for (var h : hats) {
+            for (int v : h) {
+                m = Math.max(m, v);
+            }
+        }
+        List<Integer>[] g = new List[m + 1];
+        Arrays.setAll(g, k -> new ArrayList<>());
+        for (int i = 0; i < n; ++i) {
+            for (int v : hats.get(i)) {
+                g[v].add(i);
+            }
+        }
+        final int mod = (int) 1e9 + 7;
+        int[][] f = new int[m + 1][1 << n];
+        f[0][0] = 1;
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 0; j < 1 << n; ++j) {
+                f[i][j] = f[i - 1][j];
+                for (int k : g[i]) {
+                    if ((j >> k & 1) == 1) {
+                        f[i][j] = (f[i][j] + f[i - 1][j ^ (1 << k)]) % mod;
+                    }
+                }
+            }
+        }
+        return f[m][(1 << n) - 1];
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int numberWays(vector<vector<int>>& hats) {
+        int n = hats.size();
+        int m = 0;
+        for (auto& h : hats) {
+            m = max(m, *max_element(h.begin(), h.end()));
+        }
+        vector<vector<int>> g(m + 1);
+        for (int i = 0; i < n; ++i) {
+            for (int& v : hats[i]) {
+                g[v].push_back(i);
+            }
+        }
+        const int mod = 1e9 + 7;
+        int f[m + 1][1 << n];
+        memset(f, 0, sizeof(f));
+        f[0][0] = 1;
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 0; j < 1 << n; ++j) {
+                f[i][j] = f[i - 1][j];
+                for (int k : g[i]) {
+                    if (j >> k & 1) {
+                        f[i][j] = (f[i][j] + f[i - 1][j ^ (1 << k)]) % mod;
+                    }
+                }
+            }
+        }
+        return f[m][(1 << n) - 1];
+    }
+};
 ```
 
+#### Go
+
+```go
+func numberWays(hats [][]int) int {
+	n := len(hats)
+	m := 0
+	for _, h := range hats {
+		m = max(m, slices.Max(h))
+	}
+	g := make([][]int, m+1)
+	for i, h := range hats {
+		for _, v := range h {
+			g[v] = append(g[v], i)
+		}
+	}
+	const mod = 1e9 + 7
+	f := make([][]int, m+1)
+	for i := range f {
+		f[i] = make([]int, 1<<n)
+	}
+	f[0][0] = 1
+	for i := 1; i <= m; i++ {
+		for j := 0; j < 1<<n; j++ {
+			f[i][j] = f[i-1][j]
+			for _, k := range g[i] {
+				if j>>k&1 == 1 {
+					f[i][j] = (f[i][j] + f[i-1][j^(1<<k)]) % mod
+				}
+			}
+		}
+	}
+	return f[m][(1<<n)-1]
+}
+```
+
+#### TypeScript
+
+```ts
+function numberWays(hats: number[][]): number {
+    const n = hats.length;
+    const m = Math.max(...hats.flat());
+    const g: number[][] = Array.from({ length: m + 1 }, () => []);
+    for (let i = 0; i < n; ++i) {
+        for (const v of hats[i]) {
+            g[v].push(i);
+        }
+    }
+    const f: number[][] = Array.from({ length: m + 1 }, () =>
+        Array.from({ length: 1 << n }, () => 0),
+    );
+    f[0][0] = 1;
+    const mod = 1e9 + 7;
+    for (let i = 1; i <= m; ++i) {
+        for (let j = 0; j < 1 << n; ++j) {
+            f[i][j] = f[i - 1][j];
+            for (const k of g[i]) {
+                if (((j >> k) & 1) === 1) {
+                    f[i][j] = (f[i][j] + f[i - 1][j ^ (1 << k)]) % mod;
+                }
+            }
+        }
+    }
+    return f[m][(1 << n) - 1];
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

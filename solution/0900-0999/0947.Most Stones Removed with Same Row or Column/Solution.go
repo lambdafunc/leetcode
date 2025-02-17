@@ -1,24 +1,50 @@
-var p []int
-
-func removeStones(stones [][]int) int {
-	n := 10010
-	p = make([]int, n<<1)
-	for i := 0; i < len(p); i++ {
-		p[i] = i
-	}
-	for _, e := range stones {
-		p[find(e[0])] = find(e[1] + n)
-	}
-	s := make(map[int]bool)
-	for _, e := range stones {
-		s[find(e[0])] = true
-	}
-	return len(stones) - len(s)
+type unionFind struct {
+	p, size []int
 }
 
-func find(x int) int {
-	if p[x] != x {
-		p[x] = find(p[x])
+func newUnionFind(n int) *unionFind {
+	p := make([]int, n)
+	size := make([]int, n)
+	for i := range p {
+		p[i] = i
+		size[i] = 1
 	}
-	return p[x]
+	return &unionFind{p, size}
+}
+
+func (uf *unionFind) find(x int) int {
+	if uf.p[x] != x {
+		uf.p[x] = uf.find(uf.p[x])
+	}
+	return uf.p[x]
+}
+
+func (uf *unionFind) union(a, b int) bool {
+	pa, pb := uf.find(a), uf.find(b)
+	if pa == pb {
+		return false
+	}
+	if uf.size[pa] > uf.size[pb] {
+		uf.p[pb] = pa
+		uf.size[pa] += uf.size[pb]
+	} else {
+		uf.p[pa] = pb
+		uf.size[pb] += uf.size[pa]
+	}
+	return true
+}
+
+func removeStones(stones [][]int) (ans int) {
+	n := len(stones)
+	uf := newUnionFind(n)
+	for i, s1 := range stones {
+		for j, s2 := range stones[:i] {
+			if s1[0] == s2[0] || s1[1] == s2[1] {
+				if uf.union(i, j) {
+					ans++
+				}
+			}
+		}
+	}
+	return
 }

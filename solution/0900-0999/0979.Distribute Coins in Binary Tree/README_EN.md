@@ -1,44 +1,44 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0900-0999/0979.Distribute%20Coins%20in%20Binary%20Tree/README_EN.md
+tags:
+    - Tree
+    - Depth-First Search
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
 # [979. Distribute Coins in Binary Tree](https://leetcode.com/problems/distribute-coins-in-binary-tree)
 
 [中文文档](/solution/0900-0999/0979.Distribute%20Coins%20in%20Binary%20Tree/README.md)
 
 ## Description
 
-<p>You are given the <code>root</code> of a binary tree with <code>n</code> nodes where each <code>node</code> in the tree has <code>node.val</code> coins and there are <code>n</code> coins total.</p>
+<!-- description:start -->
 
-<p>In one move, we may choose two adjacent nodes and move one coin from one node to another. (A move may be from parent to child, or from child to parent.)</p>
+<p>You are given the <code>root</code> of a binary tree with <code>n</code> nodes where each <code>node</code> in the tree has <code>node.val</code> coins. There are <code>n</code> coins in total throughout the whole tree.</p>
 
-<p>Return the number of moves required to make every node have exactly one coin.</p>
+<p>In one move, we may choose two adjacent nodes and move one coin from one node to another. A move may be from parent to child, or from child to parent.</p>
+
+<p>Return <em>the <strong>minimum</strong> number of moves required to make every node have <strong>exactly</strong> one coin</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0979.Distribute%20Coins%20in%20Binary%20Tree/images/tree1.png" style="width: 150px; height: 142px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0979.Distribute%20Coins%20in%20Binary%20Tree/images/tree1.png" style="width: 250px; height: 236px;" />
 <pre>
 <strong>Input:</strong> root = [3,0,0]
 <strong>Output:</strong> 2
 <strong>Explanation: </strong>From the root of the tree, we move one coin to its left child, and one coin to its right child.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0979.Distribute%20Coins%20in%20Binary%20Tree/images/tree2.png" style="width: 150px; height: 142px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0979.Distribute%20Coins%20in%20Binary%20Tree/images/tree2.png" style="width: 250px; height: 236px;" />
 <pre>
 <strong>Input:</strong> root = [0,3,0]
 <strong>Output:</strong> 3
-<strong>Explanation: </strong>From the left child of the root, we move two coins to the root [taking two moves].  Then, we move one coin from the root of the tree to the right child.
-</pre>
-
-<p><strong>Example 3:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0979.Distribute%20Coins%20in%20Binary%20Tree/images/tree3.png" style="width: 150px; height: 142px;" />
-<pre>
-<strong>Input:</strong> root = [1,0,2]
-<strong>Output:</strong> 2
-</pre>
-
-<p><strong>Example 4:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0979.Distribute%20Coins%20in%20Binary%20Tree/images/tree4.png" style="width: 155px; height: 156px;" />
-<pre>
-<strong>Input:</strong> root = [1,0,0,null,3]
-<strong>Output:</strong> 4
+<strong>Explanation: </strong>From the left child of the root, we move two coins to the root [taking two moves]. Then, we move one coin from the root of the tree to the right child.
 </pre>
 
 <p>&nbsp;</p>
@@ -48,14 +48,28 @@
 	<li>The number of nodes in the tree is <code>n</code>.</li>
 	<li><code>1 &lt;= n &lt;= 100</code></li>
 	<li><code>0 &lt;= Node.val &lt;= n</code></li>
-	<li>The sum of <code>Node.val</code> is <code>n</code>.</li>
+	<li>The sum of all <code>Node.val</code> is <code>n</code>.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: DFS
+
+We define a function $\textit{dfs(node)}$, which represents the coin overload in the subtree rooted at $\textit{node}$, i.e., the number of coins minus the number of nodes. If $\textit{dfs(node)}$ is positive, it means the subtree has more coins than nodes, and the excess coins need to be moved out of the subtree; if $\textit{dfs(node)}$ is negative, it means the subtree has fewer coins than nodes, and the shortfall needs to be moved into the subtree.
+
+In the function $\textit{dfs(node)}$, we first traverse the left and right subtrees to obtain the coin overload $\textit{left}$ and $\textit{right}$ of the left and right subtrees, respectively. Then, the current number of moves needs to be increased by $|\textit{left}| + |\textit{right}|$, which means moving the coins from the left and right subtrees to the current node. After that, we return the coin overload of the entire subtree, which is $\textit{left} + \textit{right} + \textit{node.val} - 1$.
+
+Finally, we return the number of moves.
+
+The time complexity is $O(n)$, and the space complexity is $O(h)$. Here, $n$ and $h$ respectively represent the number of nodes and the height of the binary tree.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -65,12 +79,12 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def distributeCoins(self, root: TreeNode) -> int:
+    def distributeCoins(self, root: Optional[TreeNode]) -> int:
         def dfs(root):
-            nonlocal ans
             if root is None:
                 return 0
             left, right = dfs(root.left), dfs(root.right)
+            nonlocal ans
             ans += abs(left) + abs(right)
             return left + right + root.val - 1
 
@@ -79,7 +93,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -98,11 +112,9 @@ class Solution:
  * }
  */
 class Solution {
-
     private int ans;
 
     public int distributeCoins(TreeNode root) {
-        ans = 0;
         dfs(root);
         return ans;
     }
@@ -117,10 +129,9 @@ class Solution {
         return left + right + root.val - 1;
     }
 }
-
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -136,26 +147,26 @@ class Solution {
  */
 class Solution {
 public:
-    int ans;
-
     int distributeCoins(TreeNode* root) {
-        ans = 0;
+        int ans = 0;
+        function<int(TreeNode*)> dfs = [&](TreeNode* root) -> int {
+            if (!root) {
+                return 0;
+            }
+            int left = dfs(root->left);
+            int right = dfs(root->right);
+            ans += abs(left) + abs(right);
+            return left + right + root->val - 1;
+        };
         dfs(root);
         return ans;
-    }
-
-    int dfs(TreeNode* root) {
-        if (!root) return 0;
-        int left = dfs(root->left), right = dfs(root->right);
-        ans += abs(left) + abs(right);
-        return left + right + root->val - 1;
     }
 };
 ```
 
-### **C++**
+#### Go
 
-```cpp
+```go
 /**
  * Definition for a binary tree node.
  * type TreeNode struct {
@@ -164,9 +175,8 @@ public:
  *     Right *TreeNode
  * }
  */
-func distributeCoins(root *TreeNode) int {
-	ans := 0
-	var dfs func(root *TreeNode) int
+func distributeCoins(root *TreeNode) (ans int) {
+	var dfs func(*TreeNode) int
 	dfs = func(root *TreeNode) int {
 		if root == nil {
 			return 0
@@ -176,7 +186,7 @@ func distributeCoins(root *TreeNode) int {
 		return left + right + root.Val - 1
 	}
 	dfs(root)
-	return ans
+	return
 }
 
 func abs(x int) int {
@@ -187,10 +197,41 @@ func abs(x int) int {
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
 
+function distributeCoins(root: TreeNode | null): number {
+    let ans = 0;
+    const dfs = (root: TreeNode | null) => {
+        if (!root) {
+            return 0;
+        }
+        const left = dfs(root.left);
+        const right = dfs(root.right);
+        ans += Math.abs(left) + Math.abs(right);
+        return left + right + root.val - 1;
+    };
+    dfs(root);
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

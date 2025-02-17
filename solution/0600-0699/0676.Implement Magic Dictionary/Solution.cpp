@@ -1,41 +1,67 @@
+class Trie {
+private:
+    Trie* children[26];
+    bool isEnd = false;
+
+public:
+    Trie() {
+        fill(begin(children), end(children), nullptr);
+    }
+
+    void insert(const string& w) {
+        Trie* node = this;
+        for (char c : w) {
+            int i = c - 'a';
+            if (!node->children[i]) {
+                node->children[i] = new Trie();
+            }
+            node = node->children[i];
+        }
+        node->isEnd = true;
+    }
+
+    bool search(const string& w) {
+        function<bool(int, Trie*, int)> dfs = [&](int i, Trie* node, int diff) {
+            if (i >= w.size()) {
+                return diff == 1 && node->isEnd;
+            }
+            int j = w[i] - 'a';
+            if (node->children[j] && dfs(i + 1, node->children[j], diff)) {
+                return true;
+            }
+            if (diff == 0) {
+                for (int k = 0; k < 26; ++k) {
+                    if (k != j && node->children[k]) {
+                        if (dfs(i + 1, node->children[k], 1)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        };
+        return dfs(0, this, 0);
+    }
+};
+
 class MagicDictionary {
 public:
-    /** Initialize your data structure here. */
     MagicDictionary() {
+        trie = new Trie();
+    }
 
-    }
-    
     void buildDict(vector<string> dictionary) {
-        for (string word : dictionary)
-        {
-            words.insert(word);
-            for (string p : patterns(word)) ++counter[p];
+        for (auto& w : dictionary) {
+            trie->insert(w);
         }
     }
-    
+
     bool search(string searchWord) {
-        for (string p : patterns(searchWord))
-        {
-            if (counter[p] > 1 || (counter[p] == 1 && !words.count(searchWord))) return true;
-        }
-        return false;
+        return trie->search(searchWord);
     }
 
 private:
-    unordered_set<string> words;
-    unordered_map<string, int> counter;
-
-    vector<string> patterns(string word) {
-        vector<string> res;
-        for (int i = 0; i < word.size(); ++i)
-        {
-            char c = word[i];
-            word[i] = '*';
-            res.push_back(word);
-            word[i] = c;
-        }
-        return res;
-    }
+    Trie* trie;
 };
 
 /**

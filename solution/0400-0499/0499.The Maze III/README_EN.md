@@ -1,8 +1,27 @@
-# [499. The Maze III](https://leetcode.com/problems/the-maze-iii)
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0499.The%20Maze%20III/README_EN.md
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Graph
+    - Array
+    - String
+    - Matrix
+    - Shortest Path
+    - Heap (Priority Queue)
+---
+
+<!-- problem:start -->
+
+# [499. The Maze III 🔒](https://leetcode.com/problems/the-maze-iii)
 
 [中文文档](/solution/0400-0499/0499.The%20Maze%20III/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>There is a ball in a <code>maze</code> with empty spaces (represented as <code>0</code>) and walls (represented as <code>1</code>). The ball can go through the empty spaces by rolling <strong>up, down, left or right</strong>, but it won&#39;t stop rolling until hitting a wall. When the ball stops, it could choose the next direction. There is also a hole in this maze. The ball will drop into the hole if it rolls onto the hole.</p>
 
@@ -15,8 +34,8 @@
 <p>You may assume that <strong>the borders of the maze are all walls</strong> (see examples).</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0499.The%20Maze%20III/images/maze3-1-grid.jpg" style="width: 573px; height: 573px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0499.The%20Maze%20III/images/maze3-1-grid.jpg" style="width: 573px; height: 573px;" />
 <pre>
 <strong>Input:</strong> maze = [[0,0,0,0,0],[1,1,0,0,1],[0,0,0,0,0],[0,1,0,0,1],[0,1,0,0,0]], ball = [4,3], hole = [0,1]
 <strong>Output:</strong> &quot;lul&quot;
@@ -26,15 +45,15 @@ The second way is up -&gt; left, represented by &#39;ul&#39;.
 Both ways have shortest distance 6, but the first way is lexicographically smaller because &#39;l&#39; &lt; &#39;u&#39;. So the output is &quot;lul&quot;.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0499.The%20Maze%20III/images/maze3-2-grid.jpg" style="width: 573px; height: 573px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0499.The%20Maze%20III/images/maze3-2-grid.jpg" style="width: 573px; height: 573px;" />
 <pre>
 <strong>Input:</strong> maze = [[0,0,0,0,0],[1,1,0,0,1],[0,0,0,0,0],[0,1,0,0,1],[0,1,0,0,0]], ball = [4,3], hole = [3,0]
 <strong>Output:</strong> &quot;impossible&quot;
 <strong>Explanation:</strong> The ball cannot reach the hole.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> maze = [[0,0,0,0,0,0,0],[0,0,1,0,0,1,0],[0,0,0,0,1,0,0],[0,0,0,0,0,0,1]], ball = [0,4], hole = [3,5]
@@ -57,22 +76,28 @@ Both ways have shortest distance 6, but the first way is lexicographically small
 	<li>The maze contains <strong>at least 2 empty spaces</strong>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-BFS.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
-    def findShortestWay(self, maze: List[List[int]], ball: List[int], hole: List[int]) -> str:
+    def findShortestWay(
+        self, maze: List[List[int]], ball: List[int], hole: List[int]
+    ) -> str:
         m, n = len(maze), len(maze[0])
         r, c = ball
         rh, ch = hole
         q = deque([(r, c)])
-        dist = [[float('inf')] * n for _ in range(m)]
+        dist = [[inf] * n for _ in range(m)]
         dist[r][c] = 0
         path = [[None] * n for _ in range(m)]
         path[r][c] = ''
@@ -80,10 +105,17 @@ class Solution:
             i, j = q.popleft()
             for a, b, d in [(-1, 0, 'u'), (1, 0, 'd'), (0, -1, 'l'), (0, 1, 'r')]:
                 x, y, step = i, j, dist[i][j]
-                while 0 <= x + a < m and 0 <= y + b < n and maze[x + a][y + b] == 0 and (x != rh or y != ch):
+                while (
+                    0 <= x + a < m
+                    and 0 <= y + b < n
+                    and maze[x + a][y + b] == 0
+                    and (x != rh or y != ch)
+                ):
                     x, y = x + a, y + b
                     step += 1
-                if dist[x][y] > step or (dist[x][y] == step and path[i][j] + d < path[x][y]):
+                if dist[x][y] > step or (
+                    dist[x][y] == step and path[i][j] + d < path[x][y]
+                ):
                     dist[x][y] = step
                     path[x][y] = path[i][j] + d
                     if x != rh or y != ch:
@@ -91,7 +123,7 @@ class Solution:
         return path[rh][ch] or 'impossible'
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -101,7 +133,7 @@ class Solution {
         int r = ball[0], c = ball[1];
         int rh = hole[0], ch = hole[1];
         Deque<int[]> q = new LinkedList<>();
-        q.offer(new int[]{r, c});
+        q.offer(new int[] {r, c});
         int[][] dist = new int[m][n];
         for (int i = 0; i < m; ++i) {
             Arrays.fill(dist[i], Integer.MAX_VALUE);
@@ -118,16 +150,18 @@ class Solution {
                 String d = String.valueOf((char) (dir[2]));
                 int x = i, y = j;
                 int step = dist[i][j];
-                while (x + a >= 0 && x + a < m && y + b >= 0 && y + b < n && maze[x + a][y + b] == 0 && (x != rh || y != ch)) {
+                while (x + a >= 0 && x + a < m && y + b >= 0 && y + b < n && maze[x + a][y + b] == 0
+                    && (x != rh || y != ch)) {
                     x += a;
                     y += b;
                     ++step;
                 }
-                if (dist[x][y] > step || (dist[x][y] == step && (path[i][j] + d).compareTo(path[x][y]) < 0)) {
+                if (dist[x][y] > step
+                    || (dist[x][y] == step && (path[i][j] + d).compareTo(path[x][y]) < 0)) {
                     dist[x][y] = step;
                     path[x][y] = path[i][j] + d;
                     if (x != rh || y != ch) {
-                        q.offer(new int[]{x, y});
+                        q.offer(new int[] {x, y});
                     }
                 }
             }
@@ -137,7 +171,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -153,25 +187,21 @@ public:
         dist[r][c] = 0;
         vector<vector<string>> path(m, vector<string>(n, ""));
         vector<vector<int>> dirs = {{-1, 0, 'u'}, {1, 0, 'd'}, {0, -1, 'l'}, {0, 1, 'r'}};
-        while (!q.empty())
-        {
+        while (!q.empty()) {
             auto p = q.front();
             q.pop();
             int i = p.first, j = p.second;
-            for (auto& dir : dirs)
-            {
+            for (auto& dir : dirs) {
                 int a = dir[0], b = dir[1];
                 char d = (char) dir[2];
                 int x = i, y = j;
                 int step = dist[i][j];
-                while (x + a >= 0 && x + a < m && y + b >= 0 && y + b < n && maze[x + a][y + b] == 0 && (x != rh || y != ch))
-                {
+                while (x + a >= 0 && x + a < m && y + b >= 0 && y + b < n && maze[x + a][y + b] == 0 && (x != rh || y != ch)) {
                     x += a;
                     y += b;
                     ++step;
                 }
-                if (dist[x][y] > step || (dist[x][y] == step && (path[i][j] + d < path[x][y])))
-                {
+                if (dist[x][y] > step || (dist[x][y] == step && (path[i][j] + d < path[x][y]))) {
                     dist[x][y] = step;
                     path[x][y] = path[i][j] + d;
                     if (x != rh || y != ch) q.push({x, y});
@@ -183,7 +213,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 import "math"
@@ -234,10 +264,8 @@ func findShortestWay(maze [][]int, ball []int, hole []int) string {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

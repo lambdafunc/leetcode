@@ -1,30 +1,24 @@
 class Solution {
 public:
-    vector<int> p;
-
     bool possibleBipartition(int n, vector<vector<int>>& dislikes) {
-        p.resize(n);
-        for (int i = 0; i < n; ++i) p[i] = i;
-        unordered_map<int, vector<int>> dis;
-        for (auto& d : dislikes)
-        {
-            int a = d[0] - 1, b = d[1] - 1;
-            dis[a].push_back(b);
-            dis[b].push_back(a);
+        unordered_map<int, vector<int>> g;
+        for (auto& e : dislikes) {
+            int a = e[0] - 1, b = e[1] - 1;
+            g[a].push_back(b);
+            g[b].push_back(a);
         }
-        for (int i = 0; i < n; ++i)
-        {
-            for (int j : dis[i])
-            {
-                if (find(i) == find(j)) return false;
-                p[find(j)] = find(dis[i][0]);
+        vector<int> color(n);
+        function<bool(int, int)> dfs = [&](int i, int c) -> bool {
+            color[i] = c;
+            for (int j : g[i]) {
+                if (!color[j] && !dfs(j, 3 - c)) return false;
+                if (color[j] == c) return false;
             }
+            return true;
+        };
+        for (int i = 0; i < n; ++i) {
+            if (!color[i] && !dfs(i, 1)) return false;
         }
         return true;
-    }
-
-    int find(int x) {
-        if (p[x] != x) p[x] = find(p[x]);
-        return p[x];
     }
 };

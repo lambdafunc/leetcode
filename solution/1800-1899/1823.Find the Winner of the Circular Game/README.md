@@ -1,12 +1,28 @@
-# [1823. 找出游戏的获胜者](https://leetcode-cn.com/problems/find-the-winner-of-the-circular-game)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1823.Find%20the%20Winner%20of%20the%20Circular%20Game/README.md
+rating: 1412
+source: 第 236 场周赛 Q2
+tags:
+    - 递归
+    - 队列
+    - 数组
+    - 数学
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [1823. 找出游戏的获胜者](https://leetcode.cn/problems/find-the-winner-of-the-circular-game)
 
 [English Version](/solution/1800-1899/1823.Find%20the%20Winner%20of%20the%20Circular%20Game/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>共有 <code>n</code> 名小伙伴一起做游戏。小伙伴们围成一圈，按 <strong>顺时针顺序</strong> 从 <code>1</code> 到 <code>n</code> 编号。确切地说，从第 <code>i</code> 名小伙伴顺时针移动一位会到达第 <code>(i+1)</code> 名小伙伴的位置，其中 <code>1 <= i < n</code> ，从第 <code>n</code> 名小伙伴顺时针移动一位会回到第 <code>1</code> 名小伙伴的位置。</p>
+<p>共有 <code>n</code> 名小伙伴一起做游戏。小伙伴们围成一圈，按 <strong>顺时针顺序</strong> 从 <code>1</code> 到 <code>n</code> 编号。确切地说，从第 <code>i</code> 名小伙伴顺时针移动一位会到达第 <code>(i+1)</code> 名小伙伴的位置，其中 <code>1 &lt;= i &lt; n</code> ，从第 <code>n</code> 名小伙伴顺时针移动一位会回到第 <code>1</code> 名小伙伴的位置。</p>
 
 <p>游戏遵循如下规则：</p>
 
@@ -20,10 +36,10 @@
 
 <p>给你参与游戏的小伙伴总数 <code>n</code> ，和一个整数 <code>k</code> ，返回游戏的获胜者。</p>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1823.Find%20the%20Winner%20of%20the%20Circular%20Game/images/ic234-q2-ex11.png" style="width: 500px; height: 345px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1823.Find%20the%20Winner%20of%20the%20Circular%20Game/images/ic234-q2-ex11.png" style="width: 500px; height: 345px;" />
 <pre>
 <strong>输入：</strong>n = 5, k = 2
 <strong>输出：</strong>3
@@ -46,25 +62,29 @@
 <strong>解释：</strong>小伙伴离开圈子的顺序：5、4、6、2、3 。小伙伴 1 是游戏的获胜者。
 </pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>1 <= k <= n <= 500</code></li>
+	<li><code>1 &lt;= k &lt;= n &lt;= 500</code></li>
 </ul>
+
+<p>&nbsp;</p>
+
+<p><strong>进阶：</strong>你能否使用线性时间复杂度和常数空间复杂度解决此问题？</p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-约瑟夫环。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -75,9 +95,7 @@ class Solution:
         return n if ans == 0 else ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -91,7 +109,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -104,7 +122,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func findTheWinner(n int, k int) int {
@@ -119,10 +137,93 @@ func findTheWinner(n int, k int) int {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function findTheWinner(n: number, k: number): number {
+    if (n === 1) {
+        return 1;
+    }
+    const ans = (k + findTheWinner(n - 1, k)) % n;
+    return ans ? ans : n;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn find_the_winner(n: i32, k: i32) -> i32 {
+        if n == 1 {
+            return 1;
+        }
+        let mut ans = (k + Solution::find_the_winner(n - 1, k)) % n;
+        return if ans == 0 { n } else { ans };
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number} n
+ * @param {number} k
+ * @return {number}
+ */
+var findTheWinner = function (n, k) {
+    if (n === 1) {
+        return 1;
+    }
+    const ans = (k + findTheWinner(n - 1, k)) % n;
+    return ans ? ans : n;
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：模拟
+
+<!-- tabs:start -->
+
+#### TypeScript
+
+```ts
+function findTheWinner(n: number, k: number): number {
+    const arr = Array.from({ length: n }, (_, i) => i + 1);
+    let i = 0;
+
+    while (arr.length > 1) {
+        i = (i + k - 1) % arr.length;
+        arr.splice(i, 1);
+    }
+
+    return arr[0];
+}
+```
+
+#### JavaScript
+
+```js
+function findTheWinner(n, k) {
+    const arr = Array.from({ length: n }, (_, i) => i + 1);
+    let i = 0;
+
+    while (arr.length > 1) {
+        i = (i + k - 1) % arr.length;
+        arr.splice(i, 1);
+    }
+
+    return arr[0];
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,64 +1,70 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0165.Compare%20Version%20Numbers/README_EN.md
+tags:
+    - Two Pointers
+    - String
+---
+
+<!-- problem:start -->
+
 # [165. Compare Version Numbers](https://leetcode.com/problems/compare-version-numbers)
 
 [中文文档](/solution/0100-0199/0165.Compare%20Version%20Numbers/README.md)
 
 ## Description
 
-<p>Given two version numbers,&nbsp;<code>version1</code> and <code>version2</code>, compare them.</p>
+<!-- description:start -->
+
+<p>Given two <strong>version strings</strong>, <code>version1</code> and <code>version2</code>, compare them. A version string consists of <strong>revisions</strong> separated by dots <code>&#39;.&#39;</code>. The <strong>value of the revision</strong> is its <strong>integer conversion</strong> ignoring leading zeros.</p>
+
+<p>To compare version strings, compare their revision values in <strong>left-to-right order</strong>. If one of the version strings has fewer revisions, treat the missing revision values as <code>0</code>.</p>
+
+<p>Return the following:</p>
 
 <ul>
-</ul>
-
-<p>Version numbers consist of <strong>one or more revisions</strong> joined by a dot&nbsp;<code>&#39;.&#39;</code>. Each revision&nbsp;consists of <strong>digits</strong>&nbsp;and may contain leading <strong>zeros</strong>. Every revision contains <strong>at least one character</strong>. Revisions are <strong>0-indexed from left to right</strong>, with the leftmost revision being revision 0, the next revision being revision 1, and so on. For example&nbsp;<code>2.5.33</code>&nbsp;and&nbsp;<code>0.1</code>&nbsp;are valid version numbers.</p>
-
-<p>To compare version numbers, compare their revisions in <strong>left-to-right order</strong>. Revisions are compared using their&nbsp;<strong>integer value ignoring any leading zeros</strong>. This means that revisions&nbsp;<code>1</code>&nbsp;and&nbsp;<code>001</code>&nbsp;are considered&nbsp;<strong>equal</strong>. If a version number does not specify a revision at an index, then&nbsp;<strong>treat the revision as&nbsp;<code>0</code></strong>. For example, version&nbsp;<code>1.0</code> is less than version&nbsp;<code>1.1</code>&nbsp;because their revision 0s are the same, but their revision 1s are&nbsp;<code>0</code>&nbsp;and&nbsp;<code>1</code>&nbsp;respectively, and&nbsp;<code>0 &lt; 1</code>.</p>
-
-<p><em>Return the following:</em></p>
-
-<ul>
-	<li>If <code>version1 &lt; version2</code>, return <code>-1</code>.</li>
-	<li>If <code>version1 &gt; version2</code>, return <code>1</code>.</li>
-	<li>Otherwise, return <code>0</code>.</li>
+	<li>If <code>version1 &lt; version2</code>, return -1.</li>
+	<li>If <code>version1 &gt; version2</code>, return 1.</li>
+	<li>Otherwise, return 0.</li>
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
-<pre>
-<strong>Input:</strong> version1 = &quot;1.01&quot;, version2 = &quot;1.001&quot;
-<strong>Output:</strong> 0
-<strong>Explanation:</strong> Ignoring leading zeroes, both &quot;01&quot; and &quot;001&quot; represent the same integer &quot;1&quot;.
-</pre>
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">version1 = &quot;1.2&quot;, version2 = &quot;1.10&quot;</span></p>
 
-<p><strong>Example 2:</strong></p>
+<p><strong>Output:</strong> <span class="example-io">-1</span></p>
 
-<pre>
-<strong>Input:</strong> version1 = &quot;1.0&quot;, version2 = &quot;1.0.0&quot;
-<strong>Output:</strong> 0
-<strong>Explanation:</strong> version1 does not specify revision 2, which means it is treated as &quot;0&quot;.
-</pre>
+<p><strong>Explanation:</strong></p>
 
-<p><strong>Example 3:</strong></p>
+<p>version1&#39;s second revision is &quot;2&quot; and version2&#39;s second revision is &quot;10&quot;: 2 &lt; 10, so version1 &lt; version2.</p>
+</div>
 
-<pre>
-<strong>Input:</strong> version1 = &quot;0.1&quot;, version2 = &quot;1.1&quot;
-<strong>Output:</strong> -1
-<strong>Explanation:</strong>&nbsp;version1&#39;s revision 0 is &quot;0&quot;, while version2&#39;s revision 0 is &quot;1&quot;. 0 &lt; 1, so version1 &lt; version2.
-</pre>
+<p><strong class="example">Example 2:</strong></p>
 
-<p><strong>Example 4:</strong></p>
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">version1 = &quot;1.01&quot;, version2 = &quot;1.001&quot;</span></p>
 
-<pre>
-<strong>Input:</strong> version1 = &quot;1.0.1&quot;, version2 = &quot;1&quot;
-<strong>Output:</strong> 1
-</pre>
+<p><strong>Output:</strong> <span class="example-io">0</span></p>
 
-<p><strong>Example 5:</strong></p>
+<p><strong>Explanation:</strong></p>
 
-<pre>
-<strong>Input:</strong> version1 = &quot;7.5.2.4&quot;, version2 = &quot;7.5.3&quot;
-<strong>Output:</strong> -1
-</pre>
+<p>Ignoring leading zeroes, both &quot;01&quot; and &quot;001&quot; represent the same integer &quot;1&quot;.</p>
+</div>
+
+<p><strong class="example">Example 3:</strong></p>
+
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">version1 = &quot;1.0&quot;, version2 = &quot;1.0.0.0&quot;</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">0</span></p>
+
+<p><strong>Explanation:</strong></p>
+
+<p>version1 has less revisions, which means every missing revision are treated as &quot;0&quot;.</p>
+</div>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
@@ -70,16 +76,23 @@
 	<li>All the given revisions in&nbsp;<code>version1</code> and <code>version2</code>&nbsp;can be stored in&nbsp;a&nbsp;<strong>32-bit integer</strong>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def compareVersion(self, version1: str, version2: str) -> int:
-        i, j, m, n = 0, 0, len(version1), len(version2)
+        m, n = len(version1), len(version2)
+        i = j = 0
         while i < m or j < n:
             a = b = 0
             while i < m and version1[i] != '.':
@@ -90,23 +103,23 @@ class Solution:
                 j += 1
             if a != b:
                 return -1 if a < b else 1
-            i += 1
-            j += 1
+            i, j = i + 1, j + 1
         return 0
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int compareVersion(String version1, String version2) {
-        for (int i = 0, j = 0; i < version1.length() || j < version2.length(); ++i, ++j) {
+        int m = version1.length(), n = version2.length();
+        for (int i = 0, j = 0; i < m || j < n; ++i, ++j) {
             int a = 0, b = 0;
-            while (i < version1.length() && version1.charAt(i) != '.') {
-                a = a * 10 + version1.charAt(i++) - '0';
+            while (i < m && version1.charAt(i) != '.') {
+                a = a * 10 + (version1.charAt(i++) - '0');
             }
-            while (j < version2.length() && version2.charAt(j) != '.') {
-                b = b * 10 + version2.charAt(j++) - '0';
+            while (j < n && version2.charAt(j) != '.') {
+                b = b * 10 + (version2.charAt(j++) - '0');
             }
             if (a != b) {
                 return a < b ? -1 : 1;
@@ -117,54 +130,42 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function compareVersion(version1: string, version2: string): number {
-    let v1 = version1.split("."),
-        v2 = version2.split(".");
-    for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
-        let c1 = Number(v1[i] || 0),
-            c2 = Number(v2[i] || 0);
-        if (c1 > c2) return 1;
-        if (c1 < c2) return -1;
-    }
-    return 0;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int compareVersion(string version1, string version2) {
-        for (int i = 0, j = 0; i < version1.size() || j < version2.size(); ++i, ++j)
-        {
+        int m = version1.size(), n = version2.size();
+        for (int i = 0, j = 0; i < m || j < n; ++i, ++j) {
             int a = 0, b = 0;
-            while (i < version1.size() && version1[i] != '.')
-                a = a * 10 + version1[i++] - '0';
-            while (j < version2.size() && version2[j] != '.')
-                b = b * 10 + version2[j++] - '0';
-            if (a != b)
+            while (i < m && version1[i] != '.') {
+                a = a * 10 + (version1[i++] - '0');
+            }
+            while (j < n && version2[j] != '.') {
+                b = b * 10 + (version2[j++] - '0');
+            }
+            if (a != b) {
                 return a < b ? -1 : 1;
+            }
         }
         return 0;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func compareVersion(version1 string, version2 string) int {
-	for i, j := 0, 0; i < len(version1) || j < len(version2); i, j = i+1, j+1 {
-		a, b := 0, 0
-		for i < len(version1) && version1[i] != '.' {
+	m, n := len(version1), len(version2)
+	for i, j := 0, 0; i < m || j < n; i, j = i+1, j+1 {
+		var a, b int
+		for i < m && version1[i] != '.' {
 			a = a*10 + int(version1[i]-'0')
 			i++
 		}
-		for j < len(version2) && version2[j] != '.' {
+		for j < n && version2[j] != '.' {
 			b = b*10 + int(version2[j]-'0')
 			j++
 		}
@@ -179,10 +180,50 @@ func compareVersion(version1 string, version2 string) int {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function compareVersion(version1: string, version2: string): number {
+    const v1 = version1.split('.');
+    const v2 = version2.split('.');
+    for (let i = 0; i < Math.max(v1.length, v2.length); ++i) {
+        const [n1, n2] = [+v1[i] || 0, +v2[i] || 0];
+        if (n1 < n2) {
+            return -1;
+        }
+        if (n1 > n2) {
+            return 1;
+        }
+    }
+    return 0;
+}
 ```
 
+#### C#
+
+```cs
+public class Solution {
+    public int CompareVersion(string version1, string version2) {
+        int m = version1.Length, n = version2.Length;
+        for (int i = 0, j = 0; i < m || j < n; ++i, ++j) {
+            int a = 0, b = 0;
+            while (i < m && version1[i] != '.') {
+                a = a * 10 + (version1[i++] - '0');
+            }
+            while (j < n && version2[j] != '.') {
+                b = b * 10 + (version2[j++] - '0');
+            }
+            if (a != b) {
+                return a < b ? -1 : 1;
+            }
+        }
+        return 0;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

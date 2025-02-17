@@ -1,10 +1,27 @@
-# [1267. 统计参与通信的服务器](https://leetcode-cn.com/problems/count-servers-that-communicate)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1200-1299/1267.Count%20Servers%20that%20Communicate/README.md
+rating: 1374
+source: 第 164 场周赛 Q2
+tags:
+    - 深度优先搜索
+    - 广度优先搜索
+    - 并查集
+    - 数组
+    - 计数
+    - 矩阵
+---
+
+<!-- problem:start -->
+
+# [1267. 统计参与通信的服务器](https://leetcode.cn/problems/count-servers-that-communicate)
 
 [English Version](/solution/1200-1299/1267.Count%20Servers%20that%20Communicate/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>这里有一幅服务器分布图，服务器的位置标识在&nbsp;<code>m * n</code>&nbsp;的整数矩阵网格&nbsp;<code>grid</code>&nbsp;中，1 表示单元格上有服务器，0 表示没有。</p>
 
@@ -16,7 +33,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1267.Count%20Servers%20that%20Communicate/images/untitled-diagram-6.jpg" style="height: 203px; width: 202px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1267.Count%20Servers%20that%20Communicate/images/untitled-diagram-6.jpg" style="height: 203px; width: 202px;"></p>
 
 <pre><strong>输入：</strong>grid = [[1,0],[0,1]]
 <strong>输出：</strong>0
@@ -24,7 +41,7 @@
 
 <p><strong>示例 2：</strong></p>
 
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1267.Count%20Servers%20that%20Communicate/images/untitled-diagram-4-1.jpg" style="height: 203px; width: 203px;"></strong></p>
+<p><strong><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1267.Count%20Servers%20that%20Communicate/images/untitled-diagram-4-1.jpg" style="height: 203px; width: 203px;"></strong></p>
 
 <pre><strong>输入：</strong>grid = [[1,0],[1,1]]
 <strong>输出：</strong>3
@@ -33,7 +50,7 @@
 
 <p><strong>示例 3：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1267.Count%20Servers%20that%20Communicate/images/untitled-diagram-1-3.jpg" style="height: 443px; width: 443px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1267.Count%20Servers%20that%20Communicate/images/untitled-diagram-1-3.jpg" style="height: 443px; width: 443px;"></p>
 
 <pre><strong>输入：</strong>grid = [[1,1,0,0],[0,0,1,0],[0,0,1,0],[0,0,0,1]]
 <strong>输出：</strong>4
@@ -52,147 +69,153 @@
 	<li><code>grid[i][j] == 0 or 1</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-对每一行、每一列的服务器数量进行统计。
+### 方法一：计数
 
-然后遍历每个服务器，若当前服务器所在的行或者列的服务器数量超过 1，说明当前服务器满足条件，累加结果 res。
+我们可以统计每一行、每一列的服务器数量，然后遍历每个服务器，若当前服务器所在的行或者列的服务器数量超过 $1$，说明当前服务器满足条件，结果加 $1$。
 
-遍历结束后，返回 res 即可。
+遍历结束后，返回结果即可。
+
+时间复杂度 $O(m \times n)$，空间复杂度 $O(m + n)$。其中 $m$ 和 $n$ 分别为矩阵的行数和列数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def countServers(self, grid: List[List[int]]) -> int:
         m, n = len(grid), len(grid[0])
-        rows = [0] * m
-        cols = [0] * n
+        row = [0] * m
+        col = [0] * n
         for i in range(m):
             for j in range(n):
-                if grid[i][j] == 1:
-                    rows[i] += 1
-                    cols[j] += 1
-        res = 0
-        for i in range(m):
-            for j in range(n):
-                if grid[i][j] == 1:
-                    if rows[i] > 1 or cols[j] > 1:
-                        res += 1
-        return res
+                if grid[i][j]:
+                    row[i] += 1
+                    col[j] += 1
+        return sum(
+            grid[i][j] and (row[i] > 1 or col[j] > 1)
+            for i in range(m)
+            for j in range(n)
+        )
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int countServers(int[][] grid) {
         int m = grid.length, n = grid[0].length;
-        int[] rows = new int[m];
-        int[] cols = new int[n];
+        int[] row = new int[m];
+        int[] col = new int[n];
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
                 if (grid[i][j] == 1) {
-                    ++rows[i];
-                    ++cols[j];
+                    row[i]++;
+                    col[j]++;
                 }
             }
         }
-        int res = 0;
+        int ans = 0;
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                if (grid[i][j] == 1) {
-                    if (rows[i] > 1 || cols[j] > 1) {
-                        ++res;
-                    }
+                if (grid[i][j] == 1 && (row[i] > 1 || col[j] > 1)) {
+                    ++ans;
                 }
             }
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int countServers(vector<vector<int>>& grid) {
         int m = grid.size(), n = grid[0].size();
-        vector<int> rows(m);
-        vector<int> cols(n);
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (grid[i][j] == 1)
-                {
-                    ++rows[i];
-                    ++cols[j];
+        vector<int> row(m), col(n);
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j]) {
+                    ++row[i];
+                    ++col[j];
                 }
             }
         }
-        int res = 0;
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (grid[i][j] == 1)
-                {
-                    if (rows[i] > 1 || cols[j] > 1)
-                    {
-                        ++res;
-                    }
-                }
+        int ans = 0;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                ans += grid[i][j] && (row[i] > 1 || col[j] > 1);
             }
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func countServers(grid [][]int) int {
+func countServers(grid [][]int) (ans int) {
 	m, n := len(grid), len(grid[0])
-	rows := make([]int, m)
-	cols := make([]int, n)
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if grid[i][j] == 1 {
-				rows[i]++
-				cols[j]++
+	row, col := make([]int, m), make([]int, n)
+	for i := range grid {
+		for j, x := range grid[i] {
+			if x == 1 {
+				row[i]++
+				col[j]++
 			}
 		}
 	}
-	res := 0
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if grid[i][j] == 1 {
-				if rows[i] > 1 || cols[j] > 1 {
-					res++
-				}
+	for i := range grid {
+		for j, x := range grid[i] {
+			if x == 1 && (row[i] > 1 || col[j] > 1) {
+				ans++
 			}
 		}
 	}
-	return res
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function countServers(grid: number[][]): number {
+    const m = grid.length;
+    const n = grid[0].length;
+    const row = new Array(m).fill(0);
+    const col = new Array(n).fill(0);
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (grid[i][j] === 1) {
+                row[i]++;
+                col[j]++;
+            }
+        }
+    }
+    let ans = 0;
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (grid[i][j] === 1 && (row[i] > 1 || col[j] > 1)) {
+                ans++;
+            }
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

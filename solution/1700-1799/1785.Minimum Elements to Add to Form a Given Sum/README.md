@@ -1,10 +1,23 @@
-# [1785. 构成特定和需要添加的最少元素](https://leetcode-cn.com/problems/minimum-elements-to-add-to-form-a-given-sum)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1785.Minimum%20Elements%20to%20Add%20to%20Form%20a%20Given%20Sum/README.md
+rating: 1432
+source: 第 231 场周赛 Q2
+tags:
+    - 贪心
+    - 数组
+---
+
+<!-- problem:start -->
+
+# [1785. 构成特定和需要添加的最少元素](https://leetcode.cn/problems/minimum-elements-to-add-to-form-a-given-sum)
 
 [English Version](/solution/1700-1799/1785.Minimum%20Elements%20to%20Add%20to%20Form%20a%20Given%20Sum/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组 <code>nums</code> ，和两个整数 <code>limit</code> 与 <code>goal</code> 。数组 <code>nums</code> 有一条重要属性：<code>abs(nums[i]) <= limit</code> 。</p>
 
@@ -40,32 +53,124 @@
 	<li><code>-10<sup>9</sup> <= goal <= 10<sup>9</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：贪心
+
+我们先计算数组元素总和 $s$，然后计算 $s$ 与 $goal$ 的差值 $d$。
+
+那么需要添加的元素数量为 $d$ 的绝对值除以 $limit$ 向上取整，即 $\lceil \frac{|d|}{limit} \rceil$。
+
+注意，本题中数组元素的数据范围为 $[-10^6, 10^6]$，元素个数最大为 $10^5$，总和 $s$ 以及差值 $d$ 可能会超过 $32$ 位整数的表示范围，因此需要使用 $64$ 位整数。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 为数组 $nums$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def minElements(self, nums: List[int], limit: int, goal: int) -> int:
+        d = abs(sum(nums) - goal)
+        return (d + limit - 1) // limit
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int minElements(int[] nums, int limit, int goal) {
+        // long s = Arrays.stream(nums).asLongStream().sum();
+        long s = 0;
+        for (int v : nums) {
+            s += v;
+        }
+        long d = Math.abs(s - goal);
+        return (int) ((d + limit - 1) / limit);
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int minElements(vector<int>& nums, int limit, int goal) {
+        long long s = accumulate(nums.begin(), nums.end(), 0ll);
+        long long d = abs(s - goal);
+        return (d + limit - 1) / limit;
+    }
+};
 ```
 
+#### Go
+
+```go
+func minElements(nums []int, limit int, goal int) int {
+	s := 0
+	for _, v := range nums {
+		s += v
+	}
+	d := abs(s - goal)
+	return (d + limit - 1) / limit
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+```
+
+#### TypeScript
+
+```ts
+function minElements(nums: number[], limit: number, goal: number): number {
+    const sum = nums.reduce((r, v) => r + v, 0);
+    const diff = Math.abs(goal - sum);
+    return Math.floor((diff + limit - 1) / limit);
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn min_elements(nums: Vec<i32>, limit: i32, goal: i32) -> i32 {
+        let limit = limit as i64;
+        let goal = goal as i64;
+        let mut sum = 0;
+        for &num in nums.iter() {
+            sum += num as i64;
+        }
+        let diff = (goal - sum).abs();
+        ((diff + limit - 1) / limit) as i32
+    }
+}
+```
+
+#### C
+
+```c
+int minElements(int* nums, int numsSize, int limit, int goal) {
+    long long sum = 0;
+    for (int i = 0; i < numsSize; i++) {
+        sum += nums[i];
+    }
+    long long diff = labs(goal - sum);
+    return (diff + limit - 1) / limit;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

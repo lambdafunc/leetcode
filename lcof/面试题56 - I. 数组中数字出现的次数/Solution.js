@@ -3,17 +3,17 @@
  * @return {number[]}
  */
 var singleNumbers = function (nums) {
-    let eor = 0;
-    for (let num of nums) {
-        eor ^= num;
+    let xs = 0;
+    for (const x of nums) {
+        xs ^= x;
     }
-    const diff = eor & (~eor + 1);
+    const lb = xs & -xs;
     let a = 0;
-    for (let num of nums) {
-        if ((num & diff) == 0) {
-            a ^= num;
+    for (const x of nums) {
+        if (x & lb) {
+            a ^= x;
         }
     }
-    let b = eor ^ a;
+    const b = xs ^ a;
     return [a, b];
 };

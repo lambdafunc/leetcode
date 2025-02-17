@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2100.Find%20Good%20Days%20to%20Rob%20the%20Bank/README_EN.md
+rating: 1702
+source: Biweekly Contest 67 Q2
+tags:
+    - Array
+    - Dynamic Programming
+    - Prefix Sum
+---
+
+<!-- problem:start -->
+
 # [2100. Find Good Days to Rob the Bank](https://leetcode.com/problems/find-good-days-to-rob-the-bank)
 
 [中文文档](/solution/2100-2199/2100.Find%20Good%20Days%20to%20Rob%20the%20Bank/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You and a gang of thieves are planning on robbing a bank. You are given a <strong>0-indexed</strong> integer array <code>security</code>, where <code>security[i]</code> is the number of guards on duty on the <code>i<sup>th</sup></code> day. The days are numbered starting from <code>0</code>. You are also given an integer <code>time</code>.</p>
 
@@ -19,7 +35,7 @@
 <p>Return <em>a list of <strong>all</strong> days <strong>(0-indexed) </strong>that are good days to rob the bank</em>.<em> The order that the days are returned in does<strong> </strong><strong>not</strong> matter.</em></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> security = [5,3,3,3,5,6,2], time = 2
@@ -30,7 +46,7 @@ On day 3, we have security[1] &gt;= security[2] &gt;= security[3] &lt;= security
 No other days satisfy this condition, so days 2 and 3 are the only good days to rob the bank.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> security = [1,1,1,1,1], time = 0
@@ -39,7 +55,7 @@ No other days satisfy this condition, so days 2 and 3 are the only good days to 
 Since time equals 0, every day is a good day to rob the bank, so return every day.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> security = [1,2,3,4,5,6], time = 2
@@ -49,15 +65,6 @@ No day has 2 days before it that have a non-increasing number of guards.
 Thus, no day is a good day to rob the bank, so return an empty list.
 </pre>
 
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> security = [1], time = 5
-<strong>Output:</strong> []
-<strong>Explanation:</strong>
-No day has 5 days before and after it.
-Thus, no day is a good day to rob the bank, so return an empty list.</pre>
-
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
@@ -66,11 +73,17 @@ Thus, no day is a good day to rob the bank, so return an empty list.</pre>
 	<li><code>0 &lt;= security[i], time &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -88,7 +101,7 @@ class Solution:
         return [i for i in range(n) if time <= min(left[i], right[i])]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -110,7 +123,7 @@ class Solution {
             }
         }
         List<Integer> ans = new ArrayList<>();
-        for (int i = 0; i < n; ++i) {
+        for (int i = time; i < n - time; ++i) {
             if (time <= Math.min(left[i], right[i])) {
                 ans.add(i);
             }
@@ -120,7 +133,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -137,7 +150,7 @@ public:
             if (security[i] <= security[i + 1])
                 right[i] = right[i + 1] + 1;
         vector<int> ans;
-        for (int i = 0; i < n; ++i)
+        for (int i = time; i < n - time; ++i)
             if (time <= min(left[i], right[i]))
                 ans.push_back(i);
         return ans;
@@ -145,7 +158,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func goodDaysToRobBank(security []int, time int) []int {
@@ -166,7 +179,7 @@ func goodDaysToRobBank(security []int, time int) []int {
 		}
 	}
 	var ans []int
-	for i := 0; i < n; i++ {
+	for i := time; i < n-time; i++ {
 		if time <= left[i] && time <= right[i] {
 			ans = append(ans, i)
 		}
@@ -175,16 +188,72 @@ func goodDaysToRobBank(security []int, time int) []int {
 }
 ```
 
-### **TypeScript**
+#### TypeScript
 
 ```ts
-
+function goodDaysToRobBank(security: number[], time: number): number[] {
+    const n = security.length;
+    if (n <= time * 2) {
+        return [];
+    }
+    const l = new Array(n).fill(0);
+    const r = new Array(n).fill(0);
+    for (let i = 1; i < n; i++) {
+        if (security[i] <= security[i - 1]) {
+            l[i] = l[i - 1] + 1;
+        }
+        if (security[n - i - 1] <= security[n - i]) {
+            r[n - i - 1] = r[n - i] + 1;
+        }
+    }
+    const res = [];
+    for (let i = time; i < n - time; i++) {
+        if (time <= Math.min(l[i], r[i])) {
+            res.push(i);
+        }
+    }
+    return res;
+}
 ```
 
-### **...**
+#### Rust
 
-```
+```rust
+use std::cmp::Ordering;
 
+impl Solution {
+    pub fn good_days_to_rob_bank(security: Vec<i32>, time: i32) -> Vec<i32> {
+        let time = time as usize;
+        let n = security.len();
+        if time * 2 >= n {
+            return vec![];
+        }
+        let mut g = vec![0; n];
+        for i in 1..n {
+            g[i] = match security[i].cmp(&security[i - 1]) {
+                Ordering::Less => -1,
+                Ordering::Greater => 1,
+                Ordering::Equal => 0,
+            };
+        }
+        let (mut a, mut b) = (vec![0; n + 1], vec![0; n + 1]);
+        for i in 1..=n {
+            a[i] = a[i - 1] + (if g[i - 1] == 1 { 1 } else { 0 });
+            b[i] = b[i - 1] + (if g[i - 1] == -1 { 1 } else { 0 });
+        }
+        let mut res = vec![];
+        for i in time..n - time {
+            if a[i + 1] - a[i + 1 - time] == 0 && b[i + 1 + time] - b[i + 1] == 0 {
+                res.push(i as i32);
+            }
+        }
+        res
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,8 +1,22 @@
-# [317. Shortest Distance from All Buildings](https://leetcode.com/problems/shortest-distance-from-all-buildings)
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0317.Shortest%20Distance%20from%20All%20Buildings/README_EN.md
+tags:
+    - Breadth-First Search
+    - Array
+    - Matrix
+---
+
+<!-- problem:start -->
+
+# [317. Shortest Distance from All Buildings 🔒](https://leetcode.com/problems/shortest-distance-from-all-buildings)
 
 [中文文档](/solution/0300-0399/0317.Shortest%20Distance%20from%20All%20Buildings/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given an <code>m x n</code> grid <code>grid</code> of values <code>0</code>, <code>1</code>, or <code>2</code>, where:</p>
 
@@ -21,8 +35,8 @@
 <p>The distance is calculated using <a href="http://en.wikipedia.org/wiki/Taxicab_geometry" target="_blank">Manhattan Distance</a>, where <code>distance(p1, p2) = |p2.x - p1.x| + |p2.y - p1.y|</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0317.Shortest%20Distance%20from%20All%20Buildings/images/buildings-grid.jpg" style="width: 413px; height: 253px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0317.Shortest%20Distance%20from%20All%20Buildings/images/buildings-grid.jpg" style="width: 413px; height: 253px;" />
 <pre>
 <strong>Input:</strong> grid = [[1,0,2,0,1],[0,0,0,0,0],[0,0,1,0,0]]
 <strong>Output:</strong> 7
@@ -31,14 +45,14 @@ The point (1,2) is an ideal empty land to build a house, as the total travel dis
 So return 7.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> grid = [[1,0]]
 <strong>Output:</strong> 1
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> grid = [[1]]
@@ -51,18 +65,22 @@ So return 7.
 <ul>
 	<li><code>m == grid.length</code></li>
 	<li><code>n == grid[i].length</code></li>
-	<li><code>1 &lt;= m, n &lt;= 100</code></li>
+	<li><code>1 &lt;= m, n &lt;= 50</code></li>
 	<li><code>grid[i][j]</code> is either <code>0</code>, <code>1</code>, or <code>2</code>.</li>
 	<li>There will be <strong>at least one</strong> building in the <code>grid</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-BFS.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -81,24 +99,29 @@ class Solution:
                     vis = set()
                     while q:
                         d += 1
-                        for _ in range(len(q), 0, -1):
+                        for _ in range(len(q)):
                             r, c = q.popleft()
                             for a, b in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
                                 x, y = r + a, c + b
-                                if 0 <= x < m and 0 <= y < n and grid[x][y] == 0 and (x, y) not in vis:
+                                if (
+                                    0 <= x < m
+                                    and 0 <= y < n
+                                    and grid[x][y] == 0
+                                    and (x, y) not in vis
+                                ):
                                     cnt[x][y] += 1
                                     dist[x][y] += d
                                     q.append((x, y))
                                     vis.add((x, y))
-        ans = float('inf')
+        ans = inf
         for i in range(m):
             for j in range(n):
                 if grid[i][j] == 0 and cnt[i][j] == total:
                     ans = min(ans, dist[i][j])
-        return -1 if ans == float('inf') else ans
+        return -1 if ans == inf else ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -114,7 +137,7 @@ class Solution {
             for (int j = 0; j < n; ++j) {
                 if (grid[i][j] == 1) {
                     ++total;
-                    q.offer(new int[]{i, j});
+                    q.offer(new int[] {i, j});
                     int d = 0;
                     boolean[][] vis = new boolean[m][n];
                     while (!q.isEmpty()) {
@@ -124,10 +147,11 @@ class Solution {
                             for (int l = 0; l < 4; ++l) {
                                 int x = p[0] + dirs[l];
                                 int y = p[1] + dirs[l + 1];
-                                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 0 && !vis[x][y]) {
+                                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 0
+                                    && !vis[x][y]) {
                                     ++cnt[x][y];
                                     dist[x][y] += d;
-                                    q.offer(new int[]{x, y});
+                                    q.offer(new int[] {x, y});
                                     vis[x][y] = true;
                                 }
                             }
@@ -149,7 +173,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -163,29 +187,22 @@ public:
         vector<vector<int>> cnt(m, vector<int>(n));
         vector<vector<int>> dist(m, vector<int>(n));
         vector<int> dirs = {-1, 0, 1, 0, -1};
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (grid[i][j] == 1)
-                {
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j] == 1) {
                     ++total;
                     q.push({i, j});
                     vector<vector<bool>> vis(m, vector<bool>(n));
                     int d = 0;
-                    while (!q.empty())
-                    {
+                    while (!q.empty()) {
                         ++d;
-                        for (int k = q.size(); k > 0; --k)
-                        {
+                        for (int k = q.size(); k > 0; --k) {
                             auto p = q.front();
                             q.pop();
-                            for (int l = 0; l < 4; ++l)
-                            {
+                            for (int l = 0; l < 4; ++l) {
                                 int x = p.first + dirs[l];
                                 int y = p.second + dirs[l + 1];
-                                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 0 && !vis[x][y])
-                                {
+                                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 0 && !vis[x][y]) {
                                     ++cnt[x][y];
                                     dist[x][y] += d;
                                     q.push({x, y});
@@ -207,7 +224,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func shortestDistance(grid [][]int) int {
@@ -265,10 +282,8 @@ func shortestDistance(grid [][]int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

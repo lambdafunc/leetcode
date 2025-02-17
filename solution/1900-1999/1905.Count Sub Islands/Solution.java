@@ -1,31 +1,35 @@
 class Solution {
-    private int[][] directions = {{0, 1}, {0, - 1}, {1, 0}, {-1, 0}};
+    private final int[] dirs = {-1, 0, 1, 0, -1};
+    private int[][] grid1;
+    private int[][] grid2;
+    private int m;
+    private int n;
 
     public int countSubIslands(int[][] grid1, int[][] grid2) {
-        int m = grid1.length, n = grid1[0].length;
-        int count = 0;
+        m = grid1.length;
+        n = grid1[0].length;
+        this.grid1 = grid1;
+        this.grid2 = grid2;
+        int ans = 0;
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                if (grid2[i][j] == 1 && dfs(grid1, grid2, i, j, m, n)) {
-                    ++count;
+                if (grid2[i][j] == 1) {
+                    ans += dfs(i, j);
                 }
             }
         }
-        return count;
+        return ans;
     }
 
-    private boolean dfs(int[][] grid1, int[][] grid2, int i, int j, int m, int n) {
-        boolean res = grid1[i][j] == 1;
+    private int dfs(int i, int j) {
+        int ok = grid1[i][j];
         grid2[i][j] = 0;
-
-        for (int[] direction : directions) {
-            int a = i + direction[0], b = j + direction[1];
-            if (a >= 0 && a < m && b >= 0 && b < n && grid2[a][b] == 1) {
-                if (!dfs(grid1, grid2, a, b, m, n)) {
-                    res = false;
-                }
+        for (int k = 0; k < 4; ++k) {
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x >= 0 && x < m && y >= 0 && y < n && grid2[x][y] == 1) {
+                ok &= dfs(x, y);
             }
         }
-        return res;
+        return ok;
     }
 }

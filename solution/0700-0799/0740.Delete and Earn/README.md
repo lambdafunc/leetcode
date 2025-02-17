@@ -1,77 +1,77 @@
-# [740. 删除与获得点数](https://leetcode-cn.com/problems/delete-and-earn)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0740.Delete%20and%20Earn/README.md
+tags:
+    - 数组
+    - 哈希表
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [740. 删除并获得点数](https://leetcode.cn/problems/delete-and-earn)
 
 [English Version](/solution/0700-0799/0740.Delete%20and%20Earn/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个整数数组&nbsp;<code>nums</code>&nbsp;，你可以对它进行一些操作。</p>
+<p>给你一个整数数组 <code>nums</code> ，你可以对它进行一些操作。</p>
 
-<p>每次操作中，选择任意一个&nbsp;<code>nums[i]</code>&nbsp;，删除它并获得&nbsp;<code>nums[i]</code>&nbsp;的点数。之后，你必须删除<strong>每个</strong>等于&nbsp;<code>nums[i] - 1</code>&nbsp;或&nbsp;<code>nums[i] + 1</code>&nbsp;的元素。</p>
+<p>每次操作中，选择任意一个 <code>nums[i]</code> ，删除它并获得 <code>nums[i]</code> 的点数。之后，你必须删除 <strong>所有 </strong>等于 <code>nums[i] - 1</code> 和 <code>nums[i] + 1</code> 的元素。</p>
 
-<p>开始你拥有 0 个点数。返回你能通过这些操作获得的最大点数。</p>
+<p>开始你拥有 <code>0</code> 个点数。返回你能通过这些操作获得的最大点数。</p>
 
-<p><strong>示例 1:</strong></p>
+<p> </p>
+
+<p><strong>示例 1：</strong></p>
 
 <pre>
-<strong>输入:</strong> nums = [3, 4, 2]
-<strong>输出:</strong> 6
-<strong>解释:</strong>
-删除 4 来获得 4 个点数，因此 3 也被删除。
-之后，删除 2 来获得 2 个点数。总共获得 6 个点数。
+<strong>输入：</strong>nums = [3,4,2]
+<strong>输出：</strong>6
+<strong>解释：</strong>
+删除 4 获得 4 个点数，因此 3 也被删除。
+之后，删除 2 获得 2 个点数。总共获得 6 个点数。
 </pre>
 
-<p><strong>示例&nbsp;2:</strong></p>
+<p><strong>示例 2：</strong></p>
 
 <pre>
-<strong>输入:</strong> nums = [2, 2, 3, 3, 3, 4]
-<strong>输出:</strong> 9
-<strong>解释:</strong>
-删除 3 来获得 3 个点数，接着要删除两个 2 和 4 。
+<strong>输入：</strong>nums = [2,2,3,3,3,4]
+<strong>输出：</strong>9
+<strong>解释：</strong>
+删除 3 获得 3 个点数，接着要删除两个 2 和 4 。
 之后，再次删除 3 获得 3 个点数，再次删除 3 获得 3 个点数。
 总共获得 9 个点数。
 </pre>
 
-<p><strong>注意:</strong></p>
+<p> </p>
+
+<p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>nums</code>的长度最大为<code>20000</code>。</li>
-	<li>每个整数<code>nums[i]</code>的大小都在<code>[1, 10000]</code>范围内。</li>
+	<li><code>1 <= nums.length <= 2 * 10<sup>4</sup></code></li>
+	<li><code>1 <= nums[i] <= 10<sup>4</sup></code></li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-核心思路: **一个数字要么不选，要么全选**
-
-首先计算出每个数字的总和 sums，并维护两个 dp 数组：select 和 nonSelect
-
-- `sums[i]` 代表值为 i 的元素总和
-- `select[i]` 代表如果选数字 i，从 0 处理到 i 的最大和
-- `nonSelect[i]` 代表如果不选数字 i，从 0 处理到 i 的最大和
-
-那么我们有以下逻辑：
-
-- 如果选 i，那么 i-1 肯定不能选；
-- 如果不选 i，那么 i-1 选不选都可以，因此我们选择其中较大的选法
-
-```java
-select[i] = nonSelect[i-1] + sums[i];
-nonSelect[i] = Math.max(select[i-1], nonSelect[i-1]);
-```
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def deleteAndEarn(self, nums: List[int]) -> int:
-        mx = float('-inf')
+        mx = -inf
         for num in nums:
             mx = max(mx, num)
         total = [0] * (mx + 1)
@@ -86,9 +86,7 @@ class Solution:
         return second
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -116,7 +114,32 @@ class Solution {
 }
 ```
 
-### **Go**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int deleteAndEarn(vector<int>& nums) {
+        vector<int> vals(10010);
+        for (int& num : nums) {
+            vals[num] += num;
+        }
+        return rob(vals);
+    }
+
+    int rob(vector<int>& nums) {
+        int a = 0, b = nums[0];
+        for (int i = 1; i < nums.size(); ++i) {
+            int c = max(nums[i] + a, b);
+            a = b;
+            b = c;
+        }
+        return b;
+    }
+};
+```
+
+#### Go
 
 ```go
 func deleteAndEarn(nums []int) int {
@@ -147,35 +170,8 @@ func deleteAndEarn(nums []int) int {
 }
 ```
 
-### **C++**
-
-```cpp
-class Solution {
-public:
-    int deleteAndEarn(vector<int>& nums) {
-        vector<int> vals(10010);
-        for (int& num : nums) {
-            vals[num] += num;
-        }
-        return rob(vals);
-    }
-
-    int rob(vector<int>& nums) {
-        int a = 0, b = nums[0];
-        for (int i = 1; i < nums.size(); ++i) {
-            int c = max(nums[i] + a, b);
-            a = b;
-            b = c;
-        }
-        return b;
-    }
-};
-```
-
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

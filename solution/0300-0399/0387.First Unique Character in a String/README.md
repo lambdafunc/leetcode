@@ -1,64 +1,100 @@
-# [387. 字符串中的第一个唯一字符](https://leetcode-cn.com/problems/first-unique-character-in-a-string)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0387.First%20Unique%20Character%20in%20a%20String/README.md
+tags:
+    - 队列
+    - 哈希表
+    - 字符串
+    - 计数
+---
+
+<!-- problem:start -->
+
+# [387. 字符串中的第一个唯一字符](https://leetcode.cn/problems/first-unique-character-in-a-string)
 
 [English Version](/solution/0300-0399/0387.First%20Unique%20Character%20in%20a%20String/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个字符串，找到它的第一个不重复的字符，并返回它的索引。如果不存在，则返回 -1。</p>
+<p>给定一个字符串&nbsp;<code>s</code>&nbsp;，找到 <em>它的第一个不重复的字符，并返回它的索引</em> 。如果不存在，则返回 <code>-1</code>&nbsp;。</p>
 
 <p>&nbsp;</p>
 
-<p><strong>示例：</strong></p>
+<p><strong>示例 1：</strong></p>
 
-<pre>s = &quot;leetcode&quot;
-返回 0
+<pre>
+<strong>输入:</strong> s = "leetcode"
+<strong>输出:</strong> 0
+</pre>
 
-s = &quot;loveleetcode&quot;
-返回 2
+<p><strong>示例 2:</strong></p>
+
+<pre>
+<strong>输入:</strong> s = "loveleetcode"
+<strong>输出:</strong> 2
+</pre>
+
+<p><strong>示例 3:</strong></p>
+
+<pre>
+<strong>输入:</strong> s = "aabb"
+<strong>输出:</strong> -1
 </pre>
 
 <p>&nbsp;</p>
 
-<p><strong>提示：</strong>你可以假定该字符串只包含小写字母。</p>
+<p><strong>提示:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= s.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>s</code>&nbsp;只包含小写字母</li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-遍历字符串，用一个 map 或者字典存放字符串中每个字符出现的次数。然后再次遍历字符串，取出对应字符出现的次数，若次数为 1，直接返回当前字符串的下标。遍历结束，返回 -1。
+### 方法一：数组或哈希表
+
+我们可以用数组或哈希表 $cnt$ 记录字符串 $s$ 中每个字符出现的次数。
+
+然后我们再遍历字符串 $s$，当遍历到某个字符 $c$ 时，如果 $cnt[c]=1$，则说明 $c$ 是第一个不重复的字符，返回它的索引即可。
+
+如果遍历完字符串 $s$ 仍然没有找到不重复的字符，返回 $-1$。
+
+时间复杂度 $O(n)$，空间复杂度 $O(\Sigma)$，其中 $\Sigma$ 是字符集的大小。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def firstUniqChar(self, s: str) -> int:
-        counter = Counter(s)
+        cnt = Counter(s)
         for i, c in enumerate(s):
-            if counter[c] == 1:
+            if cnt[c] == 1:
                 return i
         return -1
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int firstUniqChar(String s) {
-        int[] counter = new int[26];
-        for (char c : s.toCharArray()) {
-            ++counter[c - 'a'];
+        int[] cnt = new int[26];
+        int n = s.length();
+        for (int i = 0; i < n; ++i) {
+            ++cnt[s.charAt(i) - 'a'];
         }
-        for (int i = 0; i < s.length(); ++i) {
-            char c = s.charAt(i);
-            if (counter[c - 'a'] == 1) {
+        for (int i = 0; i < n; ++i) {
+            if (cnt[s.charAt(i) - 'a'] == 1) {
                 return i;
             }
         }
@@ -67,47 +103,37 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function firstUniqChar(s: string): number {
-    let record = new Map();
-    for (let cur of [...s]) {
-        record.set(cur, record.has(cur));
-    }
-    for (let i = 0; i < s.length; i++) {
-        if (!record.get(s[i])) return i;
-    }
-    return -1;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int firstUniqChar(string s) {
-        vector<int> counter(26);
-        for (char& c : s) ++counter[c - 'a'];
-        for (int i = 0; i < s.size(); ++i)
-            if (counter[s[i] - 'a'] == 1)
+        int cnt[26]{};
+        for (char& c : s) {
+            ++cnt[c - 'a'];
+        }
+        int n = s.size();
+        for (int i = 0; i < n; ++i) {
+            if (cnt[s[i] - 'a'] == 1) {
                 return i;
+            }
+        }
         return -1;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func firstUniqChar(s string) int {
-	counter := make([]int, 26)
+	cnt := [26]int{}
 	for _, c := range s {
-		counter[c-'a']++
+		cnt[c-'a']++
 	}
 	for i, c := range s {
-		if counter[c-'a'] == 1 {
+		if cnt[c-'a'] == 1 {
 			return i
 		}
 	}
@@ -115,7 +141,24 @@ func firstUniqChar(s string) int {
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+function firstUniqChar(s: string): number {
+    const cnt = new Array(26).fill(0);
+    for (const c of s) {
+        cnt[c.charCodeAt(0) - 97]++;
+    }
+    for (let i = 0; i < s.length; i++) {
+        if (cnt[s.charCodeAt(i) - 97] === 1) {
+            return i;
+        }
+    }
+    return -1;
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -123,12 +166,12 @@ func firstUniqChar(s string) int {
  * @return {number}
  */
 var firstUniqChar = function (s) {
-    const counter = new Map();
-    for (let c of s) {
-        counter[c] = (counter[c] || 0) + 1;
+    const cnt = new Array(26).fill(0);
+    for (const c of s) {
+        ++cnt[c.charCodeAt() - 'a'.charCodeAt()];
     }
     for (let i = 0; i < s.length; ++i) {
-        if (counter[s[i]] == 1) {
+        if (cnt[s[i].charCodeAt() - 'a'.charCodeAt()] === 1) {
             return i;
         }
     }
@@ -136,10 +179,30 @@ var firstUniqChar = function (s) {
 };
 ```
 
-### **...**
+#### PHP
 
-```
-
+```php
+class Solution {
+    /**
+     * @param String $s
+     * @return Integer
+     */
+    function firstUniqChar($s) {
+        for ($i = 0; $i < strlen($s); $i++) {
+            $hashtable[$s[$i]]++;
+        }
+        for ($i = 0; $i < strlen($s); $i++) {
+            if ($hashtable[$s[$i]] == 1) {
+                return $i;
+            }
+        }
+        return -1;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,8 +1,25 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1591.Strange%20Printer%20II/README_EN.md
+rating: 2290
+source: Biweekly Contest 35 Q4
+tags:
+    - Graph
+    - Topological Sort
+    - Array
+    - Matrix
+---
+
+<!-- problem:start -->
+
 # [1591. Strange Printer II](https://leetcode.com/problems/strange-printer-ii)
 
 [中文文档](/solution/1500-1599/1591.Strange%20Printer%20II/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>There is a strange printer with the following two special requirements:</p>
 
@@ -16,36 +33,26 @@
 <p>Return <code>true</code><em> if it is possible to print the matrix </em><code>targetGrid</code><em>,</em><em> otherwise, return </em><code>false</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1591.Strange%20Printer%20II/images/sample_1_1929.png" style="width: 483px; height: 138px;" /></p>
-
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1591.Strange%20Printer%20II/images/print1.jpg" style="width: 600px; height: 175px;" />
 <pre>
 <strong>Input:</strong> targetGrid = [[1,1,1,1],[1,2,2,1],[1,2,2,1],[1,1,1,1]]
 <strong>Output:</strong> true
 </pre>
 
-<p><strong>Example 2:</strong></p>
-
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1591.Strange%20Printer%20II/images/sample_2_1929.png" style="width: 483px; height: 290px;" /></p>
-
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1591.Strange%20Printer%20II/images/print2.jpg" style="width: 600px; height: 367px;" />
 <pre>
 <strong>Input:</strong> targetGrid = [[1,1,1,1],[1,1,3,3],[1,1,3,4],[5,5,1,4]]
 <strong>Output:</strong> true
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> targetGrid = [[1,2,1],[2,1,2],[1,2,1]]
 <strong>Output:</strong> false
-<strong>Explanation:</strong> It is impossible to form targetGrid because it is not allowed to print the same color in different turns.</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> targetGrid = [[1,1,1],[3,1,3]]
-<strong>Output:</strong> false
+<strong>Explanation:</strong> It is impossible to form targetGrid because it is not allowed to print the same color in different turns.
 </pre>
 
 <p>&nbsp;</p>
@@ -58,26 +65,42 @@
 	<li><code>1 &lt;= targetGrid[row][col] &lt;= 60</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 
 ```
 
-### **Java**
+#### Java
 
 ```java
 
 ```
 
-### **...**
+#### C++
+
+```cpp
 
 ```
+
+#### Go
+
+```go
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

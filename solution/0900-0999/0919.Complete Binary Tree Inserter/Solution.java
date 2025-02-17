@@ -14,36 +14,37 @@
  * }
  */
 class CBTInserter {
-    private List<TreeNode> tree;
+    private List<TreeNode> tree = new ArrayList<>();
 
     public CBTInserter(TreeNode root) {
-        tree = new ArrayList<>();
         Deque<TreeNode> q = new ArrayDeque<>();
-        q.offerLast(root);
+        q.offer(root);
         while (!q.isEmpty()) {
-            TreeNode node = q.pollFirst();
-            tree.add(node);
-            if (node.left != null) {
-                q.offerLast(node.left);
-            }
-            if (node.right != null) {
-                q.offerLast(node.right);
+            for (int i = q.size(); i > 0; --i) {
+                TreeNode node = q.poll();
+                tree.add(node);
+                if (node.left != null) {
+                    q.offer(node.left);
+                }
+                if (node.right != null) {
+                    q.offer(node.right);
+                }
             }
         }
     }
-    
+
     public int insert(int val) {
-        int pidx = (tree.size() - 1) >> 1;
+        TreeNode p = tree.get((tree.size() - 1) / 2);
         TreeNode node = new TreeNode(val);
         tree.add(node);
-        if (tree.get(pidx).left == null) {
-            tree.get(pidx).left = node;
+        if (p.left == null) {
+            p.left = node;
         } else {
-            tree.get(pidx).right = node;
+            p.right = node;
         }
-        return tree.get(pidx).val;
+        return p.val;
     }
-    
+
     public TreeNode get_root() {
         return tree.get(0);
     }

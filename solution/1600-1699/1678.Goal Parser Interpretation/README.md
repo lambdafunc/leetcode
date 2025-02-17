@@ -1,10 +1,22 @@
-# [1678. 设计 Goal 解析器](https://leetcode-cn.com/problems/goal-parser-interpretation)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1678.Goal%20Parser%20Interpretation/README.md
+rating: 1221
+source: 第 218 场周赛 Q1
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1678. 设计 Goal 解析器](https://leetcode.cn/problems/goal-parser-interpretation)
 
 [English Version](/solution/1600-1699/1678.Goal%20Parser%20Interpretation/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>请你设计一个可以解释字符串 <code>command</code> 的 <strong>Goal 解析器</strong> 。<code>command</code> 由 <code>"G"</code>、<code>"()"</code> 和/或 <code>"(al)"</code> 按某种顺序组成。Goal 解析器会将 <code>"G"</code> 解释为字符串 <code>"G"</code>、<code>"()"</code> 解释为字符串 <code>"o"</code> ，<code>"(al)"</code> 解释为字符串 <code>"al"</code> 。然后，按原顺序将经解释得到的字符串连接成一个字符串。</p>
 
@@ -44,15 +56,21 @@ G -&gt; G
 	<li><code>command</code> 由 <code>"G"</code>、<code>"()"</code> 和/或 <code>"(al)"</code> 按某种顺序组成</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：字符串替换
+
+根据题意，只需要将字符串 `command` 中的 `"()"` 替换为 `'o'`，`"(al)"` 替换为 `"al"` 即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 是字符串 $command$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -60,108 +78,219 @@ class Solution:
         return command.replace('()', 'o').replace('(al)', 'al')
 ```
 
-```python
-class Solution:
-    def interpret(self, command: str) -> str:
-        res = ''
-        i, n = 0, len(command)
-        while i < n:
-            c = command[i]
-            if c == 'G':
-                res += c
-                i += 1
-            elif c == '(' and command[i + 1] != ')':
-                res += 'al'
-                i += 4
-            else:
-                res += 'o'
-                i += 2
-        return res
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public String interpret(String command) {
-        StringBuilder sb = new StringBuilder();
-        int p = 0, q = 1;
-        for (; p < command.length(); p++, q++) {
-            char c = command.charAt(p);
-            if (c == 'G')
-                sb.append('G');
-            if (c == '(') {
-                if (command.charAt(q) == ')') {
-                    sb.append("o");
-                    p++;
-                    q++;
-                } else {
-                    sb.append("al");
-                    p += 2;
-                    q += 2;
-                }
-            }
-        }
-        return sb.toString();
+        return command.replace("()", "o").replace("(al)", "al");
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     string interpret(string command) {
-        string res = "";
-        int i = 0, n = command.size();
-        while (i < n) {
-            char c = command[i];
-            if (c == 'G') {
-                res += "G";
-                i += 1;
-            } else if (c == '(' && command[i + 1] != ')') {
-                res += "al";
-                i += 4;
-            } else {
-                res += "o";
-                i += 2;
-            }
-        }
-        return res;
+        while (command.find("()") != -1) command.replace(command.find("()"), 2, "o");
+        while (command.find("(al)") != -1) command.replace(command.find("(al)"), 4, "al");
+        return command;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func interpret(command string) string {
-	var res string
-	i, n := 0, len(command)
-	for i < n {
-		c := command[i]
-		if c == 'G' {
-			res += "G"
-			i += 1
-		} else if c == '(' && command[i+1] != ')' {
-			res += "al"
-			i += 4
-		} else {
-			res += "o"
-			i += 2
-		}
-	}
-	return res
+	command = strings.ReplaceAll(command, "()", "o")
+	command = strings.ReplaceAll(command, "(al)", "al")
+	return command
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function interpret(command: string): string {
+    return command.replace(/\(\)/g, 'o').replace(/\(al\)/g, 'al');
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn interpret(command: String) -> String {
+        command.replace("()", "o").replace("(al)", "al")
+    }
+}
+```
+
+#### C
+
+```c
+char* interpret(char* command) {
+    int n = strlen(command);
+    char* ans = malloc(sizeof(char) * n + 1);
+    int i = 0;
+    for (int j = 0; j < n; j++) {
+        char c = command[j];
+        if (c == 'G') {
+            ans[i++] = 'G';
+        } else if (c == '(') {
+            if (command[j + 1] == ')') {
+                ans[i++] = 'o';
+            } else {
+                ans[i++] = 'a';
+                ans[i++] = 'l';
+            }
+        }
+    }
+    ans[i] = '\0';
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：字符串遍历
+
+我们也可以遍历字符串 `command`，对于每个字符 $c$：
+
+-   如果是 `'G'`，直接将 $c$ 添加到结果串中；
+-   如果是 `'('`，判断下一个字符是否是 `')'`，若是，将 `'o'` 添加到结果串中，否则，将 `"al"` 添加到结果串中。
+
+遍历结束，返回结果串即可。
+
+时间复杂度 $O(n)$，其中 $n$ 是字符串 $command$ 的长度。空间复杂度 $O(1)$。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def interpret(self, command: str) -> str:
+        ans = []
+        for i, c in enumerate(command):
+            if c == 'G':
+                ans.append(c)
+            elif c == '(':
+                ans.append('o' if command[i + 1] == ')' else 'al')
+        return ''.join(ans)
+```
+
+#### Java
+
+```java
+class Solution {
+    public String interpret(String command) {
+        StringBuilder ans = new StringBuilder();
+        for (int i = 0; i < command.length(); ++i) {
+            char c = command.charAt(i);
+            if (c == 'G') {
+                ans.append(c);
+            } else if (c == '(') {
+                ans.append(command.charAt(i + 1) == ')' ? "o" : "al");
+            }
+        }
+        return ans.toString();
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    string interpret(string command) {
+        string ans;
+        for (int i = 0; i < command.size(); ++i) {
+            char c = command[i];
+            if (c == 'G')
+                ans += c;
+            else if (c == '(')
+                ans += command[i + 1] == ')' ? "o" : "al";
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func interpret(command string) string {
+	ans := &strings.Builder{}
+	for i, c := range command {
+		if c == 'G' {
+			ans.WriteRune(c)
+		} else if c == '(' {
+			if command[i+1] == ')' {
+				ans.WriteByte('o')
+			} else {
+				ans.WriteString("al")
+			}
+		}
+	}
+	return ans.String()
+}
+```
+
+#### TypeScript
+
+```ts
+function interpret(command: string): string {
+    const n = command.length;
+    const ans: string[] = [];
+    for (let i = 0; i < n; i++) {
+        const c = command[i];
+        if (c === 'G') {
+            ans.push(c);
+        } else if (c === '(') {
+            ans.push(command[i + 1] === ')' ? 'o' : 'al');
+        }
+    }
+    return ans.join('');
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn interpret(command: String) -> String {
+        let mut ans = String::new();
+        let bs = command.as_bytes();
+        for i in 0..bs.len() {
+            if bs[i] == b'G' {
+                ans.push_str("G");
+            }
+            if bs[i] == b'(' {
+                ans.push_str({
+                    if bs[i + 1] == b')' {
+                        "o"
+                    } else {
+                        "al"
+                    }
+                });
+            }
+        }
+        ans
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

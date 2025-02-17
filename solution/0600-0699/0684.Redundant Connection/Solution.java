@@ -2,17 +2,19 @@ class Solution {
     private int[] p;
 
     public int[] findRedundantConnection(int[][] edges) {
-        p = new int[1010];
-        for (int i = 0; i < p.length; ++i) {
+        int n = edges.length;
+        p = new int[n];
+        for (int i = 0; i < n; ++i) {
             p[i] = i;
         }
-        for (int[] e : edges) {
-            if (find(e[0]) == find(e[1])) {
-                return e;
+        for (int i = 0;; ++i) {
+            int pa = find(edges[i][0] - 1);
+            int pb = find(edges[i][1] - 1);
+            if (pa == pb) {
+                return edges[i];
             }
-            p[find(e[0])] = find(e[1]);
+            p[pa] = pb;
         }
-        return null;
     }
 
     private int find(int x) {

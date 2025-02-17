@@ -1,29 +1,21 @@
 func minOperations(nums []int, x int) int {
-	x = -x
+	s := -x
 	for _, v := range nums {
-		x += v
-	}
-	s, n := 0, len(nums)
-	seen := map[int]int{0: -1}
-	ans := math.MaxInt32
-	for i, v := range nums {
 		s += v
-		if _, ok := seen[s]; !ok {
-			seen[s] = i
+	}
+	vis := map[int]int{0: -1}
+	mx, t := -1, 0
+	for i, v := range nums {
+		t += v
+		if _, ok := vis[t]; !ok {
+			vis[t] = i
 		}
-		if j, ok := seen[s-x]; ok {
-			ans = min(ans, n-(i-j))
+		if j, ok := vis[t-s]; ok {
+			mx = max(mx, i-j)
 		}
 	}
-	if ans == math.MaxInt32 {
+	if mx == -1 {
 		return -1
 	}
-	return ans
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+	return len(nums) - mx
 }

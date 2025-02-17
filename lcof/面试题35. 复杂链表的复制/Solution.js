@@ -12,29 +12,18 @@
  * @return {Node}
  */
 var copyRandomList = function (head) {
-    if (head == null) {
-        return null;
+    const d = new Map();
+    const dummy = new Node(0);
+    let tail = dummy;
+    for (let cur = head; cur; cur = cur.next) {
+        tail.next = new Node(cur.val);
+        tail = tail.next;
+        d.set(cur, tail);
     }
-    let cur = head;
-    while (cur != null) {
-        let node = new Node(cur.val, cur.next);
-        cur.next = node;
-        cur = node.next;
+    tail = dummy.next;
+    for (let cur = head; cur; cur = cur.next) {
+        tail.random = d.get(cur.random);
+        tail = tail.next;
     }
-
-    cur = head;
-    while (cur != null) {
-        cur.next.random = cur.random == null ? null : cur.random.next;
-        cur = cur.next.next;
-    }
-
-    let copy = head.next;
-    cur = head;
-    while (cur != null) {
-        let next = cur.next;
-        cur.next = next.next;
-        next.next = next.next == null ? null : next.next.next;
-        cur = cur.next;
-    }
-    return copy;
+    return dummy.next;
 };

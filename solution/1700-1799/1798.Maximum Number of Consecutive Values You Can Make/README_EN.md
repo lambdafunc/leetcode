@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1798.Maximum%20Number%20of%20Consecutive%20Values%20You%20Can%20Make/README_EN.md
+rating: 1931
+source: Biweekly Contest 48 Q3
+tags:
+    - Greedy
+    - Array
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [1798. Maximum Number of Consecutive Values You Can Make](https://leetcode.com/problems/maximum-number-of-consecutive-values-you-can-make)
 
 [中文文档](/solution/1700-1799/1798.Maximum%20Number%20of%20Consecutive%20Values%20You%20Can%20Make/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given an integer array <code>coins</code> of length <code>n</code> which represents the <code>n</code> coins that you own. The value of the <code>i<sup>th</sup></code> coin is <code>coins[i]</code>. You can <strong>make</strong> some value <code>x</code> if you can choose some of your <code>n</code> coins such that their values sum up to <code>x</code>.</p>
 
@@ -11,7 +27,7 @@
 <p>Note that you may have multiple coins of the same value.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> coins = [1,3]
@@ -21,7 +37,7 @@
 - 1: take [1]
 You can make 2 consecutive integer values starting from 0.</pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> coins = [1,1,1,4]
@@ -37,10 +53,10 @@ You can make 2 consecutive integer values starting from 0.</pre>
 - 7: take [4,1,1,1]
 You can make 8 consecutive integer values starting from 0.</pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
-<strong>Input:</strong> nums = [1,4,10,3,1]
+<strong>Input:</strong> coins = [1,4,10,3,1]
 <strong>Output:</strong> 20</pre>
 
 <p>&nbsp;</p>
@@ -52,45 +68,106 @@ You can make 8 consecutive integer values starting from 0.</pre>
 	<li><code>1 &lt;= coins[i] &lt;= 4 * 10<sup>4</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Sorting + Greedy
+
+First, we sort the array. Then we define $ans$ as the current number of consecutive integers that can be constructed, initialized to $1$.
+
+We traverse the array, for the current element $v$, if $v > ans$, it means that we cannot construct $ans+1$ consecutive integers, so we directly break the loop and return $ans$. Otherwise, it means that we can construct $ans+v$ consecutive integers, so we update $ans$ to $ans+v$.
+
+Finally, we return $ans$.
+
+The time complexity is $O(n \times \log n)$, and the space complexity is $O(\log n)$. Here, $n$ is the length of the array.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def getMaximumConsecutive(self, coins: List[int]) -> int:
-        res = 1
-        for coin in sorted(coins):
-            if coin > res:
+        ans = 1
+        for v in sorted(coins):
+            if v > ans:
                 break
-            res += coin
-        return res
+            ans += v
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int getMaximumConsecutive(int[] coins) {
-        int res = 1;
         Arrays.sort(coins);
-        for (int coin : coins) {
-            if (coin > res) {
+        int ans = 1;
+        for (int v : coins) {
+            if (v > ans) {
                 break;
             }
-            res += coin;
+            ans += v;
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int getMaximumConsecutive(vector<int>& coins) {
+        sort(coins.begin(), coins.end());
+        int ans = 1;
+        for (int& v : coins) {
+            if (v > ans) break;
+            ans += v;
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func getMaximumConsecutive(coins []int) int {
+	sort.Ints(coins)
+	ans := 1
+	for _, v := range coins {
+		if v > ans {
+			break
+		}
+		ans += v
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+function getMaximumConsecutive(coins: number[]): number {
+    coins.sort((a, b) => a - b);
+    let ans = 1;
+    for (const v of coins) {
+        if (v > ans) {
+            break;
+        }
+        ans += v;
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,167 +1,174 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1002.Find%20Common%20Characters/README_EN.md
+rating: 1279
+source: Weekly Contest 126 Q1
+tags:
+    - Array
+    - Hash Table
+    - String
+---
+
+<!-- problem:start -->
+
 # [1002. Find Common Characters](https://leetcode.com/problems/find-common-characters)
 
 [中文文档](/solution/1000-1099/1002.Find%20Common%20Characters/README.md)
 
 ## Description
 
-<p>Given an array&nbsp;<code>A</code> of strings made only from lowercase letters, return a list of all characters that show up in all strings within the list <strong>(including duplicates)</strong>.&nbsp;&nbsp;For example, if a character occurs 3 times&nbsp;in all strings but not 4 times, you need to include that character three times&nbsp;in the final answer.</p>
+<!-- description:start -->
 
-<p>You may return the answer in any order.</p>
-
-<p>&nbsp;</p>
-
-<div>
-
-<p><strong>Example 1:</strong></p>
-
-<pre>
-
-<strong>Input: </strong><span id="example-input-1-1">[&quot;bella&quot;,&quot;label&quot;,&quot;roller&quot;]</span>
-
-<strong>Output: </strong><span id="example-output-1">[&quot;e&quot;,&quot;l&quot;,&quot;l&quot;]</span>
-
-</pre>
-
-<div>
-
-<p><strong>Example 2:</strong></p>
-
-<pre>
-
-<strong>Input: </strong><span id="example-input-2-1">[&quot;cool&quot;,&quot;lock&quot;,&quot;cook&quot;]</span>
-
-<strong>Output: </strong><span id="example-output-2">[&quot;c&quot;,&quot;o&quot;]</span>
-
-</pre>
+<p>Given a string array <code>words</code>, return <em>an array of all characters that show up in all strings within the </em><code>words</code><em> (including duplicates)</em>. You may return the answer in <strong>any order</strong>.</p>
 
 <p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+<pre><strong>Input:</strong> words = ["bella","label","roller"]
+<strong>Output:</strong> ["e","l","l"]
+</pre><p><strong class="example">Example 2:</strong></p>
+<pre><strong>Input:</strong> words = ["cool","lock","cook"]
+<strong>Output:</strong> ["c","o"]
+</pre>
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><strong><span>Note:</span></strong></p>
+<ul>
+	<li><code>1 &lt;= words.length &lt;= 100</code></li>
+	<li><code>1 &lt;= words[i].length &lt;= 100</code></li>
+	<li><code>words[i]</code> consists of lowercase English letters.</li>
+</ul>
 
-<ol>
-	<li><code>1 &lt;= A.length &lt;= 100</code></li>
-	<li><code>1 &lt;= A[i].length &lt;= 100</code></li>
-	<li><code>A[i][j]</code> is a lowercase letter</li>
-</ol>
-
-</div>
-
-</div>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Counting
+
+We use an array $cnt$ of length $26$ to record the minimum number of times each character appears in all strings. Finally, we traverse the $cnt$ array and add characters with a count greater than $0$ to the answer.
+
+The time complexity is $O(n \sum w_i)$, and the space complexity is $O(|\Sigma|)$. Here, $n$ is the length of the string array $words$, $w_i$ is the length of the $i$-th string in the array $words$, and $|\Sigma|$ is the size of the character set, which is $26$ in this problem.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def commonChars(self, words: List[str]) -> List[str]:
-        freq = [10000] * 26
-        for word in words:
-            t = [0] * 26
-            for c in word:
-                t[ord(c) - ord('a')] += 1
-            for i in range(26):
-                freq[i] = min(freq[i], t[i])
-        res = []
-        for i in range(26):
-            if freq[i] > 0:
-                res.extend([chr(i + ord("a"))] * freq[i])
-        return res
+        cnt = Counter(words[0])
+        for w in words:
+            t = Counter(w)
+            for c in cnt:
+                cnt[c] = min(cnt[c], t[c])
+        return list(cnt.elements())
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public List<String> commonChars(String[] words) {
-        int[] freq = new int[26];
-        Arrays.fill(freq, 10000);
-        for (String word : words) {
+        int[] cnt = new int[26];
+        Arrays.fill(cnt, 20000);
+        for (var w : words) {
             int[] t = new int[26];
-            for (char c : word.toCharArray()) {
-                ++t[c - 'a'];
+            for (int i = 0; i < w.length(); ++i) {
+                ++t[w.charAt(i) - 'a'];
             }
             for (int i = 0; i < 26; ++i) {
-                freq[i] = Math.min(freq[i], t[i]);
+                cnt[i] = Math.min(cnt[i], t[i]);
             }
         }
-        List<String> res = new ArrayList<>();
+        List<String> ans = new ArrayList<>();
         for (int i = 0; i < 26; ++i) {
-            while (freq[i]-- > 0) {
-                res.add(String.valueOf((char) (i + 'a')));
-            }
+            ans.addAll(Collections.nCopies(cnt[i], String.valueOf((char) ('a' + i))));
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<string> commonChars(vector<string>& words) {
-        vector<int> freq(26, 10000);
-        for (auto word : words)
-        {
-            vector<int> t(26);
-            for (char c : word)
+        vector<int> cnt(26, 20000);
+        for (const auto& w : words) {
+            vector<int> t(26, 0);
+            for (char c : w) {
                 ++t[c - 'a'];
-            for (int i = 0; i < 26; ++i)
-                freq[i] = min(freq[i], t[i]);
+            }
+            for (int i = 0; i < 26; ++i) {
+                cnt[i] = min(cnt[i], t[i]);
+            }
         }
-        vector<string> res;
-        for (int i = 0; i < 26; i++)
-        {
-            while (freq[i]--)
-                res.emplace_back(1, i + 'a');
+        vector<string> ans;
+        for (int i = 0; i < 26; ++i) {
+            for (int j = 0; j < cnt[i]; ++j) {
+                ans.push_back(string(1, 'a' + i));
+            }
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func commonChars(words []string) []string {
-	freq := make([]int, 26)
-	for i := 0; i < 26; i++ {
-		freq[i] = 10000
+func commonChars(words []string) (ans []string) {
+	cnt := make([]int, 26)
+	for i := range cnt {
+		cnt[i] = 20000
 	}
-	for _, word := range words {
+	for _, w := range words {
 		t := make([]int, 26)
-		for _, c := range word {
+		for _, c := range w {
 			t[c-'a']++
 		}
 		for i := 0; i < 26; i++ {
-			freq[i] = min(freq[i], t[i])
+			cnt[i] = min(cnt[i], t[i])
 		}
 	}
-	var res []string
 	for i := 0; i < 26; i++ {
-		for j := 0; j < freq[i]; j++ {
-			res = append(res, string('a'+i))
+		for j := 0; j < cnt[i]; j++ {
+			ans = append(ans, string('a'+rune(i)))
 		}
 	}
-	return res
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+	return ans
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function commonChars(words: string[]): string[] {
+    const cnt = Array(26).fill(20000);
+    const aCode = 'a'.charCodeAt(0);
+    for (const w of words) {
+        const t = Array(26).fill(0);
+        for (const c of w) {
+            t[c.charCodeAt(0) - aCode]++;
+        }
+        for (let i = 0; i < 26; i++) {
+            cnt[i] = Math.min(cnt[i], t[i]);
+        }
+    }
+    const ans: string[] = [];
+    for (let i = 0; i < 26; i++) {
+        cnt[i] && ans.push(...String.fromCharCode(i + aCode).repeat(cnt[i]));
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

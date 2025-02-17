@@ -14,35 +14,27 @@
  * }
  */
 class Solution {
+    private int[] cnt = new int[26];
+
     public boolean checkEquivalence(Node root1, Node root2) {
-        int[] ans1 = dfs(root1);
-        int[] ans2 = dfs(root2);
-        for (int i = 0; i < 26; ++i) {
-            if (ans1[i] != ans2[i]) {
+        dfs(root1, 1);
+        dfs(root2, -1);
+        for (int x : cnt) {
+            if (x != 0) {
                 return false;
             }
         }
         return true;
     }
 
-    private int[] dfs(Node root) {
-        int[] ans = new int[26];
+    private void dfs(Node root, int v) {
         if (root == null) {
-            return ans;
+            return;
         }
-        if (root.val == '+' || root.val == '-') {
-            int[] left = dfs(root.left);
-            int[] right = dfs(root.right);
-            calc(ans, left, right, root.val);
-        } else {
-            ++ans[root.val - 'a'];
+        if (root.val != '+') {
+            cnt[root.val - 'a'] += v;
         }
-        return ans;
-    }
-
-    private void calc(int[] ans, int[] left, int[] right, char op) {
-        for (int i = 0; i < 26; ++i) {
-            ans[i] = op == '+' ? left[i] + right[i] : left[i] - right[i];
-        }
+        dfs(root.left, v);
+        dfs(root.right, v);
     }
 }

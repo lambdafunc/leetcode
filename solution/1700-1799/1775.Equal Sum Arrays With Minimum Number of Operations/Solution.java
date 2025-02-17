@@ -1,37 +1,29 @@
 class Solution {
     public int minOperations(int[] nums1, int[] nums2) {
-        int s1 = sum(nums1);
-        int s2 = sum(nums2);
+        int s1 = Arrays.stream(nums1).sum();
+        int s2 = Arrays.stream(nums2).sum();
         if (s1 == s2) {
             return 0;
         }
         if (s1 > s2) {
             return minOperations(nums2, nums1);
         }
-        int[] freq = new int[6];
-        for (int x : nums1) {
-            ++freq[6 - x];
+        int d = s2 - s1;
+        int[] arr = new int[nums1.length + nums2.length];
+        int k = 0;
+        for (int v : nums1) {
+            arr[k++] = 6 - v;
         }
-        for (int x : nums2) {
-            ++freq[x - 1];
+        for (int v : nums2) {
+            arr[k++] = v - 1;
         }
-        int diff = s2 - s1;
-        int ans = 0;
-        for (int i = 5; i > 0 && diff > 0; --i) {
-            while (freq[i] > 0 && diff > 0) {
-                diff -= i;
-                --freq[i];
-                ++ans;
+        Arrays.sort(arr);
+        for (int i = 1, j = arr.length - 1; j >= 0; ++i, --j) {
+            d -= arr[j];
+            if (d <= 0) {
+                return i;
             }
         }
-        return diff > 0 ? - 1 : ans;
-    }
-
-    private int sum(int[] nums) {
-        int s = 0;
-        for (int x : nums) {
-            s += x;
-        }
-        return s;
+        return -1;
     }
 }

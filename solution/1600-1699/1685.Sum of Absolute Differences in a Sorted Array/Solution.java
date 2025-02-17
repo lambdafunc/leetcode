@@ -1,14 +1,17 @@
 class Solution {
     public int[] getSumAbsoluteDifferences(int[] nums) {
+        // int s = Arrays.stream(nums).sum();
+        int s = 0, t = 0;
+        for (int x : nums) {
+            s += x;
+        }
         int n = nums.length;
-        int[] presum = new int[n + 1];
+        int[] ans = new int[n];
         for (int i = 0; i < n; ++i) {
-            presum[i + 1] = presum[i] + nums[i];
+            int v = nums[i] * i - t + s - t - nums[i] * (n - i);
+            ans[i] = v;
+            t += nums[i];
         }
-        int[] res = new int[n];
-        for (int i = 0; i < n; ++i) {
-            res[i] = nums[i] * i - presum[i] + presum[n] - presum[i + 1] - nums[i] * (n - i - 1);
-        }
-        return res;
+        return ans;
     }
 }

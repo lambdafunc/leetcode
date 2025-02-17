@@ -1,13 +1,11 @@
-func findRepeatedDnaSequences(s string) []string {
-	cnt := make(map[string]int)
-	n := len(s) - 10
-	ans := make([]string, 0)
-	for i := 0; i <= n; i++ {
-		sub := s[i : i+10]
-		cnt[sub]++
-		if cnt[sub] == 2 {
-			ans = append(ans, sub)
+func findRepeatedDnaSequences(s string) (ans []string) {
+	cnt := map[string]int{}
+	for i := 0; i < len(s)-10+1; i++ {
+		t := s[i : i+10]
+		cnt[t]++
+		if cnt[t] == 2 {
+			ans = append(ans, t)
 		}
 	}
-	return ans
+	return
 }

@@ -1,36 +1,86 @@
-# [125. 验证回文串](https://leetcode-cn.com/problems/valid-palindrome)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0125.Valid%20Palindrome/README.md
+tags:
+    - 双指针
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [125. 验证回文串](https://leetcode.cn/problems/valid-palindrome)
 
 [English Version](/solution/0100-0199/0125.Valid%20Palindrome/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。</p>
+<p>如果在将所有大写字符转换为小写字符、并移除所有非字母数字字符之后，短语正着读和反着读都一样。则可以认为该短语是一个 <strong>回文串</strong> 。</p>
 
-<p><strong>说明：</strong>本题中，我们将空字符串定义为有效的回文串。</p>
+<p>字母和数字都属于字母数字字符。</p>
 
-<p><strong>示例 1:</strong></p>
+<p>给你一个字符串 <code>s</code>，如果它是 <strong>回文串</strong> ，返回 <code>true</code><em> </em>；否则，返回<em> </em><code>false</code><em> </em>。</p>
 
-<pre><strong>输入:</strong> &quot;A man, a plan, a canal: Panama&quot;
-<strong>输出:</strong> true
+<p>&nbsp;</p>
+
+<p><strong>示例 1：</strong></p>
+
+<pre>
+<strong>输入:</strong> s = "A man, a plan, a canal: Panama"
+<strong>输出：</strong>true
+<strong>解释：</strong>"amanaplanacanalpanama" 是回文串。
 </pre>
 
-<p><strong>示例 2:</strong></p>
+<p><strong>示例 2：</strong></p>
 
-<pre><strong>输入:</strong> &quot;race a car&quot;
-<strong>输出:</strong> false
+<pre>
+<strong>输入：</strong>s = "race a car"
+<strong>输出：</strong>false
+<strong>解释：</strong>"raceacar" 不是回文串。
 </pre>
+
+<p><strong>示例 3：</strong></p>
+
+<pre>
+<strong>输入：</strong>s = " "
+<strong>输出：</strong>true
+<strong>解释：</strong>在移除非字母数字字符之后，s 是一个空字符串 "" 。
+由于空字符串正着反着读都一样，所以是回文串。
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 &lt;= s.length &lt;= 2 * 10<sup>5</sup></code></li>
+	<li><code>s</code> 仅由可打印的 ASCII 字符组成</li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：双指针
+
+我们用双指针 $i$ 和 $j$ 分别指向字符串 $s$ 的两端，接下来循环以下过程，直至 $i \geq j$：
+
+1. 如果 $s[i]$ 不是字母或数字，指针 $i$ 右移一位，继续下一次循环；
+1. 如果 $s[j]$ 不是字母或数字，指针 $j$ 左移一位，继续下一次循环；
+1. 如果 $s[i]$ 和 $s[j]$ 的小写形式不相等，返回 `false`；
+1. 否则，指针 $i$ 右移一位，指针 $j$ 左移一位，继续下一次循环。
+
+循环结束，返回 `true`。
+
+时间复杂度 $O(n)$，其中 $n$ 是字符串 $s$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -44,14 +94,11 @@ class Solution:
             elif s[i].lower() != s[j].lower():
                 return False
             else:
-                i += 1
-                j -= 1
+                i, j = i + 1, j - 1
         return True
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -62,7 +109,7 @@ class Solution {
                 ++i;
             } else if (!Character.isLetterOrDigit(s.charAt(j))) {
                 --j;
-            } else if (Character.toUpperCase(s.charAt(i)) != Character.toUpperCase(s.charAt(j))) {
+            } else if (Character.toLowerCase(s.charAt(i)) != Character.toLowerCase(s.charAt(j))) {
                 return false;
             } else {
                 ++i;
@@ -74,7 +121,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -82,55 +129,178 @@ public:
     bool isPalindrome(string s) {
         int i = 0, j = s.size() - 1;
         while (i < j) {
-            if (!isAlphaNum(s[i])) ++i;
-            else if (!isAlphaNum(s[j])) --j;
-            else if ((s[i] + 32 - 'a') % 32 != (s[j] + 32 - 'a') % 32) return false;
-            else {
+            if (!isalnum(s[i])) {
+                ++i;
+            } else if (!isalnum(s[j])) {
+                --j;
+            } else if (tolower(s[i]) != tolower(s[j])) {
+                return false;
+            } else {
                 ++i;
                 --j;
             }
         }
         return true;
     }
-
-private:
-    bool isAlphaNum(char &ch) {
-        if (ch >= 'a' && ch <= 'z') return true;
-        if (ch >= 'A' && ch <= 'Z') return true;
-        if (ch >= '0' && ch <= '9') return true;
-        return false;
-    }
 };
 ```
 
-### **tTypeScript**
+#### Go
+
+```go
+func isPalindrome(s string) bool {
+	i, j := 0, len(s)-1
+	for i < j {
+		if !isalnum(s[i]) {
+			i++
+		} else if !isalnum(s[j]) {
+			j--
+		} else if tolower(s[i]) != tolower(s[j]) {
+			return false
+		} else {
+			i, j = i+1, j-1
+		}
+	}
+	return true
+}
+
+func isalnum(ch byte) bool {
+	return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9')
+}
+
+func tolower(ch byte) byte {
+	if ch >= 'A' && ch <= 'Z' {
+		return ch + 32
+	}
+	return ch
+}
+```
+
+#### TypeScript
 
 ```ts
 function isPalindrome(s: string): boolean {
-    let left: number = 0,
-        right: number = s.length - 1;
-    while (left < right) {
-        let char1: string = s.charAt(left);
-        let char2: string = s.charAt(right);
-        if (!/[a-zA-Z0-9]/.test(char1)) {
-            ++left;
-        } else if (!/[a-zA-Z0-9]/.test(char2)) {
-            --right;
-        } else if (char1.toLocaleLowerCase() != char2.toLocaleLowerCase()) {
+    let i = 0;
+    let j = s.length - 1;
+    while (i < j) {
+        if (!/[a-zA-Z0-9]/.test(s[i])) {
+            ++i;
+        } else if (!/[a-zA-Z0-9]/.test(s[j])) {
+            --j;
+        } else if (s[i].toLowerCase() !== s[j].toLowerCase()) {
             return false;
         } else {
-            ++left;
-            --right;
+            ++i;
+            --j;
         }
     }
     return true;
 }
 ```
 
-### **...**
+#### Rust
 
+```rust
+impl Solution {
+    pub fn is_palindrome(s: String) -> bool {
+        let s = s.to_lowercase();
+        let s = s.as_bytes();
+        let n = s.len();
+        let (mut l, mut r) = (0, n - 1);
+        while l < r {
+            while l < r && !s[l].is_ascii_alphanumeric() {
+                l += 1;
+            }
+            while l < r && !s[r].is_ascii_alphanumeric() {
+                r -= 1;
+            }
+            if s[l] != s[r] {
+                return false;
+            }
+            l += 1;
+            if r != 0 {
+                r -= 1;
+            }
+        }
+        true
+    }
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isPalindrome = function (s) {
+    let i = 0;
+    let j = s.length - 1;
+    while (i < j) {
+        if (!/[a-zA-Z0-9]/.test(s[i])) {
+            ++i;
+        } else if (!/[a-zA-Z0-9]/.test(s[j])) {
+            --j;
+        } else if (s[i].toLowerCase() !== s[j].toLowerCase()) {
+            return false;
+        } else {
+            ++i;
+            --j;
+        }
+    }
+    return true;
+};
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public bool IsPalindrome(string s) {
+        int i = 0, j = s.Length - 1;
+        while (i < j) {
+            if (!char.IsLetterOrDigit(s[i])) {
+                ++i;
+            } else if (!char.IsLetterOrDigit(s[j])) {
+                --j;
+            } else if (char.ToLower(s[i++]) != char.ToLower(s[j--])) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param String $s
+     * @return Boolean
+     */
+    function isPalindrome($s) {
+        $regex = '/[a-z0-9]/';
+        $s = strtolower($s);
+        preg_match_all($regex, $s, $matches);
+        if ($matches[0] == null) {
+            return true;
+        }
+        $len = floor(count($matches[0]) / 2);
+        for ($i = 0; $i < $len; $i++) {
+            if ($matches[0][$i] != $matches[0][count($matches[0]) - 1 - $i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

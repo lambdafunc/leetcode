@@ -1,10 +1,24 @@
-# [2045. 到达目的地的第二短时间](https://leetcode-cn.com/problems/second-minimum-time-to-reach-destination)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/README.md
+rating: 2201
+source: 第 263 场周赛 Q4
+tags:
+    - 广度优先搜索
+    - 图
+    - 最短路
+---
+
+<!-- problem:start -->
+
+# [2045. 到达目的地的第二短时间](https://leetcode.cn/problems/second-minimum-time-to-reach-destination)
 
 [English Version](/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>城市用一个 <strong>双向连通</strong> 图表示，图中有 <code>n</code> 个节点，从 <code>1</code> 到 <code>n</code> 编号（包含 <code>1</code> 和 <code>n</code>）。图中的边用一个二维整数数组 <code>edges</code> 表示，其中每个 <code>edges[i] = [u<sub>i</sub>, v<sub>i</sub>]</code>&nbsp;表示一条节点&nbsp;<code>u<sub>i</sub></code> 和节点&nbsp;<code>v<sub>i</sub></code> 之间的双向连通边。每组节点对由 <strong>最多一条</strong> 边连通，顶点不存在连接到自身的边。穿过任意一条边的时间是 <code>time</code>&nbsp;分钟。</p>
 
@@ -29,7 +43,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/e1.png" style="width: 200px; height: 250px;" />        <img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/e2.png" style="width: 200px; height: 250px;" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/e1.png" style="width: 200px; height: 250px;" />        <img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/e2.png" style="width: 200px; height: 250px;" /></p>
 
 <pre>
 <strong>输入：</strong>n = 5, edges = [[1,2],[1,3],[1,4],[3,4],[4,5]], time = 3, change = 5
@@ -54,14 +68,14 @@
 
 <p><strong>示例 2：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/eg2.png" style="width: 225px; height: 50px;" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/eg2.png" style="width: 225px; height: 50px;" /></p>
 
 <pre>
 <strong>输入：</strong>n = 2, edges = [[1,2]], time = 3, change = 2
 <strong>输出：</strong>11
 <strong>解释：</strong>
 最短时间路径是 1 -&gt; 2 ，总花费时间 = 3 分钟
-最短时间路径是 1 -&gt; 2 -&gt; 1 -&gt; 2 ，总花费时间 = 11 分钟</pre>
+第二短时间路径是 1 -&gt; 2 -&gt; 1 -&gt; 2 ，总花费时间 = 11 分钟</pre>
 
 <p>&nbsp;</p>
 
@@ -78,25 +92,29 @@
 	<li><code>1 &lt;= time, change &lt;= 10<sup>3</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-    def secondMinimum(self, n: int, edges: List[List[int]], time: int, change: int) -> int:
+    def secondMinimum(
+        self, n: int, edges: List[List[int]], time: int, change: int
+    ) -> int:
         g = defaultdict(set)
         for u, v in edges:
             g[u].add(v)
             g[v].add(u)
         q = deque([(1, 0)])
-        dist = [[float('inf')] * 2 for _ in range(n + 1)]
+        dist = [[inf] * 2 for _ in range(n + 1)]
         dist[1][1] = 0
         while q:
             u, d = q.popleft()
@@ -106,7 +124,7 @@ class Solution:
                     q.append((v, d + 1))
                 elif dist[v][0] < d + 1 < dist[v][1]:
                     dist[v][1] = d + 1
-                    if v == n:	
+                    if v == n:
                         break
                     q.append((v, d + 1))
         ans = 0
@@ -117,24 +135,20 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int secondMinimum(int n, int[][] edges, int time, int change) {
         List<Integer>[] g = new List[n + 1];
-        for (int i = 0; i < n + 1; ++i) {
-            g[i] = new ArrayList<>();
-        }
+        Arrays.setAll(g, k -> new ArrayList<>());
         for (int[] e : edges) {
             int u = e[0], v = e[1];
             g[u].add(v);
             g[v].add(u);
         }
         Deque<int[]> q = new LinkedList<>();
-        q.offerLast(new int[]{1, 0});
+        q.offerLast(new int[] {1, 0});
         int[][] dist = new int[n + 1][2];
         for (int i = 0; i < n + 1; ++i) {
             Arrays.fill(dist[i], Integer.MAX_VALUE);
@@ -146,13 +160,13 @@ class Solution {
             for (int v : g[u]) {
                 if (d + 1 < dist[v][0]) {
                     dist[v][0] = d + 1;
-                    q.offerLast(new int[]{v, d + 1});
+                    q.offerLast(new int[] {v, d + 1});
                 } else if (dist[v][0] < d + 1 && d + 1 < dist[v][1]) {
                     dist[v][1] = d + 1;
                     if (v == n) {
                         break;
                     }
-                    q.offerLast(new int[]{v, d + 1});
+                    q.offerLast(new int[] {v, d + 1});
                 }
             }
         }
@@ -168,10 +182,8 @@ class Solution {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

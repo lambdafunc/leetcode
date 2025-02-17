@@ -1,12 +1,10 @@
 class Solution:
     def halfQuestions(self, questions: List[int]) -> int:
-        counter = Counter(questions)
-        counter = OrderedDict(counter.most_common())
-        n = len(questions) >> 1
-        res = 0
-        for v in counter.values():
-            res += 1
-            if v >= n:
-                return res
+        cnt = Counter(questions)
+        ans, n = 0, len(questions) >> 1
+        for _, v in cnt.most_common():
+            ans += 1
             n -= v
-        return res
+            if n <= 0:
+                break
+        return ans

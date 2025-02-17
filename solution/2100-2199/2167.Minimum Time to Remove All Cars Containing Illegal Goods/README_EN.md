@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2167.Minimum%20Time%20to%20Remove%20All%20Cars%20Containing%20Illegal%20Goods/README_EN.md
+rating: 2219
+source: Weekly Contest 279 Q4
+tags:
+    - String
+    - Dynamic Programming
+---
+
+<!-- problem:start -->
+
 # [2167. Minimum Time to Remove All Cars Containing Illegal Goods](https://leetcode.com/problems/minimum-time-to-remove-all-cars-containing-illegal-goods)
 
 [中文文档](/solution/2100-2199/2167.Minimum%20Time%20to%20Remove%20All%20Cars%20Containing%20Illegal%20Goods/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a <strong>0-indexed</strong> binary string <code>s</code> which represents a sequence of train cars. <code>s[i] = &#39;0&#39;</code> denotes that the <code>i<sup>th</sup></code> car does <strong>not</strong> contain illegal goods and <code>s[i] = &#39;1&#39;</code> denotes that the <code>i<sup>th</sup></code> car does contain illegal goods.</p>
 
@@ -19,7 +34,7 @@
 <p>Note that an empty sequence of cars is considered to have no cars containing illegal goods.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;<strong><u>11</u></strong>00<strong><u>1</u></strong>0<strong><u>1</u></strong>&quot;
@@ -40,7 +55,7 @@ This also obtains a total time of 2 + 3 = 5.
 There are no other ways to remove them with less time.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;00<strong><u>1</u></strong>0&quot;
@@ -69,32 +84,101 @@ There are no other ways to remove them with less time.</pre>
 	<li><code>s[i]</code> is either <code>&#39;0&#39;</code> or <code>&#39;1&#39;</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def minimumTime(self, s: str) -> int:
+        n = len(s)
+        pre = [0] * (n + 1)
+        suf = [0] * (n + 1)
+        for i, c in enumerate(s):
+            pre[i + 1] = pre[i] if c == '0' else min(pre[i] + 2, i + 1)
+        for i in range(n - 1, -1, -1):
+            suf[i] = suf[i + 1] if s[i] == '0' else min(suf[i + 1] + 2, n - i)
+        return min(a + b for a, b in zip(pre[1:], suf[1:]))
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public int minimumTime(String s) {
+        int n = s.length();
+        int[] pre = new int[n + 1];
+        int[] suf = new int[n + 1];
+        for (int i = 0; i < n; ++i) {
+            pre[i + 1] = s.charAt(i) == '0' ? pre[i] : Math.min(pre[i] + 2, i + 1);
+        }
+        for (int i = n - 1; i >= 0; --i) {
+            suf[i] = s.charAt(i) == '0' ? suf[i + 1] : Math.min(suf[i + 1] + 2, n - i);
+        }
+        int ans = Integer.MAX_VALUE;
+        for (int i = 1; i <= n; ++i) {
+            ans = Math.min(ans, pre[i] + suf[i]);
+        }
+        return ans;
+    }
+}
 ```
 
-### **TypeScript**
+#### C++
 
-```ts
-
+```cpp
+class Solution {
+public:
+    int minimumTime(string s) {
+        int n = s.size();
+        vector<int> pre(n + 1);
+        vector<int> suf(n + 1);
+        for (int i = 0; i < n; ++i) pre[i + 1] = s[i] == '0' ? pre[i] : min(pre[i] + 2, i + 1);
+        for (int i = n - 1; ~i; --i) suf[i] = s[i] == '0' ? suf[i + 1] : min(suf[i + 1] + 2, n - i);
+        int ans = INT_MAX;
+        for (int i = 1; i <= n; ++i) ans = min(ans, pre[i] + suf[i]);
+        return ans;
+    }
+};
 ```
 
-### **...**
+#### Go
 
-```
-
+```go
+func minimumTime(s string) int {
+	n := len(s)
+	pre := make([]int, n+1)
+	suf := make([]int, n+1)
+	for i, c := range s {
+		pre[i+1] = pre[i]
+		if c == '1' {
+			pre[i+1] = min(pre[i]+2, i+1)
+		}
+	}
+	for i := n - 1; i >= 0; i-- {
+		suf[i] = suf[i+1]
+		if s[i] == '1' {
+			suf[i] = min(suf[i+1]+2, n-i)
+		}
+	}
+	ans := 0x3f3f3f3f
+	for i := 1; i <= n; i++ {
+		ans = min(ans, pre[i]+suf[i])
+	}
+	return ans
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

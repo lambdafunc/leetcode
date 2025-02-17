@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2081.Sum%20of%20k-Mirror%20Numbers/README_EN.md
+rating: 2209
+source: Weekly Contest 268 Q4
+tags:
+    - Math
+    - Enumeration
+---
+
+<!-- problem:start -->
+
 # [2081. Sum of k-Mirror Numbers](https://leetcode.com/problems/sum-of-k-mirror-numbers)
 
 [中文文档](/solution/2000-2099/2081.Sum%20of%20k-Mirror%20Numbers/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A <strong>k-mirror number</strong> is a <strong>positive</strong> integer <strong>without leading zeros</strong> that reads the same both forward and backward in base-10 <strong>as well as</strong> in base-k.</p>
 
@@ -14,7 +29,7 @@
 <p>Given the base <code>k</code> and the number <code>n</code>, return <em>the <strong>sum</strong> of the</em> <code>n</code> <em><strong>smallest</strong> k-mirror numbers</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> k = 2, n = 5
@@ -30,7 +45,7 @@
 Their sum = 1 + 3 + 5 + 7 + 9 = 25. 
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> k = 3, n = 7
@@ -48,7 +63,7 @@ Their sum = 1 + 3 + 5 + 7 + 9 = 25.
 Their sum = 1 + 2 + 4 + 8 + 121 + 151 + 212 = 499.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> k = 7, n = 17
@@ -65,23 +80,23 @@ Their sum = 1 + 2 + 4 + 8 + 121 + 151 + 212 = 499.
 	<li><code>1 &lt;= n &lt;= 30</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
-
-```python
-
-```
-
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public long kMirror(int k, int n) {
         long ans = 0;
-        for (int l = 1; ; ++l) {
+        for (int l = 1;; ++l) {
             int x = (int) Math.pow(10, (l - 1) / 2);
             int y = (int) Math.pow(10, (l + 1) / 2);
             for (int i = x; i < y; i++) {
@@ -111,10 +126,8 @@ class Solution {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

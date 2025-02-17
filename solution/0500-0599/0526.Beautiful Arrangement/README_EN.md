@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0526.Beautiful%20Arrangement/README_EN.md
+tags:
+    - Bit Manipulation
+    - Array
+    - Dynamic Programming
+    - Backtracking
+    - Bitmask
+---
+
+<!-- problem:start -->
+
 # [526. Beautiful Arrangement](https://leetcode.com/problems/beautiful-arrangement)
 
 [中文文档](/solution/0500-0599/0526.Beautiful%20Arrangement/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Suppose you have <code>n</code> integers labeled <code>1</code> through <code>n</code>. A permutation of those <code>n</code> integers <code>perm</code> (<strong>1-indexed</strong>) is considered a <strong>beautiful arrangement</strong> if for every <code>i</code> (<code>1 &lt;= i &lt;= n</code>), <strong>either</strong> of the following is true:</p>
 
@@ -14,7 +30,7 @@
 <p>Given an integer <code>n</code>, return <em>the <strong>number</strong> of the <strong>beautiful arrangements</strong> that you can construct</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 2
@@ -28,7 +44,7 @@ The second beautiful arrangement is [2,1]:
     - i = 2 is divisible by perm[2] = 1
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 1
@@ -42,11 +58,17 @@ The second beautiful arrangement is [2,1]:
 	<li><code>1 &lt;= n &lt;= 15</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -74,7 +96,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -118,29 +140,7 @@ class Solution {
 }
 ```
 
-```java
-class Solution {
-    public int countArrangement(int N) {
-        int maxn = 1 << N;
-        int[] f = new int[maxn];
-        f[0] = 1;
-        for (int i = 0; i < maxn; ++i) {
-            int s = 1;
-            for (int j = 0; j < N; ++j) {
-                s += (i >> j) & 1;
-            }
-            for (int j = 1; j <= N; ++j) {
-                if (((i >> (j - 1) & 1) == 0) && (s % j == 0 || j % s == 0)) {
-                    f[i | (1 << (j - 1))] += f[i];
-                }
-            }
-        }
-        return f[maxn - 1];
-    }
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -163,15 +163,12 @@ public:
     }
 
     void dfs(int i) {
-        if (i == n + 1)
-        {
+        if (i == n + 1) {
             ++ans;
             return;
         }
-        for (int j : match[i])
-        {
-            if (!vis[j])
-            {
+        for (int j : match[i]) {
+            if (!vis[j]) {
                 vis[j] = true;
                 dfs(i + 1);
                 vis[j] = false;
@@ -181,7 +178,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func countArrangement(n int) int {
@@ -216,10 +213,112 @@ func countArrangement(n int) int {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function countArrangement(n: number): number {
+    const vis = new Array(n + 1).fill(0);
+    const match = Array.from({ length: n + 1 }, () => []);
+    for (let i = 1; i <= n; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (i % j === 0 || j % i === 0) {
+                match[i].push(j);
+            }
+        }
+    }
+
+    let res = 0;
+    const dfs = (i: number, n: number) => {
+        if (i === n + 1) {
+            res++;
+            return;
+        }
+        for (const j of match[i]) {
+            if (!vis[j]) {
+                vis[j] = true;
+                dfs(i + 1, n);
+                vis[j] = false;
+            }
+        }
+    };
+    dfs(1, n);
+    return res;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    fn dfs(i: usize, n: usize, mat: &Vec<Vec<usize>>, vis: &mut Vec<bool>, res: &mut i32) {
+        if i == n + 1 {
+            *res += 1;
+            return;
+        }
+        for &j in mat[i].iter() {
+            if !vis[j] {
+                vis[j] = true;
+                Self::dfs(i + 1, n, mat, vis, res);
+                vis[j] = false;
+            }
+        }
+    }
+
+    pub fn count_arrangement(n: i32) -> i32 {
+        let n = n as usize;
+        let mut vis = vec![false; n + 1];
+        let mut mat = vec![Vec::new(); n + 1];
+        for i in 1..=n {
+            for j in 1..=n {
+                if i % j == 0 || j % i == 0 {
+                    mat[i].push(j);
+                }
+            }
+        }
+
+        let mut res = 0;
+        Self::dfs(1, n, &mat, &mut vis, &mut res);
+        res
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### Java
+
+```java
+class Solution {
+    public int countArrangement(int N) {
+        int maxn = 1 << N;
+        int[] f = new int[maxn];
+        f[0] = 1;
+        for (int i = 0; i < maxn; ++i) {
+            int s = 1;
+            for (int j = 0; j < N; ++j) {
+                s += (i >> j) & 1;
+            }
+            for (int j = 1; j <= N; ++j) {
+                if (((i >> (j - 1) & 1) == 0) && (s % j == 0 || j % s == 0)) {
+                    f[i | (1 << (j - 1))] += f[i];
+                }
+            }
+        }
+        return f[maxn - 1];
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

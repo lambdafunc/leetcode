@@ -1,10 +1,22 @@
-# [1242. 多线程网页爬虫](https://leetcode-cn.com/problems/web-crawler-multithreaded)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/README.md
+tags:
+    - 深度优先搜索
+    - 广度优先搜索
+    - 多线程
+---
+
+<!-- problem:start -->
+
+# [1242. 多线程网页爬虫 🔒](https://leetcode.cn/problems/web-crawler-multithreaded)
 
 [English Version](/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个初始地址&nbsp;<code>startUrl</code>&nbsp;和一个 HTML 解析器接口&nbsp;<code>HtmlParser</code>，请你实现一个&nbsp;<strong>多线程的网页爬虫</strong>，用于获取与&nbsp;<code>startUrl</code>&nbsp;有&nbsp;<strong>相同主机名&nbsp;</strong>的所有链接。&nbsp;</p>
 
@@ -19,7 +31,7 @@
 	<li>仅浏览与&nbsp;<code>startUrl</code>&nbsp;<strong>相同主机名&nbsp;</strong>的链接。</li>
 </ul>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/16e463265c7086cb?w=975&amp;h=266&amp;f=png&amp;s=24624" /><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/urlhostname.png" style="height:164px; width:600px" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/16e463265c7086cb?w=975&amp;h=266&amp;f=png&amp;s=24624" /><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/urlhostname.png" style="height:164px; width:600px" /></p>
 
 <p>如上图所示，主机名是&nbsp;<code>example.org</code>&nbsp;。简单起见，你可以假设所有链接都采用&nbsp;<strong>http 协议</strong>，并且没有指定&nbsp;<strong>端口号</strong>。举个例子，链接&nbsp;<code>http://leetcode.com/problems</code> 和链接&nbsp;<code>http://leetcode.com/contest</code> 属于同一个&nbsp;<strong>主机名</strong>， 而&nbsp;<code>http://example.org/test</code>&nbsp;与&nbsp;<code>http://example.com/abc</code> 并不属于同一个&nbsp;<strong>主机名</strong>。</p>
 
@@ -50,7 +62,7 @@ interface HtmlParser {
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/sample_2_1497.png" style="height:287px; width:600px" /><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/16e46559da0c446a?w=875&amp;h=418&amp;f=png&amp;s=43518" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/sample_2_1497.png" style="height:287px; width:600px" /><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/16e46559da0c446a?w=875&amp;h=418&amp;f=png&amp;s=43518" /></p>
 
 <pre>
 <strong>输入：
@@ -73,7 +85,7 @@ startUrl = &quot;http://news.yahoo.com/news/topics/&quot;
 
 <p><strong>示例 2：</strong></p>
 
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/16e4657b399a5fd2?w=654&amp;h=431&amp;f=png&amp;s=33838" /><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/sample_3_1497.png" style="height:395px; width:530px" /></strong></p>
+<p><strong><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/16e4657b399a5fd2?w=654&amp;h=431&amp;f=png&amp;s=33838" /><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1200-1299/1242.Web%20Crawler%20Multithreaded/images/sample_3_1497.png" style="height:395px; width:530px" /></strong></p>
 
 <pre>
 <strong>输入：</strong>
@@ -102,32 +114,42 @@ startUrl = &quot;http://news.google.com&quot;
 	<li>你可以假设路径都是不重复的。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 
 ```
 
-### **...**
+#### C++
+
+```cpp
 
 ```
+
+#### Go
+
+```go
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

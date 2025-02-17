@@ -1,106 +1,60 @@
-# [663. Equal Tree Partition](https://leetcode.com/problems/equal-tree-partition)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0663.Equal%20Tree%20Partition/README_EN.md
+tags:
+    - Tree
+    - Depth-First Search
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
+# [663. Equal Tree Partition 🔒](https://leetcode.com/problems/equal-tree-partition)
 
 [中文文档](/solution/0600-0699/0663.Equal%20Tree%20Partition/README.md)
 
 ## Description
 
-<p>
+<!-- description:start -->
 
-Given a binary tree with <code>n</code> nodes, your task is to check if it's possible to partition the tree to two trees which have the equal sum of values after removing <b>exactly</b> one edge on the original tree.
+<p>Given the <code>root</code> of a binary tree, return <code>true</code><em> if you can partition the tree into two trees with equal sums of values after removing exactly one edge on the original tree</em>.</p>
 
-</p>
-
-<p><b>Example 1:</b><br />
-
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0663.Equal%20Tree%20Partition/images/split1-tree.jpg" style="width: 500px; height: 204px;" />
 <pre>
-
-<b>Input:</b>     
-
-    5
-
-   / \
-
-  10 10
-
-    /  \
-
-   2   3
-
-
-
-<b>Output:</b> True
-
-<b>Explanation:</b> 
-
-    5
-
-   / 
-
-  10
-
-      
-
-Sum: 15
-
-
-
-   10
-
-  /  \
-
- 2    3
-
-
-
-Sum: 15
-
+<strong>Input:</strong> root = [5,10,10,null,null,2,3]
+<strong>Output:</strong> true
 </pre>
 
-</p>
-
-<p><b>Example 2:</b><br />
-
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0663.Equal%20Tree%20Partition/images/split2-tree.jpg" style="width: 277px; height: 302px;" />
 <pre>
-
-<b>Input:</b>     
-
-    1
-
-   / \
-
-  2  10
-
-    /  \
-
-   2   20
-
-
-
-<b>Output:</b> False
-
-<b>Explanation:</b> You can't split the tree into two trees with equal sum after removing exactly one edge on the tree.
-
+<strong>Input:</strong> root = [1,2,10,null,null,2,20]
+<strong>Output:</strong> false
+<strong>Explanation:</strong> You cannot split the tree into two trees with equal sums after removing exactly one edge on the tree.
 </pre>
 
-</p>
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><b>Note:</b><br>
+<ul>
+	<li>The number of nodes in the tree is in the range <code>[1, 10<sup>4</sup>]</code>.</li>
+	<li><code>-10<sup>5</sup> &lt;= Node.val &lt;= 10<sup>5</sup></code></li>
+</ul>
 
-<ol>
-
-<li>The range of tree node value is in the range of [-100000, 100000].</li>
-
-<li>1 <= n <= 10000</li>
-
-</ol>
-
-</p>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -126,7 +80,7 @@ class Solution:
         return s // 2 in seen
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -170,7 +124,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -205,7 +159,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -243,10 +197,8 @@ func checkEqualTree(root *TreeNode) bool {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

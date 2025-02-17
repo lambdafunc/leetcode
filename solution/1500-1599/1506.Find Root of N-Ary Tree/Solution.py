@@ -6,14 +6,12 @@ class Node:
         self.children = children if children is not None else []
 """
 
+
 class Solution:
     def findRoot(self, tree: List['Node']) -> 'Node':
-        xorsum = 0
+        x = 0
         for node in tree:
-            xorsum ^= node.val
+            x ^= node.val
             for child in node.children:
-                xorsum ^= child.val
-        
-        for node in tree:
-            if node.val == xorsum:
-                return node
+                x ^= child.val
+        return next(node for node in tree if node.val == x)

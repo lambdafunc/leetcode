@@ -1,113 +1,143 @@
-# [1090. 受标签影响的最大值](https://leetcode-cn.com/problems/largest-values-from-labels)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1090.Largest%20Values%20From%20Labels/README.md
+rating: 1501
+source: 第 141 场周赛 Q2
+tags:
+    - 贪心
+    - 数组
+    - 哈希表
+    - 计数
+    - 排序
+---
+
+<!-- problem:start -->
+
+# [1090. 受标签影响的最大值](https://leetcode.cn/problems/largest-values-from-labels)
 
 [English Version](/solution/1000-1099/1090.Largest%20Values%20From%20Labels/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>我们有一个项的集合，其中第&nbsp;<code>i</code>&nbsp;项的值为&nbsp;<code>values[i]</code>，标签为&nbsp;<code>labels[i]</code>。</p>
+<p>以两个整数数组 &nbsp;<code>values</code>&nbsp;和 <code>labels</code>&nbsp;给定&nbsp;<code>n</code>&nbsp;个项的值和标签，并且给出两个整数&nbsp;<code>numWanted</code>&nbsp;和 <code>useLimit</code> 。</p>
 
-<p>我们从这些项中选出一个子集&nbsp;<code>S</code>，这样一来：</p>
+<p>你的任务是从这些项中找到一个值的和 <strong>最大</strong> 的子集使得：</p>
 
 <ul>
-	<li><code>|S| &lt;= num_wanted</code></li>
-	<li>对于任意的标签 <code>L</code>，子集 <code>S</code> 中标签为 <code>L</code>&nbsp;的项的数目总满足&nbsp;<code>&lt;= use_limit</code>。</li>
+	<li>项的数量 <strong>最多</strong> 为&nbsp;<code>numWanted</code>。</li>
+	<li>相同标签的项的数量&nbsp;<strong>最多 </strong>为&nbsp;<code>useLimit</code>。</li>
 </ul>
 
-<p>返回子集&nbsp;<code>S</code>&nbsp;的最大可能的&nbsp;<strong>和</strong>。</p>
+<p>返回最大的和。</p>
 
 <p>&nbsp;</p>
 
-<p><strong>示例 1：</strong></p>
+<p><strong class="example">示例 1：</strong></p>
 
-<pre><strong>输入：</strong>values = [5,4,3,2,1], labels = [1,1,2,2,3], <code>num_wanted </code>= 3, use_limit = 1
-<strong>输出：</strong>9
-<strong>解释：</strong>选出的子集是第一项，第三项和第五项。
-</pre>
+<div class="example-block">
+<p><strong>输入：</strong><span class="example-io">values = [5,4,3,2,1], labels = [1,1,2,2,3], numWanted = 3, useLimit = 1</span></p>
 
-<p><strong>示例 2：</strong></p>
+<p><strong>输出：</strong><span class="example-io">9</span></p>
 
-<pre><strong>输入：</strong>values = [5,4,3,2,1], labels = [1,3,3,3,2], <code>num_wanted </code>= 3, use_limit = 2
-<strong>输出：</strong>12
-<strong>解释：</strong>选出的子集是第一项，第二项和第三项。
-</pre>
+<p><strong>解释：</strong></p>
 
-<p><strong>示例 3：</strong></p>
+<p>选择的子集是第一个、第三个和第五个项，其值之和为 5 + 3 + 1。</p>
+</div>
 
-<pre><strong>输入：</strong>values = [9,8,8,7,6], labels = [0,0,0,1,1], <code>num_wanted </code>= 3, use_limit = 1
-<strong>输出：</strong>16
-<strong>解释：</strong>选出的子集是第一项和第四项。
-</pre>
+<p><strong class="example">示例 2：</strong></p>
 
-<p><strong>示例 4：</strong></p>
+<div class="example-block">
+<p><strong>输入：</strong><span class="example-io">values = [5,4,3,2,1], labels = [1,3,3,3,2], numWanted = 3, useLimit = 2</span></p>
 
-<pre><strong>输入：</strong>values = [9,8,8,7,6], labels = [0,0,0,1,1], <code>num_wanted </code>= 3, use_limit = 2
-<strong>输出：</strong>24
-<strong>解释：</strong>选出的子集是第一项，第二项和第四项。
-</pre>
+<p><strong>输出：</strong><span class="example-io">12</span></p>
+
+<p><strong>解释：</strong></p>
+
+<p>选择的子集是第一个、第二个和第三个项，其值之和为 5 + 4 + 3。</p>
+</div>
+
+<p><strong class="example">示例 3：</strong></p>
+
+<div class="example-block">
+<p><strong>输入：</strong><span class="example-io">values = [9,8,8,7,6], labels = [0,0,0,1,1], numWanted = 3, useLimit = 1</span></p>
+
+<p><strong>输出：</strong><span class="example-io">16</span></p>
+
+<p><strong>解释：</strong></p>
+
+<p>选择的子集是第一个和第四个项，其值之和为 9 + 7。</p>
+</div>
 
 <p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
-<ol>
-	<li><code>1 &lt;= values.length == labels.length &lt;= 20000</code></li>
-	<li><code>0 &lt;= values[i], labels[i]&nbsp;&lt;= 20000</code></li>
-	<li><code>1 &lt;= num_wanted, use_limit&nbsp;&lt;= values.length</code></li>
-</ol>
+<ul>
+	<li><code>n == values.length == labels.length</code></li>
+	<li><code>1 &lt;= n &lt;= 2 * 10<sup>4</sup></code></li>
+	<li><code>0 &lt;= values[i], labels[i] &lt;= 2 * 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= numWanted, useLimit &lt;= n</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：贪心 + 排序 + 哈希表
+
+根据题目描述，我们需要从 $n$ 个元素的集合中选出一个子集，子集元素个数不超过 $numWanted$，且子集中最多有相同标签的 $useLimit$ 项，使得子集的值之和最大。因此，我们应该贪心地选择集合中值较大的元素，同时记录每个标签出现的次数，当某个标签出现的次数达到 $useLimit$ 时，我们就不能再选择该标签对应的元素了。
+
+具体地，我们先将集合中的元素按照值从大到小进行排序，然后从前向后遍历排序后的元素。在遍历的过程中，我们使用一个哈希表 $cnt$ 记录每个标签出现的次数，如果某个标签出现的次数达到了 $useLimit$，那么我们就跳过该元素，否则我们就将该元素的值加到最终的答案中，并将该标签出现的次数加 $1$。同时，我们用一个变量 $num$ 记录当前子集中的元素个数，当 $num$ 达到 $numWanted$ 时，我们就可以结束遍历了。
+
+遍历结束后，我们就得到了最大的分数。
+
+时间复杂度 $O(n \times \log n)$，空间复杂度 $O(n)$。其中 $n$ 是集合中的元素个数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-    def largestValsFromLabels(self, values: List[int], labels: List[int], numWanted: int, useLimit: int) -> int:
-        n = len(values)
-        idx = list(range(n))
-        idx.sort(key=lambda i: -values[i])
+    def largestValsFromLabels(
+        self, values: List[int], labels: List[int], numWanted: int, useLimit: int
+    ) -> int:
         ans = num = 0
-        counter = Counter()
-        for i in idx:
-            v, l = values[i], labels[i]
-            if counter[l] < useLimit:
-                counter[l] += 1
-                ans += v
+        cnt = Counter()
+        for v, l in sorted(zip(values, labels), reverse=True):
+            if cnt[l] < useLimit:
+                cnt[l] += 1
                 num += 1
-            if num == numWanted:
-                break
+                ans += v
+                if num == numWanted:
+                    break
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int largestValsFromLabels(int[] values, int[] labels, int numWanted, int useLimit) {
         int n = values.length;
-        int[][] p = new int[n][2];
+        int[][] pairs = new int[n][2];
         for (int i = 0; i < n; ++i) {
-            p[i] = new int[]{values[i], labels[i]};
+            pairs[i] = new int[] {values[i], labels[i]};
         }
-        Arrays.sort(p, (a, b) -> b[0] - a[0]);
-        int ans = 0;
-        int num = 0;
-        Map<Integer, Integer> counter = new HashMap<>();
+        Arrays.sort(pairs, (a, b) -> b[0] - a[0]);
+        Map<Integer, Integer> cnt = new HashMap<>();
+        int ans = 0, num = 0;
         for (int i = 0; i < n && num < numWanted; ++i) {
-            int v = p[i][0], l = p[i][1];
-            if (counter.getOrDefault(l, 0) < useLimit) {
-                counter.put(l, counter.getOrDefault(l, 0) + 1);
+            int v = pairs[i][0], l = pairs[i][1];
+            if (cnt.getOrDefault(l, 0) < useLimit) {
+                cnt.merge(l, 1, Integer::sum);
+                num += 1;
                 ans += v;
-                ++num;
             }
         }
         return ans;
@@ -115,24 +145,24 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int largestValsFromLabels(vector<int>& values, vector<int>& labels, int numWanted, int useLimit) {
         int n = values.size();
-        vector<pair<int, int>> p;
-        for (int i = 0; i < n; ++i) p.emplace_back(values[i], labels[i]);
-        sort(p.begin(), p.end());
-        unordered_map<int, int> counter;
+        vector<pair<int, int>> pairs(n);
+        for (int i = 0; i < n; ++i) {
+            pairs[i] = {-values[i], labels[i]};
+        }
+        sort(pairs.begin(), pairs.end());
+        unordered_map<int, int> cnt;
         int ans = 0, num = 0;
-        for (int i = n - 1; i >= 0 && num < numWanted; --i)
-        {
-            int v = p[i].first, l = p[i].second;
-            if (counter[l] < useLimit)
-            {
-                ++counter[l];
+        for (int i = 0; i < n && num < numWanted; ++i) {
+            int v = -pairs[i].first, l = pairs[i].second;
+            if (cnt[l] < useLimit) {
+                ++cnt[l];
                 ++num;
                 ans += v;
             }
@@ -142,38 +172,60 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func largestValsFromLabels(values []int, labels []int, numWanted int, useLimit int) int {
-	var p [][]int
-	for i, v := range values {
-		p = append(p, []int{v, labels[i]})
+func largestValsFromLabels(values []int, labels []int, numWanted int, useLimit int) (ans int) {
+	n := len(values)
+	pairs := make([][2]int, n)
+	for i := 0; i < n; i++ {
+		pairs[i] = [2]int{values[i], labels[i]}
 	}
-	sort.Slice(p, func(i, j int) bool {
-		return p[i][0] > p[j][0]
-	})
-	counter := make(map[int]int)
-	ans, num := 0, 0
-	for _, t := range p {
-		if num >= numWanted {
-			break
-		}
-		v, l := t[0], t[1]
-		if counter[l] < useLimit {
-			counter[l]++
+	sort.Slice(pairs, func(i, j int) bool { return pairs[i][0] > pairs[j][0] })
+	cnt := map[int]int{}
+	for i, num := 0, 0; i < n && num < numWanted; i++ {
+		v, l := pairs[i][0], pairs[i][1]
+		if cnt[l] < useLimit {
+			cnt[l]++
 			num++
 			ans += v
 		}
 	}
-	return ans
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function largestValsFromLabels(
+    values: number[],
+    labels: number[],
+    numWanted: number,
+    useLimit: number,
+): number {
+    const n = values.length;
+    const pairs = new Array(n);
+    for (let i = 0; i < n; ++i) {
+        pairs[i] = [values[i], labels[i]];
+    }
+    pairs.sort((a, b) => b[0] - a[0]);
+    const cnt: Map<number, number> = new Map();
+    let ans = 0;
+    for (let i = 0, num = 0; i < n && num < numWanted; ++i) {
+        const [v, l] = pairs[i];
+        if ((cnt.get(l) || 0) < useLimit) {
+            cnt.set(l, (cnt.get(l) || 0) + 1);
+            ++num;
+            ans += v;
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

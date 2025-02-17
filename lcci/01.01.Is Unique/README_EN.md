@@ -1,8 +1,18 @@
-# [01.01. Is Unique](https://leetcode-cn.com/problems/is-unique-lcci)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/lcci/01.01.Is%20Unique/README_EN.md
+---
+
+<!-- problem:start -->
+
+# [01.01. Is Unique](https://leetcode.cn/problems/is-unique-lcci)
 
 [中文文档](/lcci/01.01.Is%20Unique/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Implement an algorithm to determine if a string has all unique characters. What if you cannot use additional data structures?</p>
 
@@ -10,7 +20,7 @@
 
 <pre>
 
-<strong>Input: </strong><code>s</code> = &quot;leetcode&quot;
+<strong>Input: </strong> = &quot;leetcode&quot;
 
 <strong>Output: </strong>false
 
@@ -20,7 +30,7 @@
 
 <pre>
 
-<strong>Input: </strong><code>s</code> = &quot;abc&quot;
+<strong>Input: </strong>s = &quot;abc&quot;
 
 <strong>Output: </strong>true
 
@@ -32,43 +42,105 @@
 	<li><code>0 &lt;= len(s) &lt;= 100 </code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Bit Manipulation
+
+Based on the examples, we can assume that the string only contains lowercase letters (which is confirmed by actual verification).
+
+Therefore, we can use each bit of a $32$-bit integer `mask` to represent whether each character in the string has appeared.
+
+The time complexity is $O(n)$, where $n$ is the length of the string. The space complexity is $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def isUnique(self, astr: str) -> bool:
-        bitmap = 0
-        for c in astr:
-            pos = ord(c) - ord('a')
-            if (bitmap & (1 << pos)) != 0:
+        mask = 0
+        for i in map(lambda c: ord(c) - ord("a"), astr):
+            if (mask >> i) & 1:
                 return False
-            bitmap |= (1 << pos)
+            mask |= 1 << i
         return True
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public boolean isUnique(String astr) {
-        int bitmap = 0;
+        int mask = 0;
         for (char c : astr.toCharArray()) {
-            int pos = c - 'a';
-            if ((bitmap & (1 << pos)) != 0) {
+            int i = c - 'a';
+            if (((mask >> i) & 1) == 1) {
                 return false;
             }
-            bitmap |= (1 << pos);
+            mask |= 1 << i;
         }
         return true;
     }
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    bool isUnique(string astr) {
+        int mask = 0;
+        for (char c : astr) {
+            int i = c - 'a';
+            if (mask >> i & 1) {
+                return false;
+            }
+            mask |= 1 << i;
+        }
+        return true;
+    }
+};
+```
+
+#### Go
+
+```go
+func isUnique(astr string) bool {
+	mask := 0
+	for _, c := range astr {
+		i := c - 'a'
+		if mask>>i&1 == 1 {
+			return false
+		}
+		mask |= 1 << i
+	}
+	return true
+}
+```
+
+#### TypeScript
+
+```ts
+function isUnique(astr: string): boolean {
+    let mask = 0;
+    for (let j = 0; j < astr.length; ++j) {
+        const i = astr.charCodeAt(j) - 'a'.charCodeAt(0);
+        if ((mask >> i) & 1) {
+            return false;
+        }
+        mask |= 1 << i;
+    }
+    return true;
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -76,57 +148,38 @@ class Solution {
  * @return {boolean}
  */
 var isUnique = function (astr) {
-    let bitmap = 0;
-    for (let i = 0; i < astr.length; ++i) {
-        const pos = astr[i].charCodeAt() - "a".charCodeAt();
-        if ((bitmap & (1 << pos)) != 0) {
+    let mask = 0;
+    for (const c of astr) {
+        const i = c.charCodeAt() - 'a'.charCodeAt();
+        if ((mask >> i) & 1) {
             return false;
         }
-        bitmap |= 1 << pos;
+        mask |= 1 << i;
     }
     return true;
 };
 ```
 
-### **Go**
+#### Swift
 
-```go
-func isUnique(astr string) bool {
-	bitmap := 0
-	for _, r := range astr {
-		pos := r - 'a'
-		if (bitmap & (1 << pos)) != 0 {
-			return false
-		}
-		bitmap |= (1 << pos)
-	}
-	return true
+```swift
+class Solution {
+    func isUnique(_ astr: String) -> Bool {
+        var mask = 0
+        for c in astr {
+            let i = Int(c.asciiValue! - Character("a").asciiValue!)
+            if (mask >> i) & 1 != 0 {
+                return false
+            }
+            mask |= 1 << i
+        }
+        return true
+    }
 }
 ```
 
-### **C++**
-
-```cpp
-class Solution {
-public:
-    bool isUnique(string astr) {
-        int bitmap = 0;
-        for (char c : astr) {
-            int pos = c - 'a';
-            if ((bitmap & (1 << pos)) != 0) {
-                return false;
-            }
-            bitmap |= (1 << pos);
-        }
-        return true;
-    }
-};
-```
-
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

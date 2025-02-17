@@ -4,12 +4,12 @@
 #         self.val = x
 #         self.next = None
 
+
 class Solution:
     def getKthFromEnd(self, head: ListNode, k: int) -> ListNode:
         slow = fast = head
         for _ in range(k):
             fast = fast.next
         while fast:
-            slow = slow.next
-            fast = fast.next
+            slow, fast = slow.next, fast.next
         return slow

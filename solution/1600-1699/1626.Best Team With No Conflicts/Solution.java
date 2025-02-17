@@ -1,24 +1,22 @@
 class Solution {
     public int bestTeamScore(int[] scores, int[] ages) {
         int n = ages.length;
-        int[][] nums = new int[n][2];
+        int[][] arr = new int[n][2];
         for (int i = 0; i < n; ++i) {
-            nums[i] = new int[]{scores[i], ages[i]};
+            arr[i] = new int[] {scores[i], ages[i]};
         }
-        Arrays.sort(nums, (a, b) -> {
-            return a[1] == b[1] ? a[0] - b[0] : a[1] - b[1];
-        });
-        int[] dp = new int[n];
-        int res = 0;
+        Arrays.sort(arr, (a, b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        int[] f = new int[n];
+        int ans = 0;
         for (int i = 0; i < n; ++i) {
-            dp[i] = nums[i][0];
             for (int j = 0; j < i; ++j) {
-                if (nums[j][0] <= nums[i][0]) {
-                    dp[i] = Math.max(dp[i], dp[j] + nums[i][0]);
+                if (arr[i][1] >= arr[j][1]) {
+                    f[i] = Math.max(f[i], f[j]);
                 }
             }
-            res = Math.max(res, dp[i]);
+            f[i] += arr[i][0];
+            ans = Math.max(ans, f[i]);
         }
-        return res;
+        return ans;
     }
 }

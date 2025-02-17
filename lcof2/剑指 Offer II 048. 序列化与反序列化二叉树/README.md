@@ -1,8 +1,15 @@
-# [剑指 Offer II 048. 序列化与反序列化二叉树](https://leetcode-cn.com/problems/h54YBf)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20048.%20%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%BA%8C%E5%8F%89%E6%A0%91/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 048. 序列化与反序列化二叉树](https://leetcode.cn/problems/h54YBf)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。</p>
 
@@ -12,7 +19,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20048.%20%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%BA%8C%E5%8F%89%E6%A0%91/images/serdeser.jpg" style="width: 442px; height: 324px;" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20048.%20%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%BA%8C%E5%8F%89%E6%A0%91/images/serdeser.jpg" style="width: 442px; height: 324px;" /></p>
 
 <pre>
 <strong>输入：</strong>root = [1,2,3,null,null,4,5]
@@ -52,17 +59,19 @@
 
 <p>&nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 297&nbsp;题相同：<a href="https://leetcode-cn.com/problems/serialize-and-deserialize-binary-tree/">https://leetcode-cn.com/problems/serialize-and-deserialize-binary-tree/</a>&nbsp;</p>
+<p><meta charset="UTF-8" />注意：本题与主站 297&nbsp;题相同：<a href="https://leetcode.cn/problems/serialize-and-deserialize-binary-tree/">https://leetcode.cn/problems/serialize-and-deserialize-binary-tree/</a>&nbsp;</p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -72,8 +81,8 @@
 #         self.left = None
 #         self.right = None
 
-class Codec:
 
+class Codec:
     def serialize(self, root):
         """Encodes a tree to a single string.
 
@@ -96,7 +105,6 @@ class Codec:
         preorder(root)
         return ''.join(res)
 
-
     def deserialize(self, data):
         """Decodes your encoded data to tree.
 
@@ -115,15 +123,14 @@ class Codec:
 
         return inner()
 
+
 # Your Codec object will be instantiated and called as such:
 # ser = Codec()
 # deser = Codec()
 # ans = deser.deserialize(ser.serialize(root))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -189,7 +196,7 @@ public class Codec {
 // TreeNode ans = deser.deserialize(ser.serialize(root));
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -203,7 +210,6 @@ public class Codec {
  */
 class Codec {
 public:
-
     // Encodes a tree to a single string.
     string serialize(TreeNode* root) {
         if (!root) return "";
@@ -213,9 +219,9 @@ public:
     }
 
     void preorder(TreeNode* root, string& s) {
-        if (!root) s += "# ";
-        else
-        {
+        if (!root)
+            s += "# ";
+        else {
             s += to_string(root->val) + " ";
             preorder(root->left, s);
             preorder(root->right, s);
@@ -245,7 +251,7 @@ public:
 // TreeNode* ans = deser.deserialize(ser.serialize(root));
 ```
 
-### **JavaScript**
+#### JavaScript
 
 ```js
 /**
@@ -263,7 +269,7 @@ public:
  * @return {string}
  */
 var serialize = function (root) {
-    return rserialize(root, "");
+    return rserialize(root, '');
 };
 
 /**
@@ -273,15 +279,15 @@ var serialize = function (root) {
  * @return {TreeNode}
  */
 var deserialize = function (data) {
-    const dataArray = data.split(",");
+    const dataArray = data.split(',');
     return rdeserialize(dataArray);
 };
 
 const rserialize = (root, str) => {
     if (root === null) {
-        str += "#,";
+        str += '#,';
     } else {
-        str += root.val + "" + ",";
+        str += root.val + '' + ',';
         str = rserialize(root.left, str);
         str = rserialize(root.right, str);
     }
@@ -289,7 +295,7 @@ const rserialize = (root, str) => {
 };
 
 const rdeserialize = dataList => {
-    if (dataList[0] === "#") {
+    if (dataList[0] === '#') {
         dataList.shift();
         return null;
     }
@@ -308,10 +314,80 @@ const rdeserialize = dataList => {
  */
 ```
 
-### **...**
+#### Swift
 
-```
+```swift
+/* class TreeNode {
+*     var val: Int
+*     var left: TreeNode?
+*     var right: TreeNode?
+*     init() {
+*         self.val = 0
+*         self.left = nil
+*         self.right = nil
+*     }
+*     init(_ val: Int) {
+*         self.val = val
+*         self.left = nil
+*         self.right = nil
+*     }
+*     init(_ val: Int, _ left: TreeNode?, _ right: TreeNode?) {
+*         self.val = val
+*         self.left = left
+*         self.right = right
+*     }
+* }
+*/
 
+class Codec {
+    private let NULL = "#"
+    private let SEP = ","
+
+    func serialize(_ root: TreeNode?) -> String {
+        guard let root = root else { return "" }
+        var sb = ""
+        preorder(root, &sb)
+        return sb
+    }
+
+    private func preorder(_ root: TreeNode?, _ sb: inout String) {
+        guard let root = root else {
+            sb += NULL + SEP
+            return
+        }
+        sb += "\(root.val)" + SEP
+        preorder(root.left, &sb)
+        preorder(root.right, &sb)
+    }
+
+    func deserialize(_ data: String) -> TreeNode? {
+        guard !data.isEmpty else { return nil }
+        var vals = data.split(separator: Character(SEP)).map { String($0) }
+        return deserialize(&vals)
+    }
+
+    private func deserialize(_ vals: inout [String]) -> TreeNode? {
+        if vals.isEmpty { return nil }
+        let first = vals.removeFirst()
+        if first == NULL {
+            return nil
+        }
+        let root = TreeNode(Int(first)!)
+        root.left = deserialize(&vals)
+        root.right = deserialize(&vals)
+        return root
+    }
+}
+/**
+ * Your functions will be called as such:
+ * let codec = Codec()
+ * let serializedDatacodec.serialize(root);
+ * codec.deserialize(serializedData);
+ */
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

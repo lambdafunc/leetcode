@@ -1,8 +1,25 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1775.Equal%20Sum%20Arrays%20With%20Minimum%20Number%20of%20Operations/README_EN.md
+rating: 1850
+source: Weekly Contest 230 Q3
+tags:
+    - Greedy
+    - Array
+    - Hash Table
+    - Counting
+---
+
+<!-- problem:start -->
+
 # [1775. Equal Sum Arrays With Minimum Number of Operations](https://leetcode.com/problems/equal-sum-arrays-with-minimum-number-of-operations)
 
 [中文文档](/solution/1700-1799/1775.Equal%20Sum%20Arrays%20With%20Minimum%20Number%20of%20Operations/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given two arrays of integers <code>nums1</code> and <code><font face="monospace">nums2</font></code>, possibly of different lengths. The values in the arrays are between <code>1</code> and <code>6</code>, inclusive.</p>
 
@@ -11,7 +28,7 @@
 <p>Return <em>the minimum number of operations required to make the sum of values in </em><code>nums1</code><em> equal to the sum of values in </em><code>nums2</code><em>.</em> Return <code>-1</code>​​​​​ if it is not possible to make the sum of the two arrays equal.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums1 = [1,2,3,4,5,6], nums2 = [1,1,2,2,2,2]
@@ -22,7 +39,7 @@
 - Change nums1[2] to 2. nums1 = [1,2,<strong><u>2</u></strong>,4,5,1], nums2 = [6,1,2,2,2,2].
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums1 = [1,1,1,1,1,1,1], nums2 = [6]
@@ -30,7 +47,7 @@
 <strong>Explanation:</strong> There is no way to decrease the sum of nums1 or to increase the sum of nums2 to make them equal.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums1 = [6,6], nums2 = [1]
@@ -49,11 +66,17 @@
 	<li><code>1 &lt;= nums1[i], nums2[i] &lt;= 6</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -63,65 +86,50 @@ class Solution:
             return 0
         if s1 > s2:
             return self.minOperations(nums2, nums1)
-        freq = [0] * 6
-        for x in nums1:
-            freq[6 - x] += 1
-        for x in nums2:
-            freq[x - 1] += 1
-        diff = s2 - s1
-        ans, i = 0, 5
-        while i > 0 and diff > 0:
-            while freq[i] and diff > 0:
-                diff -= i
-                freq[i] -= 1
-                ans += 1
-            i -= 1
-        return -1 if diff > 0 else ans
+        arr = [6 - v for v in nums1] + [v - 1 for v in nums2]
+        d = s2 - s1
+        for i, v in enumerate(sorted(arr, reverse=True), 1):
+            d -= v
+            if d <= 0:
+                return i
+        return -1
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int minOperations(int[] nums1, int[] nums2) {
-        int s1 = sum(nums1);
-        int s2 = sum(nums2);
+        int s1 = Arrays.stream(nums1).sum();
+        int s2 = Arrays.stream(nums2).sum();
         if (s1 == s2) {
             return 0;
         }
         if (s1 > s2) {
             return minOperations(nums2, nums1);
         }
-        int[] freq = new int[6];
-        for (int x : nums1) {
-            ++freq[6 - x];
+        int d = s2 - s1;
+        int[] arr = new int[nums1.length + nums2.length];
+        int k = 0;
+        for (int v : nums1) {
+            arr[k++] = 6 - v;
         }
-        for (int x : nums2) {
-            ++freq[x - 1];
+        for (int v : nums2) {
+            arr[k++] = v - 1;
         }
-        int diff = s2 - s1;
-        int ans = 0;
-        for (int i = 5; i > 0 && diff > 0; --i) {
-            while (freq[i] > 0 && diff > 0) {
-                diff -= i;
-                --freq[i];
-                ++ans;
+        Arrays.sort(arr);
+        for (int i = 1, j = arr.length - 1; j >= 0; ++i, --j) {
+            d -= arr[j];
+            if (d <= 0) {
+                return i;
             }
         }
-        return diff > 0 ? - 1 : ans;
-    }
-
-    private int sum(int[] nums) {
-        int s = 0;
-        for (int x : nums) {
-            s += x;
-        }
-        return s;
+        return -1;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -131,26 +139,22 @@ public:
         int s2 = accumulate(nums2.begin(), nums2.end(), 0);
         if (s1 == s2) return 0;
         if (s1 > s2) return minOperations(nums2, nums1);
-        vector<int> freq(6);
-        for (int x : nums1) ++freq[6 - x];
-        for (int x : nums2) ++freq[x - 1];
-        int diff = s2 - s1;
-        int ans = 0;
-        for (int i = 5; i > 0 && diff > 0; --i)
-        {
-            while (freq[i] && diff > 0)
-            {
-                diff -= i;
-                --freq[i];
-                ++ans;
-            }
+        int d = s2 - s1;
+        int arr[nums1.size() + nums2.size()];
+        int k = 0;
+        for (int& v : nums1) arr[k++] = 6 - v;
+        for (int& v : nums2) arr[k++] = v - 1;
+        sort(arr, arr + k, greater<>());
+        for (int i = 0; i < k; ++i) {
+            d -= arr[i];
+            if (d <= 0) return i + 1;
         }
-        return diff > 0 ? -1 : ans;
+        return -1;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func minOperations(nums1 []int, nums2 []int) int {
@@ -161,41 +165,166 @@ func minOperations(nums1 []int, nums2 []int) int {
 	if s1 > s2 {
 		return minOperations(nums2, nums1)
 	}
-	freq := make([]int, 6)
-	for _, x := range nums1 {
-		freq[6-x]++
+	d := s2 - s1
+	arr := []int{}
+	for _, v := range nums1 {
+		arr = append(arr, 6-v)
 	}
-	for _, x := range nums2 {
-		freq[x-1]++
+	for _, v := range nums2 {
+		arr = append(arr, v-1)
 	}
-	diff := s2 - s1
-	ans := 0
-	for i := 5; i > 0 && diff > 0; i-- {
-		for freq[i] > 0 && diff > 0 {
-			diff -= i
-			freq[i]--
-			ans++
+	sort.Sort(sort.Reverse(sort.IntSlice(arr)))
+	for i, v := range arr {
+		d -= v
+		if d <= 0 {
+			return i + 1
 		}
 	}
-	if diff > 0 {
-		return -1
-	}
-	return ans
+	return -1
 }
 
-func sum(nums []int) int {
-	s := 0
-	for _, x := range nums {
-		s += x
+func sum(nums []int) (s int) {
+	for _, v := range nums {
+		s += v
 	}
-	return s
+	return
 }
-```
-
-### **...**
-
-```
-
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def minOperations(self, nums1: List[int], nums2: List[int]) -> int:
+        s1, s2 = sum(nums1), sum(nums2)
+        if s1 == s2:
+            return 0
+        if s1 > s2:
+            return self.minOperations(nums2, nums1)
+        cnt = Counter([6 - v for v in nums1] + [v - 1 for v in nums2])
+        d = s2 - s1
+        ans = 0
+        for i in range(5, 0, -1):
+            while cnt[i] and d > 0:
+                d -= i
+                cnt[i] -= 1
+                ans += 1
+        return ans if d <= 0 else -1
+```
+
+#### Java
+
+```java
+class Solution {
+    public int minOperations(int[] nums1, int[] nums2) {
+        int s1 = Arrays.stream(nums1).sum();
+        int s2 = Arrays.stream(nums2).sum();
+        if (s1 == s2) {
+            return 0;
+        }
+        if (s1 > s2) {
+            return minOperations(nums2, nums1);
+        }
+        int d = s2 - s1;
+        int[] cnt = new int[6];
+        for (int v : nums1) {
+            ++cnt[6 - v];
+        }
+        for (int v : nums2) {
+            ++cnt[v - 1];
+        }
+        int ans = 0;
+        for (int i = 5; i > 0; --i) {
+            while (cnt[i] > 0 && d > 0) {
+                d -= i;
+                --cnt[i];
+                ++ans;
+            }
+        }
+        return d <= 0 ? ans : -1;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int minOperations(vector<int>& nums1, vector<int>& nums2) {
+        int s1 = accumulate(nums1.begin(), nums1.end(), 0);
+        int s2 = accumulate(nums2.begin(), nums2.end(), 0);
+        if (s1 == s2) return 0;
+        if (s1 > s2) return minOperations(nums2, nums1);
+        int d = s2 - s1;
+        int cnt[6] = {0};
+        for (int& v : nums1) ++cnt[6 - v];
+        for (int& v : nums2) ++cnt[v - 1];
+        int ans = 0;
+        for (int i = 5; i; --i) {
+            while (cnt[i] && d > 0) {
+                d -= i;
+                --cnt[i];
+                ++ans;
+            }
+        }
+        return d <= 0 ? ans : -1;
+    }
+};
+```
+
+#### Go
+
+```go
+func minOperations(nums1 []int, nums2 []int) (ans int) {
+	s1, s2 := sum(nums1), sum(nums2)
+	if s1 == s2 {
+		return 0
+	}
+	if s1 > s2 {
+		return minOperations(nums2, nums1)
+	}
+	d := s2 - s1
+	cnt := [6]int{}
+	for _, v := range nums1 {
+		cnt[6-v]++
+	}
+	for _, v := range nums2 {
+		cnt[v-1]++
+	}
+	for i := 5; i > 0; i-- {
+		for cnt[i] > 0 && d > 0 {
+			d -= i
+			cnt[i]--
+			ans++
+		}
+	}
+	if d <= 0 {
+		return
+	}
+	return -1
+}
+
+func sum(nums []int) (s int) {
+	for _, v := range nums {
+		s += v
+	}
+	return
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

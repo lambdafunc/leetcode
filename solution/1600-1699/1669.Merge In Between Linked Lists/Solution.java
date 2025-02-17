@@ -10,19 +10,19 @@
  */
 class Solution {
     public ListNode mergeInBetween(ListNode list1, int a, int b, ListNode list2) {
-        ListNode p = list1;
-        for (int i = 0; i < a - 1; ++i) {
+        ListNode p = list1, q = list1;
+        while (--a > 0) {
             p = p.next;
         }
-        ListNode q = list1;
-        for (int i = 0; i < b + 1; ++i) {
+        while (b-- > 0) {
             q = q.next;
         }
         p.next = list2;
-        while (list2.next != null) {
-            list2 = list2.next;
+        while (p.next != null) {
+            p = p.next;
         }
-        list2.next = q;
+        p.next = q.next;
+        q.next = null;
         return list1;
     }
 }

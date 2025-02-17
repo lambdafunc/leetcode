@@ -1,21 +1,26 @@
 class Solution {
+    private List<List<Integer>> ans = new ArrayList<>();
+    private List<Integer> t = new ArrayList<>();
+    private int[] nums;
+
     public List<List<Integer>> subsetsWithDup(int[] nums) {
-        List<Integer> path = new ArrayList<>();
-        List<List<Integer>> res = new ArrayList<>();
         Arrays.sort(nums);
-        dfs(nums, 0, res, path);
-        return res;
+        this.nums = nums;
+        dfs(0);
+        return ans;
     }
 
-    private void dfs(int[] nums, int i, List<List<Integer>> res, List<Integer> path) {
-        res.add(new ArrayList<>(path));
-        for (int j = i; j < nums.length; ++j) {
-            if (j != i && nums[j] == nums[j - 1]) {
-                continue;
-            }
-            path.add(nums[j]);
-            dfs(nums, i + 1, res, path);
-            path.remove(path.size() - 1);
+    private void dfs(int i) {
+        if (i >= nums.length) {
+            ans.add(new ArrayList<>(t));
+            return;
         }
+        t.add(nums[i]);
+        dfs(i + 1);
+        int x = t.remove(t.size() - 1);
+        while (i + 1 < nums.length && nums[i + 1] == x) {
+            ++i;
+        }
+        dfs(i + 1);
     }
 }

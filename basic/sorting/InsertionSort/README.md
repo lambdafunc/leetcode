@@ -10,14 +10,33 @@
 
 与冒泡排序对比：
 
-- 在冒泡排序中，经过每一轮的排序处理后，数组后端的数是排好序的。
-- 在插入排序中，经过每一轮的排序处理后，数组前端的数是排好序的。
+-   在冒泡排序中，经过每一轮的排序处理后，数组后端的数是排好序的。
+-   在插入排序中，经过每一轮的排序处理后，数组前端的数是排好序的。
 
 ## 代码示例
 
 <!-- tabs:start -->
 
-### **Java**
+#### Python3
+
+```python
+def insertion_sort(array):
+    for i in range(len(array)):
+        cur_index = i
+        while array[cur_index - 1] > array[cur_index] and cur_index - 1 >= 0:
+            array[cur_index], array[cur_index - 1] = (
+                array[cur_index - 1],
+                array[cur_index],
+            )
+            cur_index -= 1
+    return array
+
+
+array = [10, 17, 50, 7, 30, 24, 27, 45, 15, 5, 36, 21]
+print(insertion_sort(array))
+```
+
+#### Java
 
 ```java
 import java.util.Arrays;
@@ -27,7 +46,7 @@ public class InsertionSort {
     private static void insertionSort(int[] nums) {
         for (int i = 1, j, n = nums.length; i < n; ++i) {
             int num = nums[i];
-            for (j = i - 1; j >=0 && nums[j] > num; --j) {
+            for (j = i - 1; j >= 0 && nums[j] > num; --j) {
                 nums[j + 1] = nums[j];
             }
             nums[j + 1] = num;
@@ -42,28 +61,48 @@ public class InsertionSort {
 }
 ```
 
-### **JavaScript**
+#### C++
 
-```js
-function insertionSort(inputArr) {
-    let len = inputArr.length;
-    for (let i = 1; i <= len - 1; i++) {
-        let temp = inputArr[i];
-        let j = i - 1;
-        while (j >= 0 && inputArr[j] > temp) {
-            inputArr[j + 1] = inputArr[j];
-            j--;
-        }
-        inputArr[j + 1] = temp;
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+void printvec(const vector<int>& vec, const string& strbegin = "", const string& strend = "") {
+    cout << strbegin << endl;
+    for (auto val : vec) {
+        cout << val << "\t";
     }
-    return inputArr;
+
+    cout << endl;
+    cout << strend << endl;
 }
 
-let arr = [6, 3, 2, 1, 5];
-console.log(insertionSort(arr));
+void insertsort(vector<int>& vec) {
+    for (int i = 1; i < vec.size(); i++) {
+        int j = i - 1;
+        int num = vec[i];
+        for (; j >= 0 && vec[j] > num; j--) {
+            vec[j + 1] = vec[j];
+        }
+
+        vec[j + 1] = num;
+    }
+
+    return;
+}
+
+int main() {
+    vector<int> vec = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+    printvec(vec);
+    insertsort(vec);
+    printvec(vec, "after insert sort");
+    return (0);
+}
 ```
 
-### **Go**
+#### Go
 
 ```go
 package main
@@ -87,54 +126,7 @@ func main() {
 }
 ```
 
-### **C++**
-
-```cpp
-#include <iostream>
-#include <vector>
-
-using namespace std;
-
-void printvec(const vector<int> &vec, const string &strbegin = "", const string &strend = "")
-{
-    cout << strbegin << endl;
-    for (auto val : vec)
-    {
-        cout << val << "\t";
-    }
-
-    cout << endl;
-    cout << strend << endl;
-}
-
-void insertsort(vector<int> &vec)
-{
-    for (int i = 1; i < vec.size(); i++)
-    {
-        int j = i - 1;
-        int num = vec[i];
-        for (; j >= 0 && vec[j] > num; j--)
-        {
-            vec[j + 1] = vec[j];
-        }
-
-        vec[j + 1] = num;
-    }
-
-    return;
-}
-
-int main()
-{
-    vector<int> vec = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
-    printvec(vec);
-    insertsort(vec);
-    printvec(vec, "after insert sort");
-    return (0);
-}
-```
-
-### **Rust**
+#### Rust
 
 ```rust
 fn insertion_sort(nums: &mut Vec<i32>) {
@@ -142,7 +134,7 @@ fn insertion_sort(nums: &mut Vec<i32>) {
     for i in 1..n {
         let mut j = i - 1;
         let temp = nums[i];
-        while j >= 0 as usize && nums[j] > temp {
+        while j >= (0 as usize) && nums[j] > temp {
             nums[j + 1] = nums[j];
             j -= 1;
         }
@@ -157,7 +149,28 @@ fn main() {
 }
 ```
 
-### **C#**
+#### JavaScript
+
+```js
+function insertionSort(inputArr) {
+    let len = inputArr.length;
+    for (let i = 1; i <= len - 1; i++) {
+        let temp = inputArr[i];
+        let j = i - 1;
+        while (j >= 0 && inputArr[j] > temp) {
+            inputArr[j + 1] = inputArr[j];
+            j--;
+        }
+        inputArr[j + 1] = temp;
+    }
+    return inputArr;
+}
+
+let arr = [6, 3, 2, 1, 5];
+console.log(insertionSort(arr));
+```
+
+#### C#
 
 ```cs
 using System.Diagnostics;
@@ -198,15 +211,3 @@ public class Program
 ```
 
 <!-- tabs:end -->
-
-## 算法分析
-
-空间复杂度 O(1)，时间复杂度 O(n²)。
-
-分情况讨论：
-
-1. 给定的数组按照顺序排好序：只需要进行 n-1 次比较，两两交换次数为 0，时间复杂度为 O(n)，这是最好的情况。
-1. 给定的数组按照逆序排列：需要进行 `n*(n-1)/2` 次比较，时间复杂度为 O(n²)，这是最坏的情况。
-1. 给定的数组杂乱无章：在这种情况下，平均时间复杂度是 O(n²)。
-
-因此，时间复杂度是 O(n²)，这也是一种稳定的排序算法。

@@ -1,9 +1,8 @@
 class Solution:
     def isUnique(self, astr: str) -> bool:
-        bitmap = 0
-        for c in astr:
-            pos = ord(c) - ord('a')
-            if (bitmap & (1 << pos)) != 0:
+        mask = 0
+        for i in map(lambda c: ord(c) - ord("a"), astr):
+            if (mask >> i) & 1:
                 return False
-            bitmap |= (1 << pos)
+            mask |= 1 << i
         return True

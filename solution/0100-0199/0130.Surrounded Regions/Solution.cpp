@@ -1,40 +1,33 @@
 class Solution {
 public:
-    vector<int> p;
-    int dirs[4][2] = {{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
-
     void solve(vector<vector<char>>& board) {
         int m = board.size(), n = board[0].size();
-        p.resize(m * n + 1);
-        for (int i = 0; i < p.size(); ++i) p[i] = i;
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (board[i][j] == 'O')
-                {
-                    if (i == 0 || j == 0 || i == m - 1 || j == n - 1) p[find(i * n + j)] = find(m * n);
-                    else
-                    {
-                        for (auto e : dirs)
-                        {
-                            if (board[i + e[0]][j + e[1]] == 'O') p[find(i * n + j)] = find((i + e[0]) * n + j + e[1]);
-                        }
-                    }
+        int dirs[5] = {-1, 0, 1, 0, -1};
+        function<void(int, int)> dfs = [&](int i, int j) {
+            if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] != 'O') {
+                return;
+            }
+            board[i][j] = '.';
+            for (int k = 0; k < 4; ++k) {
+                dfs(i + dirs[k], j + dirs[k + 1]);
+            }
+        };
+        for (int i = 0; i < m; ++i) {
+            dfs(i, 0);
+            dfs(i, n - 1);
+        }
+        for (int j = 1; j < n - 1; ++j) {
+            dfs(0, j);
+            dfs(m - 1, j);
+        }
+        for (auto& row : board) {
+            for (auto& c : row) {
+                if (c == '.') {
+                    c = 'O';
+                } else if (c == 'O') {
+                    c = 'X';
                 }
             }
         }
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (board[i][j] == 'O' && find(i * n + j) != find(m * n)) board[i][j] = 'X';
-            }
-        }
-    }
-
-    int find(int x) {
-        if (p[x] != x) p[x] = find(p[x]);
-        return p[x];
     }
 };

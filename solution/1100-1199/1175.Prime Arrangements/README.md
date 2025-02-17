@@ -1,10 +1,22 @@
-# [1175. 质数排列](https://leetcode-cn.com/problems/prime-arrangements)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1175.Prime%20Arrangements/README.md
+rating: 1489
+source: 第 152 场周赛 Q1
+tags:
+    - 数学
+---
+
+<!-- problem:start -->
+
+# [1175. 质数排列](https://leetcode.cn/problems/prime-arrangements)
 
 [English Version](/solution/1100-1199/1175.Prime%20Arrangements/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>请你帮忙给从 <code>1</code> 到 <code>n</code>&nbsp;的数设计排列方案，使得所有的「质数」都应该被放在「质数索引」（索引从 1 开始）上；你需要返回可能的方案总数。</p>
 
@@ -35,32 +47,157 @@
 	<li><code>1 &lt;= n &lt;= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：数学
+
+先统计 $[1,n]$ 范围内的质数个数，我们记为 $cnt$。然后求 $cnt$ 以及 $n-cnt$ 阶乘的乘积得到答案，注意取模操作。
+
+这里我们用“埃氏筛”统计质数。
+
+如果 $x$ 是质数，那么大于 $x$ 的 $x$ 的倍数 $2x$,$3x$,… 一定不是质数，因此我们可以从这里入手。
+
+设 $primes[i]$ 表示数 $i$ 是不是质数，如果是质数则为 $true$，否则为 $false$。
+
+我们在 $[2,n]$ 范围内顺序遍历每个数 $i$，如果这个数为质数，质数个数增 $1$，然后将其所有的倍数 $j$ 都标记为合数（除了该质数本身），即 $primes[j]=false$，这样在运行结束的时候我们即能知道质数的个数。
+
+时间复杂度 $O(n \times \log \log n)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
+class Solution:
+    def numPrimeArrangements(self, n: int) -> int:
+        def count(n):
+            cnt = 0
+            primes = [True] * (n + 1)
+            for i in range(2, n + 1):
+                if primes[i]:
+                    cnt += 1
+                    for j in range(i + i, n + 1, i):
+                        primes[j] = False
+            return cnt
 
+        cnt = count(n)
+        ans = factorial(cnt) * factorial(n - cnt)
+        return ans % (10**9 + 7)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
+class Solution {
+    private static final int MOD = (int) 1e9 + 7;
 
+    public int numPrimeArrangements(int n) {
+        int cnt = count(n);
+        long ans = f(cnt) * f(n - cnt);
+        return (int) (ans % MOD);
+    }
+
+    private long f(int n) {
+        long ans = 1;
+        for (int i = 2; i <= n; ++i) {
+            ans = (ans * i) % MOD;
+        }
+        return ans;
+    }
+
+    private int count(int n) {
+        int cnt = 0;
+        boolean[] primes = new boolean[n + 1];
+        Arrays.fill(primes, true);
+        for (int i = 2; i <= n; ++i) {
+            if (primes[i]) {
+                ++cnt;
+                for (int j = i + i; j <= n; j += i) {
+                    primes[j] = false;
+                }
+            }
+        }
+        return cnt;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+using ll = long long;
+const int MOD = 1e9 + 7;
+
+class Solution {
+public:
+    int numPrimeArrangements(int n) {
+        int cnt = count(n);
+        ll ans = f(cnt) * f(n - cnt);
+        return (int) (ans % MOD);
+    }
+
+    ll f(int n) {
+        ll ans = 1;
+        for (int i = 2; i <= n; ++i) ans = (ans * i) % MOD;
+        return ans;
+    }
+
+    int count(int n) {
+        vector<bool> primes(n + 1, true);
+        int cnt = 0;
+        for (int i = 2; i <= n; ++i) {
+            if (primes[i]) {
+                ++cnt;
+                for (int j = i + i; j <= n; j += i) primes[j] = false;
+            }
+        }
+        return cnt;
+    }
+};
 ```
 
+#### Go
+
+```go
+func numPrimeArrangements(n int) int {
+	count := func(n int) int {
+		cnt := 0
+		primes := make([]bool, n+1)
+		for i := range primes {
+			primes[i] = true
+		}
+		for i := 2; i <= n; i++ {
+			if primes[i] {
+				cnt++
+				for j := i + i; j <= n; j += i {
+					primes[j] = false
+				}
+			}
+		}
+		return cnt
+	}
+
+	mod := int(1e9) + 7
+	f := func(n int) int {
+		ans := 1
+		for i := 2; i <= n; i++ {
+			ans = (ans * i) % mod
+		}
+		return ans
+	}
+
+	cnt := count(n)
+	ans := f(cnt) * f(n-cnt)
+	return ans % mod
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

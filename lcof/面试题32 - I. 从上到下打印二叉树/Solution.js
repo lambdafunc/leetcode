@@ -10,14 +10,19 @@
  * @return {number[]}
  */
 var levelOrder = function (root) {
-    if (!root) return [];
-    let queue = [root];
-    let res = [];
-    while (queue.length) {
-        let node = queue.shift();
-        if (!node) continue;
-        res.push(node.val);
-        queue.push(node.left, node.right);
+    const ans = [];
+    if (!root) {
+        return ans;
     }
-    return res;
+    const q = [root];
+    while (q.length) {
+        const t = [];
+        for (const { val, left, right } of q) {
+            ans.push(val);
+            left && t.push(left);
+            right && t.push(right);
+        }
+        q.splice(0, q.length, ...t);
+    }
+    return ans;
 };

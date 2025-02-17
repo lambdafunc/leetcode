@@ -1,14 +1,13 @@
-func sumOddLengthSubarrays(arr []int) int {
+func sumOddLengthSubarrays(arr []int) (ans int) {
 	n := len(arr)
-	presum := make([]int, n+1)
-	for i := range arr {
-		presum[i+1] = presum[i] + arr[i]
+	f := make([]int, n)
+	g := make([]int, n)
+	f[0] = arr[0]
+	ans = f[0]
+	for i := 1; i < n; i++ {
+		f[i] = g[i-1] + arr[i]*(i/2+1)
+		g[i] = f[i-1] + arr[i]*((i+1)/2)
+		ans += f[i]
 	}
-	res := 0
-	for i := 0; i < n; i++ {
-		for j := 0; i+j < n; j += 2 {
-			res += presum[i+j+1] - presum[i]
-		}
-	}
-	return res
+	return
 }

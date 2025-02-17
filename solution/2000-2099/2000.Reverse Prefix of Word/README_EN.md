@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2000.Reverse%20Prefix%20of%20Word/README_EN.md
+rating: 1199
+source: Weekly Contest 258 Q1
+tags:
+    - Stack
+    - Two Pointers
+    - String
+---
+
+<!-- problem:start -->
+
 # [2000. Reverse Prefix of Word](https://leetcode.com/problems/reverse-prefix-of-word)
 
 [中文文档](/solution/2000-2099/2000.Reverse%20Prefix%20of%20Word/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given a <strong>0-indexed</strong> string <code>word</code> and a character <code>ch</code>, <strong>reverse</strong> the segment of <code>word</code> that starts at index <code>0</code> and ends at the index of the <strong>first occurrence</strong> of <code>ch</code> (<strong>inclusive</strong>). If the character <code>ch</code> does not exist in <code>word</code>, do nothing.</p>
 
@@ -13,7 +29,7 @@
 <p>Return <em>the resulting string</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> word = &quot;<u>abcd</u>efd&quot;, ch = &quot;d&quot;
@@ -22,7 +38,7 @@
 Reverse the part of word from 0 to 3 (inclusive), the resulting string is &quot;dcbaefd&quot;.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> word = &quot;<u>xyxz</u>xe&quot;, ch = &quot;z&quot;
@@ -31,7 +47,7 @@ Reverse the part of word from 0 to 3 (inclusive), the resulting string is &quot;
 Reverse the part of word from 0 to 3 (inclusive), the resulting string is &quot;zxyxxe&quot;.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> word = &quot;abcd&quot;, ch = &quot;z&quot;
@@ -49,51 +65,65 @@ You should not do any reverse operation, the resulting string is &quot;abcd&quot
 	<li><code>ch</code> is a lowercase English letter.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Simulation
+
+First, we find the index $i$ where the character $ch$ first appears. Then, we reverse the characters from index $0$ to index $i$ (including index $i$). Finally, we concatenate the reversed string with the string starting from index $i + 1$.
+
+The time complexity is $O(n)$, and the space complexity is $O(n)$. Here, $n$ is the length of the string $word$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def reversePrefix(self, word: str, ch: str) -> str:
         i = word.find(ch)
-        return word if i == -1 else word[i::-1] + word[i + 1:]
+        return word if i == -1 else word[i::-1] + word[i + 1 :]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
-
     public String reversePrefix(String word, char ch) {
-        int i = word.indexOf(ch);
-        return i == -1
-            ? word
-            : new StringBuilder(word.substring(0, i + 1))
-                .reverse()
-                .append(word.substring(i + 1))
-                .toString();
+        int j = word.indexOf(ch);
+        if (j == -1) {
+            return word;
+        }
+        char[] cs = word.toCharArray();
+        for (int i = 0; i < j; ++i, --j) {
+            char t = cs[i];
+            cs[i] = cs[j];
+            cs[j] = t;
+        }
+        return String.valueOf(cs);
     }
 }
-
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     string reversePrefix(string word, char ch) {
         int i = word.find(ch);
-        if (i != string::npos) reverse(word.begin(), word.begin() + i + 1);
+        if (i != string::npos) {
+            reverse(word.begin(), word.begin() + i + 1);
+        }
         return word;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func reversePrefix(word string, ch byte) string {
@@ -110,19 +140,21 @@ func reversePrefix(word string, ch byte) string {
 }
 ```
 
-### **TypeScript**
+#### TypeScript
 
 ```ts
 function reversePrefix(word: string, ch: string): string {
-    let idx = word.indexOf(ch) + 1;
-    if (!idx) return word;
-    return [...word.substring(0, idx)].reverse().join('') + word.substring(idx);
-};
+    const i = word.indexOf(ch) + 1;
+    if (!i) {
+        return word;
+    }
+    return [...word.slice(0, i)].reverse().join('') + word.slice(i);
+}
 ```
 
-### **Rust**
+#### Rust
 
-```rs
+```rust
 impl Solution {
     pub fn reverse_prefix(word: String, ch: char) -> String {
         match word.find(ch) {
@@ -133,10 +165,36 @@ impl Solution {
 }
 ```
 
-### **...**
+#### PHP
 
-```
-
+```php
+class Solution {
+    /**
+     * @param String $word
+     * @param String $ch
+     * @return String
+     */
+    function reversePrefix($word, $ch) {
+        $len = strlen($word);
+        $rs = '';
+        for ($i = 0; $i < $len; $i++) {
+            $rs = $rs . $word[$i];
+            if ($word[$i] == $ch) {
+                break;
+            }
+        }
+        if (strlen($rs) == $len && $rs[$len - 1] != $ch) {
+            return $word;
+        }
+        $rs = strrev($rs);
+        $rs = $rs . substr($word, strlen($rs));
+        return $rs;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

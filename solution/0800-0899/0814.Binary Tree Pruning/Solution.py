@@ -5,11 +5,11 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def pruneTree(self, root: TreeNode) -> TreeNode:
-        if not root:
-            return None
+    def pruneTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        if root is None:
+            return root
         root.left = self.pruneTree(root.left)
         root.right = self.pruneTree(root.right)
-        if root.val == 0 and not root.left and not root.right:
+        if root.val == 0 and root.left == root.right:
             return None
         return root

@@ -1,19 +1,16 @@
-from typing import List
-from collections import deque
-
-
 class Solution:
     def eventualSafeNodes(self, graph: List[List[int]]) -> List[int]:
-        n = len(graph)
-        outDegree = [len(vs) for vs in graph]
-        revGraph = [[] for _ in range(n)]
-        for u, vs in enumerate(graph):
-            for v in vs:
-                revGraph[v].append(u)
-        q = deque([i for i, d in enumerate(outDegree) if d == 0])
+        rg = defaultdict(list)
+        indeg = [0] * len(graph)
+        for i, vs in enumerate(graph):
+            for j in vs:
+                rg[j].append(i)
+            indeg[i] = len(vs)
+        q = deque([i for i, v in enumerate(indeg) if v == 0])
         while q:
-            for u in revGraph[q.popleft()]:
-                outDegree[u] -= 1
-                if outDegree[u] == 0:
-                    q.append(u)
-        return [i for i, d in enumerate(outDegree) if d == 0]
+            i = q.popleft()
+            for j in rg[i]:
+                indeg[j] -= 1
+                if indeg[j] == 0:
+                    q.append(j)
+        return [i for i, v in enumerate(indeg) if v == 0]

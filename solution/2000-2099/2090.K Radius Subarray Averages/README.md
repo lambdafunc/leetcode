@@ -1,10 +1,23 @@
-# [2090. 半径为 k 的子数组平均值](https://leetcode-cn.com/problems/k-radius-subarray-averages)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2090.K%20Radius%20Subarray%20Averages/README.md
+rating: 1358
+source: 第 269 场周赛 Q2
+tags:
+    - 数组
+    - 滑动窗口
+---
+
+<!-- problem:start -->
+
+# [2090. 半径为 k 的子数组平均值](https://leetcode.cn/problems/k-radius-subarray-averages)
 
 [English Version](/solution/2000-2099/2090.K%20Radius%20Subarray%20Averages/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个下标从 <strong>0</strong> 开始的数组 <code>nums</code> ，数组中有 <code>n</code> 个整数，另给你一个整数 <code>k</code> 。</p>
 
@@ -15,14 +28,14 @@
 <p><code>x</code> 个元素的 <strong>平均值</strong> 是 <code>x</code> 个元素相加之和除以 <code>x</code> ，此时使用截断式 <strong>整数除法</strong> ，即需要去掉结果的小数部分。</p>
 
 <ul>
-	<li>例如，四个元素 <code>2</code>、<code>3</code>、<code>1</code> 和 <code>5</code> 的平均值是 <code>(2 + 3 + 1 + 5) / 4 = 11 / 4 = 3.75</code>，截断后得到 <code>3</code> 。</li>
+	<li>例如，四个元素 <code>2</code>、<code>3</code>、<code>1</code> 和 <code>5</code> 的平均值是 <code>(2 + 3 + 1 + 5) / 4 = 11 / 4 = 2.75</code>，截断后得到 <code>2</code> 。</li>
 </ul>
 
 <p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2090.K%20Radius%20Subarray%20Averages/images/eg1.png" style="width: 343px; height: 119px;" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2090.K%20Radius%20Subarray%20Averages/images/eg1.png" style="width: 343px; height: 119px;" /></p>
 
 <pre>
 <strong>输入：</strong>nums = [7,4,3,9,1,8,5,2,6], k = 3
@@ -65,46 +78,56 @@
 	<li><code>0 &lt;= nums[i], k &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-前缀和。
+### 方法一：滑动窗口
+
+半径为 $k$ 的子数组的长度为 $k \times 2 + 1$，因此我们可以维护一个大小为 $k \times 2 + 1$ 的窗口，记窗口中的所有元素和为 $s$。
+
+我们创建一个长度为 $n$ 的答案数组 $\textit{ans}$，初始时每个元素都为 $-1$。
+
+接下来，我们遍历数组 $\textit{nums}$，将 $\textit{nums}[i]$ 的值加到窗口的和 $s$ 中，如果此时 $i \geq k \times 2$，说明此时窗口大小为 $k \times 2 + 1$，那么 $\textit{ans}[i-k] = \frac{s}{k \times 2 + 1}$，然后我们将 $\textit{nums}[i - k \times 2]$ 的值从窗口和 $s$ 中移出。继续遍历下个元素。
+
+最后返回答案数组即可。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组 $\textit{nums}$ 的长度。忽略答案数组的空间消耗，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def getAverages(self, nums: List[int], k: int) -> List[int]:
         n = len(nums)
-        presum = [0] * (n + 1)
-        for i in range(n):
-            presum[i + 1] = presum[i] + nums[i]
-        return [-1 if i - k < 0 or i + k >= n else (presum[i + k + 1] - presum[i - k]) // (k * 2 + 1) for i in range(n)]
+        ans = [-1] * n
+        s = 0
+        for i, x in enumerate(nums):
+            s += x
+            if i >= k * 2:
+                ans[i - k] = s // (k * 2 + 1)
+                s -= nums[i - k * 2]
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int[] getAverages(int[] nums, int k) {
         int n = nums.length;
-        long[] presum = new long[n + 1];
-        for (int i = 0; i < n; ++i) {
-            presum[i + 1] = presum[i] + nums[i];
-        }
         int[] ans = new int[n];
+        Arrays.fill(ans, -1);
+        long s = 0;
         for (int i = 0; i < n; ++i) {
-            if (i - k < 0 || i + k >= n) {
-                ans[i] = -1;
-            } else {
-                ans[i] = (int) ((presum[i + k + 1] - presum[i - k]) / (k * 2 + 1));
+            s += nums[i];
+            if (i >= k * 2) {
+                ans[i - k] = (int) (s / (k * 2 + 1));
+                s -= nums[i - k * 2];
             }
         }
         return ans;
@@ -112,71 +135,67 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function getAverages(nums: number[], k: number): number[] {
-    const n = nums.length;
-    const l = 2 * k + 1;
-    let sum = 0;
-    let ans = new Array(n).fill(-1);
-    for (let i = 0; i < n; i++) {
-        sum += nums[i];
-        let shiftIndex = i - l;
-        if (shiftIndex > -1) {
-            sum -= nums[shiftIndex];
-        }
-        if (i + 1 >= l) {
-            ans[i - k] = Math.floor(sum / l);
-        }
-    }
-    return ans;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<int> getAverages(vector<int>& nums, int k) {
         int n = nums.size();
-        vector<long long> presum(n + 1);
-        for (int i = 0; i < n; ++i) presum[i + 1] = presum[i] + nums[i];
         vector<int> ans(n, -1);
-        for (int i = 0; i < n; ++i)
-            if (i - k >= 0 && i + k < n)
-                ans[i] = (presum[i + k + 1] - presum[i - k]) * 1ll / (k * 2 + 1);
+        long long s = 0;
+        for (int i = 0; i < n; ++i) {
+            s += nums[i];
+            if (i >= k * 2) {
+                ans[i - k] = s / (k * 2 + 1);
+                s -= nums[i - k * 2];
+            }
+        }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func getAverages(nums []int, k int) []int {
-	n := len(nums)
-	presum := make([]int64, n+1)
-	for i, num := range nums {
-		presum[i+1] = presum[i] + int64(num)
+	ans := make([]int, len(nums))
+	for i := range ans {
+		ans[i] = -1
 	}
-	var ans []int
-	for i := 0; i < n; i++ {
-		if i-k < 0 || i+k >= n {
-			ans = append(ans, -1)
-		} else {
-			ans = append(ans, int((presum[i+k+1]-presum[i-k])/int64(k*2+1)))
+	s := 0
+	for i, x := range nums {
+		s += x
+		if i >= k*2 {
+			ans[i-k] = s / (k*2 + 1)
+			s -= nums[i-k*2]
 		}
 	}
 	return ans
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function getAverages(nums: number[], k: number): number[] {
+    const n = nums.length;
+    const ans: number[] = Array(n).fill(-1);
+    let s = 0;
+    for (let i = 0; i < n; ++i) {
+        s += nums[i];
+        if (i >= k * 2) {
+            ans[i - k] = Math.floor(s / (k * 2 + 1));
+            s -= nums[i - k * 2];
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

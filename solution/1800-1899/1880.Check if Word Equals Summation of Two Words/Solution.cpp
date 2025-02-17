@@ -1,15 +1,13 @@
 class Solution {
 public:
     bool isSumEqual(string firstWord, string secondWord, string targetWord) {
-        return convert(firstWord) + convert(secondWord) == convert(targetWord);
-    }
-private:
-    int convert(string word) {
-        int res = 0;
-        for (char c : word) {
-            res *= 10;
-            res += (c - 'a');
-        }
-        return res;
+        auto f = [](string& s) -> int {
+            int ans = 0;
+            for (char c : s) {
+                ans = ans * 10 + (c - 'a');
+            }
+            return ans;
+        };
+        return f(firstWord) + f(secondWord) == f(targetWord);
     }
 };

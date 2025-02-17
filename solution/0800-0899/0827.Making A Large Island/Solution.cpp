@@ -1,76 +1,53 @@
 class Solution {
 public:
-    vector<int> p;
-    vector<int> size;
-    int n, mx;
-    int dirs[4][2] = {{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
-
     int largestIsland(vector<vector<int>>& grid) {
-        n = grid.size();
-        mx = 1;
-        p.resize(n * n);
-        size.resize(n * n);
-        for (int i = 0; i < p.size(); ++i)
-        {
-            p[i] = i;
-            size[i] = 1;
-        }
-        for (int i = 0; i < n; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (grid[i][j] == 1)
-                {
-                    for (auto e : dirs)
-                    {
-                        if (check(i + e[0], j + e[1], grid)) unite(i * n + j, (i + e[0]) * n + j + e[1]);
-                    }
+        int n = grid.size();
+        int p[n][n];
+        memset(p, 0, sizeof(p));
+        int cnt[n * n + 1];
+        memset(cnt, 0, sizeof(cnt));
+        const int dirs[5] = {-1, 0, 1, 0, -1};
+        int root = 0;
+        int ans = 0;
+        function<int(int, int)> dfs = [&](int i, int j) {
+            p[i][j] = root;
+            ++cnt[root];
+            for (int k = 0; k < 4; ++k) {
+                int x = i + dirs[k];
+                int y = j + dirs[k + 1];
+                if (x >= 0 && x < n && y >= 0 && y < n && grid[x][y] && !p[x][y]) {
+                    dfs(x, y);
+                }
+            }
+            return cnt[root];
+        };
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j] && !p[i][j]) {
+                    ++root;
+                    ans = max(ans, dfs(i, j));
                 }
             }
         }
-        int res = mx;
-        for (int i = 0; i < n; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (grid[i][j] == 0)
-                {
-                    int t = 1;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (!grid[i][j]) {
                     unordered_set<int> s;
-                    for (auto e : dirs)
-                    {
-                        if (check(i + e[0], j + e[1], grid))
-                        {
-                            int root = find((i + e[0]) * n + j + e[1]);
-                            if (!s.count(root)) {
-                                t += size[root];
-                                s.insert(root);
-                            }
+                    for (int k = 0; k < 4; ++k) {
+                        int x = i + dirs[k];
+                        int y = j + dirs[k + 1];
+                        if (x >= 0 && x < n && y >= 0 && y < n) {
+                            s.insert(p[x][y]);
                         }
                     }
-                    res = max(res, t);
+                    int t = 1;
+                    for (int x : s) {
+                        t += cnt[x];
+                    }
+                    ans = max(ans, t);
                 }
             }
         }
-        return res;
-    }
-
-    int find(int x) {
-        if (p[x] != x) p[x] = find(p[x]);
-        return p[x];
-    }
-
-    void unite(int a, int b) {
-        int pa = find(a), pb = find(b);
-        if (pa != pb)
-        {
-            size[pb] += size[pa];
-            mx = max(mx, size[pb]);
-            p[pa] = pb;
-        }
-    }
-
-    bool check(int i, int j, vector<vector<int>>& grid) {
-        return i >= 0 && i < n && j >= 0 && j < n && grid[i][j] == 1;
+        return ans;
     }
 };

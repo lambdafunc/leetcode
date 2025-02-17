@@ -1,10 +1,19 @@
-# [面试题 08.09. 括号](https://leetcode-cn.com/problems/bracket-lcci)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/lcci/08.09.Bracket/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 08.09. 括号](https://leetcode.cn/problems/bracket-lcci)
 
 [English Version](/lcci/08.09.Bracket/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
+
 <p>括号。设计一种算法，打印n对括号的所有合法的（例如，开闭一一对应）组合。</p>
 
 <p>说明：解集不能包含重复的子集。</p>
@@ -21,131 +30,168 @@
 ]
 </pre>
 
+<!-- description:end -->
+
 ## 解法
 
-深度优先搜索 DFS。
+<!-- solution:start -->
+
+### 方法一：DFS + 剪枝
+
+题目中 $n$ 的范围为 $[1, 8]$，因此我们直接通过“暴力搜索 + 剪枝”的方式快速解决本题。
+
+我们设计函数 `dfs(l, r, t)`，其中 $l$ 和 $r$ 分别表示左括号和右括号的数量，而 $t$ 表示当前的括号序列。那么我们可以得到如下的递归结构：
+
+-   如果 $l \gt n$ 或者 $r \gt n$ 或者 $l \lt r$，那么当前括号组合 $t$ 不合法，直接返回；
+-   如果 $l = n$ 且 $r = n$，那么当前括号组合 $t$ 合法，将其加入答案数组 `ans` 中，直接返回；
+-   我们可以选择添加一个左括号，递归执行 `dfs(l + 1, r, t + "(")`；
+-   我们也可以选择添加一个右括号，递归执行 `dfs(l, r + 1, t + ")")`。
+
+时间复杂度 $O(2^{n\times 2} \times n)$，空间复杂度 $O(n)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def generateParenthesis(self, n: int) -> List[str]:
-        ans = []
-
-        def dfs(left, right, t):
-            if left == n and right == n:
+        def dfs(l, r, t):
+            if l > n or r > n or l < r:
+                return
+            if l == n and r == n:
                 ans.append(t)
                 return
-            if left < n:
-                dfs(left + 1, right, t + '(')
-            if right < left:
-                dfs(left, right + 1, t + ')')
+            dfs(l + 1, r, t + '(')
+            dfs(l, r + 1, t + ')')
 
+        ans = []
         dfs(0, 0, '')
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
+    private List<String> ans = new ArrayList<>();
+    private int n;
+
     public List<String> generateParenthesis(int n) {
-        List<String> ans = new ArrayList<>();
-        dfs(0, 0, n, "", ans);
+        this.n = n;
+        dfs(0, 0, "");
         return ans;
     }
 
-    private void dfs(int left, int right, int n, String t, List<String> ans) {
-        if (left == n && right == n) {
+    private void dfs(int l, int r, String t) {
+        if (l > n || r > n || l < r) {
+            return;
+        }
+        if (l == n && r == n) {
             ans.add(t);
             return;
         }
-        if (left < n) {
-            dfs(left + 1, right, n, t + "(", ans);
-        }
-        if (right < left) {
-            dfs(left, right + 1, n, t + ")", ans);
-        }
+        dfs(l + 1, r, t + "(");
+        dfs(l, r + 1, t + ")");
     }
 }
 ```
 
-### **TypeScript**
-
-```ts
-function generateParenthesis(n: number): string[] {
-    let ans = [];
-    dfs(0, 0, n, "", ans);
-    return ans;
-}
-
-function dfs(left: number, right: number, n: number, t: string, ans: string[]) {
-    if (left == n && right == n) {
-        ans.push(t);
-        return;
-    }
-    if (left < n) {
-        dfs(left + 1, right, n, t + "(", ans);
-    }
-    if (right < left) {
-        dfs(left, right + 1, n, t + ")", ans);
-    }
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<string> generateParenthesis(int n) {
         vector<string> ans;
-        dfs(0, 0, n, "", ans);
+        auto dfs = [&](this auto&& dfs, int l, int r, string t) {
+            if (l > n || r > n || l < r) return;
+            if (l == n && r == n) {
+                ans.push_back(t);
+                return;
+            }
+            dfs(l + 1, r, t + "(");
+            dfs(l, r + 1, t + ")");
+        };
+        dfs(0, 0, "");
         return ans;
-    }
-
-    void dfs(int left, int right, int n, string t, vector<string>& ans) {
-        if (left == n && right == n)
-        {
-            ans.push_back(t);
-            return;
-        }
-        if (left < n) dfs(left + 1, right, n, t + "(", ans);
-        if (right < left) dfs(left, right + 1, n, t + ")", ans);
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func generateParenthesis(n int) []string {
-	var ans []string
-	dfs(0, 0, n, "", &ans)
+	ans := []string{}
+	var dfs func(int, int, string)
+	dfs = func(l, r int, t string) {
+		if l > n || r > n || l < r {
+			return
+		}
+		if l == n && r == n {
+			ans = append(ans, t)
+			return
+		}
+		dfs(l+1, r, t+"(")
+		dfs(l, r+1, t+")")
+	}
+	dfs(0, 0, "")
 	return ans
-}
-
-func dfs(left, right, n int, t string, ans *[]string) {
-	if left == n && right == n {
-		*ans = append(*ans, t)
-		return
-	}
-	if left < n {
-		dfs(left+1, right, n, t+"(", ans)
-	}
-	if right < left {
-		dfs(left, right+1, n, t+")", ans)
-	}
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+function generateParenthesis(n: number): string[] {
+    function dfs(l, r, t) {
+        if (l > n || r > n || l < r) {
+            return;
+        }
+        if (l == n && r == n) {
+            ans.push(t);
+            return;
+        }
+        dfs(l + 1, r, t + '(');
+        dfs(l, r + 1, t + ')');
+    }
+    let ans = [];
+    dfs(0, 0, '');
+    return ans;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    fn dfs(left: i32, right: i32, s: &mut String, res: &mut Vec<String>) {
+        if left == 0 && right == 0 {
+            res.push(s.clone());
+            return;
+        }
+        if left > 0 {
+            s.push('(');
+            Self::dfs(left - 1, right, s, res);
+            s.pop();
+        }
+        if right > left {
+            s.push(')');
+            Self::dfs(left, right - 1, s, res);
+            s.pop();
+        }
+    }
+
+    pub fn generate_parenthesis(n: i32) -> Vec<String> {
+        let mut res = Vec::new();
+        Self::dfs(n, n, &mut String::new(), &mut res);
+        res
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -153,29 +199,52 @@ func dfs(left, right, n int, t string, ans *[]string) {
  * @return {string[]}
  */
 var generateParenthesis = function (n) {
-    let res = [];
-    dfs(n, 0, 0, "", res);
-    return res;
+    function dfs(l, r, t) {
+        if (l > n || r > n || l < r) {
+            return;
+        }
+        if (l == n && r == n) {
+            ans.push(t);
+            return;
+        }
+        dfs(l + 1, r, t + '(');
+        dfs(l, r + 1, t + ')');
+    }
+    let ans = [];
+    dfs(0, 0, '');
+    return ans;
 };
+```
 
-function dfs(n, left, right, prev, res) {
-    if (left == n && right == n) {
-        res.push(prev);
-        return;
+#### Swift
+
+```swift
+class Solution {
+    private var ans: [String] = []
+    private var n: Int = 0
+
+    func generateParenthesis(_ n: Int) -> [String] {
+        self.n = n
+        dfs(l: 0, r: 0, t: "")
+        return ans
     }
-    if (left < n) {
-        dfs(n, left + 1, right, prev + "(", res);
-    }
-    if (right < left) {
-        dfs(n, left, right + 1, prev + ")", res);
+
+    private func dfs(l: Int, r: Int, t: String) {
+        if l > n || r > n || l < r {
+            return
+        }
+        if l == n && r == n {
+            ans.append(t)
+            return
+        }
+        dfs(l: l + 1, r: r, t: t + "(")
+        dfs(l: l, r: r + 1, t: t + ")")
     }
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

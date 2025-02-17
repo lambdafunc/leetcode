@@ -1,41 +1,24 @@
 class Solution:
-    def maxCompatibilitySum(self, students: List[List[int]], mentors: List[List[int]]) -> int:
-        def score(s, m):
-            res = 0
-            for i in range(len(s)):
-                res += 1 if s[i] == m[i] else 0
-            return res
-
-        m, n = len(students), len(students[0])
-        scores = [[0] * m for _ in range(m)]
-        for i in range(m):
-            for j in range(m):
-                scores[i][j] = score(students[i], mentors[j])
-        p = self.permute(list(range(m)))
-        mx = 0
-        for item in p:
-            t = 0
-            sidx = 0
-            for midx in item:
-                t += scores[sidx][midx]
-                sidx += 1
-            mx = max(mx, t)
-        return mx
-
-    def permute(self, nums):
-        def dfs(nums, i, res, path, used):
-            if i == len(nums):
-                res.append(copy.deepcopy(path))
+    def maxCompatibilitySum(
+        self, students: List[List[int]], mentors: List[List[int]]
+    ) -> int:
+        def dfs(i: int, s: int):
+            if i >= m:
+                nonlocal ans
+                ans = max(ans, s)
                 return
-            for j in range(len(nums)):
-                if not used[j]:
-                    path.append(nums[j])
-                    used[j] = True
-                    dfs(nums, i + 1, res, path, used)
-                    used[j] = False
-                    path.pop()
+            for j in range(m):
+                if not vis[j]:
+                    vis[j] = True
+                    dfs(i + 1, s + g[i][j])
+                    vis[j] = False
 
-        res, path = [], []
-        used = [False] * len(nums)
-        dfs(nums, 0, res, path, used)
-        return res
+        ans = 0
+        m = len(students)
+        vis = [False] * m
+        g = [[0] * m for _ in range(m)]
+        for i, x in enumerate(students):
+            for j, y in enumerate(mentors):
+                g[i][j] = sum(a == b for a, b in zip(x, y))
+        dfs(0, 0)
+        return ans

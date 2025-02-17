@@ -1,34 +1,52 @@
-# [面试题 64. 求 1+2+…+n](https://leetcode-cn.com/problems/qiu-12n-lcof/)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9864.%20%E6%B1%821%2B2%2B%E2%80%A6%2Bn/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 64. 求 1+2+…+n](https://leetcode.cn/problems/qiu-12n-lcof/)
 
 ## 题目描述
 
-求 `1+2+...+n`，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（A?B:C）。
+<!-- description:start -->
 
-**示例 1：**
+<p>求 <code>1+2+...+n</code> ，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。</p>
 
-```
-输入: n = 3
-输出: 6
-```
+<p>&nbsp;</p>
 
-**示例 2：**
+<p><strong>示例 1：</strong></p>
 
-```
-输入: n = 9
-输出: 45
-```
+<pre><strong>输入:</strong> n = 3
+<strong>输出:&nbsp;</strong>6
+</pre>
 
-**限制：**
+<p><strong>示例 2：</strong></p>
 
-- `1 <= n <= 10000`
+<pre><strong>输入:</strong> n = 9
+<strong>输出:&nbsp;</strong>45
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>限制：</strong></p>
+
+<ul>
+	<li><code>1 &lt;= n&nbsp;&lt;= 10000</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-递归，结合**逻辑与**短路运算符求解。
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -36,7 +54,7 @@ class Solution:
         return n and (n + self.sumNums(n - 1))
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -48,19 +66,19 @@ class Solution {
 }
 ```
 
-### **JavaScript**
+#### C++
 
-```js
-/**
- * @param {number} n
- * @return {number}
- */
-var sumNums = function (n) {
-    return (n ** 2 + n) >> 1;
+```cpp
+class Solution {
+public:
+    int sumNums(int n) {
+        n && (n += sumNums(n - 1));
+        return n;
+    }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func sumNums(n int) int {
@@ -75,10 +93,75 @@ func sumNums(n int) int {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+var sumNums = function (n: number): number {
+    return n && n + sumNums(n - 1);
+};
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn sum_nums(mut n: i32) -> i32 {
+        n != 0
+            && (
+                {
+                    n += Solution::sum_nums(n - 1);
+                },
+                true,
+            )
+                .1;
+        n
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var sumNums = function (n) {
+    return (n ** 2 + n) >> 1;
+};
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int result;
+    public int SumNums(int n) {
+        helper(n);
+        return result;
+    }
+
+    public bool helper(int n) {
+        result += n;
+        return n == 0 || helper(n - 1);
+    }
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func sumNums(_ n: Int) -> Int {
+        var s = n
+        let _ = n > 0 && { s += sumNums(n - 1); return true }()
+        return s
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

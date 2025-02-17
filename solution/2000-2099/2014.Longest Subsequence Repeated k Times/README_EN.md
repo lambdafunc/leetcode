@@ -1,8 +1,26 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2014.Longest%20Subsequence%20Repeated%20k%20Times/README_EN.md
+rating: 2558
+source: Weekly Contest 259 Q4
+tags:
+    - Greedy
+    - String
+    - Backtracking
+    - Counting
+    - Enumeration
+---
+
+<!-- problem:start -->
+
 # [2014. Longest Subsequence Repeated k Times](https://leetcode.com/problems/longest-subsequence-repeated-k-times)
 
 [中文文档](/solution/2000-2099/2014.Longest%20Subsequence%20Repeated%20k%20Times/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a string <code>s</code> of length <code>n</code>, and an integer <code>k</code>. You are tasked to find the <strong>longest subsequence repeated</strong> <code>k</code> times in string <code>s</code>.</p>
 
@@ -17,8 +35,8 @@
 <p>Return <em>the <strong>longest subsequence repeated</strong> </em><code>k</code><em> times in string </em><code>s</code><em>. If multiple such subsequences are found, return the <strong>lexicographically largest</strong> one. If there is no such subsequence, return an <strong>empty</strong> string</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="example 1" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2014.Longest%20Subsequence%20Repeated%20k%20Times/images/longest-subsequence-repeat-k-times.png" style="width: 457px; height: 99px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="example 1" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2014.Longest%20Subsequence%20Repeated%20k%20Times/images/longest-subsequence-repeat-k-times.png" style="width: 457px; height: 99px;" />
 <pre>
 <strong>Input:</strong> s = &quot;letsleetcode&quot;, k = 2
 <strong>Output:</strong> &quot;let&quot;
@@ -26,7 +44,7 @@
 &quot;let&quot; is the lexicographically largest one.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;bb&quot;, k = 2
@@ -34,20 +52,12 @@
 <strong>Explanation:</strong> The longest subsequence repeated 2 times is &quot;b&quot;.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;ab&quot;, k = 2
 <strong>Output:</strong> &quot;&quot;
 <strong>Explanation:</strong> There is no subsequence repeated 2 times. Empty string is returned.
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> s = &quot;bbabbabbbbabaababab&quot;, k = 3
-<strong>Output:</strong> &quot;bbbb&quot;
-<strong>Explanation:</strong> The longest subsequence &quot;bbbb&quot; is repeated 3 times in &quot;<u>bb</u>a<u>bb</u>a<u>bbbb</u>a<u>b</u>aa<u>b</u>a<u>b</u>a<u>b</u>&quot;.
 </pre>
 
 <p>&nbsp;</p>
@@ -60,26 +70,42 @@
 	<li><code>s</code> consists of lowercase English letters.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 
 ```
 
-### **Java**
+#### Java
 
 ```java
 
 ```
 
-### **...**
+#### C++
+
+```cpp
 
 ```
+
+#### Go
+
+```go
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

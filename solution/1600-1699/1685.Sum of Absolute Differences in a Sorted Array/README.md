@@ -1,10 +1,24 @@
-# [1685. 有序数组中差绝对值之和](https://leetcode-cn.com/problems/sum-of-absolute-differences-in-a-sorted-array)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1685.Sum%20of%20Absolute%20Differences%20in%20a%20Sorted%20Array/README.md
+rating: 1495
+source: 第 41 场双周赛 Q2
+tags:
+    - 数组
+    - 数学
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [1685. 有序数组中差绝对值之和](https://leetcode.cn/problems/sum-of-absolute-differences-in-a-sorted-array)
 
 [English Version](/solution/1600-1699/1685.Sum%20of%20Absolute%20Differences%20in%20a%20Sorted%20Array/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个 <strong>非递减 </strong>有序整数数组 <code>nums</code> 。</p>
 
@@ -41,96 +55,155 @@ result[2] = |5-2| + |5-3| + |5-5| = 3 + 2 + 0 = 5。
 	<li><code>1 <= nums[i] <= nums[i + 1] <= 10<sup>4</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-前缀和实现。
+### 方法一：求和 + 枚举
+
+我们先求出数组 $nums$ 所有元素的和，记为 $s$，用变量 $t$ 记录当前已经枚举过的元素之和。
+
+接下来枚举 $nums[i]$，那么 $ans[i] = nums[i] \times i - t + s - t - nums[i] \times (n - i)$，然后我们更新 $t$，即 $t = t + nums[i]$。继续枚举下一个元素，直到枚举完所有元素。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组 $nums$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def getSumAbsoluteDifferences(self, nums: List[int]) -> List[int]:
-        n = len(nums)
-        presum = [0] * (n + 1)
-        for i in range(n):
-            presum[i + 1] = presum[i] + nums[i]
-        res = []
-        for i, num in enumerate(nums):
-            t = num * i - presum[i] + presum[n] - presum[i + 1] - num * (n - i - 1)
-            res.append(t)
-        return res
+        ans = []
+        s, t = sum(nums), 0
+        for i, x in enumerate(nums):
+            v = x * i - t + s - t - x * (len(nums) - i)
+            ans.append(v)
+            t += x
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int[] getSumAbsoluteDifferences(int[] nums) {
+        // int s = Arrays.stream(nums).sum();
+        int s = 0, t = 0;
+        for (int x : nums) {
+            s += x;
+        }
         int n = nums.length;
-        int[] presum = new int[n + 1];
+        int[] ans = new int[n];
         for (int i = 0; i < n; ++i) {
-            presum[i + 1] = presum[i] + nums[i];
+            int v = nums[i] * i - t + s - t - nums[i] * (n - i);
+            ans[i] = v;
+            t += nums[i];
         }
-        int[] res = new int[n];
-        for (int i = 0; i < n; ++i) {
-            res[i] = nums[i] * i - presum[i] + presum[n] - presum[i + 1] - nums[i] * (n - i - 1);
-        }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<int> getSumAbsoluteDifferences(vector<int>& nums) {
+        int s = accumulate(nums.begin(), nums.end(), 0), t = 0;
         int n = nums.size();
-        vector<int> presum(n + 1);
+        vector<int> ans(n);
         for (int i = 0; i < n; ++i) {
-            presum[i + 1] = presum[i] + nums[i];
+            int v = nums[i] * i - t + s - t - nums[i] * (n - i);
+            ans[i] = v;
+            t += nums[i];
         }
-        vector<int> res;
-        for (int i = 0; i < n; ++i) {
-            int t = nums[i] * i - presum[i] + presum[n] - presum[i + 1] - nums[i] * (n - i - 1);
-            res.push_back(t);
-        }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func getSumAbsoluteDifferences(nums []int) []int {
-	n := len(nums)
-	presum := make([]int, n+1)
-	for i := 0; i < n; i++ {
-		presum[i+1] = presum[i] + nums[i]
+func getSumAbsoluteDifferences(nums []int) (ans []int) {
+	var s, t int
+	for _, x := range nums {
+		s += x
 	}
-	var res []int
-	for i := 0; i < n; i++ {
-		t := nums[i]*i - presum[i] + presum[n] - presum[i+1] - nums[i]*(n-i-1)
-		res = append(res, t)
+	for i, x := range nums {
+		v := x*i - t + s - t - x*(len(nums)-i)
+		ans = append(ans, v)
+		t += x
 	}
-	return res
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function getSumAbsoluteDifferences(nums: number[]): number[] {
+    const s = nums.reduce((a, b) => a + b);
+    let t = 0;
+    const n = nums.length;
+    const ans = new Array(n);
+    for (let i = 0; i < n; ++i) {
+        const v = nums[i] * i - t + s - t - nums[i] * (n - i);
+        ans[i] = v;
+        t += nums[i];
+    }
+    return ans;
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var getSumAbsoluteDifferences = function (nums) {
+    const s = nums.reduce((a, b) => a + b);
+    let t = 0;
+    const n = nums.length;
+    const ans = new Array(n);
+    for (let i = 0; i < n; ++i) {
+        const v = nums[i] * i - t + s - t - nums[i] * (n - i);
+        ans[i] = v;
+        t += nums[i];
+    }
+    return ans;
+};
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int[] GetSumAbsoluteDifferences(int[] nums) {
+        int s = 0, t = 0;
+        foreach (int x in nums) {
+            s += x;
+        }
+        int n = nums.Length;
+        int[] ans = new int[n];
+        for (int i = 0; i < n; ++i) {
+            int v = nums[i] * i - t + s - t - nums[i] * (n - i);
+            ans[i] = v;
+            t += nums[i];
+        }
+        return ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

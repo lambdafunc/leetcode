@@ -1,30 +1,41 @@
 class Solution {
-    private boolean[][] visited;
+    private int m;
+    private int n;
+    private String word;
+    private char[][] board;
 
     public boolean exist(char[][] board, String word) {
-        int m = board.length, n = board[0].length;
-        visited = new boolean[m][n];
-        char[] chars = word.toCharArray();
+        m = board.length;
+        n = board[0].length;
+        this.word = word;
+        this.board = board;
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                boolean res = dfs(board, i, j, chars, 0);
-                if (res) return true;
+                if (dfs(i, j, 0)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    private boolean dfs(char[][] board, int i, int j, char[] chars, int cur) {
-        if (cur == chars.length) return true;
-        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length) return false;
-        if (visited[i][j] || board[i][j] != chars[cur]) return false;
-        visited[i][j] = true;
-        int next = cur + 1;
-        boolean res = dfs(board, i + 1, j, chars, next) 
-                || dfs(board, i - 1, j, chars, next) 
-                || dfs(board, i, j + 1, chars, next) 
-                || dfs(board, i, j - 1, chars, next);
-        visited[i][j] = false;
-        return res;
+    private boolean dfs(int i, int j, int k) {
+        if (k == word.length() - 1) {
+            return board[i][j] == word.charAt(k);
+        }
+        if (board[i][j] != word.charAt(k)) {
+            return false;
+        }
+        char c = board[i][j];
+        board[i][j] = '0';
+        int[] dirs = {-1, 0, 1, 0, -1};
+        for (int u = 0; u < 4; ++u) {
+            int x = i + dirs[u], y = j + dirs[u + 1];
+            if (x >= 0 && x < m && y >= 0 && y < n && board[x][y] != '0' && dfs(x, y, k + 1)) {
+                return true;
+            }
+        }
+        board[i][j] = c;
+        return false;
     }
 }

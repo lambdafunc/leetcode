@@ -1,74 +1,55 @@
-var p []int
-var size []int
-var n int
-var mx int
-
 func largestIsland(grid [][]int) int {
-	n, mx = len(grid), 1
-	p = make([]int, n*n)
-	size = make([]int, n*n)
-	for i := 0; i < len(p); i++ {
-		p[i] = i
-		size[i] = 1
+	n := len(grid)
+	p := make([][]int, n)
+	for i := range p {
+		p[i] = make([]int, n)
+	}
+	cnt := make([]int, n*n+1)
+	dirs := []int{-1, 0, 1, 0, -1}
+	root := 0
+	ans := 0
+
+	var dfs func(int, int) int
+	dfs = func(i, j int) int {
+		p[i][j] = root
+		cnt[root]++
+		for k := 0; k < 4; k++ {
+			x := i + dirs[k]
+			y := j + dirs[k+1]
+			if x >= 0 && x < n && y >= 0 && y < n && grid[x][y] == 1 && p[x][y] == 0 {
+				dfs(x, y)
+			}
+		}
+		return cnt[root]
 	}
 
-	dirs := [4][2]int{{0, -1}, {0, 1}, {1, 0}, {-1, 0}}
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
-			if grid[i][j] == 1 {
-				for _, e := range dirs {
-					if check(i+e[0], j+e[1], grid) {
-						union(i*n+j, (i+e[0])*n+j+e[1])
-					}
-				}
+			if grid[i][j] == 1 && p[i][j] == 0 {
+				root++
+				ans = max(ans, dfs(i, j))
 			}
 		}
 	}
-	res := mx
+
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
 			if grid[i][j] == 0 {
-				t := 1
-				s := make(map[int]bool)
-				for _, e := range dirs {
-					if check(i+e[0], j+e[1], grid) {
-						root := find((i+e[0])*n + j + e[1])
-						if !s[root] {
-							t += size[root]
-							s[root] = true
-						}
+				s := make(map[int]struct{})
+				for k := 0; k < 4; k++ {
+					x := i + dirs[k]
+					y := j + dirs[k+1]
+					if x >= 0 && x < n && y >= 0 && y < n {
+						s[p[x][y]] = struct{}{}
 					}
 				}
-				res = max(res, t)
+				t := 1
+				for x := range s {
+					t += cnt[x]
+				}
+				ans = max(ans, t)
 			}
 		}
 	}
-	return res
-}
-
-func find(x int) int {
-	if p[x] != x {
-		p[x] = find(p[x])
-	}
-	return p[x]
-}
-
-func union(a, b int) {
-	pa, pb := find(a), find(b)
-	if pa != pb {
-		size[pb] += size[pa]
-		mx = max(mx, size[pb])
-		p[pa] = pb
-	}
-}
-
-func check(i, j int, grid [][]int) bool {
-	return i >= 0 && i < n && j >= 0 && j < n && grid[i][j] == 1
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return ans
 }

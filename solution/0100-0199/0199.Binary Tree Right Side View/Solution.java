@@ -19,17 +19,17 @@ class Solution {
         if (root == null) {
             return ans;
         }
-        Deque<TreeNode> q = new LinkedList<>();
-        q.offerLast(root);
+        Deque<TreeNode> q = new ArrayDeque<>();
+        q.offer(root);
         while (!q.isEmpty()) {
             ans.add(q.peekFirst().val);
-            for (int i = q.size(); i > 0; --i) {
-                TreeNode node = q.pollFirst();
+            for (int k = q.size(); k > 0; --k) {
+                TreeNode node = q.poll();
                 if (node.right != null) {
-                    q.offerLast(node.right);
+                    q.offer(node.right);
                 }
                 if (node.left != null) {
-                    q.offerLast(node.left);
+                    q.offer(node.left);
                 }
             }
         }

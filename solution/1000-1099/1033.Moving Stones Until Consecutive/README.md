@@ -1,10 +1,23 @@
-# [1033. 移动石子直到连续](https://leetcode-cn.com/problems/moving-stones-until-consecutive)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1033.Moving%20Stones%20Until%20Consecutive/README.md
+rating: 1421
+source: 第 134 场周赛 Q1
+tags:
+    - 脑筋急转弯
+    - 数学
+---
+
+<!-- problem:start -->
+
+# [1033. 移动石子直到连续](https://leetcode.cn/problems/moving-stones-until-consecutive)
 
 [English Version](/solution/1000-1099/1033.Moving%20Stones%20Until%20Consecutive/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>三枚石子放置在数轴上，位置分别为 <code>a</code>，<code>b</code>，<code>c</code>。</p>
 
@@ -43,32 +56,115 @@
 	<li><code>a != b, b != c, c != a</code></li>
 </ol>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：分类讨论
+
+我们先将 $a, b, c$ 排序，记为 $x, y, z$，即 $x \lt y \lt z$。
+
+接下来分情况讨论：
+
+1. 如果 $z - x \leq 2$，说明 $3$ 个数已经相邻，不用移动，结果为 $[0, 0]$；
+1. 否则，如果 $y - x \lt 3$，或者 $z - y \lt 3$，说明有两个数只间隔一个位置，我们只需要把另一个数移动到这两个数的中间，最小移动次数为 $1$；其他情况，最小移动次数为 $2$；
+1. 最大移动次数就是两边的数字逐个往中间靠，最多移动 $z - x - 2$ 次。
+
+时间复杂度 $O(1)$，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def numMovesStones(self, a: int, b: int, c: int) -> List[int]:
+        x, z = min(a, b, c), max(a, b, c)
+        y = a + b + c - x - z
+        mi = mx = 0
+        if z - x > 2:
+            mi = 1 if y - x < 3 or z - y < 3 else 2
+            mx = z - x - 2
+        return [mi, mx]
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int[] numMovesStones(int a, int b, int c) {
+        int x = Math.min(a, Math.min(b, c));
+        int z = Math.max(a, Math.max(b, c));
+        int y = a + b + c - x - z;
+        int mi = 0, mx = 0;
+        if (z - x > 2) {
+            mi = y - x < 3 || z - y < 3 ? 1 : 2;
+            mx = z - x - 2;
+        }
+        return new int[] {mi, mx};
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> numMovesStones(int a, int b, int c) {
+        int x = min({a, b, c});
+        int z = max({a, b, c});
+        int y = a + b + c - x - z;
+        int mi = 0, mx = 0;
+        if (z - x > 2) {
+            mi = y - x < 3 || z - y < 3 ? 1 : 2;
+            mx = z - x - 2;
+        }
+        return {mi, mx};
+    }
+};
 ```
 
+#### Go
+
+```go
+func numMovesStones(a int, b int, c int) []int {
+	x := min(a, min(b, c))
+	z := max(a, max(b, c))
+	y := a + b + c - x - z
+	mi, mx := 0, 0
+	if z-x > 2 {
+		mi = 2
+		if y-x < 3 || z-y < 3 {
+			mi = 1
+		}
+		mx = z - x - 2
+	}
+	return []int{mi, mx}
+}
+```
+
+#### TypeScript
+
+```ts
+function numMovesStones(a: number, b: number, c: number): number[] {
+    const x = Math.min(a, Math.min(b, c));
+    const z = Math.max(a, Math.max(b, c));
+    const y = a + b + c - x - z;
+    let mi = 0,
+        mx = 0;
+    if (z - x > 2) {
+        mi = y - x < 3 || z - y < 3 ? 1 : 2;
+        mx = z - x - 2;
+    }
+    return [mi, mx];
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

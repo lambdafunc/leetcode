@@ -1,10 +1,12 @@
 class Solution:
     def myPow(self, x: float, n: int) -> float:
-        if n == 0:
-            return 1
-        if n == 1:
-            return x
-        if n == -1:
-            return 1 / x
-        half = self.myPow(x, n // 2)
-        return half * half * self.myPow(x, n % 2)
+        def qpow(a: float, n: int) -> float:
+            ans = 1
+            while n:
+                if n & 1:
+                    ans *= a
+                a *= a
+                n >>= 1
+            return ans
+
+        return qpow(x, n) if n >= 0 else 1 / qpow(x, -n)

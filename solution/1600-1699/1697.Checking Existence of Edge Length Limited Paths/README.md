@@ -1,10 +1,26 @@
-# [1697. 检查边长度限制的路径是否存在](https://leetcode-cn.com/problems/checking-existence-of-edge-length-limited-paths)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1697.Checking%20Existence%20of%20Edge%20Length%20Limited%20Paths/README.md
+rating: 2300
+source: 第 220 场周赛 Q4
+tags:
+    - 并查集
+    - 图
+    - 数组
+    - 双指针
+    - 排序
+---
+
+<!-- problem:start -->
+
+# [1697. 检查边长度限制的路径是否存在](https://leetcode.cn/problems/checking-existence-of-edge-length-limited-paths)
 
 [English Version](/solution/1600-1699/1697.Checking%20Existence%20of%20Edge%20Length%20Limited%20Paths/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个 <code>n</code> 个点组成的无向图边集 <code>edgeList</code> ，其中 <code>edgeList[i] = [u<sub>i</sub>, v<sub>i</sub>, dis<sub>i</sub>]</code> 表示点 <code>u<sub>i</sub></code> 和点 <code>v<sub>i</sub></code> 之间有一条长度为 <code>dis<sub>i</sub></code> 的边。请注意，两个点之间可能有 <strong>超过一条边 </strong>。</p>
 
@@ -15,7 +31,7 @@
 <p> </p>
 
 <p><strong>示例 1：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1600-1699/1697.Checking%20Existence%20of%20Edge%20Length%20Limited%20Paths/images/h.png" style="width: 267px; height: 262px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1600-1699/1697.Checking%20Existence%20of%20Edge%20Length%20Limited%20Paths/images/h.png" style="width: 267px; height: 262px;" />
 <pre>
 <b>输入：</b>n = 3, edgeList = [[0,1,2],[1,2,4],[2,0,8],[1,0,16]], queries = [[0,1,2],[0,2,5]]
 <b>输出：</b>[false,true]
@@ -25,7 +41,7 @@
 </pre>
 
 <p><strong>示例 2：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1600-1699/1697.Checking%20Existence%20of%20Edge%20Length%20Limited%20Paths/images/q.png" style="width: 390px; height: 358px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1600-1699/1697.Checking%20Existence%20of%20Edge%20Length%20Limited%20Paths/images/q.png" style="width: 390px; height: 358px;" />
 <pre>
 <b>输入：</b>n = 5, edgeList = [[0,1,10],[1,2,5],[2,3,9],[3,4,13]], queries = [[0,4,14],[1,4,13]]
 <b>输出：</b>[true,false]
@@ -48,106 +64,50 @@
 	<li>两个点之间可能有 <strong>多条</strong> 边。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-并查集。
+### 方法一：离线查询 + 并查集
 
-模板 1——朴素并查集：
+根据题目要求，我们需要对每个查询 $queries[i]$ 进行判断，即判断当前查询的两个点 $a$ 和 $b$ 之间是否存在一条边权小于等于 $limit$ 的路径。
 
-```python
-# 初始化，p存储每个点的父节点
-p = list(range(n))
+判断两点是否连通可以通过并查集来实现。另外，由于查询的顺序对结果没有影响，因此我们可以先将所有查询按照 $limit$ 从小到大排序，所有边也按照边权从小到大排序。
 
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        # 路径压缩
-        p[x] = find(p[x])
-    return p[x]
+然后对于每个查询，我们从边权最小的边开始，将边权严格小于 $limit$ 的所有边加入并查集，接着利用并查集的查询操作判断两点是否连通即可。
 
-# 合并a和b所在的两个集合
-p[find(a)] = find(b)
-```
-
-模板 2——维护 size 的并查集：
-
-```python
-# 初始化，p存储每个点的父节点，size只有当节点是祖宗节点时才有意义，表示祖宗节点所在集合中，点的数量
-p = list(range(n))
-size = [1] * n
-
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        # 路径压缩
-        p[x] = find(p[x])
-    return p[x]
-
-# 合并a和b所在的两个集合
-if find(a) != find(b):
-    size[find(b)] += size[find(a)]
-    p[find(a)] = find(b)
-```
-
-模板 3——维护到祖宗节点距离的并查集：
-
-```python
-# 初始化，p存储每个点的父节点，d[x]存储x到p[x]的距离
-p = list(range(n))
-d = [0] * n
-
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        t = find(p[x])
-        d[x] += d[p[x]]
-        p[x] = t
-    return p[x]
-
-# 合并a和b所在的两个集合
-p[find(a)] = find(b)
-d[find(a)] = distance
-```
-
-对于本题，可以转换为：将小于 limit 的所有边加入图中，判断此时是否存在从 pj 到 qj 的一条路径。
+时间复杂度 $O(m \times \log m + q \times \log q)$，其中 $m$ 和 $q$ 分别为边数和查询数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-    def distanceLimitedPathsExist(self, n: int, edgeList: List[List[int]], queries: List[List[int]]) -> List[bool]:
-        p = list(range(n))
-
+    def distanceLimitedPathsExist(
+        self, n: int, edgeList: List[List[int]], queries: List[List[int]]
+    ) -> List[bool]:
         def find(x):
             if p[x] != x:
                 p[x] = find(p[x])
             return p[x]
 
+        p = list(range(n))
         edgeList.sort(key=lambda x: x[2])
-        m = len(queries)
-        indexes = list(range(m))
-        indexes.sort(key=lambda x: queries[x][2])
-        ans = [False] * m
-        i = 0
-        for j in indexes:
-            pj, qj, limit = queries[j][0], queries[j][1], queries[j][2]
-            while i < len(edgeList) and edgeList[i][2] < limit:
-                u, v = edgeList[i][0], edgeList[i][1]
+        j = 0
+        ans = [False] * len(queries)
+        for i, (a, b, limit) in sorted(enumerate(queries), key=lambda x: x[1][2]):
+            while j < len(edgeList) and edgeList[j][2] < limit:
+                u, v, _ = edgeList[j]
                 p[find(u)] = find(v)
-                i += 1
-            ans[j] = find(pj) == find(qj)
+                j += 1
+            ans[i] = find(a) == find(b)
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -158,23 +118,23 @@ class Solution {
         for (int i = 0; i < n; ++i) {
             p[i] = i;
         }
+        Arrays.sort(edgeList, (a, b) -> a[2] - b[2]);
         int m = queries.length;
-        Integer[] indexes = new Integer[m];
-        for (int i = 0; i < m; ++i) {
-            indexes[i] = i;
-        }
-        Arrays.sort(indexes, Comparator.comparingInt(i -> queries[i][2]));
-        Arrays.sort(edgeList, Comparator.comparingInt(a -> a[2]));
         boolean[] ans = new boolean[m];
-        int i = 0;
-        for (int j : indexes) {
-            int pj = queries[j][0], qj = queries[j][1], limit = queries[j][2];
-            while (i < edgeList.length && edgeList[i][2] < limit) {
-                int u = edgeList[i][0], v = edgeList[i][1];
+        Integer[] qid = new Integer[m];
+        for (int i = 0; i < m; ++i) {
+            qid[i] = i;
+        }
+        Arrays.sort(qid, (i, j) -> queries[i][2] - queries[j][2]);
+        int j = 0;
+        for (int i : qid) {
+            int a = queries[i][0], b = queries[i][1], limit = queries[i][2];
+            while (j < edgeList.length && edgeList[j][2] < limit) {
+                int u = edgeList[j][0], v = edgeList[j][1];
                 p[find(u)] = find(v);
-                ++i;
+                ++j;
             }
-            ans[j] = find(pj) == find(qj);
+            ans[i] = find(a) == find(b);
         }
         return ans;
     }
@@ -188,96 +148,276 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    vector<int> p;
-
     vector<bool> distanceLimitedPathsExist(int n, vector<vector<int>>& edgeList, vector<vector<int>>& queries) {
-        p.resize(n);
-        for (int i = 0; i < n; ++i) p[i] = i;
-        sort(edgeList.begin(), edgeList.end(), [](const auto& e1, const auto& e2) {
-            return e1[2] < e2[2];
-        });
+        vector<int> p(n);
+        iota(p.begin(), p.end(), 0);
+        sort(edgeList.begin(), edgeList.end(), [](auto& a, auto& b) { return a[2] < b[2]; });
+        function<int(int)> find = [&](int x) -> int {
+            if (p[x] != x) p[x] = find(p[x]);
+            return p[x];
+        };
         int m = queries.size();
-        vector<int> indexes(m);
-        for (int i = 0; i < m; ++i) indexes[i] = i;
-        sort(indexes.begin(), indexes.end(), [&](int i, int j) {
-            return queries[i][2] < queries[j][2];
-        });
-
-        vector<bool> ans(m, false);
-        int i = 0;
-        for (int j : indexes)
-        {
-            int pj = queries[j][0], qj = queries[j][1], limit = queries[j][2];
-            while (i < edgeList.size() && edgeList[i][2] < limit)
-            {
-                int u = edgeList[i][0], v = edgeList[i][1];
+        vector<bool> ans(m);
+        vector<int> qid(m);
+        iota(qid.begin(), qid.end(), 0);
+        sort(qid.begin(), qid.end(), [&](int i, int j) { return queries[i][2] < queries[j][2]; });
+        int j = 0;
+        for (int i : qid) {
+            int a = queries[i][0], b = queries[i][1], limit = queries[i][2];
+            while (j < edgeList.size() && edgeList[j][2] < limit) {
+                int u = edgeList[j][0], v = edgeList[j][1];
                 p[find(u)] = find(v);
-                ++i;
+                ++j;
             }
-            ans[j] = find(pj) == find(qj);
+            ans[i] = find(a) == find(b);
         }
         return ans;
-    }
-
-    int find(int x) {
-        if (p[x] != x) p[x] = find(p[x]);
-        return p[x];
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-var p []int
-
 func distanceLimitedPathsExist(n int, edgeList [][]int, queries [][]int) []bool {
-	p = make([]int, n)
-	for i := 0; i < n; i++ {
+	p := make([]int, n)
+	for i := range p {
 		p[i] = i
 	}
-	sort.Slice(edgeList, func(i, j int) bool {
-		return edgeList[i][2] < edgeList[j][2]
-	})
-	m := len(queries)
-	indexes := make([]int, m)
-	for i := 0; i < m; i++ {
-		indexes[i] = i
-	}
-	sort.Slice(indexes, func(i, j int) bool {
-		return queries[indexes[i]][2] < queries[indexes[j]][2]
-	})
-	ans := make([]bool, m)
-	i := 0
-	for _, j := range indexes {
-		pj, qj, limit := queries[j][0], queries[j][1], queries[j][2]
-		for i < len(edgeList) && edgeList[i][2] < limit {
-			u, v := edgeList[i][0], edgeList[i][1]
-			p[find(u)] = find(v)
-			i++
+	sort.Slice(edgeList, func(i, j int) bool { return edgeList[i][2] < edgeList[j][2] })
+	var find func(int) int
+	find = func(x int) int {
+		if p[x] != x {
+			p[x] = find(p[x])
 		}
-		ans[j] = find(pj) == find(qj)
+		return p[x]
+	}
+	m := len(queries)
+	qid := make([]int, m)
+	ans := make([]bool, m)
+	for i := range qid {
+		qid[i] = i
+	}
+	sort.Slice(qid, func(i, j int) bool { return queries[qid[i]][2] < queries[qid[j]][2] })
+	j := 0
+	for _, i := range qid {
+		a, b, limit := queries[i][0], queries[i][1], queries[i][2]
+		for j < len(edgeList) && edgeList[j][2] < limit {
+			u, v := edgeList[j][0], edgeList[j][1]
+			p[find(u)] = find(v)
+			j++
+		}
+		ans[i] = find(a) == find(b)
 	}
 	return ans
 }
+```
 
-func find(x int) int {
-	if p[x] != x {
-		p[x] = find(p[x])
-	}
-	return p[x]
+#### Rust
+
+```rust
+impl Solution {
+    #[allow(dead_code)]
+    pub fn distance_limited_paths_exist(
+        n: i32,
+        edge_list: Vec<Vec<i32>>,
+        queries: Vec<Vec<i32>>,
+    ) -> Vec<bool> {
+        let mut disjoint_set: Vec<usize> = vec![0; n as usize];
+        let mut ans_vec: Vec<bool> = vec![false; queries.len()];
+        let mut q_vec: Vec<usize> = vec![0; queries.len()];
+
+        // Initialize the set
+        for i in 0..n {
+            disjoint_set[i as usize] = i as usize;
+        }
+
+        // Initialize the q_vec
+        for i in 0..queries.len() {
+            q_vec[i] = i;
+        }
+
+        // Sort the q_vec based on the query limit, from the lowest to highest
+        q_vec.sort_by(|i, j| queries[*i][2].cmp(&queries[*j][2]));
+
+        // Sort the edge_list based on the edge weight, from the lowest to highest
+        let mut edge_list = edge_list.clone();
+        edge_list.sort_by(|i, j| i[2].cmp(&j[2]));
+
+        let mut edge_idx: usize = 0;
+        for q_idx in &q_vec {
+            let s = queries[*q_idx][0] as usize;
+            let d = queries[*q_idx][1] as usize;
+            let limit = queries[*q_idx][2];
+            // Construct the disjoint set
+            while edge_idx < edge_list.len() && edge_list[edge_idx][2] < limit {
+                Solution::union(
+                    edge_list[edge_idx][0] as usize,
+                    edge_list[edge_idx][1] as usize,
+                    &mut disjoint_set,
+                );
+                edge_idx += 1;
+            }
+            // If the parents of s & d are the same, this query should be `true`
+            // Otherwise, the current query is `false`
+            ans_vec[*q_idx] = Solution::check_valid(s, d, &mut disjoint_set);
+        }
+
+        ans_vec
+    }
+
+    #[allow(dead_code)]
+    pub fn find(x: usize, d_set: &mut Vec<usize>) -> usize {
+        if d_set[x] != x {
+            d_set[x] = Solution::find(d_set[x], d_set);
+        }
+        return d_set[x];
+    }
+
+    #[allow(dead_code)]
+    pub fn union(s: usize, d: usize, d_set: &mut Vec<usize>) {
+        let p_s = Solution::find(s, d_set);
+        let p_d = Solution::find(d, d_set);
+        d_set[p_s] = p_d;
+    }
+
+    #[allow(dead_code)]
+    pub fn check_valid(s: usize, d: usize, d_set: &mut Vec<usize>) -> bool {
+        let p_s = Solution::find(s, d_set);
+        let p_d = Solution::find(d, d_set);
+        p_s == p_d
+    }
 }
 ```
 
-### **...**
+<!-- tabs:end -->
 
+附并查集相关介绍以及常用模板：
+
+并查集是一种树形的数据结构，顾名思义，它用于处理一些不交集的**合并**及**查询**问题。 它支持两种操作：
+
+1. 查找（Find）：确定某个元素处于哪个子集，单次操作时间复杂度 $O(\alpha(n))$
+1. 合并（Union）：将两个子集合并成一个集合，单次操作时间复杂度 $O(\alpha(n))$
+
+其中 $\alpha$ 为阿克曼函数的反函数，其增长极其缓慢，也就是说其单次操作的平均运行时间可以认为是一个很小的常数。
+
+以下是并查集的常用模板，需要熟练掌握。其中：
+
+-   `n` 表示节点数
+-   `p` 存储每个点的父节点，初始时每个点的父节点都是自己
+-   `size` 只有当节点是祖宗节点时才有意义，表示祖宗节点所在集合中，点的数量
+-   `find(x)` 函数用于查找 $x$ 所在集合的祖宗节点
+-   `union(a, b)` 函数用于合并 $a$ 和 $b$ 所在的集合
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+p = list(range(n))
+size = [1] * n
+
+def find(x):
+    if p[x] != x:
+        # 路径压缩
+        p[x] = find(p[x])
+    return p[x]
+
+
+def union(a, b):
+    pa, pb = find(a), find(b)
+    if pa == pb:
+        return
+    p[pa] = pb
+    size[pb] += size[pa]
 ```
 
+#### Java
+
+```java
+int[] p = new int[n];
+int[] size = new int[n];
+for (int i = 0; i < n; ++i) {
+    p[i] = i;
+    size[i] = 1;
+}
+
+int find(int x) {
+    if (p[x] != x) {
+        // 路径压缩
+        p[x] = find(p[x]);
+    }
+    return p[x];
+}
+
+void union(int a, int b) {
+    int pa = find(a), pb = find(b);
+    if (pa == pb) {
+        return;
+    }
+    p[pa] = pb;
+    size[pb] += size[pa];
+}
+```
+
+#### C++
+
+```cpp
+vector<int> p(n);
+iota(p.begin(), p.end(), 0);
+vector<int> size(n, 1);
+
+int find(int x) {
+    if (p[x] != x) {
+        // 路径压缩
+        p[x] = find(p[x]);
+    }
+    return p[x];
+}
+
+void unite(int a, int b) {
+    int pa = find(a), pb = find(b);
+    if (pa == pb) return;
+    p[pa] = pb;
+    size[pb] += size[pa];
+}
+```
+
+#### Go
+
+```go
+p := make([]int, n)
+size := make([]int, n)
+for i := range p {
+    p[i] = i
+    size[i] = 1
+}
+
+func find(x int) int {
+    if p[x] != x {
+        // 路径压缩
+        p[x] = find(p[x])
+    }
+    return p[x]
+}
+
+func union(a, b int) {
+    pa, pb := find(a), find(b)
+    if pa == pb {
+        return
+    }
+    p[pa] = pb
+    size[pb] += size[pa]
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,8 +1,24 @@
-# [1087. Brace Expansion](https://leetcode.com/problems/brace-expansion)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1087.Brace%20Expansion/README_EN.md
+rating: 1480
+source: Biweekly Contest 2 Q3
+tags:
+    - Breadth-First Search
+    - String
+    - Backtracking
+---
+
+<!-- problem:start -->
+
+# [1087. Brace Expansion 🔒](https://leetcode.com/problems/brace-expansion)
 
 [中文文档](/solution/1000-1099/1087.Brace%20Expansion/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a string <code>s</code> representing a list of words. Each letter in the word has one or more options.</p>
 
@@ -16,10 +32,10 @@
 <p>Return all words that can be formed in this manner, <strong>sorted</strong> in lexicographical order.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 <pre><strong>Input:</strong> s = "{a,b}c{d,e}f"
 <strong>Output:</strong> ["acdf","acef","bcdf","bcef"]
-</pre><p><strong>Example 2:</strong></p>
+</pre><p><strong class="example">Example 2:</strong></p>
 <pre><strong>Input:</strong> s = "abcd"
 <strong>Output:</strong> ["abcd"]
 </pre>
@@ -34,11 +50,17 @@
 	<li>All characters inside a pair of consecutive opening and ending curly brackets are different.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -48,12 +70,12 @@ class Solution:
                 return
             if s[0] == '{':
                 j = s.find('}')
-                items.append(s[1: j].split(','))
-                convert(s[j + 1:])
+                items.append(s[1:j].split(','))
+                convert(s[j + 1 :])
             else:
                 j = s.find('{')
                 if j != -1:
-                    items.append(s[: j].split(','))
+                    items.append(s[:j].split(','))
                     convert(s[j:])
                 else:
                     items.append(s.split(','))
@@ -75,7 +97,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -124,10 +146,8 @@ class Solution {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

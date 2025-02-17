@@ -1,5 +1,4 @@
 class Twitter:
-
     def __init__(self):
         """
         Initialize your data structure here.
@@ -26,7 +25,7 @@ class Twitter:
         users.add(userId)
         tweets = [self.user_tweets[u][::-1][:10] for u in users]
         tweets = sum(tweets, [])
-        return heapq.nlargest(10, tweets, key=lambda tweet: self.tweets[tweet])
+        return nlargest(10, tweets, key=lambda tweet: self.tweets[tweet])
 
     def follow(self, followerId: int, followeeId: int) -> None:
         """

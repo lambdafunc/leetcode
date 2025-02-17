@@ -1,24 +1,13 @@
-func lengthOfLongestSubstring(s string) int {
-	window := make(map[byte]int)
-	n := len(s)
-	ans := 0
-	left, right := 0, 0
-	for right < n {
-		b := s[right]
-		right++
-		window[b]++
-		for window[b] > 1 {
-			window[s[left]]--
-			left++
+func lengthOfLongestSubstring(s string) (ans int) {
+	cnt := [128]int{}
+	l := 0
+	for r, c := range s {
+		cnt[c]++
+		for cnt[c] > 1 {
+			cnt[s[l]]--
+			l++
 		}
-		ans = max(ans, right-left)
+		ans = max(ans, r-l+1)
 	}
-	return ans
-}
-
-func max(x, y int) int {
-	if x > y {
-		return x
-	}
-	return y
+	return
 }

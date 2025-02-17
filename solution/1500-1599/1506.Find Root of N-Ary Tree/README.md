@@ -1,22 +1,35 @@
-# [1506. 找到 N 叉树的根节点](https://leetcode-cn.com/problems/find-root-of-n-ary-tree)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1506.Find%20Root%20of%20N-Ary%20Tree/README.md
+tags:
+    - 位运算
+    - 树
+    - 深度优先搜索
+    - 哈希表
+---
+
+<!-- problem:start -->
+
+# [1506. 找到 N 叉树的根节点 🔒](https://leetcode.cn/problems/find-root-of-n-ary-tree)
 
 [English Version](/solution/1500-1599/1506.Find%20Root%20of%20N-Ary%20Tree/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一棵 <a href="https://slack-redir.net/link?url=https%3A%2F%2Fleetcode.com%2Farticles%2Fintroduction-to-n-ary-trees" target="_blank">N 叉树</a> 的所有节点在一个数组  <code>Node[] tree</code> 中，树中每个节点都有 <strong>唯一的值</strong> 。</p>
+<p>给定一棵&nbsp;<a href="https://leetcode.cn/explore/learn/card/n-ary-tree/" target="_blank">N 叉树</a>&nbsp;的所有节点在一个数组&nbsp;&nbsp;<code>Node[] tree</code>&nbsp;中，树中每个节点都有 <strong>唯一的值</strong> 。</p>
 
 <p>找到并返回 N 叉树的 <strong>根节点 </strong>。</p>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>自定义测试：</strong></p>
 
 <p><em>N 叉树的输入序列为其层序遍历序列，每组子节点用 null 分隔（见示例）。</em></p>
 
-<p><em><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1506.Find%20Root%20of%20N-Ary%20Tree/images/sample_4_964.png" style="width:300px" /></em></p>
+<p><em><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1506.Find%20Root%20of%20N-Ary%20Tree/images/sample_4_964.png" style="width:300px" /></em></p>
 
 <p>上图中的 N 叉树的序列化描述为 <code>[1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]</code> 。</p>
 
@@ -29,11 +42,11 @@
 	<li>驱动程序代码将接受返回的 <code>Node</code> 对象并对其进行序列化。如果序列化的结果和输入数据 <strong>相同</strong> ，则测试 <strong>通过</strong> 。</li>
 </ul>
 
-<p> </p>
+<p>&nbsp;</p>
 
-<p><strong>示例 1：</strong></p>
+<p><strong class="example">示例 1：</strong></p>
 
-<p><img src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1506.Find%20Root%20of%20N-Ary%20Tree/images/narytreeexample.png" style="width:250px" /></p>
+<p><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1506.Find%20Root%20of%20N-Ary%20Tree/images/narytreeexample.png" style="width:250px" /></p>
 
 <pre>
 <strong>输入：</strong>tree = [1,null,3,2,4,null,5,6]
@@ -44,25 +57,25 @@
 findRoot 函数应该返回根 Node(1) ，驱动程序代码将序列化它并与输入数据进行比较。
 输入数据和序列化的 Node(1) 相同，因此测试通过。</pre>
 
-<p><strong>示例 2：</strong></p>
+<p><strong class="example">示例 2：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1506.Find%20Root%20of%20N-Ary%20Tree/images/sample_4_964.png" style="height:241px; width:296px" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1506.Find%20Root%20of%20N-Ary%20Tree/images/sample_4_964.png" style="height:241px; width:296px" /></p>
 
 <pre>
 <strong>输入：</strong>tree = [1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]
 <strong>输出：</strong>[1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]
 </pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li>节点的总个数在 <code>[1, 5*10^4]</code> 之间。</li>
+	<li>节点的总个数在&nbsp;<code>[1,&nbsp;5*10^4]</code>&nbsp;之间。</li>
 	<li>每个节点都有唯一的值。</li>
 </ul>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>进阶：</strong></p>
 
@@ -70,24 +83,25 @@ findRoot 函数应该返回根 Node(1) ，驱动程序代码将序列化它并�
 	<li>你可以使用 O(1) 额外内存空间且 O(n) 时间复杂度的算法来找到该树的根节点吗？</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-遍历 N 叉树 tree 的所有节点以及它们的子节点：
+### 方法一：位运算
 
-- 对于非根节点，它会在 tree 列表中出现一次，并且在某个节点的 children 列表中出现一次，一共出现两次。
-- 对于根节点，它只会在 tree 列表中出现一次。
+对于一棵 N 叉树的节点，如果该节点是根节点，那么该节点只会出现一次在数组 `tree` 中；而如果该节点不是根节点，那么该节点会出现两次，一次在数组 `tree` 中，一次在该节点的父节点的 `children` 数组中。
 
-我们对遍历到的节点及子节点进行按位异或运算，由于一个数异或两次等于没有进行任何运算，因此最后运算的结果就是根节点的值。
+因此，我们可以遍历数组 `tree`，计算每个节点的值以及其所有子节点的值的异或和，记录在变量 $x$ 中。遍历结束后，我们得到的 $x$ 就是根节点的值。
 
-由于树中节点值唯一，我们再遍历一遍 tree 列表找出该节点即可。
+接下来，我们再遍历数组 `tree`，找到值为 $x$ 的节点，即为根节点，返回即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 为数组 `tree` 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 """
@@ -98,22 +112,18 @@ class Node:
         self.children = children if children is not None else []
 """
 
+
 class Solution:
     def findRoot(self, tree: List['Node']) -> 'Node':
-        xorsum = 0
+        x = 0
         for node in tree:
-            xorsum ^= node.val
+            x ^= node.val
             for child in node.children:
-                xorsum ^= child.val
-
-        for node in tree:
-            if node.val == xorsum:
-                return node
+                x ^= child.val
+        return next(node for node in tree if node.val == x)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /*
@@ -141,24 +151,23 @@ class Node {
 
 class Solution {
     public Node findRoot(List<Node> tree) {
-        int xor = 0;
+        int x = 0;
         for (Node node : tree) {
-            xor ^= node.val;
+            x ^= node.val;
             for (Node child : node.children) {
-                xor ^= child.val;
+                x ^= child.val;
             }
         }
-        for (Node node :tree) {
-            if (node.val == xor) {
-                return node;
+        for (int i = 0;; ++i) {
+            if (tree.get(i).val == x) {
+                return tree.get(i);
             }
         }
-        return null;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /*
@@ -184,24 +193,23 @@ public:
 class Solution {
 public:
     Node* findRoot(vector<Node*> tree) {
-        int xorsum = 0;
-        for (auto& node : tree) {
-            xorsum ^= node->val;
-            for (auto& child : node->children) {
-                xorsum ^= child->val;
+        int x = 0;
+        for (Node* node : tree) {
+            x ^= node->val;
+            for (Node* child : node->children) {
+                x ^= child->val;
             }
         }
-        for (auto& node : tree) {
-            if (node->val == xorsum) {
-                return node;
+        for (int i = 0;; ++i) {
+            if (tree[i]->val == x) {
+                return tree[i];
             }
         }
-        return nullptr;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -213,26 +221,50 @@ public:
  */
 
 func findRoot(tree []*Node) *Node {
-	xorsum := 0
+	x := 0
 	for _, node := range tree {
-		xorsum ^= node.Val
+		x ^= node.Val
 		for _, child := range node.Children {
-			xorsum ^= child.Val
+			x ^= child.Val
 		}
 	}
-	for _, node := range tree {
-		if node.Val == xorsum {
-			return node
+	for i := 0; ; i++ {
+		if tree[i].Val == x {
+			return tree[i]
 		}
 	}
-	return nil
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+/**
+ * Definition for Node.
+ * class Node {
+ *     val: number
+ *     children: Node[]
+ *     constructor(val?: number, children?: Node[]) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.children = (children===undefined ? [] : children)
+ *     }
+ * }
+ */
 
+function findRoot(tree: Node[]): Node | null {
+    let x = 0;
+    for (const node of tree) {
+        x ^= node.val;
+        for (const child of node.children) {
+            x ^= child.val;
+        }
+    }
+    return tree.find(node => node.val === x) || null;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

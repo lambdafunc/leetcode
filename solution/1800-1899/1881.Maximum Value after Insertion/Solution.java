@@ -1,23 +1,16 @@
 class Solution {
     public String maxValue(String n, int x) {
-        boolean negative = n.charAt(0) == '-';
-        StringBuilder res = new StringBuilder();
         int i = 0;
-        if (negative) {
+        if (n.charAt(0) == '-') {
             ++i;
-            res.append("-");
-        }
-        boolean find = false;
-        for (; i < n.length(); ++i) {
-            int num = n.charAt(i) - '0';
-            if ((negative && x < num) || (!negative && x > num)) {
-                res.append(x);
-                find = true;
-                break;
+            while (i < n.length() && n.charAt(i) - '0' <= x) {
+                ++i;
             }
-            res.append(n.charAt(i));
+        } else {
+            while (i < n.length() && n.charAt(i) - '0' >= x) {
+                ++i;
+            }
         }
-        res.append(find ? n.substring(i) : x);
-        return res.toString();
+        return n.substring(0, i) + x + n.substring(i);
     }
 }

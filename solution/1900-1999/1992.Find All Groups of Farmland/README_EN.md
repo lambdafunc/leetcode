@@ -1,8 +1,25 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1992.Find%20All%20Groups%20of%20Farmland/README_EN.md
+rating: 1539
+source: Biweekly Contest 60 Q2
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Array
+    - Matrix
+---
+
+<!-- problem:start -->
+
 # [1992. Find All Groups of Farmland](https://leetcode.com/problems/find-all-groups-of-farmland)
 
 [中文文档](/solution/1900-1999/1992.Find%20All%20Groups%20of%20Farmland/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a <strong>0-indexed</strong> <code>m x n</code> binary matrix <code>land</code> where a <code>0</code> represents a hectare of forested land and a <code>1</code> represents a hectare of farmland.</p>
 
@@ -13,8 +30,8 @@
 <p>Return <em>a 2D array containing the 4-length arrays described above for each <strong>group</strong> of farmland in </em><code>land</code><em>. If there are no groups of farmland, return an empty array. You may return the answer in <strong>any order</strong></em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1992.Find%20All%20Groups%20of%20Farmland/images/screenshot-2021-07-27-at-12-23-15-copy-of-diagram-drawio-diagrams-net.png" style="width: 300px; height: 300px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1992.Find%20All%20Groups%20of%20Farmland/images/screenshot-2021-07-27-at-12-23-15-copy-of-diagram-drawio-diagrams-net.png" style="width: 300px; height: 300px;" />
 <pre>
 <strong>Input:</strong> land = [[1,0,0],[0,1,1],[0,1,1]]
 <strong>Output:</strong> [[0,0,0,0],[1,1,2,2]]
@@ -23,8 +40,8 @@ The first group has a top left corner at land[0][0] and a bottom right corner at
 The second group has a top left corner at land[1][1] and a bottom right corner at land[2][2].
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1992.Find%20All%20Groups%20of%20Farmland/images/screenshot-2021-07-27-at-12-30-26-copy-of-diagram-drawio-diagrams-net.png" style="width: 200px; height: 200px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1992.Find%20All%20Groups%20of%20Farmland/images/screenshot-2021-07-27-at-12-30-26-copy-of-diagram-drawio-diagrams-net.png" style="width: 200px; height: 200px;" />
 <pre>
 <strong>Input:</strong> land = [[1,1],[1,1]]
 <strong>Output:</strong> [[0,0,1,1]]
@@ -32,8 +49,8 @@ The second group has a top left corner at land[1][1] and a bottom right corner a
 The first group has a top left corner at land[0][0] and a bottom right corner at land[1][1].
 </pre>
 
-<p><strong>Example 3:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1992.Find%20All%20Groups%20of%20Farmland/images/screenshot-2021-07-27-at-12-32-24-copy-of-diagram-drawio-diagrams-net.png" style="width: 100px; height: 100px;" />
+<p><strong class="example">Example 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1992.Find%20All%20Groups%20of%20Farmland/images/screenshot-2021-07-27-at-12-32-24-copy-of-diagram-drawio-diagrams-net.png" style="width: 100px; height: 100px;" />
 <pre>
 <strong>Input:</strong> land = [[0]]
 <strong>Output:</strong> []
@@ -52,11 +69,17 @@ There are no groups of farmland.
 	<li>Groups of farmland are <strong>rectangular</strong> in shape.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -65,7 +88,11 @@ class Solution:
         ans = []
         for i in range(m):
             for j in range(n):
-                if land[i][j] == 0 or (j > 0 and land[i][j-1] == 1) or (i > 0 and land[i-1][j] == 1):
+                if (
+                    land[i][j] == 0
+                    or (j > 0 and land[i][j - 1] == 1)
+                    or (i > 0 and land[i - 1][j] == 1)
+                ):
                     continue
                 x, y = i, j
                 while x + 1 < m and land[x + 1][j] == 1:
@@ -76,7 +103,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -86,14 +113,17 @@ class Solution {
         int n = land[0].length;
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                if (land[i][j] == 0 || (j > 0 && land[i][j-1] == 1) || (i > 0 && land[i-1][j] == 1)) {
+                if (land[i][j] == 0 || (j > 0 && land[i][j - 1] == 1)
+                    || (i > 0 && land[i - 1][j] == 1)) {
                     continue;
                 }
                 int x = i;
                 int y = j;
-                for (; x + 1 < m && land[x + 1][j] == 1; ++x);
-                for (; y + 1 < n && land[x][y + 1] == 1; ++y);
-                ans.add(new int[]{i, j, x, y});
+                for (; x + 1 < m && land[x + 1][j] == 1; ++x)
+                    ;
+                for (; y + 1 < n && land[x][y + 1] == 1; ++y)
+                    ;
+                ans.add(new int[] {i, j, x, y});
             }
         }
         return ans.toArray(new int[ans.size()][4]);
@@ -101,7 +131,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -110,15 +140,15 @@ public:
         vector<vector<int>> ans;
         int m = land.size();
         int n = land[0].size();
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (land[i][j] == 0 || (j > 0 && land[i][j-1] == 1) || (i > 0 && land[i-1][j] == 1)) continue;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (land[i][j] == 0 || (j > 0 && land[i][j - 1] == 1) || (i > 0 && land[i - 1][j] == 1)) continue;
                 int x = i;
                 int y = j;
-                for (; x + 1 < m && land[x + 1][j] == 1; ++x);
-                for (; y + 1 < n && land[x][y + 1] == 1; ++y);
+                for (; x + 1 < m && land[x + 1][j] == 1; ++x)
+                    ;
+                for (; y + 1 < n && land[x][y + 1] == 1; ++y)
+                    ;
                 ans.push_back({i, j, x, y});
             }
         }
@@ -127,7 +157,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func findFarmland(land [][]int) [][]int {
@@ -150,10 +180,8 @@ func findFarmland(land [][]int) [][]int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

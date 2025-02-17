@@ -1,8 +1,26 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0218.The%20Skyline%20Problem/README_EN.md
+tags:
+    - Binary Indexed Tree
+    - Segment Tree
+    - Array
+    - Divide and Conquer
+    - Ordered Set
+    - Line Sweep
+    - Heap (Priority Queue)
+---
+
+<!-- problem:start -->
+
 # [218. The Skyline Problem](https://leetcode.com/problems/the-skyline-problem)
 
 [中文文档](/solution/0200-0299/0218.The%20Skyline%20Problem/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A city&#39;s <strong>skyline</strong> is the outer contour of the silhouette formed by all the buildings in that city when viewed from a distance. Given the locations and heights of all the buildings, return <em>the <strong>skyline</strong> formed by these buildings collectively</em>.</p>
 
@@ -21,8 +39,8 @@
 <p><b>Note:</b> There must be no consecutive horizontal lines of equal height in the output skyline. For instance, <code>[...,[2 3],[4 5],[7 5],[11 5],[12 7],...]</code> is not acceptable; the three lines of height 5 should be merged into one in the final output as such: <code>[...,[2 3],[4 5],[12 7],...]</code></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0200-0299/0218.The%20Skyline%20Problem/images/merged.jpg" style="width: 800px; height: 331px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0200-0299/0218.The%20Skyline%20Problem/images/merged.jpg" style="width: 800px; height: 331px;" />
 <pre>
 <strong>Input:</strong> buildings = [[2,9,10],[3,7,15],[5,12,12],[15,20,10],[19,24,8]]
 <strong>Output:</strong> [[2,10],[3,15],[7,12],[12,0],[15,10],[20,8],[24,0]]
@@ -31,7 +49,7 @@ Figure A shows the buildings of the input.
 Figure B shows the skyline formed by those buildings. The red points in figure B represent the key points in the output list.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> buildings = [[0,2,3],[2,5,3]]
@@ -48,26 +66,174 @@ Figure B shows the skyline formed by those buildings. The red points in figure B
 	<li><code>buildings</code> is sorted by <code>left<sub>i</sub></code> in&nbsp;non-decreasing order.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
+from queue import PriorityQueue
 
+
+class Solution:
+    def getSkyline(self, buildings: List[List[int]]) -> List[List[int]]:
+        skys, lines, pq = [], [], PriorityQueue()
+        for build in buildings:
+            lines.extend([build[0], build[1]])
+        lines.sort()
+        city, n = 0, len(buildings)
+        for line in lines:
+            while city < n and buildings[city][0] <= line:
+                pq.put([-buildings[city][2], buildings[city][0], buildings[city][1]])
+                city += 1
+            while not pq.empty() and pq.queue[0][2] <= line:
+                pq.get()
+            high = 0
+            if not pq.empty():
+                high = -pq.queue[0][0]
+            if len(skys) > 0 and skys[-1][1] == high:
+                continue
+            skys.append([line, high])
+        return skys
 ```
 
-### **Java**
+#### C++
 
-```java
+```cpp
+class Solution {
+public:
+    vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) {
+        set<int> poss;
+        map<int, int> m;
+        for (auto v : buildings) {
+            poss.insert(v[0]);
+            poss.insert(v[1]);
+        }
 
+        int i = 0;
+        for (int pos : poss)
+            m.insert(pair<int, int>(pos, i++));
+
+        vector<int> highs(m.size(), 0);
+        for (auto v : buildings) {
+            const int b = m[v[0]], e = m[v[1]];
+            for (int i = b; i < e; ++i)
+                highs[i] = max(highs[i], v[2]);
+        }
+
+        vector<pair<int, int>> res;
+        vector<int> mm(poss.begin(), poss.end());
+        for (int i = 0; i < highs.size(); ++i) {
+            if (highs[i] != highs[i + 1])
+                res.push_back(pair<int, int>(mm[i], highs[i]));
+            else {
+                const int start = i;
+                res.push_back(pair<int, int>(mm[start], highs[i]));
+                while (highs[i] == highs[i + 1])
+                    ++i;
+            }
+        }
+        return res;
+    }
+};
 ```
 
-### **...**
+#### Go
 
+```go
+type Matrix struct{ left, right, height int }
+type Queue []Matrix
+
+func (q Queue) Len() int           { return len(q) }
+func (q Queue) Top() Matrix        { return q[0] }
+func (q Queue) Swap(i, j int)      { q[i], q[j] = q[j], q[i] }
+func (q Queue) Less(i, j int) bool { return q[i].height > q[j].height }
+func (q *Queue) Push(x any)        { *q = append(*q, x.(Matrix)) }
+func (q *Queue) Pop() any {
+	old, x := *q, (*q)[len(*q)-1]
+	*q = old[:len(old)-1]
+	return x
+}
+
+func getSkyline(buildings [][]int) [][]int {
+	skys, lines, pq := make([][]int, 0), make([]int, 0), &Queue{}
+	heap.Init(pq)
+	for _, v := range buildings {
+		lines = append(lines, v[0], v[1])
+	}
+	sort.Ints(lines)
+	city, n := 0, len(buildings)
+	for _, line := range lines {
+		// 将所有符合条件的矩形加入队列
+		for ; city < n && buildings[city][0] <= line && buildings[city][1] > line; city++ {
+			v := Matrix{left: buildings[city][0], right: buildings[city][1], height: buildings[city][2]}
+			heap.Push(pq, v)
+		}
+		// 从队列移除不符合条件的矩形
+		for pq.Len() > 0 && pq.Top().right <= line {
+			heap.Pop(pq)
+		}
+		high := 0
+		// 队列为空说明是最右侧建筑物的终点，其轮廓点为 (line, 0)
+		if pq.Len() != 0 {
+			high = pq.Top().height
+		}
+		// 如果该点高度和前一个轮廓点一样的话，直接忽略
+		if len(skys) > 0 && skys[len(skys)-1][1] == high {
+			continue
+		}
+		skys = append(skys, []int{line, high})
+	}
+	return skys
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn get_skyline(buildings: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+        let mut skys: Vec<Vec<i32>> = vec![];
+        let mut lines = vec![];
+        for building in buildings.iter() {
+            lines.push(building[0]);
+            lines.push(building[1]);
+        }
+        lines.sort_unstable();
+        let mut pq = std::collections::BinaryHeap::new();
+        let (mut city, n) = (0, buildings.len());
+
+        for line in lines {
+            while city < n && buildings[city][0] <= line && buildings[city][1] > line {
+                pq.push((buildings[city][2], buildings[city][1]));
+                city += 1;
+            }
+            while !pq.is_empty() && pq.peek().unwrap().1 <= line {
+                pq.pop();
+            }
+            let mut high = 0;
+            if !pq.is_empty() {
+                high = pq.peek().unwrap().0;
+            }
+            if !skys.is_empty() && skys.last().unwrap()[1] == high {
+                continue;
+            }
+            skys.push(vec![line, high]);
+        }
+        skys
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

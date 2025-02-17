@@ -1,25 +1,21 @@
 class MinStack:
-
     def __init__(self):
-        """
-        initialize your data structure here.
-        """
-        self.s = []
-        self.mins = [float('inf')]
+        self.stk1 = []
+        self.stk2 = [inf]
 
     def push(self, val: int) -> None:
-        self.s.append(val)
-        self.mins.append(min(self.mins[-1], val))
+        self.stk1.append(val)
+        self.stk2.append(min(val, self.stk2[-1]))
 
     def pop(self) -> None:
-        self.s.pop()
-        self.mins.pop()
+        self.stk1.pop()
+        self.stk2.pop()
 
     def top(self) -> int:
-        return self.s[-1]
+        return self.stk1[-1]
 
     def getMin(self) -> int:
-        return self.mins[-1]
+        return self.stk2[-1]
 
 
 # Your MinStack object will be instantiated and called as such:

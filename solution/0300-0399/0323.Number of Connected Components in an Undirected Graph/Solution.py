@@ -1,12 +1,16 @@
 class Solution:
     def countComponents(self, n: int, edges: List[List[int]]) -> int:
-        p = list(range(n))
+        def dfs(i: int) -> int:
+            if i in vis:
+                return 0
+            vis.add(i)
+            for j in g[i]:
+                dfs(j)
+            return 1
 
-        def find(x):
-            if p[x] != x:
-                p[x] = find(p[x])
-            return p[x]
-
+        g = [[] for _ in range(n)]
         for a, b in edges:
-            p[find(a)] = find(b)
-        return sum(i == find(i) for i in range(n))
+            g[a].append(b)
+            g[b].append(a)
+        vis = set()
+        return sum(dfs(i) for i in range(n))

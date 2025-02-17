@@ -1,21 +1,40 @@
-# [549. 二叉树中最长的连续序列](https://leetcode-cn.com/problems/binary-tree-longest-consecutive-sequence-ii)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0549.Binary%20Tree%20Longest%20Consecutive%20Sequence%20II/README.md
+tags:
+    - 树
+    - 深度优先搜索
+    - 二叉树
+---
+
+<!-- problem:start -->
+
+# [549. 二叉树最长连续序列 II 🔒](https://leetcode.cn/problems/binary-tree-longest-consecutive-sequence-ii)
 
 [English Version](/solution/0500-0599/0549.Binary%20Tree%20Longest%20Consecutive%20Sequence%20II/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个二叉树，你需要找出二叉树中最长的连续序列路径的长度。</p>
+<p>给定二叉树的根&nbsp;<code>root</code>&nbsp;，返回树中<strong>最长连续路径</strong>的长度。<br />
+<strong>连续路径</strong>是路径中相邻节点的值相差 <code>1</code> 的路径。此路径可以是增加或减少。</p>
 
-<p>请注意，该路径可以是递增的或者是递减。例如，[1,2,3,4] 和 [4,3,2,1] 都被认为是合法的，而路径 [1,2,4,3] 则不合法。另一方面，路径可以是 子-父-子 顺序，并不一定是 父-子 顺序。</p>
+<ul>
+	<li>例如，&nbsp;<code>[1,2,3,4]</code> 和 <code>[4,3,2,1]</code> 都被认为有效，但路径 <code>[1,2,4,3]</code> 无效。</li>
+</ul>
+
+<p>另一方面，路径可以是子-父-子顺序，不一定是父子顺序。</p>
+
+<p>&nbsp;</p>
 
 <p><strong>示例 1:</strong></p>
 
-<pre><strong>输入:</strong>
-        1
-       / \
-      2   3
+<p><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0500-0599/0549.Binary%20Tree%20Longest%20Consecutive%20Sequence%20II/images/consec2-1-tree.jpg" /></p>
+
+<pre>
+<strong>输入: </strong>root = [1,2,3]
 <strong>输出:</strong> 2
 <strong>解释:</strong> 最长的连续路径是 [1, 2] 或者 [2, 1]。
 </pre>
@@ -24,27 +43,34 @@
 
 <p><strong>示例 2:</strong></p>
 
-<pre><strong>输入:</strong>
-        2
-       / \
-      1   3
+<p><img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0500-0599/0549.Binary%20Tree%20Longest%20Consecutive%20Sequence%20II/images/consec2-2-tree.jpg" /></p>
+
+<pre>
+<strong>输入: </strong>root = [2,1,3]
 <strong>输出:</strong> 3
 <strong>解释:</strong> 最长的连续路径是 [1, 2, 3] 或者 [3, 2, 1]。
 </pre>
 
 <p>&nbsp;</p>
 
-<p><strong>注意:</strong> 树上所有节点的值都在 [-1e7, 1e7] 范围内。</p>
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li>树上所有节点的值都在&nbsp;<code>[1, 3 * 10<sup>4</sup>]</code>&nbsp;范围内。</li>
+	<li><code>-3 * 10<sup>4</sup>&nbsp;&lt;= Node.val &lt;= 3 * 10<sup>4</sup></code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -80,9 +106,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -111,7 +135,7 @@ class Solution {
 
     private int[] dfs(TreeNode root) {
         if (root == null) {
-            return new int[]{0, 0};
+            return new int[] {0, 0};
         }
         int incr = 1, decr = 1;
         int[] left = dfs(root.left);
@@ -133,12 +157,12 @@ class Solution {
             }
         }
         ans = Math.max(ans, incr + decr - 1);
-        return new int[]{incr, decr};
+        return new int[] {incr, decr};
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -167,13 +191,11 @@ public:
         int incr = 1, decr = 1;
         auto left = dfs(root->left);
         auto right = dfs(root->right);
-        if (root->left)
-        {
+        if (root->left) {
             if (root->left->val + 1 == root->val) incr = left[0] + 1;
             if (root->left->val - 1 == root->val) decr = left[1] + 1;
         }
-        if (root->right)
-        {
+        if (root->right) {
             if (root->right->val + 1 == root->val) incr = max(incr, right[0] + 1);
             if (root->right->val - 1 == root->val) decr = max(decr, right[1] + 1);
         }
@@ -183,7 +205,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -226,19 +248,10 @@ func longestConsecutive(root *TreeNode) int {
 	dfs(root)
 	return ans
 }
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-```
-
-### **...**
-
-```
-
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

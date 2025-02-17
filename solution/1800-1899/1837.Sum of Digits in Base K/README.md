@@ -1,10 +1,22 @@
-# [1837. K 进制表示下的各位数字总和](https://leetcode-cn.com/problems/sum-of-digits-in-base-k)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1837.Sum%20of%20Digits%20in%20Base%20K/README.md
+rating: 1282
+source: 第 238 场周赛 Q1
+tags:
+    - 数学
+---
+
+<!-- problem:start -->
+
+# [1837. K 进制表示下的各位数字总和](https://leetcode.cn/problems/sum-of-digits-in-base-k)
 
 [English Version](/solution/1800-1899/1837.Sum%20of%20Digits%20in%20Base%20K/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数 <code>n</code>（<code>10</code> 进制）和一个基数 <code>k</code> ，请你将 <code>n</code> 从 <code>10</code> 进制表示转换为 <code>k</code> 进制表示，计算并返回转换后各位数字的 <strong>总和</strong> 。</p>
 
@@ -37,49 +49,136 @@
 	<li><code>2 <= k <= 10</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-将 n 除 k 取余，直至为 0，余数相加求得结果。
+### 方法一：数学
+
+我们将 $n$ 除 $k$ 取余，直至为 $0$，余数相加即可得到结果。
+
+时间复杂度 $O(\log_{k}n)$，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def sumBase(self, n: int, k: int) -> int:
-        res = 0
-        while n != 0:
-            n, t = divmod(n, k)
-            res += t
-        return res
+        ans = 0
+        while n:
+            ans += n % k
+            n //= k
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int sumBase(int n, int k) {
-        int res = 0;
+        int ans = 0;
         while (n != 0) {
-            res += (n % k);
+            ans += n % k;
             n /= k;
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int sumBase(int n, int k) {
+        int ans = 0;
+        while (n) {
+            ans += n % k;
+            n /= k;
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func sumBase(n int, k int) (ans int) {
+	for n > 0 {
+		ans += n % k
+		n /= k
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function sumBase(n: number, k: number): number {
+    let ans = 0;
+    while (n) {
+        ans += n % k;
+        n = Math.floor(n / k);
+    }
+    return ans;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn sum_base(mut n: i32, k: i32) -> i32 {
+        let mut ans = 0;
+        while n != 0 {
+            ans += n % k;
+            n /= k;
+        }
+        ans
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number} n
+ * @param {number} k
+ * @return {number}
+ */
+var sumBase = function (n, k) {
+    let ans = 0;
+    while (n) {
+        ans += n % k;
+        n = Math.floor(n / k);
+    }
+    return ans;
+};
+```
+
+#### C
+
+```c
+int sumBase(int n, int k) {
+    int ans = 0;
+    while (n) {
+        ans += n % k;
+        n /= k;
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,21 +1,8 @@
 class Solution {
 public:
     string interpret(string command) {
-        string res = "";
-        int i = 0, n = command.size();
-        while (i < n) {
-            char c = command[i];
-            if (c == 'G') {
-                res += "G";
-                i += 1;
-            } else if (c == '(' && command[i + 1] != ')') {
-                res += "al";
-                i += 4;
-            } else {
-                res += "o";
-                i += 2;
-            }
-        }
-        return res;
+        while (command.find("()") != -1) command.replace(command.find("()"), 2, "o");
+        while (command.find("(al)") != -1) command.replace(command.find("(al)"), 4, "al");
+        return command;
     }
 };

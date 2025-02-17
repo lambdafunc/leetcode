@@ -1,24 +1,13 @@
 class Solution:
-    def reverseOnlyLetters(self, S):
-        """
-        :type S: str
-        :rtype: str
-        """
-
-        S = list(S)
-
-        start = 0
-        end = len(S)-1
-
-        while start < end :
-
-            while start < end and S[start] not in string.ascii_letters :
-                start += 1
-            while start < end and S[end] not in string.ascii_letters :
-                end -= 1
-
-            S[start], S[end] = S[end], S[start]
-            start += 1
-            end -= 1
-
-        return ''.join(S)
+    def reverseOnlyLetters(self, s: str) -> str:
+        cs = list(s)
+        i, j = 0, len(cs) - 1
+        while i < j:
+            while i < j and not cs[i].isalpha():
+                i += 1
+            while i < j and not cs[j].isalpha():
+                j -= 1
+            if i < j:
+                cs[i], cs[j] = cs[j], cs[i]
+                i, j = i + 1, j - 1
+        return "".join(cs)

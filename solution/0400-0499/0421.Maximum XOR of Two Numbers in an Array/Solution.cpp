@@ -1,76 +1,46 @@
 class Trie {
 public:
-    Trie* left;
-    Trie* right;
+    Trie* children[2];
+
+    Trie()
+        : children{nullptr, nullptr} {}
+
+    void insert(int x) {
+        Trie* node = this;
+        for (int i = 30; ~i; --i) {
+            int v = x >> i & 1;
+            if (!node->children[v]) {
+                node->children[v] = new Trie();
+            }
+            node = node->children[v];
+        }
+    }
+
+    int search(int x) {
+        Trie* node = this;
+        int ans = 0;
+        for (int i = 30; ~i; --i) {
+            int v = x >> i & 1;
+            if (node->children[v ^ 1]) {
+                ans |= 1 << i;
+                node = node->children[v ^ 1];
+            } else {
+                node = node->children[v];
+            }
+        }
+        return ans;
+    }
 };
 
 class Solution {
 public:
-    int highest = 30;
-    Trie* root;
-
     int findMaximumXOR(vector<int>& nums) {
-        root = new Trie();
-        int res = 0;
-        for (int i = 1; i < nums.size(); ++i)
-        {
-            add(nums[i - 1]);
-            res = max(res, cal(nums[i]));
+        Trie* trie = new Trie();
+        int ans = 0;
+        for (int x : nums) {
+            trie->insert(x);
+            ans = max(ans, trie->search(x));
         }
-        return res;
-    }
-
-    int cal(int num) {
-        Trie* node = root;
-        int res = 0;
-        for (int i = highest; i >= 0; --i)
-        {
-            int bit = (num >> i) & 1;
-            if (bit == 0)
-            {
-                if (node->right)
-                {
-                    res = res * 2 + 1;
-                    node = node->right;
-                }
-                else
-                {
-                    res = res * 2;
-                    node = node->left;
-                }
-            }
-            else
-            {
-                if (node->left)
-                {
-                    res = res * 2 + 1;
-                    node = node->left;
-                }
-                else
-                {
-                    res = res * 2;
-                    node = node->right;
-                }
-            }
-        }
-        return res;
-    }
-
-    void add(int num) {
-        Trie* node = root;
-        for (int i = highest; i >= 0; --i)
-        {
-            int bit = (num >> i) & 1;
-            if (bit == 0)
-            {
-                if (!node->left) node->left = new Trie();
-                node = node->left;
-            }
-            else
-            {
-                if (!node->right) node->right = new Trie();
-                node = node->right;
-            }
-        }
+        return ans;
     }
 };

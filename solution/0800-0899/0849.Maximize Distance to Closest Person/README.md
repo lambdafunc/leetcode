@@ -1,10 +1,20 @@
-# [849. 到最近的人的最大距离](https://leetcode-cn.com/problems/maximize-distance-to-closest-person)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0849.Maximize%20Distance%20to%20Closest%20Person/README.md
+tags:
+    - 数组
+---
+
+<!-- problem:start -->
+
+# [849. 到最近的人的最大距离](https://leetcode.cn/problems/maximize-distance-to-closest-person)
 
 [English Version](/solution/0800-0899/0849.Maximize%20Distance%20to%20Closest%20Person/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个数组 <code>seats</code> 表示一排座位，其中 <code>seats[i] = 1</code> 代表有人坐在第 <code>i</code> 个座位上，<code>seats[i] = 0</code> 代表座位 <code>i</code> 上是空的（<strong>下标从 0 开始</strong>）。</p>
 
@@ -17,7 +27,7 @@
 <p> </p>
 
 <p><strong>示例 1：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0800-0899/0849.Maximize%20Distance%20to%20Closest%20Person/images/distance.jpg" style="width: 650px; height: 257px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0800-0899/0849.Maximize%20Distance%20to%20Closest%20Person/images/distance.jpg" style="width: 650px; height: 257px;" />
 <pre>
 <strong>输入：</strong>seats = [1,0,0,0,1,0,1]
 <strong>输出：</strong>2
@@ -55,32 +65,134 @@
 	<li>至少有一个 <strong>座位上有人</strong></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：一次遍历
+
+我们定义两个变量 $\textit{first}$ 和 $\textit{last}$ 分别表示第一个人和最后一个人的位置，用变量 $d$ 表示两个人之间的最大距离。
+
+然后遍历数组 $\textit{seats}$，如果当前位置有人，如果此前 $\textit{last}$ 更新过，说明此前有人，此时更新 $d = \max(d, i - \textit{last})$；如果此前 $\textit{first}$ 没有更新过，说明此前没有人，此时更新 $\textit{first} = i$。接下来更新 $\textit{last} = i$。
+
+最后返回 $\max(\textit{first}, n - \textit{last} - 1, d / 2)$ 即可。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组 $\textit{seats}$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def maxDistToClosest(self, seats: List[int]) -> int:
+        first = last = None
+        d = 0
+        for i, c in enumerate(seats):
+            if c:
+                if last is not None:
+                    d = max(d, i - last)
+                if first is None:
+                    first = i
+                last = i
+        return max(first, len(seats) - last - 1, d // 2)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int maxDistToClosest(int[] seats) {
+        int first = -1, last = -1;
+        int d = 0, n = seats.length;
+        for (int i = 0; i < n; ++i) {
+            if (seats[i] == 1) {
+                if (last != -1) {
+                    d = Math.max(d, i - last);
+                }
+                if (first == -1) {
+                    first = i;
+                }
+                last = i;
+            }
+        }
+        return Math.max(d / 2, Math.max(first, n - last - 1));
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int maxDistToClosest(vector<int>& seats) {
+        int first = -1, last = -1;
+        int d = 0, n = seats.size();
+        for (int i = 0; i < n; ++i) {
+            if (seats[i] == 1) {
+                if (last != -1) {
+                    d = max(d, i - last);
+                }
+                if (first == -1) {
+                    first = i;
+                }
+                last = i;
+            }
+        }
+        return max({d / 2, max(first, n - last - 1)});
+    }
+};
 ```
 
+#### Go
+
+```go
+func maxDistToClosest(seats []int) int {
+	first, last := -1, -1
+	d := 0
+	for i, c := range seats {
+		if c == 1 {
+			if last != -1 {
+				d = max(d, i-last)
+			}
+			if first == -1 {
+				first = i
+			}
+			last = i
+		}
+	}
+	return max(d/2, max(first, len(seats)-last-1))
+}
+```
+
+#### TypeScript
+
+```ts
+function maxDistToClosest(seats: number[]): number {
+    let first = -1,
+        last = -1;
+    let d = 0,
+        n = seats.length;
+    for (let i = 0; i < n; ++i) {
+        if (seats[i] === 1) {
+            if (last !== -1) {
+                d = Math.max(d, i - last);
+            }
+            if (first === -1) {
+                first = i;
+            }
+            last = i;
+        }
+    }
+    return Math.max(first, n - last - 1, d >> 1);
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,21 @@
-# [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0121.Best%20Time%20to%20Buy%20and%20Sell%20Stock/README.md
+tags:
+    - 数组
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [121. 买卖股票的最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock)
 
 [English Version](/solution/0100-0199/0121.Best%20Time%20to%20Buy%20and%20Sell%20Stock/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给定一个数组 <code>prices</code> ，它的第 <code>i</code> 个元素 <code>prices[i]</code> 表示一支给定股票第 <code>i</code> 天的价格。</p>
 
@@ -40,87 +51,111 @@
 	<li><code>0 <= prices[i] <= 10<sup>4</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：枚举 + 维护前缀最小值
+
+我们可以枚举数组 $nums$ 每个元素作为卖出价格，那么我们需要在前面找到一个最小值作为买入价格，这样才能使得利润最大化。
+
+因此，我们用一个变量 $mi$ 维护数组 $nums$ 的前缀最小值。接下来遍历数组 $nums$，对于每个元素 $v$，计算其与前面元素的最小值 $mi$ 的差值，更新答案为差值的最大值。然后更新 $mi = min(mi, v)$。继续遍历数组 $nums$，直到遍历结束。
+
+最后返回答案即可。
+
+时间复杂度 $O(n)$，其中 $n$ 是数组 $nums$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        res, mi = 0, prices[0]
-        for price in prices[1:]:
-            res = max(res, price - mi)
-            mi = min(mi, price)
-        return res
+        ans, mi = 0, inf
+        for v in prices:
+            ans = max(ans, v - mi)
+            mi = min(mi, v)
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int maxProfit(int[] prices) {
-        int res = 0, mi = prices[0];
-        for (int i = 1; i < prices.length; ++i) {
-            res = Math.max(res, prices[i] - mi);
-            mi = Math.min(mi, prices[i]);
+        int ans = 0, mi = prices[0];
+        for (int v : prices) {
+            ans = Math.max(ans, v - mi);
+            mi = Math.min(mi, v);
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int maxProfit(vector<int>& prices) {
-        int res = 0, mi = prices[0];
-        for (int i = 1; i < prices.size(); ++i) {
-            res = max(res, prices[i] - mi);
-            mi = min(mi, prices[i]);
+        int ans = 0, mi = prices[0];
+        for (int& v : prices) {
+            ans = max(ans, v - mi);
+            mi = min(mi, v);
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func maxProfit(prices []int) int {
-	res, mi := 0, prices[0]
-	for i := 1; i < len(prices); i++ {
-		res = max(res, prices[i]-mi)
-		mi = min(min, prices[i])
+func maxProfit(prices []int) (ans int) {
+	mi := prices[0]
+	for _, v := range prices {
+		ans = max(ans, v-mi)
+		mi = min(mi, v)
 	}
-	return res
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+	return
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+function maxProfit(prices: number[]): number {
+    let ans = 0;
+    let mi = prices[0];
+    for (const v of prices) {
+        ans = Math.max(ans, v - mi);
+        mi = Math.min(mi, v);
+    }
+    return ans;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn max_profit(prices: Vec<i32>) -> i32 {
+        let mut ans = 0;
+        let mut mi = prices[0];
+        for &v in &prices {
+            ans = ans.max(v - mi);
+            mi = mi.min(v);
+        }
+        ans
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -128,36 +163,53 @@ func min(a, b int) int {
  * @return {number}
  */
 var maxProfit = function (prices) {
-    let res = 0;
+    let ans = 0;
     let mi = prices[0];
-    for (let i = 1; i < prices.length; ++i) {
-        res = Math.max(res, prices[i] - mi);
-        mi = Math.min(mi, prices[i]);
+    for (const v of prices) {
+        ans = Math.max(ans, v - mi);
+        mi = Math.min(mi, v);
     }
-    return res;
+    return ans;
 };
 ```
 
-### **C#**
+#### C#
 
 ```cs
 public class Solution {
     public int MaxProfit(int[] prices) {
-        int res = 0, mi = prices[0];
-        for (int i = 1; i < prices.Length; ++i)
-        {
-            res = Math.Max(res, prices[i] - mi);
-            mi = Math.Min(mi, prices[i]);
+        int ans = 0, mi = prices[0];
+        foreach (int v in prices) {
+            ans = Math.Max(ans, v - mi);
+            mi = Math.Min(mi, v);
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **...**
+#### PHP
 
-```
-
+```php
+class Solution {
+    /**
+     * @param Integer[] $prices
+     * @return Integer
+     */
+    function maxProfit($prices) {
+        $ans = 0;
+        $mi = $prices[0];
+        foreach ($prices as $v) {
+            $ans = max($ans, $v - $mi);
+            $mi = min($mi, $v);
+        }
+        return $ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,141 +1,133 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1090.Largest%20Values%20From%20Labels/README_EN.md
+rating: 1501
+source: Weekly Contest 141 Q2
+tags:
+    - Greedy
+    - Array
+    - Hash Table
+    - Counting
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [1090. Largest Values From Labels](https://leetcode.com/problems/largest-values-from-labels)
 
 [中文文档](/solution/1000-1099/1090.Largest%20Values%20From%20Labels/README.md)
 
 ## Description
 
-<p>We have a set of items: the <code>i</code>-th item has value <code>values[i]</code> and label <code>labels[i]</code>.</p>
+<!-- description:start -->
 
-<p>Then, we choose&nbsp;a subset <code>S</code> of these items, such that:</p>
+<p>You are given <code>n</code> item&#39;s value and label as two integer arrays <code>values</code> and <code>labels</code>. You are also given two integers <code>numWanted</code> and <code>useLimit</code>.</p>
+
+<p>Your task is to find a subset of items with the <strong>maximum sum</strong> of their values such that:</p>
 
 <ul>
-	<li><code>|S| &lt;= num_wanted</code></li>
-	<li>For every label <code>L</code>, the number of items in <code>S</code> with&nbsp;label <code>L</code> is <code>&lt;= use_limit</code>.</li>
+	<li>The number of items is <strong>at most</strong> <code>numWanted</code>.</li>
+	<li>The number of items with the same label is <strong>at most</strong> <code>useLimit</code>.</li>
 </ul>
 
-<p>Return the largest possible sum of the subset <code>S</code>.</p>
+<p>Return the maximum sum.</p>
 
 <p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
-<div>
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">values = [5,4,3,2,1], labels = [1,1,2,2,3], numWanted = 3, useLimit = 1</span></p>
 
-<p><strong>Example 1:</strong></p>
+<p><strong>Output:</strong> <span class="example-io">9</span></p>
 
-<pre>
+<p><strong>Explanation:</strong></p>
 
-<strong>Input: </strong>values = <span id="example-input-1-1">[5,4,3,2,1]</span>, labels = <span id="example-input-1-2">[1,1,2,2,3]</span>, <code>num_wanted </code>= <span id="example-input-1-3">3</span>, use_limit = <span id="example-input-1-4">1</span>
+<p>The subset chosen is the first, third, and fifth items with the sum of values 5 + 3 + 1.</p>
+</div>
 
-<strong>Output: </strong><span id="example-output-1">9</span>
+<p><strong class="example">Example 2:</strong></p>
 
-<strong>Explanation: </strong>The subset chosen is the first, third, and fifth item.
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">values = [5,4,3,2,1], labels = [1,3,3,3,2], numWanted = 3, useLimit = 2</span></p>
 
-</pre>
+<p><strong>Output:</strong> <span class="example-io">12</span></p>
 
-<div>
+<p><strong>Explanation:</strong></p>
 
-<p><strong>Example 2:</strong></p>
+<p>The subset chosen is the first, second, and third items with the sum of values 5 + 4 + 3.</p>
+</div>
 
-<pre>
+<p><strong class="example">Example 3:</strong></p>
 
-<strong>Input: </strong>values = <span id="example-input-2-1">[5,4,3,2,1]</span>, labels = <span id="example-input-2-2">[1,3,3,3,2]</span>, <code>num_wanted </code>= <span id="example-input-2-3">3</span>, use_limit = <span id="example-input-2-4">2</span>
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">values = [9,8,8,7,6], labels = [0,0,0,1,1], numWanted = 3, useLimit = 1</span></p>
 
-<strong>Output: </strong><span id="example-output-2">12</span>
+<p><strong>Output:</strong> <span class="example-io">16</span></p>
 
-<strong>Explanation: </strong>The subset chosen is the first, second, and third item.
+<p><strong>Explanation:</strong></p>
 
-</pre>
-
-<div>
-
-<p><strong>Example 3:</strong></p>
-
-<pre>
-
-<strong>Input: </strong>values = <span id="example-input-3-1">[9,8,8,7,6]</span>, labels = <span id="example-input-3-2">[0,0,0,1,1]</span>, <code>num_wanted </code>= <span id="example-input-3-3">3</span>, use_limit = <span id="example-input-3-4">1</span>
-
-<strong>Output:</strong>&nbsp;16
-
-<strong>Explanation: </strong>The subset chosen is the first and fourth item.
-
-</pre>
-
-<div>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-
-<strong>Input: </strong>values = <span id="example-input-4-1">[9,8,8,7,6]</span>, labels = <span id="example-input-4-2">[0,0,0,1,1]</span>, <code>num_wanted </code>= <span id="example-input-4-3">3</span>, use_limit = <span id="example-input-4-4">2</span>
-
-<strong>Output: </strong><span id="example-output-4">24</span>
-
-<strong>Explanation: </strong>The subset chosen is the first, second, and fourth item.
-
-</pre>
+<p>The subset chosen is the first and fourth items with the sum of values 9 + 7.</p>
+</div>
 
 <p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><strong>Note:</strong></p>
+<ul>
+	<li><code>n == values.length == labels.length</code></li>
+	<li><code>1 &lt;= n &lt;= 2 * 10<sup>4</sup></code></li>
+	<li><code>0 &lt;= values[i], labels[i] &lt;= 2 * 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= numWanted, useLimit &lt;= n</code></li>
+</ul>
 
-<ol>
-	<li><code>1 &lt;= values.length == labels.length &lt;= 20000</code></li>
-	<li><code>0 &lt;= values[i], labels[i]&nbsp;&lt;= 20000</code></li>
-	<li><code>1 &lt;= num_wanted, use_limit&nbsp;&lt;= values.length</code></li>
-</ol>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
-    def largestValsFromLabels(self, values: List[int], labels: List[int], numWanted: int, useLimit: int) -> int:
-        n = len(values)
-        idx = list(range(n))
-        idx.sort(key=lambda i: -values[i])
+    def largestValsFromLabels(
+        self, values: List[int], labels: List[int], numWanted: int, useLimit: int
+    ) -> int:
         ans = num = 0
-        counter = Counter()
-        for i in idx:
-            v, l = values[i], labels[i]
-            if counter[l] < useLimit:
-                counter[l] += 1
-                ans += v
+        cnt = Counter()
+        for v, l in sorted(zip(values, labels), reverse=True):
+            if cnt[l] < useLimit:
+                cnt[l] += 1
                 num += 1
-            if num == numWanted:
-                break
+                ans += v
+                if num == numWanted:
+                    break
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int largestValsFromLabels(int[] values, int[] labels, int numWanted, int useLimit) {
         int n = values.length;
-        int[][] p = new int[n][2];
+        int[][] pairs = new int[n][2];
         for (int i = 0; i < n; ++i) {
-            p[i] = new int[]{values[i], labels[i]};
+            pairs[i] = new int[] {values[i], labels[i]};
         }
-        Arrays.sort(p, (a, b) -> b[0] - a[0]);
-        int ans = 0;
-        int num = 0;
-        Map<Integer, Integer> counter = new HashMap<>();
+        Arrays.sort(pairs, (a, b) -> b[0] - a[0]);
+        Map<Integer, Integer> cnt = new HashMap<>();
+        int ans = 0, num = 0;
         for (int i = 0; i < n && num < numWanted; ++i) {
-            int v = p[i][0], l = p[i][1];
-            if (counter.getOrDefault(l, 0) < useLimit) {
-                counter.put(l, counter.getOrDefault(l, 0) + 1);
+            int v = pairs[i][0], l = pairs[i][1];
+            if (cnt.getOrDefault(l, 0) < useLimit) {
+                cnt.merge(l, 1, Integer::sum);
+                num += 1;
                 ans += v;
-                ++num;
             }
         }
         return ans;
@@ -143,24 +135,24 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int largestValsFromLabels(vector<int>& values, vector<int>& labels, int numWanted, int useLimit) {
         int n = values.size();
-        vector<pair<int, int>> p;
-        for (int i = 0; i < n; ++i) p.emplace_back(values[i], labels[i]);
-        sort(p.begin(), p.end());
-        unordered_map<int, int> counter;
+        vector<pair<int, int>> pairs(n);
+        for (int i = 0; i < n; ++i) {
+            pairs[i] = {-values[i], labels[i]};
+        }
+        sort(pairs.begin(), pairs.end());
+        unordered_map<int, int> cnt;
         int ans = 0, num = 0;
-        for (int i = n - 1; i >= 0 && num < numWanted; --i)
-        {
-            int v = p[i].first, l = p[i].second;
-            if (counter[l] < useLimit)
-            {
-                ++counter[l];
+        for (int i = 0; i < n && num < numWanted; ++i) {
+            int v = -pairs[i].first, l = pairs[i].second;
+            if (cnt[l] < useLimit) {
+                ++cnt[l];
                 ++num;
                 ans += v;
             }
@@ -170,38 +162,60 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func largestValsFromLabels(values []int, labels []int, numWanted int, useLimit int) int {
-	var p [][]int
-	for i, v := range values {
-		p = append(p, []int{v, labels[i]})
+func largestValsFromLabels(values []int, labels []int, numWanted int, useLimit int) (ans int) {
+	n := len(values)
+	pairs := make([][2]int, n)
+	for i := 0; i < n; i++ {
+		pairs[i] = [2]int{values[i], labels[i]}
 	}
-	sort.Slice(p, func(i, j int) bool {
-		return p[i][0] > p[j][0]
-	})
-	counter := make(map[int]int)
-	ans, num := 0, 0
-	for _, t := range p {
-		if num >= numWanted {
-			break
-		}
-		v, l := t[0], t[1]
-		if counter[l] < useLimit {
-			counter[l]++
+	sort.Slice(pairs, func(i, j int) bool { return pairs[i][0] > pairs[j][0] })
+	cnt := map[int]int{}
+	for i, num := 0, 0; i < n && num < numWanted; i++ {
+		v, l := pairs[i][0], pairs[i][1]
+		if cnt[l] < useLimit {
+			cnt[l]++
 			num++
 			ans += v
 		}
 	}
-	return ans
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function largestValsFromLabels(
+    values: number[],
+    labels: number[],
+    numWanted: number,
+    useLimit: number,
+): number {
+    const n = values.length;
+    const pairs = new Array(n);
+    for (let i = 0; i < n; ++i) {
+        pairs[i] = [values[i], labels[i]];
+    }
+    pairs.sort((a, b) => b[0] - a[0]);
+    const cnt: Map<number, number> = new Map();
+    let ans = 0;
+    for (let i = 0, num = 0; i < n && num < numWanted; ++i) {
+        const [v, l] = pairs[i];
+        if ((cnt.get(l) || 0) < useLimit) {
+            cnt.set(l, (cnt.get(l) || 0) + 1);
+            ++num;
+            ans += v;
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

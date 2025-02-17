@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2120.Execution%20of%20All%20Suffix%20Instructions%20Staying%20in%20a%20Grid/README_EN.md
+rating: 1379
+source: Weekly Contest 273 Q2
+tags:
+    - String
+    - Simulation
+---
+
+<!-- problem:start -->
+
 # [2120. Execution of All Suffix Instructions Staying in a Grid](https://leetcode.com/problems/execution-of-all-suffix-instructions-staying-in-a-grid)
 
 [中文文档](/solution/2100-2199/2120.Execution%20of%20All%20Suffix%20Instructions%20Staying%20in%20a%20Grid/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>There is an <code>n x n</code> grid, with the top-left cell at <code>(0, 0)</code> and the bottom-right cell at <code>(n - 1, n - 1)</code>. You are given the integer <code>n</code> and an integer array <code>startPos</code> where <code>startPos = [start<sub>row</sub>, start<sub>col</sub>]</code> indicates that a robot is initially at cell <code>(start<sub>row</sub>, start<sub>col</sub>)</code>.</p>
 
@@ -18,8 +33,8 @@
 <p>Return <em>an array</em> <code>answer</code> <em>of length</em> <code>m</code> <em>where</em> <code>answer[i]</code> <em>is <strong>the number of instructions</strong> the robot can execute if the robot <strong>begins executing from</strong> the</em> <code>i<sup>th</sup></code> <em>instruction in</em> <code>s</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2100-2199/2120.Execution%20of%20All%20Suffix%20Instructions%20Staying%20in%20a%20Grid/images/1.png" style="width: 145px; height: 142px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2100-2199/2120.Execution%20of%20All%20Suffix%20Instructions%20Staying%20in%20a%20Grid/images/1.png" style="width: 145px; height: 142px;" />
 <pre>
 <strong>Input:</strong> n = 3, startPos = [0,1], s = &quot;RRDDLU&quot;
 <strong>Output:</strong> [1,5,4,3,1,0]
@@ -32,8 +47,8 @@
 - 5<sup>th</sup>:      &quot;U&quot;. If moving up, it would move off the grid.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2100-2199/2120.Execution%20of%20All%20Suffix%20Instructions%20Staying%20in%20a%20Grid/images/2.png" style="width: 106px; height: 103px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2100-2199/2120.Execution%20of%20All%20Suffix%20Instructions%20Staying%20in%20a%20Grid/images/2.png" style="width: 106px; height: 103px;" />
 <pre>
 <strong>Input:</strong> n = 2, startPos = [1,1], s = &quot;LURD&quot;
 <strong>Output:</strong> [4,1,0,0]
@@ -44,8 +59,8 @@
 - 3<sup>rd</sup>:    &quot;D&quot;.
 </pre>
 
-<p><strong>Example 3:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2100-2199/2120.Execution%20of%20All%20Suffix%20Instructions%20Staying%20in%20a%20Grid/images/3.png" style="width: 67px; height: 64px;" />
+<p><strong class="example">Example 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2100-2199/2120.Execution%20of%20All%20Suffix%20Instructions%20Staying%20in%20a%20Grid/images/3.png" style="width: 67px; height: 64px;" />
 <pre>
 <strong>Input:</strong> n = 1, startPos = [0,0], s = &quot;LRUD&quot;
 <strong>Output:</strong> [0,0,0,0]
@@ -63,23 +78,24 @@
 	<li><code>s</code> consists of <code>&#39;L&#39;</code>, <code>&#39;R&#39;</code>, <code>&#39;U&#39;</code>, and <code>&#39;D&#39;</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def executeInstructions(self, n: int, startPos: List[int], s: str) -> List[int]:
         ans = []
         m = len(s)
-        mp = {
-            "L": [0, -1],
-            "R": [0, 1],
-            "U": [-1, 0],
-            "D": [1, 0]
-        }
+        mp = {"L": [0, -1], "R": [0, 1], "U": [-1, 0], "D": [1, 0]}
         for i in range(m):
             x, y = startPos
             t = 0
@@ -93,7 +109,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -101,10 +117,10 @@ class Solution {
         int m = s.length();
         int[] ans = new int[m];
         Map<Character, int[]> mp = new HashMap<>(4);
-        mp.put('L', new int[]{0, -1});
-        mp.put('R', new int[]{0, 1});
-        mp.put('U', new int[]{-1, 0});
-        mp.put('D', new int[]{1, 0});
+        mp.put('L', new int[] {0, -1});
+        mp.put('R', new int[] {0, 1});
+        mp.put('U', new int[] {-1, 0});
+        mp.put('D', new int[] {1, 0});
         for (int i = 0; i < m; ++i) {
             int x = startPos[0], y = startPos[1];
             int t = 0;
@@ -126,7 +142,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -139,20 +155,17 @@ public:
         mp['R'] = {0, 1};
         mp['U'] = {-1, 0};
         mp['D'] = {1, 0};
-        for (int i = 0; i < m; ++i)
-        {
+        for (int i = 0; i < m; ++i) {
             int x = startPos[0], y = startPos[1];
             int t = 0;
-            for (int j = i; j < m; ++j)
-            {
+            for (int j = i; j < m; ++j) {
                 int a = mp[s[j]][0], b = mp[s[j]][1];
-                if (0 <= x + a && x + a < n && 0 <= y + b && y + b < n)
-                {
+                if (0 <= x + a && x + a < n && 0 <= y + b && y + b < n) {
                     x += a;
                     y += b;
                     ++t;
-                }
-                else break;
+                } else
+                    break;
             }
             ans[i] = t;
         }
@@ -161,7 +174,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func executeInstructions(n int, startPos []int, s string) []int {
@@ -191,16 +204,111 @@ func executeInstructions(n int, startPos []int, s string) []int {
 }
 ```
 
-### **TypeScript**
+#### TypeScript
 
 ```ts
-
+function executeInstructions(n: number, startPos: number[], s: string): number[] {
+    const m = s.length;
+    const ans = new Array(m);
+    for (let i = 0; i < m; i++) {
+        let [y, x] = startPos;
+        let j: number;
+        for (j = i; j < m; j++) {
+            const c = s[j];
+            if (c === 'U') {
+                y--;
+            } else if (c === 'D') {
+                y++;
+            } else if (c === 'L') {
+                x--;
+            } else {
+                x++;
+            }
+            if (y === -1 || y === n || x === -1 || x === n) {
+                break;
+            }
+        }
+        ans[i] = j - i;
+    }
+    return ans;
+}
 ```
 
-### **...**
+#### Rust
 
+```rust
+impl Solution {
+    pub fn execute_instructions(n: i32, start_pos: Vec<i32>, s: String) -> Vec<i32> {
+        let s = s.as_bytes();
+        let m = s.len();
+        let mut ans = vec![0; m];
+        for i in 0..m {
+            let mut y = start_pos[0];
+            let mut x = start_pos[1];
+            let mut j = i;
+            while j < m {
+                match s[j] {
+                    b'U' => {
+                        y -= 1;
+                    }
+                    b'D' => {
+                        y += 1;
+                    }
+                    b'L' => {
+                        x -= 1;
+                    }
+                    _ => {
+                        x += 1;
+                    }
+                }
+                if y == -1 || y == n || x == -1 || x == n {
+                    break;
+                }
+                j += 1;
+            }
+            ans[i] = (j - i) as i32;
+        }
+        ans
+    }
+}
 ```
 
+#### C
+
+```c
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* executeInstructions(int n, int* startPos, int startPosSize, char* s, int* returnSize) {
+    int m = strlen(s);
+    int* ans = malloc(sizeof(int) * m);
+    for (int i = 0; i < m; i++) {
+        int y = startPos[0];
+        int x = startPos[1];
+        int j = i;
+        for (j = i; j < m; j++) {
+            if (s[j] == 'U') {
+                y--;
+            } else if (s[j] == 'D') {
+                y++;
+            } else if (s[j] == 'L') {
+                x--;
+            } else {
+                x++;
+            }
+            if (y == -1 || y == n || x == -1 || x == n) {
+                break;
+            }
+        }
+        ans[i] = j - i;
+    }
+    *returnSize = m;
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

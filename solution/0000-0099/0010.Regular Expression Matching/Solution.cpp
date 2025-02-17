@@ -2,27 +2,26 @@ class Solution {
 public:
     bool isMatch(string s, string p) {
         int m = s.size(), n = p.size();
-        if (n == 0) return m == 0;
-        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
-        dp[0][0] = true;
-        for (int j = 1; j < n + 1; ++j) {
-            if (p[j - 1] == '*') {
-                dp[0][j] = dp[0][j - 2];
+        int f[m + 1][n + 1];
+        memset(f, 0, sizeof f);
+        function<bool(int, int)> dfs = [&](int i, int j) -> bool {
+            if (j >= n) {
+                return i == m;
             }
-        }
-        for (int i = 1; i < m + 1; ++i) {
-            for (int j = 1; j < n + 1; ++j) {
-                if (s[i - 1] == p[j - 1] || p[j - 1] == '.') {
-                    dp[i][j] = dp[i - 1][j - 1];
-                } else if (p[j - 1] == '*') {
-                    if (s[i - 1] == p[j - 2] || p[j - 2] == '.') {
-                        dp[i][j] = dp[i][j - 2] || dp[i - 1][j];
-                    } else {
-                        dp[i][j] = dp[i][j - 2];
-                    }
+            if (f[i][j]) {
+                return f[i][j] == 1;
+            }
+            int res = -1;
+            if (j + 1 < n && p[j + 1] == '*') {
+                if (dfs(i, j + 2) or (i < m and (s[i] == p[j] or p[j] == '.') and dfs(i + 1, j))) {
+                    res = 1;
                 }
+            } else if (i < m and (s[i] == p[j] or p[j] == '.') and dfs(i + 1, j + 1)) {
+                res = 1;
             }
-        }
-        return dp[m][n];
+            f[i][j] = res;
+            return res == 1;
+        };
+        return dfs(0, 0);
     }
 };

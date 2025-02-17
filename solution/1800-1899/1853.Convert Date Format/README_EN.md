@@ -1,8 +1,20 @@
-# [1853. Convert Date Format](https://leetcode.com/problems/convert-date-format)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1853.Convert%20Date%20Format/README_EN.md
+tags:
+    - Database
+---
+
+<!-- problem:start -->
+
+# [1853. Convert Date Format 🔒](https://leetcode.com/problems/convert-date-format)
 
 [中文文档](/solution/1800-1899/1853.Convert%20Date%20Format/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Table: <code>Days</code></p>
 
@@ -12,20 +24,22 @@
 +-------------+------+
 | day         | date |
 +-------------+------+
-day is the primary key for this table.
+day is the column with unique values for this table.
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query to convert each date in <code>Days</code> into a string formatted as <code>&quot;day_name, month_name day, year&quot;</code>.</p>
+<p>Write a solution&nbsp;to convert each date in <code>Days</code> into a string formatted as <code>&quot;day_name, month_name day, year&quot;</code>.</p>
 
-<p>Return the result table <strong>in any order</strong>.</p>
+<p>Return the result table in <strong>any order</strong>.</p>
 
-<p>The query result format is in the following example:</p>
+<p>The&nbsp;result format is in the following example.</p>
 
 <p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
+<strong>Input:</strong> 
 Days table:
 +------------+
 | day        |
@@ -34,8 +48,7 @@ Days table:
 | 2021-08-09 |
 | 2020-06-26 |
 +------------+
-
-Result table:
+<strong>Output:</strong> 
 +-------------------------+
 | day                     |
 +-------------------------+
@@ -43,17 +56,28 @@ Result table:
 | Monday, August 9, 2021  |
 | Friday, June 26, 2020   |
 +-------------------------+
-Please note that the output is case-sensitive.
+<strong>Explanation:</strong> Please note that the output is case-sensitive.
 </pre>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **SQL**
+#### MySQL
 
 ```sql
-
+# Write your MySQL query statement below
+SELECT DATE_FORMAT(day, '%W, %M %e, %Y') AS day FROM Days;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

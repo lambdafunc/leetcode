@@ -1,40 +1,50 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0133.Clone%20Graph/README_EN.md
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Graph
+    - Hash Table
+---
+
+<!-- problem:start -->
+
 # [133. Clone Graph](https://leetcode.com/problems/clone-graph)
 
 [中文文档](/solution/0100-0199/0133.Clone%20Graph/README.md)
 
 ## Description
 
-<p>Given a reference of a node in a&nbsp;<strong><a href="https://en.wikipedia.org/wiki/Connectivity_(graph_theory)#Connected_graph" target="_blank">connected</a></strong>&nbsp;undirected graph.</p>
+<!-- description:start -->
+
+<p>Given a reference of a node in a <strong><a href="https://en.wikipedia.org/wiki/Connectivity_(graph_theory)#Connected_graph" target="_blank">connected</a></strong> undirected graph.</p>
 
 <p>Return a <a href="https://en.wikipedia.org/wiki/Object_copying#Deep_copy" target="_blank"><strong>deep copy</strong></a> (clone) of the graph.</p>
 
-<p>Each node in the graph contains a val (<code>int</code>) and a list (<code>List[Node]</code>) of its neighbors.</p>
+<p>Each node in the graph contains a value (<code>int</code>) and a list (<code>List[Node]</code>) of its neighbors.</p>
 
 <pre>
-
 class Node {
-
     public int val;
-
     public List&lt;Node&gt; neighbors;
-
 }
-
 </pre>
 
 <p>&nbsp;</p>
 
 <p><strong>Test case format:</strong></p>
 
-<p>For simplicity sake, each&nbsp;node&#39;s value is the same as the node&#39;s index (1-indexed). For example, the first node with&nbsp;<code>val = 1</code>, the second node with <code>val = 2</code>, and so on.&nbsp;The graph is represented in the test case using an adjacency list.</p>
+<p>For simplicity, each node&#39;s value is the same as the node&#39;s index (1-indexed). For example, the first node with <code>val == 1</code>, the second node with <code>val == 2</code>, and so on. The graph is represented in the test case using an adjacency list.</p>
 
-<p><b>Adjacency list</b>&nbsp;is a collection of unordered&nbsp;<b>lists</b>&nbsp;used to represent a finite graph. Each&nbsp;list&nbsp;describes the set of neighbors of a node in the graph.</p>
+<p><b>An adjacency list</b> is a collection of unordered <b>lists</b> used to represent a finite graph. Each list describes the set of neighbors of a node in the graph.</p>
 
-<p>The given node will&nbsp;always be the first node&nbsp;with&nbsp;<code>val = 1</code>. You must return the <strong>copy of the given node</strong> as a reference to the cloned graph.</p>
+<p>The given node will always be the first node with <code>val = 1</code>. You must return the <strong>copy of the given node</strong> as a reference to the cloned graph.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0133.Clone%20Graph/images/133_clone_graph_question.png" style="width: 500px; height: 550px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0133.Clone%20Graph/images/133_clone_graph_question.png" style="width: 454px; height: 500px;" />
 <pre>
 <strong>Input:</strong> adjList = [[2,4],[1,3],[2,4],[1,3]]
 <strong>Output:</strong> [[2,4],[1,3],[2,4],[1,3]]
@@ -45,15 +55,15 @@ class Node {
 4th node (val = 4)&#39;s neighbors are 1st node (val = 1) and 3rd node (val = 3).
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0133.Clone%20Graph/images/graph.png" style="width: 163px; height: 148px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0133.Clone%20Graph/images/graph.png" style="width: 163px; height: 148px;" />
 <pre>
 <strong>Input:</strong> adjList = [[]]
 <strong>Output:</strong> [[]]
 <strong>Explanation:</strong> Note that the input contains one empty list. The graph consists of only one node with val = 1 and it does not have any neighbors.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> adjList = []
@@ -61,29 +71,28 @@ class Node {
 <strong>Explanation:</strong> This an empty graph, it does not have any nodes.
 </pre>
 
-<p><strong>Example 4:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0133.Clone%20Graph/images/graph-1.png" style="width: 272px; height: 133px;" />
-<pre>
-<strong>Input:</strong> adjList = [[2],[1]]
-<strong>Output:</strong> [[2],[1]]
-</pre>
-
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
 <ul>
+	<li>The number of nodes in the graph is in the range <code>[0, 100]</code>.</li>
 	<li><code>1 &lt;= Node.val &lt;= 100</code></li>
 	<li><code>Node.val</code> is unique for each node.</li>
-	<li>Number of Nodes will not exceed 100.</li>
-	<li>There is no repeated edges and no self-loops in the graph.</li>
+	<li>There are no repeated edges and no self-loops in the graph.</li>
 	<li>The Graph is connected and all nodes can be visited starting from the given node.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 """
@@ -113,7 +122,7 @@ class Solution:
         return clone(node)
 ```
 
-### **Java**
+#### Java
 
 ```java
 /*
@@ -156,44 +165,7 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-/**
- * Definition for Node.
- * class Node {
- *     val: number
- *     neighbors: Node[]
- *     constructor(val?: number, neighbors?: Node[]) {
- *         this.val = (val===undefined ? 0 : val)
- *         this.neighbors = (neighbors===undefined ? [] : neighbors)
- *     }
- * }
- */
-
-function cloneGraph(node: Node | null): Node | null {
-    if (node == null) return null;
-
-    const visited = new Map();
-    visited.set(node, new Node(node.val));
-    const queue = [node];
-    while (queue.length) {
-        const cur = queue.shift();
-        for (let neighbor of cur.neighbors || []) {
-            if (!visited.has(neighbor)) {
-                queue.push(neighbor);
-                const newNeighbor = new Node(neighbor.val, []);
-                visited.set(neighbor, newNeighbor);
-            }
-            const newNode = visited.get(cur);
-            newNode.neighbors.push(visited.get(neighbor));
-        }
-    }
-    return visited.get(node);
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 /*
@@ -233,7 +205,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -266,10 +238,84 @@ func cloneGraph(node *Node) *Node {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+/**
+ * Definition for Node.
+ * class Node {
+ *     val: number
+ *     neighbors: Node[]
+ *     constructor(val?: number, neighbors?: Node[]) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.neighbors = (neighbors===undefined ? [] : neighbors)
+ *     }
+ * }
+ */
+
+function cloneGraph(node: Node | null): Node | null {
+    if (node == null) return null;
+
+    const visited = new Map();
+    visited.set(node, new Node(node.val));
+    const queue = [node];
+    while (queue.length) {
+        const cur = queue.shift();
+        for (let neighbor of cur.neighbors || []) {
+            if (!visited.has(neighbor)) {
+                queue.push(neighbor);
+                const newNeighbor = new Node(neighbor.val, []);
+                visited.set(neighbor, newNeighbor);
+            }
+            const newNode = visited.get(cur);
+            newNode.neighbors.push(visited.get(neighbor));
+        }
+    }
+    return visited.get(node);
+}
 ```
 
+#### C#
+
+```cs
+using System.Collections.Generic;
+
+public class Solution {
+    public Node CloneGraph(Node node) {
+        if (node == null) return null;
+        var dict = new Dictionary<int, Node>();
+        var queue = new Queue<Node>();
+        queue.Enqueue(CloneVal(node));
+        dict.Add(node.val, queue.Peek());
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+            var newNeighbors = new List<Node>(current.neighbors.Count);
+            foreach (var oldNeighbor in current.neighbors)
+            {
+                Node newNeighbor;
+                if (!dict.TryGetValue(oldNeighbor.val, out newNeighbor))
+                {
+                    newNeighbor = CloneVal(oldNeighbor);
+                    queue.Enqueue(newNeighbor);
+                    dict.Add(newNeighbor.val, newNeighbor);
+                }
+                newNeighbors.Add(newNeighbor);
+            }
+            current.neighbors = newNeighbors;
+        }
+        return dict[node.val];
+    }
+
+    private Node CloneVal(Node node)
+    {
+        return new Node(node.val, new List<Node>(node.neighbors));
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

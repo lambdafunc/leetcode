@@ -1,8 +1,21 @@
-# [1826. Faulty Sensor](https://leetcode.com/problems/faulty-sensor)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1826.Faulty%20Sensor/README_EN.md
+tags:
+    - Array
+    - Two Pointers
+---
+
+<!-- problem:start -->
+
+# [1826. Faulty Sensor 🔒](https://leetcode.com/problems/faulty-sensor)
 
 [中文文档](/solution/1800-1899/1826.Faulty%20Sensor/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>An experiment is being conducted in a lab. To ensure accuracy, there are<strong> two </strong>sensors collecting data simultaneously. You are given two arrays <code>sensor1</code> and <code>sensor2</code>, where <code>sensor1[i]</code> and <code>sensor2[i]</code> are the <code>i<sup>th</sup></code> data points collected by the two sensors.</p>
 
@@ -15,7 +28,7 @@
 <p>We know that there is a defect in <strong>at most one</strong> of the sensors. Return <em>the sensor number (</em><code>1</code><em> or </em><code>2</code><em>) with the defect. If there is <strong>no defect</strong> in either sensor or if it is<strong> impossible</strong> to determine the defective sensor, return </em><code>-1</code><em>.</em></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> sensor1 = [2,3,4,5], sensor2 = [2,1,3,4]
@@ -24,7 +37,7 @@
 The second data point from sensor 2 is dropped, and the last value of sensor 1 is replaced by a 5.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> sensor1 = [2,2,2,2,2], sensor2 = [2,2,2,2,5]
@@ -33,7 +46,7 @@ The second data point from sensor 2 is dropped, and the last value of sensor 1 i
 Dropping the last value for either sensor could produce the output for the other sensor.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> sensor1 = [2,3,2,2,3,2], sensor2 = [2,3,2,3,2,7]
@@ -51,26 +64,127 @@ The fourth data point from sensor 1 is dropped, and the last value of sensor 1 i
 	<li><code>1 &lt;= sensor1[i], sensor2[i] &lt;= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Traversal
+
+Traverse both arrays, find the first unequal position $i$. If $i \lt n - 1$, loop to compare $sensor1[i + 1]$ and $sensor2[i]$, if they are not equal, it indicates that sensor $1$ is defective, return $1$; otherwise compare $sensor1[i]$ and $sensor2[i + 1]$, if they are not equal, it indicates that sensor $2$ is defective, return $2$.
+
+If the traversal ends, it means that the defective sensor cannot be determined, return $-1$.
+
+The time complexity is $O(n)$, where $n$ is the length of the array. The space complexity is $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def badSensor(self, sensor1: List[int], sensor2: List[int]) -> int:
+        i, n = 0, len(sensor1)
+        while i < n - 1:
+            if sensor1[i] != sensor2[i]:
+                break
+            i += 1
+        while i < n - 1:
+            if sensor1[i + 1] != sensor2[i]:
+                return 1
+            if sensor1[i] != sensor2[i + 1]:
+                return 2
+            i += 1
+        return -1
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public int badSensor(int[] sensor1, int[] sensor2) {
+        int i = 0;
+        int n = sensor1.length;
+        for (; i < n - 1 && sensor1[i] == sensor2[i]; ++i) {
+        }
+        for (; i < n - 1; ++i) {
+            if (sensor1[i + 1] != sensor2[i]) {
+                return 1;
+            }
+            if (sensor1[i] != sensor2[i + 1]) {
+                return 2;
+            }
+        }
+        return -1;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int badSensor(vector<int>& sensor1, vector<int>& sensor2) {
+        int i = 0;
+        int n = sensor1.size();
+        for (; i < n - 1 && sensor1[i] == sensor2[i]; ++i) {}
+        for (; i < n - 1; ++i) {
+            if (sensor1[i + 1] != sensor2[i]) return 1;
+            if (sensor1[i] != sensor2[i + 1]) return 2;
+        }
+        return -1;
+    }
+};
 ```
 
+#### Go
+
+```go
+func badSensor(sensor1 []int, sensor2 []int) int {
+	i, n := 0, len(sensor1)
+	for ; i < n-1 && sensor1[i] == sensor2[i]; i++ {
+	}
+	for ; i < n-1; i++ {
+		if sensor1[i+1] != sensor2[i] {
+			return 1
+		}
+		if sensor1[i] != sensor2[i+1] {
+			return 2
+		}
+	}
+	return -1
+}
+```
+
+#### TypeScript
+
+```ts
+function badSensor(sensor1: number[], sensor2: number[]): number {
+    let i = 0;
+    const n = sensor1.length;
+    while (i < n - 1) {
+        if (sensor1[i] !== sensor2[i]) {
+            break;
+        }
+        ++i;
+    }
+    while (i < n - 1) {
+        if (sensor1[i + 1] !== sensor2[i]) {
+            return 1;
+        }
+        if (sensor1[i] !== sensor2[i + 1]) {
+            return 2;
+        }
+        ++i;
+    }
+    return -1;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

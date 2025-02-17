@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2095.Delete%20the%20Middle%20Node%20of%20a%20Linked%20List/README_EN.md
+rating: 1324
+source: Weekly Contest 270 Q2
+tags:
+    - Linked List
+    - Two Pointers
+---
+
+<!-- problem:start -->
+
 # [2095. Delete the Middle Node of a Linked List](https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list)
 
 [中文文档](/solution/2000-2099/2095.Delete%20the%20Middle%20Node%20of%20a%20Linked%20List/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given the <code>head</code> of a linked list. <strong>Delete</strong> the <strong>middle node</strong>, and return <em>the</em> <code>head</code> <em>of the modified linked list</em>.</p>
 
@@ -13,8 +28,8 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2095.Delete%20the%20Middle%20Node%20of%20a%20Linked%20List/images/eg1drawio.png" style="width: 500px; height: 77px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2095.Delete%20the%20Middle%20Node%20of%20a%20Linked%20List/images/eg1drawio.png" style="width: 500px; height: 77px;" />
 <pre>
 <strong>Input:</strong> head = [1,3,4,7,1,2,6]
 <strong>Output:</strong> [1,3,4,1,2,6]
@@ -24,8 +39,8 @@ Since n = 7, node 3 with value 7 is the middle node, which is marked in red.
 We return the new list after removing this node. 
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2095.Delete%20the%20Middle%20Node%20of%20a%20Linked%20List/images/eg2drawio.png" style="width: 250px; height: 43px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2095.Delete%20the%20Middle%20Node%20of%20a%20Linked%20List/images/eg2drawio.png" style="width: 250px; height: 43px;" />
 <pre>
 <strong>Input:</strong> head = [1,2,3,4]
 <strong>Output:</strong> [1,2,4]
@@ -34,8 +49,8 @@ The above figure represents the given linked list.
 For n = 4, node 2 with value 3 is the middle node, which is marked in red.
 </pre>
 
-<p><strong>Example 3:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2095.Delete%20the%20Middle%20Node%20of%20a%20Linked%20List/images/eg3drawio.png" style="width: 150px; height: 58px;" />
+<p><strong class="example">Example 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2095.Delete%20the%20Middle%20Node%20of%20a%20Linked%20List/images/eg3drawio.png" style="width: 150px; height: 58px;" />
 <pre>
 <strong>Input:</strong> head = [2,1]
 <strong>Output:</strong> [2]
@@ -52,11 +67,23 @@ Node 0 with value 2 is the only node remaining after removing node 1.</pre>
 	<li><code>1 &lt;= Node.val &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Fast and Slow Pointers
+
+The fast and slow pointer technique is a common method used to solve problems related to linked lists. We can maintain two pointers, a slow pointer $\textit{slow}$ and a fast pointer $\textit{fast}$. Initially, $\textit{slow}$ points to a dummy node, whose $\textit{next}$ pointer points to the head node $\textit{head}$ of the list, while $\textit{fast}$ points to the head node $\textit{head}$.
+
+Then, we move the slow pointer one position backward and the fast pointer two positions backward each time, until the fast pointer reaches the end of the list. At this point, the node next to the node pointed by the slow pointer is the middle node of the list. We can remove the middle node by setting the $\textit{next}$ pointer of the node pointed by the slow pointer to point to the next next node.
+
+The time complexity is $O(n)$, where $n$ is the length of the list. The space complexity is $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -75,7 +102,7 @@ class Solution:
         return dummy.next
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -102,35 +129,7 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-/**
- * Definition for singly-linked list.
- * class ListNode {
- *     val: number
- *     next: ListNode | null
- *     constructor(val?: number, next?: ListNode | null) {
- *         this.val = (val===undefined ? 0 : val)
- *         this.next = (next===undefined ? null : next)
- *     }
- * }
- */
-
-function deleteMiddle(head: ListNode | null): ListNode | null {
-    if (!head || !head.next) return null;
-    let fast = head.next,
-        slow = head;
-    while (fast.next && fast.next.next) {
-        slow = slow.next;
-        fast = fast.next.next;
-    }
-    slow.next = slow.next.next;
-    return head;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -149,8 +148,7 @@ public:
         ListNode* dummy = new ListNode(0, head);
         ListNode* slow = dummy;
         ListNode* fast = head;
-        while (fast && fast->next)
-        {
+        while (fast && fast->next) {
             slow = slow->next;
             fast = fast->next->next;
         }
@@ -160,7 +158,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -181,10 +179,35 @@ func deleteMiddle(head *ListNode) *ListNode {
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
 
+function deleteMiddle(head: ListNode | null): ListNode | null {
+    const dummy = new ListNode(0, head);
+    let [slow, fast] = [dummy, head];
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    slow.next = slow.next.next;
+    return dummy.next;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

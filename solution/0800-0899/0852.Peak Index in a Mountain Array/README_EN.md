@@ -1,59 +1,73 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0852.Peak%20Index%20in%20a%20Mountain%20Array/README_EN.md
+tags:
+    - Array
+    - Binary Search
+---
+
+<!-- problem:start -->
+
 # [852. Peak Index in a Mountain Array](https://leetcode.com/problems/peak-index-in-a-mountain-array)
 
 [中文文档](/solution/0800-0899/0852.Peak%20Index%20in%20a%20Mountain%20Array/README.md)
 
 ## Description
 
-<p>Let&#39;s call an array <code>arr</code> a <strong>mountain</strong>&nbsp;if the following properties hold:</p>
+<!-- description:start -->
 
-<ul>
-	<li><code>arr.length &gt;= 3</code></li>
-	<li>There exists some <code>i</code> with&nbsp;<code>0 &lt; i&nbsp;&lt; arr.length - 1</code>&nbsp;such that:
-	<ul>
-		<li><code>arr[0] &lt; arr[1] &lt; ... arr[i-1] &lt; arr[i] </code></li>
-		<li><code>arr[i] &gt; arr[i+1] &gt; ... &gt; arr[arr.length - 1]</code></li>
-	</ul>
-	</li>
-</ul>
+<p>You are given an integer <strong>mountain</strong> array <code>arr</code> of length <code>n</code> where the values increase to a <strong>peak element</strong> and then decrease.</p>
 
-<p>Given an integer array <code>arr</code> that is <strong>guaranteed</strong> to be&nbsp;a mountain, return any&nbsp;<code>i</code>&nbsp;such that&nbsp;<code>arr[0] &lt; arr[1] &lt; ... arr[i - 1] &lt; arr[i] &gt; arr[i + 1] &gt; ... &gt; arr[arr.length - 1]</code>.</p>
+<p>Return the index of the peak element.</p>
+
+<p>Your task is to solve it in <code>O(log(n))</code> time complexity.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<pre><strong>Input:</strong> arr = [0,1,0]
-<strong>Output:</strong> 1
-</pre><p><strong>Example 2:</strong></p>
-<pre><strong>Input:</strong> arr = [0,2,1,0]
-<strong>Output:</strong> 1
-</pre><p><strong>Example 3:</strong></p>
-<pre><strong>Input:</strong> arr = [0,10,5,2]
-<strong>Output:</strong> 1
-</pre><p><strong>Example 4:</strong></p>
-<pre><strong>Input:</strong> arr = [3,4,5,1]
-<strong>Output:</strong> 2
-</pre><p><strong>Example 5:</strong></p>
-<pre><strong>Input:</strong> arr = [24,69,100,99,79,78,67,36,26,19]
-<strong>Output:</strong> 2
-</pre>
+<p><strong class="example">Example 1:</strong></p>
+
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">arr = [0,1,0]</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">1</span></p>
+</div>
+
+<p><strong class="example">Example 2:</strong></p>
+
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">arr = [0,2,1,0]</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">1</span></p>
+</div>
+
+<p><strong class="example">Example 3:</strong></p>
+
+<div class="example-block">
+<p><strong>Input:</strong> <span class="example-io">arr = [0,10,5,2]</span></p>
+
+<p><strong>Output:</strong> <span class="example-io">1</span></p>
+</div>
+
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>3 &lt;= arr.length &lt;= 10<sup>4</sup></code></li>
+	<li><code>3 &lt;= arr.length &lt;= 10<sup>5</sup></code></li>
 	<li><code>0 &lt;= arr[i] &lt;= 10<sup>6</sup></code></li>
 	<li><code>arr</code> is <strong>guaranteed</strong> to be a mountain array.</li>
 </ul>
 
-<p>&nbsp;</p>
-<strong>Follow up:</strong> Finding the <code>O(n)</code> is straightforward, could you find an <code>O(log(n))</code> solution?
+<!-- description:end -->
 
 ## Solutions
 
-Binary search.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -68,7 +82,7 @@ class Solution:
         return left
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -87,25 +101,26 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int peakIndexInMountainArray(vector<int>& arr) {
         int left = 1, right = arr.size() - 2;
-        while (left < right)
-        {
+        while (left < right) {
             int mid = (left + right) >> 1;
-            if (arr[mid] > arr[mid + 1]) right = mid;
-            else left = mid + 1;
+            if (arr[mid] > arr[mid + 1])
+                right = mid;
+            else
+                left = mid + 1;
         }
         return left;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func peakIndexInMountainArray(arr []int) int {
@@ -122,7 +137,45 @@ func peakIndexInMountainArray(arr []int) int {
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+function peakIndexInMountainArray(arr: number[]): number {
+    let left = 1,
+        right = arr.length - 2;
+    while (left < right) {
+        const mid = (left + right) >> 1;
+        if (arr[mid] > arr[mid + 1]) {
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+    return left;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn peak_index_in_mountain_array(arr: Vec<i32>) -> i32 {
+        let mut left = 1;
+        let mut right = arr.len() - 2;
+        while left < right {
+            let mid = left + (right - left) / 2;
+            if arr[mid] > arr[mid + 1] {
+                right = mid;
+            } else {
+                left = left + 1;
+            }
+        }
+        left as i32
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -134,20 +187,18 @@ var peakIndexInMountainArray = function (arr) {
     let right = arr.length - 2;
     while (left < right) {
         const mid = (left + right) >> 1;
-        if (arr[mid] > arr[mid + 1]) {
-            right = mid;
-        } else {
+        if (arr[mid] < arr[mid + 1]) {
             left = mid + 1;
+        } else {
+            right = mid;
         }
     }
     return left;
 };
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

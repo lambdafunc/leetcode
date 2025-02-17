@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2069.Walking%20Robot%20Simulation%20II/README_EN.md
+rating: 1918
+source: Biweekly Contest 65 Q2
+tags:
+    - Design
+    - Simulation
+---
+
+<!-- problem:start -->
+
 # [2069. Walking Robot Simulation II](https://leetcode.com/problems/walking-robot-simulation-ii)
 
 [中文文档](/solution/2000-2099/2069.Walking%20Robot%20Simulation%20II/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A <code>width x height</code> grid is on an XY-plane with the <strong>bottom-left</strong> cell at <code>(0, 0)</code> and the <strong>top-right</strong> cell at <code>(width - 1, height - 1)</code>. The grid is aligned with the four cardinal directions (<code>&quot;North&quot;</code>, <code>&quot;East&quot;</code>, <code>&quot;South&quot;</code>, and <code>&quot;West&quot;</code>). A robot is <strong>initially</strong> at cell <code>(0, 0)</code> facing direction <code>&quot;East&quot;</code>.</p>
 
@@ -19,32 +34,32 @@
 
 <ul>
 	<li><code>Robot(int width, int height)</code> Initializes the <code>width x height</code> grid with the robot at <code>(0, 0)</code> facing <code>&quot;East&quot;</code>.</li>
-	<li><code>void move(int num)</code> Instructs the robot to move forward <code>num</code> steps.</li>
+	<li><code>void step(int num)</code> Instructs the robot to move forward <code>num</code> steps.</li>
 	<li><code>int[] getPos()</code> Returns the current cell the robot is at, as an array of length 2, <code>[x, y]</code>.</li>
 	<li><code>String getDir()</code> Returns the current direction of the robot, <code>&quot;North&quot;</code>, <code>&quot;East&quot;</code>, <code>&quot;South&quot;</code>, or <code>&quot;West&quot;</code>.</li>
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="example-1" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2069.Walking%20Robot%20Simulation%20II/images/example-1.png" style="width: 498px; height: 268px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="example-1" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2069.Walking%20Robot%20Simulation%20II/images/example-1.png" style="width: 498px; height: 268px;" />
 <pre>
 <strong>Input</strong>
-[&quot;Robot&quot;, &quot;move&quot;, &quot;move&quot;, &quot;getPos&quot;, &quot;getDir&quot;, &quot;move&quot;, &quot;move&quot;, &quot;move&quot;, &quot;getPos&quot;, &quot;getDir&quot;]
+[&quot;Robot&quot;, &quot;step&quot;, &quot;step&quot;, &quot;getPos&quot;, &quot;getDir&quot;, &quot;step&quot;, &quot;step&quot;, &quot;step&quot;, &quot;getPos&quot;, &quot;getDir&quot;]
 [[6, 3], [2], [2], [], [], [2], [1], [4], [], []]
 <strong>Output</strong>
 [null, null, null, [4, 0], &quot;East&quot;, null, null, null, [1, 2], &quot;West&quot;]
 
 <strong>Explanation</strong>
 Robot robot = new Robot(6, 3); // Initialize the grid and the robot at (0, 0) facing East.
-robot.move(2); // It moves two steps East to (2, 0), and faces East.
-robot.move(2); // It moves two steps East to (4, 0), and faces East.
+robot.step(2); // It moves two steps East to (2, 0), and faces East.
+robot.step(2); // It moves two steps East to (4, 0), and faces East.
 robot.getPos(); // return [4, 0]
 robot.getDir(); // return &quot;East&quot;
-robot.move(2); // It moves one step East to (5, 0), and faces East.
+robot.step(2); // It moves one step East to (5, 0), and faces East.
 // Moving the next step East would be out of bounds, so it turns and faces North.
 // Then, it moves one step North to (5, 1), and faces North.
-robot.move(1); // It moves one step North to (5, 2), and faces <strong>North</strong> (not West).
-robot.move(4); // Moving the next step North would be out of bounds, so it turns and faces West.
+robot.step(1); // It moves one step North to (5, 2), and faces <strong>North</strong> (not West).
+robot.step(4); // Moving the next step North would be out of bounds, so it turns and faces West.
 // Then, it moves four steps West to (1, 2), and faces West.
 robot.getPos(); // return [1, 2]
 robot.getDir(); // return &quot;West&quot;
@@ -57,29 +72,45 @@ robot.getDir(); // return &quot;West&quot;
 <ul>
 	<li><code>2 &lt;= width, height &lt;= 100</code></li>
 	<li><code>1 &lt;= num &lt;= 10<sup>5</sup></code></li>
-	<li>At most <code>10<sup>4</sup></code> calls <strong>in total</strong> will be made to <code>move</code>, <code>getPos</code>, and <code>getDir</code>.</li>
+	<li>At most <code>10<sup>4</sup></code> calls <strong>in total</strong> will be made to <code>step</code>, <code>getPos</code>, and <code>getDir</code>.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 
 ```
 
-### **Java**
+#### Java
 
 ```java
 
 ```
 
-### **...**
+#### C++
+
+```cpp
 
 ```
+
+#### Go
+
+```go
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

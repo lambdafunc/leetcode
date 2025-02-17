@@ -1,106 +1,101 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1094.Car%20Pooling/README_EN.md
+rating: 1441
+source: Weekly Contest 142 Q2
+tags:
+    - Array
+    - Prefix Sum
+    - Sorting
+    - Simulation
+    - Heap (Priority Queue)
+---
+
+<!-- problem:start -->
+
 # [1094. Car Pooling](https://leetcode.com/problems/car-pooling)
 
 [中文文档](/solution/1000-1099/1094.Car%20Pooling/README.md)
 
 ## Description
 
-<p>You are driving a vehicle that&nbsp;has <code>capacity</code> empty seats initially available for passengers.&nbsp; The vehicle <strong>only</strong> drives east (ie. it <strong>cannot</strong> turn around and drive west.)</p>
+<!-- description:start -->
 
-<p>Given a list of <code>trips</code>, <code>trip[i] = [num_passengers, start_location, end_location]</code>&nbsp;contains information about the <code>i</code>-th trip: the number of passengers that must be picked up, and the locations to pick them up and drop them off.&nbsp; The locations are given as the number of kilometers&nbsp;due east from your vehicle&#39;s initial location.</p>
+<p>There is a car with <code>capacity</code> empty seats. The vehicle only drives east (i.e., it cannot turn around and drive west).</p>
 
-<p>Return <code>true</code> if and only if&nbsp;it is possible to pick up and drop off all passengers for all the given trips.&nbsp;</p>
+<p>You are given the integer <code>capacity</code> and an array <code>trips</code> where <code>trips[i] = [numPassengers<sub>i</sub>, from<sub>i</sub>, to<sub>i</sub>]</code> indicates that the <code>i<sup>th</sup></code> trip has <code>numPassengers<sub>i</sub></code> passengers and the locations to pick them up and drop them off are <code>from<sub>i</sub></code> and <code>to<sub>i</sub></code> respectively. The locations are given as the number of kilometers due east from the car&#39;s initial location.</p>
+
+<p>Return <code>true</code><em> if it is possible to pick up and drop off all passengers for all the given trips, or </em><code>false</code><em> otherwise</em>.</p>
 
 <p>&nbsp;</p>
-
-<p><strong>Example 1:</strong></p>
-
-<pre>
-<strong>Input: </strong>trips = <span id="example-input-1-1">[[2,1,5],[3,3,7]]</span>, capacity = <span id="example-input-1-2">4</span>
-<strong>Output: </strong><span id="example-output-1">false</span>
-</pre>
-
-<div>
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-<strong>Input: </strong>trips = <span id="example-input-2-1">[[2,1,5],[3,3,7]]</span>, capacity = <span id="example-input-2-2">5</span>
-<strong>Output: </strong><span id="example-output-2">true</span>
+<strong>Input:</strong> trips = [[2,1,5],[3,3,7]], capacity = 4
+<strong>Output:</strong> false
 </pre>
 
-<div>
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-<strong>Input: </strong>trips = <span id="example-input-3-1">[[2,1,5],[3,5,7]]</span>, capacity = <span id="example-input-3-2">3</span>
-<strong>Output: </strong><span id="example-output-3">true</span>
+<strong>Input:</strong> trips = [[2,1,5],[3,3,7]], capacity = 5
+<strong>Output:</strong> true
 </pre>
-
-<div>
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input: </strong>trips = <span id="example-input-4-1">[[3,2,7],[3,7,9],[8,3,9]]</span>, capacity = <span id="example-input-4-2">11</span>
-<strong>Output: </strong><span id="example-output-4">true</span>
-</pre>
-</div>
-</div>
-</div>
-
-<div>
-<div>
-<div>
-<div>&nbsp;</div>
-</div>
-</div>
-</div>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
-<ol>
-	<li><code>trips.length &lt;= 1000</code></li>
+<ul>
+	<li><code>1 &lt;= trips.length &lt;= 1000</code></li>
 	<li><code>trips[i].length == 3</code></li>
-	<li><code>1 &lt;= trips[i][0] &lt;= 100</code></li>
-	<li><code>0 &lt;= trips[i][1] &lt; trips[i][2] &lt;= 1000</code></li>
-	<li><code>1 &lt;=&nbsp;capacity &lt;= 100000</code></li>
-</ol>
+	<li><code>1 &lt;= numPassengers<sub>i</sub> &lt;= 100</code></li>
+	<li><code>0 &lt;= from<sub>i</sub> &lt; to<sub>i</sub> &lt;= 1000</code></li>
+	<li><code>1 &lt;= capacity &lt;= 10<sup>5</sup></code></li>
+</ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Difference Array
+
+We can use the idea of a difference array, adding the number of passengers to the starting point of each trip and subtracting from the end point. Finally, we just need to check whether the prefix sum of the difference array does not exceed the maximum passenger capacity of the car.
+
+The time complexity is $O(n)$, and the space complexity is $O(M)$. Here, $n$ is the number of trips, and $M$ is the maximum end point in the trips. In this problem, $M \le 1000$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def carPooling(self, trips: List[List[int]], capacity: int) -> bool:
-        delta = [0] * 1001
-        for num, start, end in trips:
-            delta[start] += num
-            delta[end] -= num
-        cur = 0
-        for num in delta:
-            cur += num
-            if cur > capacity:
-                return False
-        return True
+        mx = max(e[2] for e in trips)
+        d = [0] * (mx + 1)
+        for x, f, t in trips:
+            d[f] += x
+            d[t] -= x
+        return all(s <= capacity for s in accumulate(d))
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public boolean carPooling(int[][] trips, int capacity) {
-        int[] delta = new int[1001];
-        for (int[] trip : trips) {
-            int num = trip[0], start = trip[1], end = trip[2];
-            delta[start] += num;
-            delta[end] -= num;
+        int[] d = new int[1001];
+        for (var trip : trips) {
+            int x = trip[0], f = trip[1], t = trip[2];
+            d[f] += x;
+            d[t] -= x;
         }
-        int cur = 0;
-        for (int num : delta) {
-            cur += num;
-            if (cur > capacity) {
+        int s = 0;
+        for (int x : d) {
+            s += x;
+            if (s > capacity) {
                 return false;
             }
         }
@@ -109,7 +104,95 @@ class Solution {
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    bool carPooling(vector<vector<int>>& trips, int capacity) {
+        int d[1001]{};
+        for (auto& trip : trips) {
+            int x = trip[0], f = trip[1], t = trip[2];
+            d[f] += x;
+            d[t] -= x;
+        }
+        int s = 0;
+        for (int x : d) {
+            s += x;
+            if (s > capacity) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+```
+
+#### Go
+
+```go
+func carPooling(trips [][]int, capacity int) bool {
+	d := [1001]int{}
+	for _, trip := range trips {
+		x, f, t := trip[0], trip[1], trip[2]
+		d[f] += x
+		d[t] -= x
+	}
+	s := 0
+	for _, x := range d {
+		s += x
+		if s > capacity {
+			return false
+		}
+	}
+	return true
+}
+```
+
+#### TypeScript
+
+```ts
+function carPooling(trips: number[][], capacity: number): boolean {
+    const mx = Math.max(...trips.map(([, , t]) => t));
+    const d = Array(mx + 1).fill(0);
+    for (const [x, f, t] of trips) {
+        d[f] += x;
+        d[t] -= x;
+    }
+    let s = 0;
+    for (const x of d) {
+        s += x;
+        if (s > capacity) {
+            return false;
+        }
+    }
+    return true;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn car_pooling(trips: Vec<Vec<i32>>, capacity: i32) -> bool {
+        let mx = trips.iter().map(|e| e[2]).max().unwrap_or(0) as usize;
+        let mut d = vec![0; mx + 1];
+        for trip in &trips {
+            let (x, f, t) = (trip[0], trip[1] as usize, trip[2] as usize);
+            d[f] += x;
+            d[t] -= x;
+        }
+        d.iter()
+            .scan(0, |acc, &x| {
+                *acc += x;
+                Some(*acc)
+            })
+            .all(|s| s <= capacity)
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -118,72 +201,49 @@ class Solution {
  * @return {boolean}
  */
 var carPooling = function (trips, capacity) {
-    let delta = new Array();
-    for (let trip of trips) {
-        let [num, start, end] = trip;
-        delta[start] = (delta[start] || 0) + num;
-        delta[end] = (delta[end] || 0) - num;
+    const mx = Math.max(...trips.map(([, , t]) => t));
+    const d = Array(mx + 1).fill(0);
+    for (const [x, f, t] of trips) {
+        d[f] += x;
+        d[t] -= x;
     }
-    let total = 0;
-    for (let i = 0; i < delta.length; i++) {
-        let cur = delta[i];
-        if (cur == undefined) continue;
-        total += cur;
-        if (total > capacity) return false;
+    let s = 0;
+    for (const x of d) {
+        s += x;
+        if (s > capacity) {
+            return false;
+        }
     }
     return true;
 };
 ```
 
-### **C++**
+#### C#
 
-```cpp
-class Solution {
-public:
-    bool carPooling(vector<vector<int>>& trips, int capacity) {
-        vector<int> delta(1001);
-        for (auto &trip : trips) {
-            int num = trip[0], start = trip[1], end = trip[2];
-            delta[start] += num;
-            delta[end] -= num;
+```cs
+public class Solution {
+    public bool CarPooling(int[][] trips, int capacity) {
+        int mx = trips.Max(x => x[2]);
+        int[] d = new int[mx + 1];
+        foreach (var trip in trips) {
+            int x = trip[0], f = trip[1], t = trip[2];
+            d[f] += x;
+            d[t] -= x;
         }
-        int cur = 0;
-        for (auto &num : delta) {
-            cur += num;
-            if (cur > capacity) {
+        int s = 0;
+        foreach (var x in d) {
+            s += x;
+            if (s > capacity) {
                 return false;
             }
         }
         return true;
     }
-};
-```
-
-### **Go**
-
-```go
-func carPooling(trips [][]int, capacity int) bool {
-	delta := make([]int, 1010)
-	for _, trip := range trips {
-		num, start, end := trip[0], trip[1], trip[2]
-		delta[start] += num
-		delta[end] -= num
-	}
-	cur := 0
-	for _, num := range delta {
-		cur += num
-		if cur > capacity {
-			return false
-		}
-	}
-	return true
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

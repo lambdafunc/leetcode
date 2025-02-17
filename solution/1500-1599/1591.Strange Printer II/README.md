@@ -1,10 +1,25 @@
-# [1591. 奇怪的打印机 II](https://leetcode-cn.com/problems/strange-printer-ii)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1591.Strange%20Printer%20II/README.md
+rating: 2290
+source: 第 35 场双周赛 Q4
+tags:
+    - 图
+    - 拓扑排序
+    - 数组
+    - 矩阵
+---
+
+<!-- problem:start -->
+
+# [1591. 奇怪的打印机 II](https://leetcode.cn/problems/strange-printer-ii)
 
 [English Version](/solution/1500-1599/1591.Strange%20Printer%20II/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个奇怪的打印机，它有如下两个特殊的打印规则：</p>
 
@@ -21,7 +36,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1591.Strange%20Printer%20II/images/sample_1_1929.png" style="height: 138px; width: 483px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1591.Strange%20Printer%20II/images/sample_1_1929.png" style="height: 138px; width: 483px;"></p>
 
 <pre><strong>输入：</strong>targetGrid = [[1,1,1,1],[1,2,2,1],[1,2,2,1],[1,1,1,1]]
 <strong>输出：</strong>true
@@ -29,7 +44,7 @@
 
 <p><strong>示例 2：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1591.Strange%20Printer%20II/images/sample_2_1929.png" style="height: 290px; width: 483px;"></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1500-1599/1591.Strange%20Printer%20II/images/sample_2_1929.png" style="height: 290px; width: 483px;"></p>
 
 <pre><strong>输入：</strong>targetGrid = [[1,1,1,1],[1,1,3,3],[1,1,3,4],[5,5,1,4]]
 <strong>输出：</strong>true
@@ -58,32 +73,42 @@
 	<li><code>1 &lt;= targetGrid[row][col] &lt;= 60</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 
 ```
 
-### **...**
+#### C++
+
+```cpp
 
 ```
+
+#### Go
+
+```go
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

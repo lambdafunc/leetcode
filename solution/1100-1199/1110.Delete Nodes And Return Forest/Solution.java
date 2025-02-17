@@ -1,24 +1,47 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
 class Solution {
+    private boolean[] s = new boolean[1001];
+    private List<TreeNode> ans = new ArrayList<>();
+
     public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
-        boolean[] del = new boolean[1001];
-        for (int d : to_delete) {
-            del[d] = true;
+        for (int x : to_delete) {
+            s[x] = true;
         }
-        List<TreeNode> res = new ArrayList<>();
-        dfs(root, true, del, res);
-        return res;
+        if (dfs(root) != null) {
+            ans.add(root);
+        }
+        return ans;
     }
 
-    private TreeNode dfs(TreeNode root, boolean isRoot, boolean[] del, List<TreeNode> res) {
+    private TreeNode dfs(TreeNode root) {
         if (root == null) {
             return null;
         }
-        boolean flag = del[root.val];
-        if (!flag && isRoot) {
-            res.add(root);
+        root.left = dfs(root.left);
+        root.right = dfs(root.right);
+        if (!s[root.val]) {
+            return root;
         }
-        root.left = dfs(root.left, flag, del, res);
-        root.right = dfs(root.right, flag, del, res);
-        return flag ? null : root;
+        if (root.left != null) {
+            ans.add(root.left);
+        }
+        if (root.right != null) {
+            ans.add(root.right);
+        }
+        return null;
     }
 }

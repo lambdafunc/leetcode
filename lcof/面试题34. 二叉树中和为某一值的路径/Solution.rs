@@ -18,42 +18,29 @@
 // }
 use std::cell::RefCell;
 use std::rc::Rc;
-
 impl Solution {
     fn dfs(
         root: &Option<Rc<RefCell<TreeNode>>>,
         mut target: i32,
-        mut values: Vec<i32>,
-    ) -> Vec<Vec<i32>> {
-        let node = root.as_ref().unwrap().borrow();
-        values.push(node.val);
-        target -= node.val;
-        let mut res = vec![];
-        // 确定叶结点身份
-        if node.left.is_none() && node.right.is_none() {
-            if target == 0 {
-                res.push(values);
+        t: &mut Vec<i32>,
+        ans: &mut Vec<Vec<i32>>,
+    ) {
+        if let Some(node) = root.as_ref() {
+            let node = node.borrow();
+            t.push(node.val);
+            target -= node.val;
+            if node.left.is_none() && node.right.is_none() && target == 0 {
+                ans.push(t.clone());
             }
-            return res;
+            Self::dfs(&node.left, target, t, ans);
+            Self::dfs(&node.right, target, t, ans);
+            t.pop();
         }
-        if node.left.is_some() {
-            let res_l = Solution::dfs(&node.left, target, values.clone());
-            if !res_l.is_empty() {
-                res = [res, res_l].concat();
-            }
-        }
-        if node.right.is_some() {
-            let res_r = Solution::dfs(&node.right, target, values.clone());
-            if !res_r.is_empty() {
-                res = [res, res_r].concat();
-            }
-        }
-        res
     }
+
     pub fn path_sum(root: Option<Rc<RefCell<TreeNode>>>, target: i32) -> Vec<Vec<i32>> {
-        if root.is_none() {
-            return vec![];
-        }
-        Solution::dfs(&root, target, vec![])
+        let mut ans = vec![];
+        Self::dfs(&root, target, &mut vec![], &mut ans);
+        ans
     }
 }

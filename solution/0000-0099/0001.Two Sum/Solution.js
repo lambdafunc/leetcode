@@ -1,44 +1,16 @@
 /**
- *  Author: limbowandering
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
  */
-
-const twoSum = function (nums, target) {
-    const map = {};
-    for (let i = 0; i < nums.length; i++) {
-        if (map[nums[i]] !== undefined) {
-            return [map[nums[i]], i];
-        } else {
-            map[target - nums[i]] = i;
-        }
-    }
-};
-
-/**
- *  Author: Mcnwork2018
- */
-
 var twoSum = function (nums, target) {
-    let len = nums.length;
-    let n = {};
-    for (let i = 0; i < len; i++) {
-        if (n[target - nums[i]] !== undefined) {
-            return [n[target - nums[i]], i];
+    const d = new Map();
+    for (let i = 0; ; ++i) {
+        const x = nums[i];
+        const y = target - x;
+        if (d.has(y)) {
+            return [d.get(y), i];
         }
-        n[nums[i]] = i;
+        d.set(x, i);
     }
-};
-
-/**
- * Author: rookie
- */
-
-var twoSum = function (nums, target) {
-    const map = new Map();
-    for (let i = 0; i < nums.length; i++) {
-        if (map.has(target - nums[i])) {
-            return [map.get(target - nums[i]), i];
-        }
-        map.set(nums[i], i);
-    }
-    return [];
 };

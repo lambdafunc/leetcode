@@ -5,8 +5,9 @@
 
 class Node {
 public:
-    virtual ~Node () {};
+    virtual ~Node(){};
     virtual int evaluate() const = 0;
+
 protected:
     // define your fields here
     string val;
@@ -37,10 +38,9 @@ public:
     }
 };
 
-
 /**
  * This is the TreeBuilder class.
- * You can treat it as the driver code that takes the postinfix input 
+ * You can treat it as the driver code that takes the postinfix input
  * and returns the expression tree represnting it as a Node.
  */
 
@@ -48,19 +48,15 @@ class TreeBuilder {
 public:
     Node* buildTree(vector<string>& postfix) {
         stack<MyNode*> stk;
-        for (auto s : postfix)
-        {
+        for (auto s : postfix) {
             MyNode* node;
-            if (s == "+" || s == "-" || s == "*" || s == "/")
-            {
+            if (s == "+" || s == "-" || s == "*" || s == "/") {
                 auto right = stk.top();
                 stk.pop();
                 auto left = stk.top();
                 stk.pop();
                 node = new MyNode(s, left, right);
-            }
-            else
-            {
+            } else {
                 node = new MyNode(s);
             }
             stk.push(node);
@@ -68,7 +64,6 @@ public:
         return stk.top();
     }
 };
-
 
 /**
  * Your TreeBuilder object will be instantiated and called as such:

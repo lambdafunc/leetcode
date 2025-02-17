@@ -1,47 +1,63 @@
-class Solution {
-    private int[] p;
-    private int[][] dirs = new int[][]{{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
-    private int[][] grid;
-    private int m;
-    private int n;
+class UnionFind {
+    private final int[] p;
+    private final int[] size;
 
-    public List<Integer> numIslands2(int m, int n, int[][] positions) {
-        p = new int[m * n];
-        for (int i = 0; i < p.length; ++i) {
+    public UnionFind(int n) {
+        p = new int[n];
+        size = new int[n];
+        for (int i = 0; i < n; ++i) {
             p[i] = i;
+            size[i] = 1;
         }
-        grid = new int[m][n];
-        this.m = m;
-        this.n = n;
-        List<Integer> res = new ArrayList<>();
-        int cur = 0;
-        for (int[] position : positions) {
-            int i = position[0], j = position[1];
-            if (grid[i][j] == 1) {
-                res.add(cur);
-                continue;
-            }
-            grid[i][j] = 1;
-            ++cur;
-            for (int[] e : dirs) {
-                if (check(i + e[0], j + e[1]) && find(i * n + j) != find((i + e[0]) * n + j + e[1])) {
-                    p[find(i * n + j)] = find((i + e[0]) * n + j + e[1]);
-                    --cur;
-                }
-            }
-            res.add(cur);
-        }
-        return res;
     }
 
-    private boolean check(int i, int j) {
-        return i >= 0 && i < m && j >= 0 && j < n && grid[i][j] == 1;
-    }
-
-    private int find(int x) {
+    public int find(int x) {
         if (p[x] != x) {
             p[x] = find(p[x]);
         }
         return p[x];
+    }
+
+    public boolean union(int a, int b) {
+        int pa = find(a), pb = find(b);
+        if (pa == pb) {
+            return false;
+        }
+        if (size[pa] > size[pb]) {
+            p[pb] = pa;
+            size[pa] += size[pb];
+        } else {
+            p[pa] = pb;
+            size[pb] += size[pa];
+        }
+        return true;
+    }
+}
+
+class Solution {
+    public List<Integer> numIslands2(int m, int n, int[][] positions) {
+        int[][] grid = new int[m][n];
+        UnionFind uf = new UnionFind(m * n);
+        int[] dirs = {-1, 0, 1, 0, -1};
+        int cnt = 0;
+        List<Integer> ans = new ArrayList<>();
+        for (var p : positions) {
+            int i = p[0], j = p[1];
+            if (grid[i][j] == 1) {
+                ans.add(cnt);
+                continue;
+            }
+            grid[i][j] = 1;
+            ++cnt;
+            for (int k = 0; k < 4; ++k) {
+                int x = i + dirs[k], y = j + dirs[k + 1];
+                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 1
+                    && uf.union(i * n + j, x * n + y)) {
+                    --cnt;
+                }
+            }
+            ans.add(cnt);
+        }
+        return ans;
     }
 }

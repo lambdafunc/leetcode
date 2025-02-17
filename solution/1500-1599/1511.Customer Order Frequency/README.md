@@ -1,21 +1,32 @@
-# [1511. 消费者下单频率](https://leetcode-cn.com/problems/customer-order-frequency)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1511.Customer%20Order%20Frequency/README.md
+tags:
+    - 数据库
+---
+
+<!-- problem:start -->
+
+# [1511. 消费者下单频率 🔒](https://leetcode.cn/problems/customer-order-frequency)
 
 [English Version](/solution/1500-1599/1511.Customer%20Order%20Frequency/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>表: <code>Customers</code></p>
 
-<pre>+---------------+---------+
+<pre>
++---------------+---------+
 | Column Name   | Type    |
 +---------------+---------+
 | customer_id   | int     |
 | name          | varchar |
 | country       | varchar |
 +---------------+---------+
-customer_id 是该表主键.
+customer_id 是该表具有唯一值的列.
 该表包含公司消费者的信息.
 </pre>
 
@@ -23,22 +34,24 @@ customer_id 是该表主键.
 
 <p>表: <code>Product</code></p>
 
-<pre>+---------------+---------+
+<pre>
++---------------+---------+
 | Column Name   | Type    |
 +---------------+---------+
 | product_id    | int     |
 | description   | varchar |
 | price         | int     |
 +---------------+---------+
-product_id 是该表主键.
+product_id 是该表具有唯一值的列.
 该表包含公司产品的信息.
-price 是本产品的花销.</pre>
+price 是该产品所需的花销.</pre>
 
 <p>&nbsp;</p>
 
 <p>表: <code>Orders</code></p>
 
-<pre>+---------------+---------+
+<pre>
++---------------+---------+
 | Column Name   | Type    |
 +---------------+---------+
 | order_id      | int     |
@@ -47,22 +60,26 @@ price 是本产品的花销.</pre>
 | order_date    | date    |
 | quantity      | int     |
 +---------------+---------+
-order_id 是该表主键.
+order_id 是该表具有唯一值的列.
 该表包含消费者下单的信息.
-customer_id 是买了数量为&quot;quantity&quot;, id为&quot;product_id&quot;产品的消费者的 id.
-Order_date 是订单发货的日期, 格式为(&#39;YYYY-MM-DD&#39;).</pre>
+customer_id 是买了数量为 "quantity", id 为 "product_id" 产品的消费者的 id.
+Order_date 是订单发货的日期, 格式为('YYYY-MM-DD').</pre>
 
 <p>&nbsp;</p>
 
-<p>写一个 SQL 语句,&nbsp; 报告消费者的 id 和名字,&nbsp;其中消费者在 2020 年 6 月和 7 月,&nbsp;每月至少花费了$100.</p>
+<p>写一个解决方案，报告在&nbsp;<strong>2020 年 6 月和 7 月&nbsp;</strong>每个月至少花费 <code>$100</code> 的客户的 <code>customer_id</code> 和 <code>customer_name</code> 。</p>
 
-<p>结果表无顺序要求.</p>
+<p>以&nbsp;<strong>任意顺序&nbsp;</strong>返回结果表.</p>
 
-<p>查询结果格式如下例所示.</p>
+<p>结果格式如下例所示。</p>
 
 <p>&nbsp;</p>
 
-<pre><code>Customers</code>
+<p><strong>示例 1:</strong></p>
+
+<pre>
+<strong>输入：</strong>
+<code>Customers table:</code>
 +--------------+-----------+-------------+
 | customer_id  | name &nbsp;    | country &nbsp; &nbsp; |
 +--------------+-----------+-------------+
@@ -70,8 +87,7 @@ Order_date 是订单发货的日期, 格式为(&#39;YYYY-MM-DD&#39;).</pre>
 | 2          &nbsp; | Jonathan  | Peru       &nbsp;|
 | 3          &nbsp; | Moustafa &nbsp;| Egypt      &nbsp;|
 +--------------+-----------+-------------+
-
-<code>Product</code>
+<code>Product table:</code>
 +--------------+-------------+-------------+
 | product_id   | description | price   &nbsp; &nbsp; |
 +--------------+-------------+-------------+
@@ -80,8 +96,7 @@ Order_date 是订单发货的日期, 格式为(&#39;YYYY-MM-DD&#39;).</pre>
 | 30         &nbsp; | LC Book    &nbsp;| 45         &nbsp;|
 | 40           | LC Keychain&nbsp;| 2         &nbsp; |
 +--------------+-------------+-------------+
-
-<code>Orders</code>
+<code>Orders table:</code>
 +--------------+-------------+-------------+-------------+-----------+
 | order_id     | customer_id | product_id  | order_date  | quantity  |
 +--------------+-------------+-------------+-------------+-----------+
@@ -94,39 +109,47 @@ Order_date 是订单发货的日期, 格式为(&#39;YYYY-MM-DD&#39;).</pre>
 | 7    &nbsp;       | 3        &nbsp;  | 30         &nbsp;| 2020-06-25  | 2         |
 | 9          &nbsp; | 3           | 30         &nbsp;| 2020-05-08  | 3         |
 +--------------+-------------+-------------+-------------+-----------+
-
-Result 表:
+<strong>输出：</strong>
 +--------------+------------+
 | customer_id  | name       |  
 +--------------+------------+
 | 1            | Winston    |
 +--------------+------------+ 
-Winston 在2020年6月花费了$300(300 * 1), 在7月花费了$100(10 * 1 + 45 * 2).
-Jonathan 在2020年6月花费了$600(300 * 2), 在7月花费了$20(2 * 10).
-Moustafa 在2020年6月花费了$110 (10 * 2 + 45 * 2), 在7月花费了$0.
-</pre>
+<strong>解释：</strong>
+Winston 在 2020 年 6 月花费了 $300(300 * 1), 在 7 月花费了 $100(10 * 1 + 45 * 2).
+Jonathan 在 2020 年 6 月花费了 $600(300 * 2), 在 7 月花费了 $20(2 * 10).
+Moustafa 在 2020 年 6 月花费了 $110 (10 * 2 + 45 * 2), 在 7 月花费了 $0.</pre>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：等值连接 + 分组求和
+
+我们可以使用 `JOIN` 语句，连接 `Orders` 和 `Product` 表，再连接 `Customers` 表，筛选出 `order_date` 在 $2020$ 年的记录，然后使用 `GROUP BY` 语句，按照 `customer_id` 分组，使用 `HAVING` 语句，筛选出 $6$ 月和 $7$ 月花费大于等于 $100$ 的客户。
 
 <!-- tabs:start -->
 
-### **SQL**
+#### MySQL
 
 ```sql
 # Write your MySQL query statement below
-SELECT
-    c.customer_id AS CUSTOMER_ID,
-    c.name AS NAME
+SELECT customer_id, name
 FROM
-    Customers c, Product p, Orders o
-WHERE
-    c.customer_id = o.customer_id
-AND p.product_id = o.product_id
-GROUP BY c.customer_id
-HAVING sum(if(month(o.order_date)=6, price*quantity, 0)) >= 100
-AND sum(if(month(o.order_date)=7, price*quantity, 0)) >= 100;
+    Orders
+    JOIN Product USING (product_id)
+    JOIN Customers USING (customer_id)
+WHERE YEAR(order_date) = 2020
+GROUP BY 1
+HAVING
+    SUM(IF(MONTH(order_date) = 6, quantity * price, 0)) >= 100
+    AND SUM(IF(MONTH(order_date) = 7, quantity * price, 0)) >= 100;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

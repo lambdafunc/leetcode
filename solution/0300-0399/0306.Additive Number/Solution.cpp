@@ -2,10 +2,8 @@ class Solution {
 public:
     bool isAdditiveNumber(string num) {
         int n = num.size();
-        for (int i = 1; i < min(n - 1, 19); ++i)
-        {
-            for (int j = i + 1; j < min(n, i + 19); ++j)
-            {
+        for (int i = 1; i < min(n - 1, 19); ++i) {
+            for (int j = i + 1; j < min(n, i + 19); ++j) {
                 if (i > 1 && num[0] == '0') break;
                 if (j - i > 1 && num[i] == '0') continue;
                 auto a = stoll(num.substr(0, i));

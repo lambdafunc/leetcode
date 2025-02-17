@@ -1,8 +1,15 @@
-# [剑指 Offer II 112. 最长递增路径](https://leetcode-cn.com/problems/fpTFWP)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20112.%20%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E8%B7%AF%E5%BE%84/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 112. 最长递增路径](https://leetcode.cn/problems/fpTFWP)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给定一个&nbsp;<code>m x n</code> 整数矩阵&nbsp;<code>matrix</code> ，找出其中 <strong>最长递增路径</strong> 的长度。</p>
 
@@ -12,7 +19,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20112.%20%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E8%B7%AF%E5%BE%84/images/grid1.jpg" style="width: 242px; height: 242px;" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20112.%20%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E8%B7%AF%E5%BE%84/images/grid1.jpg" style="width: 242px; height: 242px;" /></p>
 
 <pre>
 <strong>输入：</strong>matrix = [[9,9,4],[6,6,8],[2,1,1]]
@@ -21,7 +28,7 @@
 
 <p><strong>示例 2：</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20112.%20%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E8%B7%AF%E5%BE%84/images/tmp-grid.jpg" style="width: 253px; height: 253px;" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20112.%20%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E8%B7%AF%E5%BE%84/images/tmp-grid.jpg" style="width: 253px; height: 253px;" /></p>
 
 <pre>
 <strong>输入：</strong>matrix = [[3,4,5],[3,2,6],[2,2,1]]
@@ -49,24 +56,24 @@
 
 <p>&nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 329&nbsp;题相同：&nbsp;<a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/</a></p>
+<p><meta charset="UTF-8" />注意：本题与主站 329&nbsp;题相同：&nbsp;<a href="https://leetcode.cn/problems/longest-increasing-path-in-a-matrix/">https://leetcode.cn/problems/longest-increasing-path-in-a-matrix/</a></p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-记忆化搜索。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
-        @lru_cache(None)
+        @cache
         def dfs(i, j):
             ans = 1
             for a, b in [[-1, 0], [1, 0], [0, 1], [0, -1]]:
@@ -79,9 +86,7 @@ class Solution:
         return max(dfs(i, j) for i in range(m) for j in range(n))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -125,7 +130,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -151,8 +156,7 @@ public:
         if (memo[i][j] != -1) return memo[i][j];
         int ans = 1;
         vector<int> dirs = {-1, 0, 1, 0, -1};
-        for (int k = 0; k < 4; ++k)
-        {
+        for (int k = 0; k < 4; ++k) {
             int x = i + dirs[k], y = j + dirs[k + 1];
             if (x >= 0 && x < m && y >= 0 && y < n && matrix[x][y] > matrix[i][j])
                 ans = max(ans, dfs(x, y) + 1);
@@ -163,7 +167,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func longestIncreasingPath(matrix [][]int) int {
@@ -183,8 +187,8 @@ func longestIncreasingPath(matrix [][]int) int {
 		}
 		ans := 1
 		dirs := []int{-1, 0, 1, 0, -1}
-        for k := 0; k < 4; k++ {
-            x, y := i+dirs[k], j+dirs[k+1]
+		for k := 0; k < 4; k++ {
+			x, y := i+dirs[k], j+dirs[k+1]
 			if x >= 0 && x < m && y >= 0 && y < n && matrix[x][y] > matrix[i][j] {
 				ans = max(ans, dfs(x, y)+1)
 			}
@@ -199,19 +203,53 @@ func longestIncreasingPath(matrix [][]int) int {
 	}
 	return ans
 }
+```
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+#### Swift
+
+```swift
+class Solution {
+    private var memo: [[Int]] = []
+    private var matrix: [[Int]] = []
+    private var m: Int = 0
+    private var n: Int = 0
+
+    func longestIncreasingPath(_ matrix: [[Int]]) -> Int {
+        self.matrix = matrix
+        m = matrix.count
+        n = matrix[0].count
+        memo = Array(repeating: Array(repeating: -1, count: n), count: m)
+
+        var ans = 0
+        for i in 0..<m {
+            for j in 0..<n {
+                ans = max(ans, dfs(i, j))
+            }
+        }
+        return ans
+    }
+
+    private func dfs(_ i: Int, _ j: Int) -> Int {
+        if memo[i][j] != -1 {
+            return memo[i][j]
+        }
+        var ans = 1
+        let dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+        for (dx, dy) in dirs {
+            let x = i + dx, y = j + dy
+            if x >= 0, x < m, y >= 0, y < n, matrix[x][y] > matrix[i][j] {
+                ans = max(ans, dfs(x, y) + 1)
+            }
+        }
+        memo[i][j] = ans
+        return ans
+    }
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

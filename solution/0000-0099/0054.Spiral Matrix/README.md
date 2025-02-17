@@ -1,24 +1,36 @@
-# [54. 螺旋矩阵](https://leetcode-cn.com/problems/spiral-matrix)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0000-0099/0054.Spiral%20Matrix/README.md
+tags:
+    - 数组
+    - 矩阵
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [54. 螺旋矩阵](https://leetcode.cn/problems/spiral-matrix)
 
 [English Version](/solution/0000-0099/0054.Spiral%20Matrix/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个 <code>m</code> 行 <code>n</code> 列的矩阵 <code>matrix</code> ，请按照 <strong>顺时针螺旋顺序</strong> ，返回矩阵中的所有元素。</p>
 
 <p> </p>
 
 <p><strong>示例 1：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0054.Spiral%20Matrix/images/spiral1.jpg" style="width: 242px; height: 242px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0054.Spiral%20Matrix/images/spiral1.jpg" style="width: 242px; height: 242px;" />
 <pre>
 <strong>输入：</strong>matrix = [[1,2,3],[4,5,6],[7,8,9]]
 <strong>输出：</strong>[1,2,3,6,9,8,7,4,5]
 </pre>
 
 <p><strong>示例 2：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0054.Spiral%20Matrix/images/spiral.jpg" style="width: 322px; height: 242px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0054.Spiral%20Matrix/images/spiral.jpg" style="width: 322px; height: 242px;" />
 <pre>
 <strong>输入：</strong>matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
 <strong>输出：</strong>[1,2,3,4,8,12,11,10,9,5,6,7]
@@ -35,85 +47,175 @@
 	<li><code>-100 <= matrix[i][j] <= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-从外往里一圈一圈遍历并存储矩阵元素即可。
+### 方法一：模拟
+
+我们可以模拟整个遍历的过程，用 $i$ 和 $j$ 分别表示当前访问到的元素的行和列，用 $k$ 表示当前的方向，用数组或哈希表 $\textit{vis}$ 记录每个元素是否被访问过。每次我们访问到一个元素后，将其标记为已访问，然后按照当前的方向前进一步，如果前进一步后发现越界或者已经访问过，则改变方向继续前进，直到遍历完整个矩阵。
+
+时间复杂度 $O(m \times n)$，空间复杂度 $O(m \times n)$。其中 $m$ 和 $n$ 分别是矩阵的行数和列数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
-        def add(i1, j1, i2, j2):
-            if i1 == i2:
-                return [matrix[i1][j] for j in range(j1, j2 + 1)]
-            if j1 == j2:
-                return [matrix[i][j1] for i in range(i1, i2 + 1)]
-            return [matrix[i1][j] for j in range(j1, j2)] + [matrix[i][j2] for i in range(i1, i2)] + [matrix[i2][j] for j in range(j2, j1, -1)] + [matrix[i][j1] for i in range(i2, i1, -1)]
         m, n = len(matrix), len(matrix[0])
-        i1, j1, i2, j2 = 0, 0, m - 1, n - 1
-        res = []
-        while i1 <= i2 and j1 <= j2:
-            res += add(i1, j1, i2, j2)
-            i1, j1, i2, j2 = i1 + 1, j1 + 1, i2 - 1, j2 - 1
-        return res
+        dirs = (0, 1, 0, -1, 0)
+        vis = [[False] * n for _ in range(m)]
+        i = j = k = 0
+        ans = []
+        for _ in range(m * n):
+            ans.append(matrix[i][j])
+            vis[i][j] = True
+            x, y = i + dirs[k], j + dirs[k + 1]
+            if x < 0 or x >= m or y < 0 or y >= n or vis[x][y]:
+                k = (k + 1) % 4
+            i += dirs[k]
+            j += dirs[k + 1]
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
-    private List<Integer> res;
-
     public List<Integer> spiralOrder(int[][] matrix) {
         int m = matrix.length, n = matrix[0].length;
-        res = new ArrayList<>();
-        int i1 = 0, i2 = m - 1;
-        int j1 = 0, j2 = n - 1;
-        while (i1 <= i2 && j1 <= j2) {
-            add(matrix, i1++, j1++, i2--, j2--);
-        }
-        return res;
-    }
-
-    private void add(int[][] matrix, int i1, int j1, int i2, int j2) {
-        if (i1 == i2) {
-            for (int j = j1; j <= j2; ++j) {
-                res.add(matrix[i1][j]);
+        int[] dirs = {0, 1, 0, -1, 0};
+        int i = 0, j = 0, k = 0;
+        List<Integer> ans = new ArrayList<>();
+        boolean[][] vis = new boolean[m][n];
+        for (int h = m * n; h > 0; --h) {
+            ans.add(matrix[i][j]);
+            vis[i][j] = true;
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x < 0 || x >= m || y < 0 || y >= n || vis[x][y]) {
+                k = (k + 1) % 4;
             }
-            return;
+            i += dirs[k];
+            j += dirs[k + 1];
         }
-        if (j1 == j2) {
-            for (int i = i1; i <= i2; ++i) {
-                res.add(matrix[i][j1]);
-            }
-            return;
-        }
-        for (int j = j1; j < j2; ++j) {
-            res.add(matrix[i1][j]);
-        }
-        for (int i = i1; i < i2; ++i) {
-            res.add(matrix[i][j2]);
-        }
-        for (int j = j2; j > j1; --j) {
-            res.add(matrix[i2][j]);
-        }
-        for (int i = i2; i > i1; --i) {
-            res.add(matrix[i][j1]);
-        }
+        return ans;
     }
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        int dirs[5] = {0, 1, 0, -1, 0};
+        int i = 0, j = 0, k = 0;
+        vector<int> ans;
+        bool vis[m][n];
+        memset(vis, false, sizeof(vis));
+        for (int h = m * n; h; --h) {
+            ans.push_back(matrix[i][j]);
+            vis[i][j] = true;
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x < 0 || x >= m || y < 0 || y >= n || vis[x][y]) {
+                k = (k + 1) % 4;
+            }
+            i += dirs[k];
+            j += dirs[k + 1];
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func spiralOrder(matrix [][]int) (ans []int) {
+	m, n := len(matrix), len(matrix[0])
+	vis := make([][]bool, m)
+	for i := range vis {
+		vis[i] = make([]bool, n)
+	}
+	dirs := [5]int{0, 1, 0, -1, 0}
+	i, j, k := 0, 0, 0
+	for h := m * n; h > 0; h-- {
+		ans = append(ans, matrix[i][j])
+		vis[i][j] = true
+		x, y := i+dirs[k], j+dirs[k+1]
+		if x < 0 || x >= m || y < 0 || y >= n || vis[x][y] {
+			k = (k + 1) % 4
+		}
+		i, j = i+dirs[k], j+dirs[k+1]
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function spiralOrder(matrix: number[][]): number[] {
+    const m = matrix.length;
+    const n = matrix[0].length;
+    const ans: number[] = [];
+    const vis: boolean[][] = Array.from({ length: m }, () => Array(n).fill(false));
+    const dirs = [0, 1, 0, -1, 0];
+    for (let h = m * n, i = 0, j = 0, k = 0; h > 0; --h) {
+        ans.push(matrix[i][j]);
+        vis[i][j] = true;
+        const x = i + dirs[k];
+        const y = j + dirs[k + 1];
+        if (x < 0 || x >= m || y < 0 || y >= n || vis[x][y]) {
+            k = (k + 1) % 4;
+        }
+        i += dirs[k];
+        j += dirs[k + 1];
+    }
+    return ans;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn spiral_order(matrix: Vec<Vec<i32>>) -> Vec<i32> {
+        let m = matrix.len();
+        let n = matrix[0].len();
+        let mut dirs = vec![0, 1, 0, -1, 0];
+        let mut vis = vec![vec![false; n]; m];
+        let mut i = 0;
+        let mut j = 0;
+        let mut k = 0;
+        let mut ans = Vec::new();
+
+        for _ in 0..(m * n) {
+            ans.push(matrix[i][j]);
+            vis[i][j] = true;
+            let x = i as i32 + dirs[k] as i32;
+            let y = j as i32 + dirs[k + 1] as i32;
+
+            if x < 0 || x >= m as i32 || y < 0 || y >= n as i32 || vis[x as usize][y as usize] {
+                k = (k + 1) % 4;
+            }
+
+            i = (i as i32 + dirs[k] as i32) as usize;
+            j = (j as i32 + dirs[k + 1] as i32) as usize;
+        }
+
+        ans
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -121,73 +223,306 @@ class Solution {
  * @return {number[]}
  */
 var spiralOrder = function (matrix) {
-    let m = matrix.length;
-    if (m === 0) return [];
-    let res = [];
-    let top = 0,
-        bottom = m - 1,
-        left = 0,
-        right = matrix[0].length - 1;
-    while (left < right && bottom > top) {
-        for (let i = left; i < right; i++) res.push(matrix[top][i]);
-        for (let i = top; i < bottom; i++) res.push(matrix[i][right]);
-        for (let i = right; i > left; i--) res.push(matrix[bottom][i]);
-        for (let i = bottom; i > top; i--) res.push(matrix[i][left]);
-        top++;
-        bottom--;
-        left++;
-        right--;
+    const m = matrix.length;
+    const n = matrix[0].length;
+    const ans = [];
+    const vis = Array.from({ length: m }, () => Array(n).fill(false));
+    const dirs = [0, 1, 0, -1, 0];
+    for (let h = m * n, i = 0, j = 0, k = 0; h > 0; --h) {
+        ans.push(matrix[i][j]);
+        vis[i][j] = true;
+        const x = i + dirs[k];
+        const y = j + dirs[k + 1];
+        if (x < 0 || x >= m || y < 0 || y >= n || vis[x][y]) {
+            k = (k + 1) % 4;
+        }
+        i += dirs[k];
+        j += dirs[k + 1];
     }
-    if (left === right) {
-        for (i = top; i <= bottom; i++) res.push(matrix[i][left]);
-    } else if (top === bottom) {
-        for (i = left; i <= right; i++) res.push(matrix[top][i]);
-    }
-    return res;
+    return ans;
 };
 ```
 
-### **Go**
+#### C#
 
-```go
-func spiralOrder(matrix [][]int) []int {
-	if len(matrix) == 0 {
-		return []int{}
-	}
-
-	m, n := len(matrix), len(matrix[0])
-	ans := make([]int, 0, m*n)
-
-	top, bottom, left, right := 0, m-1, 0, n-1
-	for left <= right && top <= bottom {
-		for i := left; i <= right; i++ {
-			ans = append(ans, matrix[top][i])
-		}
-		for i := top + 1; i <= bottom; i++ {
-			ans = append(ans, matrix[i][right])
-		}
-		if left < right && top < bottom {
-			for i := right - 1; i >= left; i-- {
-				ans = append(ans, matrix[bottom][i])
-			}
-			for i := bottom - 1; i > top; i-- {
-				ans = append(ans, matrix[i][left])
-			}
-		}
-		top++
-		bottom--
-		left++
-		right--
-	}
-
-	return ans
+```cs
+public class Solution {
+    public IList<int> SpiralOrder(int[][] matrix) {
+        int m = matrix.Length, n = matrix[0].Length;
+        int[] dirs = { 0, 1, 0, -1, 0 };
+        int i = 0, j = 0, k = 0;
+        IList<int> ans = new List<int>();
+        bool[,] vis = new bool[m, n];
+        for (int h = m * n; h > 0; --h) {
+            ans.Add(matrix[i][j]);
+            vis[i, j] = true;
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x < 0 || x >= m || y < 0 || y >= n || vis[x, y]) {
+                k = (k + 1) % 4;
+            }
+            i += dirs[k];
+            j += dirs[k + 1];
+        }
+        return ans;
+    }
 }
 ```
 
-### **...**
+<!-- tabs:end -->
 
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：模拟（空间优化）
+
+注意到，题目中矩阵元素取值范围为 $[-100, 100]$，因此，我们可以将访问过的元素加上一个较大的值，比如 $300$，这样只需要判断访问的元素是否大于 $100$ 即可，无需额外的空间记录是否访问过。如果最终需要将访问过的元素恢复原值，可以在遍历结束后再次遍历一遍矩阵，将所有元素减去 $300$。
+
+时间复杂度 $O(m \times n)$，其中 $m$ 和 $n$ 分别是矩阵的行数和列数。空间复杂度 $O(1)$。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        m, n = len(matrix), len(matrix[0])
+        dirs = (0, 1, 0, -1, 0)
+        i = j = k = 0
+        ans = []
+        for _ in range(m * n):
+            ans.append(matrix[i][j])
+            matrix[i][j] += 300
+            x, y = i + dirs[k], j + dirs[k + 1]
+            if x < 0 or x >= m or y < 0 or y >= n or matrix[x][y] > 100:
+                k = (k + 1) % 4
+            i += dirs[k]
+            j += dirs[k + 1]
+        for i in range(m):
+            for j in range(n):
+                matrix[i][j] -= 300
+        return ans
 ```
 
+#### Java
+
+```java
+class Solution {
+    public List<Integer> spiralOrder(int[][] matrix) {
+        int m = matrix.length, n = matrix[0].length;
+        int[] dirs = {0, 1, 0, -1, 0};
+        int i = 0, j = 0, k = 0;
+        List<Integer> ans = new ArrayList<>();
+        for (int h = m * n; h > 0; --h) {
+            ans.add(matrix[i][j]);
+            matrix[i][j] += 300;
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x < 0 || x >= m || y < 0 || y >= n || matrix[x][y] > 100) {
+                k = (k + 1) % 4;
+            }
+            i += dirs[k];
+            j += dirs[k + 1];
+        }
+        for (i = 0; i < m; ++i) {
+            for (j = 0; j < n; ++j) {
+                matrix[i][j] -= 300;
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        int dirs[5] = {0, 1, 0, -1, 0};
+        int i = 0, j = 0, k = 0;
+        vector<int> ans;
+        for (int h = m * n; h; --h) {
+            ans.push_back(matrix[i][j]);
+            matrix[i][j] += 300;
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x < 0 || x >= m || y < 0 || y >= n || matrix[x][y] > 100) {
+                k = (k + 1) % 4;
+            }
+            i += dirs[k];
+            j += dirs[k + 1];
+        }
+        for (i = 0; i < m; ++i) {
+            for (j = 0; j < n; ++j) {
+                matrix[i][j] -= 300;
+            }
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func spiralOrder(matrix [][]int) (ans []int) {
+	m, n := len(matrix), len(matrix[0])
+	dirs := [5]int{0, 1, 0, -1, 0}
+	i, j, k := 0, 0, 0
+	for h := m * n; h > 0; h-- {
+		ans = append(ans, matrix[i][j])
+		matrix[i][j] += 300
+		x, y := i+dirs[k], j+dirs[k+1]
+		if x < 0 || x >= m || y < 0 || y >= n || matrix[x][y] > 100 {
+			k = (k + 1) % 4
+		}
+		i, j = i+dirs[k], j+dirs[k+1]
+	}
+	for i = 0; i < m; i++ {
+		for j = 0; j < n; j++ {
+			matrix[i][j] -= 300
+		}
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function spiralOrder(matrix: number[][]): number[] {
+    const m = matrix.length;
+    const n = matrix[0].length;
+    const ans: number[] = [];
+    const dirs = [0, 1, 0, -1, 0];
+    for (let h = m * n, i = 0, j = 0, k = 0; h > 0; --h) {
+        ans.push(matrix[i][j]);
+        matrix[i][j] += 300;
+        const x = i + dirs[k];
+        const y = j + dirs[k + 1];
+        if (x < 0 || x >= m || y < 0 || y >= n || matrix[x][y] > 100) {
+            k = (k + 1) % 4;
+        }
+        i += dirs[k];
+        j += dirs[k + 1];
+    }
+    for (let i = 0; i < m; ++i) {
+        for (let j = 0; j < n; ++j) {
+            matrix[i][j] -= 300;
+        }
+    }
+    return ans;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn spiral_order(mut matrix: Vec<Vec<i32>>) -> Vec<i32> {
+        let m = matrix.len();
+        let n = matrix[0].len();
+        let mut dirs = vec![0, 1, 0, -1, 0];
+        let mut i = 0;
+        let mut j = 0;
+        let mut k = 0;
+        let mut ans = Vec::new();
+
+        for _ in 0..(m * n) {
+            ans.push(matrix[i][j]);
+            matrix[i][j] += 300;
+            let x = i as i32 + dirs[k] as i32;
+            let y = j as i32 + dirs[k + 1] as i32;
+
+            if x < 0
+                || x >= m as i32
+                || y < 0
+                || y >= n as i32
+                || matrix[x as usize][y as usize] > 100
+            {
+                k = (k + 1) % 4;
+            }
+
+            i = (i as i32 + dirs[k] as i32) as usize;
+            j = (j as i32 + dirs[k + 1] as i32) as usize;
+        }
+
+        for i in 0..m {
+            for j in 0..n {
+                matrix[i][j] -= 300;
+            }
+        }
+
+        ans
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[][]} matrix
+ * @return {number[]}
+ */
+var spiralOrder = function (matrix) {
+    const m = matrix.length;
+    const n = matrix[0].length;
+    const ans = [];
+    const dirs = [0, 1, 0, -1, 0];
+    for (let h = m * n, i = 0, j = 0, k = 0; h > 0; --h) {
+        ans.push(matrix[i][j]);
+        matrix[i][j] += 300;
+        const x = i + dirs[k];
+        const y = j + dirs[k + 1];
+        if (x < 0 || x >= m || y < 0 || y >= n || matrix[x][y] > 100) {
+            k = (k + 1) % 4;
+        }
+        i += dirs[k];
+        j += dirs[k + 1];
+    }
+    for (let i = 0; i < m; ++i) {
+        for (let j = 0; j < n; ++j) {
+            matrix[i][j] -= 300;
+        }
+    }
+    return ans;
+};
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public IList<int> SpiralOrder(int[][] matrix) {
+        int m = matrix.Length, n = matrix[0].Length;
+        int[] dirs = { 0, 1, 0, -1, 0 };
+        int i = 0, j = 0, k = 0;
+        IList<int> ans = new List<int>();
+        for (int h = m * n; h > 0; --h) {
+            ans.Add(matrix[i][j]);
+            matrix[i][j] += 300;
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x < 0 || x >= m || y < 0 || y >= n || matrix[x][y] > 100) {
+                k = (k + 1) % 4;
+            }
+            i += dirs[k];
+            j += dirs[k + 1];
+        }
+        for (int a = 0; a < m; ++a) {
+            for (int b = 0; b < n; ++b) {
+                matrix[a][b] -= 300;
+            }
+        }
+        return ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

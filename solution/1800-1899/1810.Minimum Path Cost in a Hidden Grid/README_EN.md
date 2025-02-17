@@ -1,8 +1,24 @@
-# [1810. Minimum Path Cost in a Hidden Grid](https://leetcode.com/problems/minimum-path-cost-in-a-hidden-grid)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1810.Minimum%20Path%20Cost%20in%20a%20Hidden%20Grid/README_EN.md
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Graph
+    - Interactive
+    - Heap (Priority Queue)
+---
+
+<!-- problem:start -->
+
+# [1810. Minimum Path Cost in a Hidden Grid 🔒](https://leetcode.com/problems/minimum-path-cost-in-a-hidden-grid)
 
 [中文文档](/solution/1800-1899/1810.Minimum%20Path%20Cost%20in%20a%20Hidden%20Grid/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>This is an <strong>interactive problem</strong>.</p>
 
@@ -38,7 +54,7 @@
 <p>Remember that you will <strong>not</strong> have this information in your code.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> grid = [[2,3],[1,1]], r1 = 0, c1 = 1, r2 = 1, c2 = 0
@@ -59,9 +75,9 @@ The robot is initially standing on cell (0, 1), denoted by the 3.
 - master.isTarget() returns true.
 - master.move(&#39;L&#39;) doesn&#39;t move the robot and returns -1.
 - master.move(&#39;R&#39;) moves the robot to the cell (1, 1) and returns 1.
-We now know that the target is the cell (0, 1), and the minimum total cost to reach it is 2. </pre>
+We now know that the target is the cell (1, 0), and the minimum total cost to reach it is 2. </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> grid = [[0,3,1],[3,4,2],[1,2,0]], r1 = 2, c1 = 0, r2 = 0, c2 = 2
@@ -69,7 +85,7 @@ We now know that the target is the cell (0, 1), and the minimum total cost to re
 <strong>Explanation:</strong> The minimum cost path is (2,0) -&gt; (2,1) -&gt; (1,1) -&gt; (1,2) -&gt; (0,2).
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> grid = [[1,0],[0,1]], r1 = 0, c1 = 0, r2 = 1, c2 = 1
@@ -87,26 +103,154 @@ We now know that the target is the cell (0, 1), and the minimum total cost to re
 	<li><code>0 &lt;= grid[i][j] &lt;= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
+# """
+# This is GridMaster's API interface.
+# You should not implement it, or speculate about its implementation
+# """
+# class GridMaster(object):
+#    def canMove(self, direction: str) -> bool:
+#
+#
+#    def move(self, direction: str) -> int:
+#
+#
+#    def isTarget(self) -> None:
+#
+#
 
+
+class Solution(object):
+    def findShortestPath(self, master: 'GridMaster') -> int:
+        def dfs(i, j):
+            nonlocal target
+            if master.isTarget():
+                target = (i, j)
+            for dir, (a, b, ndir) in dirs.items():
+                x, y = i + a, j + b
+                if 0 <= x < N and 0 <= y < N and master.canMove(dir) and g[x][y] == -1:
+                    g[x][y] = master.move(dir)
+                    dfs(x, y)
+                    master.move(ndir)
+
+        target = (-1, -1)
+        N = 200
+        INF = 0x3F3F3F3F
+        g = [[-1] * N for _ in range(N)]
+        dirs = {
+            'U': (-1, 0, 'D'),
+            'D': (1, 0, 'U'),
+            'L': (0, -1, 'R'),
+            'R': (0, 1, 'L'),
+        }
+        dfs(100, 100)
+        if target == (-1, -1):
+            return -1
+        q = [(0, 100, 100)]
+        dist = [[INF] * N for _ in range(N)]
+        dist[100][100] = 0
+        while q:
+            w, i, j = heappop(q)
+            if (i, j) == target:
+                return w
+            for a, b, _ in dirs.values():
+                x, y = i + a, j + b
+                if (
+                    0 <= x < N
+                    and 0 <= y < N
+                    and g[x][y] != -1
+                    and dist[x][y] > w + g[x][y]
+                ):
+                    dist[x][y] = w + g[x][y]
+                    heappush(q, (dist[x][y], x, y))
+        return 0
 ```
 
-### **Java**
+#### Java
 
 ```java
+/**
+ * // This is the GridMaster's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * class GridMaster {
+ *     boolean canMove(char direction);
+ *     int move(char direction);
+ *     boolean isTarget();
+ * }
+ */
 
-```
+class Solution {
+    private static final char[] dir = {'U', 'R', 'D', 'L'};
+    private static final char[] ndir = {'D', 'L', 'U', 'R'};
+    private static final int[] dirs = {-1, 0, 1, 0, -1};
+    private static final int N = 200;
+    private static final int INF = 0x3f3f3f3f;
+    private static int[][] g = new int[N][N];
+    private static int[][] dist = new int[N][N];
+    private int[] target;
 
-### **...**
+    public int findShortestPath(GridMaster master) {
+        target = new int[] {-1, -1};
+        for (int i = 0; i < N; ++i) {
+            Arrays.fill(g[i], -1);
+            Arrays.fill(dist[i], INF);
+        }
+        dfs(100, 100, master);
+        if (target[0] == -1 && target[1] == -1) {
+            return -1;
+        }
+        PriorityQueue<int[]> q = new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
+        q.offer(new int[] {0, 100, 100});
+        dist[100][100] = 0;
+        while (!q.isEmpty()) {
+            int[] p = q.poll();
+            int w = p[0], i = p[1], j = p[2];
+            if (i == target[0] && j == target[1]) {
+                return w;
+            }
+            for (int k = 0; k < 4; ++k) {
+                int x = i + dirs[k], y = j + dirs[k + 1];
+                if (x >= 0 && x < N && y >= 0 && y < N && g[x][y] != -1
+                    && dist[x][y] > w + g[x][y]) {
+                    dist[x][y] = w + g[x][y];
+                    q.offer(new int[] {dist[x][y], x, y});
+                }
+            }
+        }
+        return 0;
+    }
 
-```
-
+    private void dfs(int i, int j, GridMaster master) {
+        if (master.isTarget()) {
+            target = new int[] {i, j};
+        }
+        for (int k = 0; k < 4; ++k) {
+            char d = dir[k], nd = ndir[k];
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x >= 0 && x < N && y >= 0 && y < N && master.canMove(d) && g[x][y] == -1) {
+                g[x][y] = master.move(d);
+                dfs(x, y, master);
+                master.move(nd);
+            }
+        }
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

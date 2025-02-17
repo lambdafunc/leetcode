@@ -1,22 +1,13 @@
-func findDisappearedNumbers(nums []int) []int {
-	for _, num := range nums {
-		idx := abs(num) - 1
-		if nums[idx] > 0 {
-			nums[idx] *= -1
+func findDisappearedNumbers(nums []int) (ans []int) {
+	n := len(nums)
+	s := make([]bool, n+1)
+	for _, x := range nums {
+		s[x] = true
+	}
+	for i := 1; i <= n; i++ {
+		if !s[i] {
+			ans = append(ans, i)
 		}
 	}
-	var res []int
-	for i, num := range nums {
-		if num > 0 {
-			res = append(res, i+1)
-		}
-	}
-	return res
-}
-
-func abs(a int) int {
-	if a > 0 {
-		return a
-	}
-	return -a
+	return
 }

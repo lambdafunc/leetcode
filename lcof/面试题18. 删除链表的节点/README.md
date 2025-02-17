@@ -1,6 +1,16 @@
-# [面试题 18. 删除链表的节点](https://leetcode-cn.com/problems/shan-chu-lian-biao-de-jie-dian-lcof/)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9818.%20%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E8%8A%82%E7%82%B9/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 18. 删除链表的节点](https://leetcode.cn/problems/shan-chu-lian-biao-de-jie-dian-lcof/)
 
 ## 题目描述
+
+<!-- description:start -->
 
 <p>给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。</p>
 
@@ -31,15 +41,25 @@
 	<li>若使用 C 或 C++ 语言，你不需要 <code>free</code> 或 <code>delete</code> 被删除的节点</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-定义一个虚拟头节点 `dummy` 指向 `head`，`pre` 指针初始指向 `dummy`。
+<!-- solution:start -->
 
-循环遍历链表，`pre` 往后移动。当指针 `pre.next` 指向的节点的值等于 `val` 时退出循环，将 `pre.next` 指向 `pre.next.next`，然后返回 `dummy.next`。
+### 方法一：模拟
+
+我们先创建一个虚拟头节点 `dummy`，令 `dummy.next = head`，然后创建一个指针 `cur` 指向 `dummy`。
+
+遍历链表，当 `cur.next.val == val` 时，将 `cur.next` 指向 `cur.next.next`，然后跳出循环。
+
+最后返回 `dummy.next` 即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 为链表的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -49,14 +69,16 @@
 #         self.next = None
 class Solution:
     def deleteNode(self, head: ListNode, val: int) -> ListNode:
-        pre = dummy = ListNode(next=head)
-        while pre.next and pre.next.val != val:
-            pre = pre.next
-        pre.next = None if not pre.next else pre.next.next
+        dummy = cur = ListNode(0, head)
+        while cur.next:
+            if cur.next.val == val:
+                cur.next = cur.next.next
+                break
+            cur = cur.next
         return dummy.next
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -68,65 +90,20 @@ class Solution:
  * }
  */
 class Solution {
-
     public ListNode deleteNode(ListNode head, int val) {
         ListNode dummy = new ListNode(0, head);
-        ListNode pre = dummy;
-        for (; pre.next != null && pre.next.val != val; pre = pre.next);
-        pre.next = pre.next == null ? null : pre.next.next;
+        for (ListNode cur = dummy; cur.next != null; cur = cur.next) {
+            if (cur.next.val == val) {
+                cur.next = cur.next.next;
+                break;
+            }
+        }
         return dummy.next;
     }
 }
-
 ```
 
-### **JavaScript**
-
-```js
-/**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
- */
-/**
- * @param {ListNode} head
- * @param {number} val
- * @return {ListNode}
- */
-var deleteNode = function (head, val) {
-    const dummy = new ListNode(0, head);
-    let pre = dummy;
-    for (; pre.next && pre.next.val != val; pre = pre.next);
-    pre.next = pre.next?.next;
-    return dummy.next;
-};
-```
-
-### **Go**
-
-```go
-/**
- * Definition for singly-linked list.
- * type ListNode struct {
- *     Val int
- *     Next *ListNode
- * }
- */
-func deleteNode(head *ListNode, val int) *ListNode {
-	dummy := &ListNode{0, head}
-	pre := dummy
-	for ; pre.Next != nil && pre.Next.Val != val; pre = pre.Next {
-	}
-	if pre.Next != nil {
-		pre.Next = pre.Next.Next
-	}
-	return dummy.Next
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -139,17 +116,42 @@ func deleteNode(head *ListNode, val int) *ListNode {
  */
 class Solution {
 public:
-    ListNode *deleteNode(ListNode *head, int val) {
-        ListNode *dummy = new ListNode(0, head);
-        ListNode *pre = dummy;
-        for (; pre->next && pre->next->val != val; pre = pre->next);
-        pre->next = pre->next ? pre->next->next : nullptr;
+    ListNode* deleteNode(ListNode* head, int val) {
+        ListNode* dummy = new ListNode(0, head);
+        for (ListNode* cur = dummy; cur->next; cur = cur->next) {
+            if (cur->next->val == val) {
+                cur->next = cur->next->next;
+                break;
+            }
+        }
         return dummy->next;
     }
 };
 ```
 
-### **Rust**
+#### Go
+
+```go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func deleteNode(head *ListNode, val int) *ListNode {
+	dummy := &ListNode{0, head}
+	for cur := dummy; cur.Next != nil; cur = cur.Next {
+		if cur.Next.Val == val {
+			cur.Next = cur.Next.Next
+			break
+		}
+	}
+	return dummy.Next
+}
+```
+
+#### Rust
 
 ```rust
 // Definition for singly-linked list.
@@ -183,10 +185,93 @@ impl Solution {
 }
 ```
 
-### **...**
+#### JavaScript
 
+```js
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} val
+ * @return {ListNode}
+ */
+var deleteNode = function (head, val) {
+    const dummy = new ListNode(0, head);
+    for (let cur = dummy; cur.next; cur = cur.next) {
+        if (cur.next.val == val) {
+            cur.next = cur.next.next;
+            break;
+        }
+    }
+    return dummy.next;
+};
 ```
 
+#### C#
+
+```cs
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     public int val;
+ *     public ListNode next;
+ *     public ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode DeleteNode(ListNode head, int val) {
+        ListNode dummy = new ListNode(0, head);
+        for (ListNode cur = dummy; cur.next != null; cur = cur.next) {
+            if (cur.next.val == val) {
+                cur.next = cur.next.next;
+                break;
+            }
+        }
+        return dummy.next;
+    }
+}
+```
+
+#### Swift
+
+```swift
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     var val: Int
+ *     var next: ListNode?
+ *     init(_ val: Int, _ next: ListNode? = nil) {
+ *         self.val = val
+ *         self.next = next
+ *     }
+ * }
+ */
+
+class Solution {
+    func deleteNode(_ head: ListNode?, _ val: Int) -> ListNode? {
+        let dummy = ListNode(0, head)
+        var current: ListNode? = dummy
+
+        while current?.next != nil {
+            if current?.next?.val == val {
+                current?.next = current?.next?.next
+                break
+            }
+            current = current?.next
+        }
+
+        return dummy.next
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,15 +1,15 @@
 class Solution:
     def subsets(self, nums: List[int]) -> List[List[int]]:
-        res = []
-
-        def dfs(i, n, t):
-            res.append(t.copy())
-            if i == n:
+        def dfs(i: int):
+            if i == len(nums):
+                ans.append(t[:])
                 return
-            for j in range(i, n):
-                t.append(nums[j])
-                dfs(j + 1, n, t)
-                t.pop()
+            dfs(i + 1)
+            t.append(nums[i])
+            dfs(i + 1)
+            t.pop()
 
-        dfs(0, len(nums), [])
-        return res
+        ans = []
+        t = []
+        dfs(0)
+        return ans

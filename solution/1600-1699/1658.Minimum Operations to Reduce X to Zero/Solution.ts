@@ -1,22 +1,16 @@
 function minOperations(nums: number[], x: number): number {
-    const total = nums.reduce((a, c) => a + c, 0);
-    if (total < x) return -1;
-    // 前缀和 + 哈希表, 求何为total - x的最长子序列
+    const s = nums.reduce((acc, cur) => acc + cur, -x);
+    const vis: Map<number, number> = new Map([[0, -1]]);
+    let [mx, t] = [-1, 0];
     const n = nums.length;
-    const target = total - x;
-    let hashMap = new Map();
-    hashMap.set(0, -1);
-    let pre = 0;
-    let ans = -1;
-    for (let right = 0; right < n; right++) {
-        pre += nums[right];
-        if (!hashMap.has(pre)) {
-            hashMap.set(pre, right);
+    for (let i = 0; i < n; ++i) {
+        t += nums[i];
+        if (!vis.has(t)) {
+            vis.set(t, i);
         }
-        if (hashMap.has(pre - target)) {
-            let left = hashMap.get(pre - target);
-            ans = Math.max(right - left, ans)
+        if (vis.has(t - s)) {
+            mx = Math.max(mx, i - vis.get(t - s)!);
         }
     }
-    return ans == -1 ? -1 : n - ans;
-};
+    return ~mx ? n - mx : -1;
+}

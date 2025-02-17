@@ -1,133 +1,218 @@
-# [568. Maximum Vacation Days](https://leetcode.com/problems/maximum-vacation-days)
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0568.Maximum%20Vacation%20Days/README_EN.md
+tags:
+    - Array
+    - Dynamic Programming
+    - Matrix
+---
+
+<!-- problem:start -->
+
+# [568. Maximum Vacation Days 🔒](https://leetcode.com/problems/maximum-vacation-days)
 
 [中文文档](/solution/0500-0599/0568.Maximum%20Vacation%20Days/README.md)
 
 ## Description
 
-<p>
+<!-- description:start -->
 
-LeetCode wants to give one of its best employees the option to travel among <b>N</b> cities to collect algorithm problems. But all work and no play makes Jack a dull boy, you could take vacations in some particular cities and weeks. Your job is to schedule the traveling to maximize the number of vacation days you could take, but there are certain rules and restrictions you need to follow.
+<p>LeetCode wants to give one of its best employees the option to travel among <code>n</code> cities to collect algorithm problems. But all work and no play makes Jack a dull boy, you could take vacations in some particular cities and weeks. Your job is to schedule the traveling to maximize the number of vacation days you could take, but there are certain rules and restrictions you need to follow.</p>
 
-</p>
-
-<p><b>Rules and restrictions:</b><br>
+<p>Rules and restrictions:</p>
 
 <ol>
-
-<li>You can only travel among <b>N</b> cities, represented by indexes from 0 to N-1. Initially, you are in the city indexed 0 on <b>Monday</b>.</li>
-
-<li>The cities are connected by flights. The flights are represented as a <b>N*N</b> matrix (not necessary symmetrical), called <b>flights</b> representing the airline status from the city i to the city j. If there is no flight from the city i to the city j, <b>flights[i][j] = 0</b>; Otherwise, <b>flights[i][j] = 1</b>. Also, <b>flights[i][i] = 0</b> for all i.</li>
-
-<li>You totally have <b>K</b> weeks (<b>each week has 7 days</b>) to travel. You can only take flights at most once <b>per day</b> and can only take flights on each week's <b>Monday</b> morning. Since flight time is so short, we don't consider the impact of flight time.</li>
-
-<li>For each city, you can only have restricted vacation days in different weeks, given an <b>N*K</b> matrix called <b>days</b> representing this relationship. For the value of <b>days[i][j]</b>, it represents the maximum days you could take vacation in the city <b>i</b> in the week <b>j</b>.</li>
-
+	<li>You can only travel among <code>n</code> cities, represented by indexes from <code>0</code> to <code>n - 1</code>. Initially, you are in the city indexed <code>0</code> on <strong>Monday</strong>.</li>
+	<li>The cities are connected by flights. The flights are represented as an <code>n x n</code> matrix (not necessarily symmetrical), called <code>flights</code> representing the airline status from the city <code>i</code> to the city <code>j</code>. If there is no flight from the city <code>i</code> to the city <code>j</code>, <code>flights[i][j] == 0</code>; Otherwise, <code>flights[i][j] == 1</code>. Also, <code>flights[i][i] == 0</code> for all <code>i</code>.</li>
+	<li>You totally have <code>k</code> weeks (each week has <strong>seven days</strong>) to travel. You can only take flights at most once per day and can only take flights on each week&#39;s Monday morning. Since flight time is so short, we do not consider the impact of flight time.</li>
+	<li>For each city, you can only have restricted vacation days in different weeks, given an <code>n x k</code> matrix called <code>days</code> representing this relationship. For the value of <code>days[i][j]</code>, it represents the maximum days you could take a vacation in the city <code>i</code> in the week <code>j</code>.</li>
+	<li>You could stay in a city beyond the number of vacation days, but you should work on the extra days, which will not be counted as vacation days.</li>
+	<li>If you fly from city <code>A</code> to city <code>B</code> and take the vacation on that day, the deduction towards vacation days will count towards the vacation days of city <code>B</code> in that week.</li>
+	<li>We do not consider the impact of flight hours on the calculation of vacation days.</li>
 </ol>
 
-</p>
+<p>Given the two matrices <code>flights</code> and <code>days</code>, return <em>the maximum vacation days you could take during </em><code>k</code><em> weeks</em>.</p>
 
-<p>You're given the <b>flights</b> matrix and <b>days</b> matrix, and you need to output the maximum vacation days you could take during <b>K</b> weeks.</p>
-
-<p><b>Example 1:</b><br />
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
-<b>Input:</b>flights = [[0,1,1],[1,0,1],[1,1,0]], days = [[1,3,1],[6,0,3],[3,3,3]]
-
-<b>Output:</b> 12
-
-<b>Explanation:</b> <br>Ans = 6 + 3 + 3 = 12. <br>
-
+<strong>Input:</strong> flights = [[0,1,1],[1,0,1],[1,1,0]], days = [[1,3,1],[6,0,3],[3,3,3]]
+<strong>Output:</strong> 12
+<strong>Explanation:</strong>
 One of the best strategies is:
-
-1st week : fly from city 0 to city 1 on Monday, and play 6 days and work 1 day. <br/>(Although you start at city 0, we could also fly to and start at other cities since it is Monday.) 
-
+1st week : fly from city 0 to city 1 on Monday, and play 6 days and work 1 day.
+(Although you start at city 0, we could also fly to and start at other cities since it is Monday.)
 2nd week : fly from city 1 to city 2 on Monday, and play 3 days and work 4 days.
-
 3rd week : stay at city 2, and play 3 days and work 4 days.
-
+Ans = 6 + 3 + 3 = 12.
 </pre>
 
-</p>
-
-<p><b>Example 2:</b><br />
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
-<b>Input:</b>flights = [[0,0,0],[0,0,0],[0,0,0]], days = [[1,1,1],[7,7,7],[7,7,7]]
-
-<b>Output:</b> 3
-
-<b>Explanation:</b> <br>Ans = 1 + 1 + 1 = 3. <br>
-
-Since there is no flights enable you to move to another city, you have to stay at city 0 for the whole 3 weeks. <br/>For each week, you only have one day to play and six days to work. <br/>So the maximum number of vacation days is 3.
-
+<strong>Input:</strong> flights = [[0,0,0],[0,0,0],[0,0,0]], days = [[1,1,1],[7,7,7],[7,7,7]]
+<strong>Output:</strong> 3
+<strong>Explanation:</strong>
+Since there are no flights that enable you to move to another city, you have to stay at city 0 for the whole 3 weeks. 
+For each week, you only have one day to play and six days to work.
+So the maximum number of vacation days is 3.
+Ans = 1 + 1 + 1 = 3.
 </pre>
 
-</p>
-
-<p><b>Example 3:</b><br />
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
-
-<b>Input:</b>flights = [[0,1,1],[1,0,1],[1,1,0]], days = [[7,0,0],[0,7,0],[0,0,7]]
-
-<b>Output:</b> 21
-
-<b>Explanation:</b><br>Ans = 7 + 7 + 7 = 21<br>
-
+<strong>Input:</strong> flights = [[0,1,1],[1,0,1],[1,1,0]], days = [[7,0,0],[0,7,0],[0,0,7]]
+<strong>Output:</strong> 21
+<strong>Explanation:</strong>
 One of the best strategies is:
-
-1st week : stay at city 0, and play 7 days. 
-
+1st week : stay at city 0, and play 7 days.
 2nd week : fly from city 0 to city 1 on Monday, and play 7 days.
-
 3rd week : fly from city 1 to city 2 on Monday, and play 7 days.
-
+Ans = 7 + 7 + 7 = 21
 </pre>
 
-</p>
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><b>Note:</b><br>
+<ul>
+	<li><code>n == flights.length</code></li>
+	<li><code>n == flights[i].length</code></li>
+	<li><code>n == days.length</code></li>
+	<li><code>k == days[i].length</code></li>
+	<li><code>1 &lt;= n, k &lt;= 100</code></li>
+	<li><code>flights[i][j]</code> is either <code>0</code> or <code>1</code>.</li>
+	<li><code>0 &lt;= days[i][j] &lt;= 7</code></li>
+</ul>
 
-<ol>
-
-<li><b>N and K</b> are positive integers, which are in the range of [1, 100].</li>
-
-<li>In the matrix <b>flights</b>, all the values are integers in the range of [0, 1].</li>
-
-<li>In the matrix <b>days</b>, all the values are integers in the range [0, 7].</li>
-
-<li>You could stay at a city beyond the number of vacation days, but you should <b>work</b> on the extra days, which won't be counted as vacation days.</li>
-
-<li>If you fly from the city A to the city B and take the vacation on that day, the deduction towards vacation days will count towards the vacation days of city B in that week.</li>
-
-<li>We don't consider the impact of flight hours towards the calculation of vacation days.</li>
-
-</ol>
-
-</p>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def maxVacationDays(self, flights: List[List[int]], days: List[List[int]]) -> int:
+        n = len(flights)
+        K = len(days[0])
+        f = [[-inf] * n for _ in range(K + 1)]
+        f[0][0] = 0
+        for k in range(1, K + 1):
+            for j in range(n):
+                f[k][j] = f[k - 1][j]
+                for i in range(n):
+                    if flights[i][j]:
+                        f[k][j] = max(f[k][j], f[k - 1][i])
+                f[k][j] += days[j][k - 1]
+        return max(f[-1][j] for j in range(n))
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public int maxVacationDays(int[][] flights, int[][] days) {
+        int n = flights.length;
+        int K = days[0].length;
+        final int inf = 1 << 30;
+        int[][] f = new int[K + 1][n];
+        for (var g : f) {
+            Arrays.fill(g, -inf);
+        }
+        f[0][0] = 0;
+        for (int k = 1; k <= K; ++k) {
+            for (int j = 0; j < n; ++j) {
+                f[k][j] = f[k - 1][j];
+                for (int i = 0; i < n; ++i) {
+                    if (flights[i][j] == 1) {
+                        f[k][j] = Math.max(f[k][j], f[k - 1][i]);
+                    }
+                }
+                f[k][j] += days[j][k - 1];
+            }
+        }
+        int ans = 0;
+        for (int j = 0; j < n; ++j) {
+            ans = Math.max(ans, f[K][j]);
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int maxVacationDays(vector<vector<int>>& flights, vector<vector<int>>& days) {
+        int n = flights.size();
+        int K = days[0].size();
+        int f[K + 1][n];
+        memset(f, -0x3f, sizeof(f));
+        f[0][0] = 0;
+        for (int k = 1; k <= K; ++k) {
+            for (int j = 0; j < n; ++j) {
+                f[k][j] = f[k - 1][j];
+                for (int i = 0; i < n; ++i) {
+                    if (flights[i][j] == 1) {
+                        f[k][j] = max(f[k][j], f[k - 1][i]);
+                    }
+                }
+                f[k][j] += days[j][k - 1];
+            }
+        }
+        int ans = 0;
+        for (int j = 0; j < n; ++j) {
+            ans = max(ans, f[K][j]);
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func maxVacationDays(flights [][]int, days [][]int) (ans int) {
+	n, K := len(flights), len(days[0])
+	f := make([][]int, K+1)
+	for i := range f {
+		f[i] = make([]int, n)
+		for j := range f[i] {
+			f[i][j] = -(1 << 30)
+		}
+	}
+	f[0][0] = 0
+	for k := 1; k <= K; k++ {
+		for j := 0; j < n; j++ {
+			f[k][j] = f[k-1][j]
+			for i := 0; i < n; i++ {
+				if flights[i][j] == 1 {
+					f[k][j] = max(f[k][j], f[k-1][i])
+				}
+			}
+			f[k][j] += days[j][k-1]
+		}
+	}
+	for j := 0; j < n; j++ {
+		ans = max(ans, f[K][j])
+	}
+	return
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

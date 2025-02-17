@@ -1,32 +1,27 @@
 class RLEIterator {
 public:
-    vector<int> encoding;
-    int curr;
-    int i;
-
     RLEIterator(vector<int>& encoding) {
         this->encoding = encoding;
-        this->curr = 0;
-        this->i = 0;
     }
-    
+
     int next(int n) {
-        while (i < encoding.size())
-        {
-            if (curr + n > encoding[i])
-            {
-                n -= encoding[i] - curr;
-                curr = 0;
+        while (i < encoding.size()) {
+            if (encoding[i] - j < n) {
+                n -= (encoding[i] - j);
                 i += 2;
-            }
-            else
-            {
-                curr += n;
+                j = 0;
+            } else {
+                j += n;
                 return encoding[i + 1];
             }
         }
         return -1;
     }
+
+private:
+    vector<int> encoding;
+    int i = 0;
+    int j = 0;
 };
 
 /**

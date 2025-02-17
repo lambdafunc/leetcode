@@ -1,10 +1,25 @@
-# [1673. 找出最具竞争力的子序列](https://leetcode-cn.com/problems/find-the-most-competitive-subsequence)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1673.Find%20the%20Most%20Competitive%20Subsequence/README.md
+rating: 1802
+source: 第 217 场周赛 Q2
+tags:
+    - 栈
+    - 贪心
+    - 数组
+    - 单调栈
+---
+
+<!-- problem:start -->
+
+# [1673. 找出最具竞争力的子序列](https://leetcode.cn/problems/find-the-most-competitive-subsequence)
 
 [English Version](/solution/1600-1699/1673.Find%20the%20Most%20Competitive%20Subsequence/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数数组 <code>nums</code> 和一个正整数 <code>k</code> ，返回长度为 <code>k</code> 且最具 <strong>竞争力</strong> 的<em> </em><code>nums</code> 子序列。</p>
 
@@ -39,32 +54,120 @@
 	<li><code>1 <= k <= nums.length</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：栈
+
+我们从左到右遍历数组 `nums`，维护一个栈 `stk`，遍历过程中，如果当前元素 `nums[i]` 小于栈顶元素，且栈中元素个数加上 $n-i$ 大于 $k$，则将栈顶元素出栈，直到不满足上述条件为止。此时如果栈中元素个数小于 $k$，则将当前元素入栈。
+
+遍历结束后，栈中元素即为所求。
+
+时间复杂度 $O(n)$，空间复杂度 $O(k)$。其中 $n$ 为数组 `nums` 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def mostCompetitive(self, nums: List[int], k: int) -> List[int]:
+        stk = []
+        n = len(nums)
+        for i, v in enumerate(nums):
+            while stk and stk[-1] > v and len(stk) + n - i > k:
+                stk.pop()
+            if len(stk) < k:
+                stk.append(v)
+        return stk
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int[] mostCompetitive(int[] nums, int k) {
+        Deque<Integer> stk = new ArrayDeque<>();
+        int n = nums.length;
+        for (int i = 0; i < nums.length; ++i) {
+            while (!stk.isEmpty() && stk.peek() > nums[i] && stk.size() + n - i > k) {
+                stk.pop();
+            }
+            if (stk.size() < k) {
+                stk.push(nums[i]);
+            }
+        }
+        int[] ans = new int[stk.size()];
+        for (int i = ans.length - 1; i >= 0; --i) {
+            ans[i] = stk.pop();
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> mostCompetitive(vector<int>& nums, int k) {
+        vector<int> stk;
+        int n = nums.size();
+        for (int i = 0; i < n; ++i) {
+            while (stk.size() && stk.back() > nums[i] && stk.size() + n - i > k) {
+                stk.pop_back();
+            }
+            if (stk.size() < k) {
+                stk.push_back(nums[i]);
+            }
+        }
+        return stk;
+    }
+};
 ```
 
+#### Go
+
+```go
+func mostCompetitive(nums []int, k int) []int {
+	stk := []int{}
+	n := len(nums)
+	for i, v := range nums {
+		for len(stk) > 0 && stk[len(stk)-1] > v && len(stk)+n-i > k {
+			stk = stk[:len(stk)-1]
+		}
+		if len(stk) < k {
+			stk = append(stk, v)
+		}
+	}
+	return stk
+}
+```
+
+#### TypeScript
+
+```ts
+function mostCompetitive(nums: number[], k: number): number[] {
+    const stk: number[] = [];
+    const n = nums.length;
+    for (let i = 0; i < n; ++i) {
+        while (stk.length && stk.at(-1)! > nums[i] && stk.length + n - i > k) {
+            stk.pop();
+        }
+        if (stk.length < k) {
+            stk.push(nums[i]);
+        }
+    }
+    return stk;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

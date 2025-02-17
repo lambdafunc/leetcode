@@ -1,10 +1,19 @@
-# [面试题 17.24. 最大子矩阵](https://leetcode-cn.com/problems/max-submatrix-lcci)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/lcci/17.24.Max%20Submatrix/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 17.24. 最大子矩阵](https://leetcode.cn/problems/max-submatrix-lcci)
 
 [English Version](/lcci/17.24.Max%20Submatrix/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
+
 <p>给定一个正整数和负整数组成的 N &times; M&nbsp;矩阵，编写代码找出元素总和最大的子矩阵。</p>
 
 <p>返回一个数组 <code>[r1, c1, r2, c2]</code>，其中 <code>r1</code>, <code>c1</code> 分别代表子矩阵左上角的行号和列号，<code>r2</code>, <code>c2</code> 分别代表右下角的行号和列号。若有多个满足条件的子矩阵，返回任意一个均可。</p>
@@ -27,17 +36,17 @@
 	<li><code>1 &lt;= matrix.length, matrix[0].length &lt;= 200</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-双指针 i1, i2 遍历所有可能的“行对”，即子矩阵的上下两条边，这决定了矩阵的高，然后枚举 i1~i2 高度的每一列，看成一维数组的一项，求和最大的子数组即可。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -71,9 +80,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -86,7 +93,7 @@ class Solution {
             }
         }
         int mx = matrix[0][0];
-        int[] ans = new int[]{0, 0, 0, 0};
+        int[] ans = new int[] {0, 0, 0, 0};
         for (int i1 = 0; i1 < m; ++i1) {
             for (int i2 = i1; i2 < m; ++i2) {
                 int[] nums = new int[n];
@@ -104,7 +111,7 @@ class Solution {
                     }
                     if (f > mx) {
                         mx = f;
-                        ans = new int[]{i1, start, i2, j};
+                        ans = new int[] {i1, start, i2, j};
                     }
                 }
             }
@@ -114,7 +121,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -127,25 +134,21 @@ public:
                 s[i + 1][j] = s[i][j] + matrix[i][j];
         int mx = matrix[0][0];
         vector<int> ans(4);
-        for (int i1 = 0; i1 < m; ++i1)
-        {
-            for (int i2 = i1; i2 < m; ++i2)
-            {
+        for (int i1 = 0; i1 < m; ++i1) {
+            for (int i2 = i1; i2 < m; ++i2) {
                 vector<int> nums;
                 for (int j = 0; j < n; ++j)
                     nums.push_back(s[i2 + 1][j] - s[i1][j]);
                 int start = 0;
                 int f = nums[0];
-                for (int j = 1; j < n; ++j)
-                {
-                    if (f > 0) f += nums[j];
-                    else
-                    {
+                for (int j = 1; j < n; ++j) {
+                    if (f > 0)
+                        f += nums[j];
+                    else {
                         f = nums[j];
                         start = j;
                     }
-                    if (f > mx)
-                    {
+                    if (f > mx) {
                         mx = f;
                         ans[0] = i1;
                         ans[1] = start;
@@ -160,7 +163,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func getMaxMatrix(matrix [][]int) []int {
@@ -202,10 +205,53 @@ func getMaxMatrix(matrix [][]int) []int {
 }
 ```
 
-### **...**
+#### Swift
 
-```
+```swift
+class Solution {
+    func getMaxMatrix(_ matrix: [[Int]]) -> [Int] {
+        let m = matrix.count, n = matrix[0].count
+        var s = Array(repeating: Array(repeating: 0, count: n), count: m + 1)
 
+        for i in 0..<m {
+            for j in 0..<n {
+                s[i + 1][j] = s[i][j] + matrix[i][j]
+            }
+        }
+
+        var mx = matrix[0][0]
+        var ans = [0, 0, 0, 0]
+
+        for i1 in 0..<m {
+            for i2 in i1..<m {
+                var nums = [Int](repeating: 0, count: n)
+                for j in 0..<n {
+                    nums[j] = s[i2 + 1][j] - s[i1][j]
+                }
+
+                var start = 0
+                var f = nums[0]
+                for j in 1..<n {
+                    if f > 0 {
+                        f += nums[j]
+                    } else {
+                        f = nums[j]
+                        start = j
+                    }
+                    if f > mx {
+                        mx = f
+                        ans = [i1, start, i2, j]
+                    }
+                }
+            }
+        }
+        return ans
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

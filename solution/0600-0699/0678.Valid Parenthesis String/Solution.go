@@ -1,37 +1,18 @@
 func checkValidString(s string) bool {
 	n := len(s)
-	left, asterisk := 0, 0
-	for i := 0; i < n; i++ {
-		if s[i] == '(' {
-			left++
-		} else if s[i] == ')' {
-			if left > 0 {
-				left--
-			} else if asterisk > 0 {
-				asterisk--
-			} else {
-				return false
+	dp := make([][]bool, n)
+	for i := range dp {
+		dp[i] = make([]bool, n)
+		dp[i][i] = s[i] == '*'
+	}
+	for i := n - 2; i >= 0; i-- {
+		for j := i + 1; j < n; j++ {
+			a, b := s[i], s[j]
+			dp[i][j] = (a == '(' || a == '*') && (b == '*' || b == ')') && (i+1 == j || dp[i+1][j-1])
+			for k := i; k < j && !dp[i][j]; k++ {
+				dp[i][j] = dp[i][k] && dp[k+1][j]
 			}
-		} else {
-			asterisk++
 		}
 	}
-	asterisk = 0
-	right := 0
-	for i := n - 1; i >= 0; i-- {
-		if s[i] == ')' {
-			right++
-		} else if s[i] == '(' {
-			if right > 0 {
-				right--
-			} else if asterisk > 0 {
-				asterisk--
-			} else {
-				return false
-			}
-		} else {
-			asterisk++
-		}
-	}
-	return true
+	return dp[0][n-1]
 }

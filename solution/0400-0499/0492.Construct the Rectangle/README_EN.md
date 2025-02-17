@@ -1,8 +1,20 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0492.Construct%20the%20Rectangle/README_EN.md
+tags:
+    - Math
+---
+
+<!-- problem:start -->
+
 # [492. Construct the Rectangle](https://leetcode.com/problems/construct-the-rectangle)
 
 [中文文档](/solution/0400-0499/0492.Construct%20the%20Rectangle/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A web developer needs to know how to design a web page&#39;s size. So, given a specific rectangular web page&rsquo;s area, your job by now is to design a rectangular web page, whose length L and width W satisfy the following requirements:</p>
 
@@ -15,7 +27,7 @@
 <p>Return <em>an array <code>[L, W]</code> where <code>L</code> and <code>W</code> are the length and width of the&nbsp;web page you designed in sequence.</em></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> area = 4
@@ -24,14 +36,14 @@
 But according to requirement 2, [1,4] is illegal; according to requirement 3,  [4,1] is not optimal compared to [2,2]. So the length L is 2, and the width W is 2.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> area = 37
 <strong>Output:</strong> [37,1]
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> area = 122122
@@ -45,11 +57,17 @@ But according to requirement 2, [1,4] is illegal; according to requirement 3,  [
 	<li><code>1 &lt;= area &lt;= 10<sup>7</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -60,7 +78,7 @@ class Solution:
         return [area // w, w]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -69,12 +87,12 @@ class Solution {
         while (area % w != 0) {
             --w;
         }
-        return new int[]{area / w, w};
+        return new int[] {area / w, w};
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -87,7 +105,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func constructRectangle(area int) []int {
@@ -99,10 +117,8 @@ func constructRectangle(area int) []int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,140 +1,128 @@
-# [122. 买卖股票的最佳时机 II](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0122.Best%20Time%20to%20Buy%20and%20Sell%20Stock%20II/README.md
+tags:
+    - 贪心
+    - 数组
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [122. 买卖股票的最佳时机 II](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii)
 
 [English Version](/solution/0100-0199/0122.Best%20Time%20to%20Buy%20and%20Sell%20Stock%20II/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个数组 <code>prices</code> ，其中 <code>prices[i]</code> 是一支给定股票第 <code>i</code> 天的价格。</p>
+<p>给你一个整数数组 <code>prices</code> ，其中&nbsp;<code>prices[i]</code> 表示某支股票第 <code>i</code> 天的价格。</p>
 
-<p>设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。</p>
+<p>在每一天，你可以决定是否购买和/或出售股票。你在任何时候&nbsp;<strong>最多</strong>&nbsp;只能持有 <strong>一股</strong> 股票。你也可以先购买，然后在 <strong>同一天</strong> 出售。</p>
 
-<p><strong>注意：</strong>你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
+<p>返回 <em>你能获得的 <strong>最大</strong> 利润</em>&nbsp;。</p>
 
-<p> </p>
+<p>&nbsp;</p>
 
-<p><strong>示例 1:</strong></p>
-
-<pre>
-<strong>输入:</strong> prices = [7,1,5,3,6,4]
-<strong>输出:</strong> 7
-<strong>解释:</strong> 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
-     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。
-</pre>
-
-<p><strong>示例 2:</strong></p>
+<p><strong>示例 1：</strong></p>
 
 <pre>
-<strong>输入:</strong> prices = [1,2,3,4,5]
-<strong>输出:</strong> 4
-<strong>解释:</strong> 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
-     注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
-</pre>
+<strong>输入：</strong>prices = [7,1,5,3,6,4]
+<strong>输出：</strong>7
+<strong>解释：</strong>在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。
+随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6 - 3 = 3。
+最大总利润为 4 + 3 = 7 。</pre>
 
-<p><strong>示例 3:</strong></p>
+<p><strong>示例 2：</strong></p>
 
 <pre>
-<strong>输入:</strong> prices = [7,6,4,3,1]
-<strong>输出:</strong> 0
-<strong>解释:</strong> 在这种情况下, 没有交易完成, 所以最大利润为 0。</pre>
+<strong>输入：</strong>prices = [1,2,3,4,5]
+<strong>输出：</strong>4
+<strong>解释：</strong>在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。
+最大总利润为 4 。</pre>
 
-<p> </p>
+<p><strong>示例&nbsp;3：</strong></p>
+
+<pre>
+<strong>输入：</strong>prices = [7,6,4,3,1]
+<strong>输出：</strong>0
+<strong>解释：</strong>在这种情况下, 交易无法获得正利润，所以不参与交易可以获得最大利润，最大利润为 0。</pre>
+
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>1 <= prices.length <= 3 * 10<sup>4</sup></code></li>
-	<li><code>0 <= prices[i] <= 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= prices.length &lt;= 3 * 10<sup>4</sup></code></li>
+	<li><code>0 &lt;= prices[i] &lt;= 10<sup>4</sup></code></li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-### 1. 贪心法
+### 方法一：贪心
 
-所有上涨交易日都做买卖，所有下跌交易日都不做买卖，这样便能实现利润最大化。
+从第二天开始，如果当天股价大于前一天股价，则在前一天买入，当天卖出，即可获得利润。如果当天股价小于前一天股价，则不买入，不卖出。也即是说，所有上涨交易日都做买卖，所有下跌交易日都不做买卖，最终获得的利润是最大的。
 
-### 2. 动态规划法
-
-设 f1 表示当天结束后持有股票的最大利润，f2 表示当前结束后没有持有股票的最大利润。
-
-初始第 1 天结束时，`f1 = -prices[0]`，`f2 = 0`。
-
-从第 2 天开始，当天结束时：
-
-- 若持有股票，则可能是前一天持有股票，然后继续持有；也可能是前一天没有持有股票，然后当天买入股票。最大利润 `f1 = max(f1, f2 - prices[i])`。
-- 若没有持有股票，则可能是前一天没持有股票，今天也没持有股票；或者前一天持有股票，然后今天卖出。最大利润 `f2 = max(f2, f1 + prices[i])`。
-
-最后返回 f2 即可。
+时间复杂度 $O(n)$，其中 $n$ 为数组 `prices` 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-贪心：
+#### Python3
 
 ```python
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        res = 0
-        for i in range(1, len(prices)):
-            t = prices[i] - prices[i - 1]
-            res += max(t, 0)
-        return res
+        return sum(max(0, b - a) for a, b in pairwise(prices))
 ```
 
-动态规划：
-
-```python
-class Solution:
-    def maxProfit(self, prices: List[int]) -> int:
-        f1, f2 = -prices[0], 0
-        for price in prices[1:]:
-            f1 = max(f1, f2 - price)
-            f2 = max(f2, f1 + price)
-        return f2
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-贪心：
+#### Java
 
 ```java
 class Solution {
     public int maxProfit(int[] prices) {
-        int res = 0;
+        int ans = 0;
         for (int i = 1; i < prices.length; ++i) {
-            // 策略是所有上涨交易日都做买卖，所以下跌交易日都不做买卖
-            int t = prices[i] - prices[i - 1];
-            res += Math.max(t, 0);
+            ans += Math.max(0, prices[i] - prices[i - 1]);
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-动态规划：
+#### C++
 
-```java
+```cpp
 class Solution {
-    public int maxProfit(int[] prices) {
-        int f1 = -prices[0], f2 = 0;
-        for (int i = 1; i < prices.length; ++i) {
-            f1 = Math.max(f1, f2 - prices[i]);
-            f2 = Math.max(f2, f1 + prices[i]);
-        }
-        return f2;
+public:
+    int maxProfit(vector<int>& prices) {
+        int ans = 0;
+        for (int i = 1; i < prices.size(); ++i) ans += max(0, prices[i] - prices[i - 1]);
+        return ans;
     }
+};
+```
+
+#### Go
+
+```go
+func maxProfit(prices []int) (ans int) {
+	for i, v := range prices[1:] {
+		t := v - prices[i]
+		if t > 0 {
+			ans += t
+		}
+	}
+	return
 }
 ```
 
-### **TypeScript**
+#### TypeScript
 
 ```ts
 function maxProfit(prices: number[]): number {
@@ -146,96 +134,145 @@ function maxProfit(prices: number[]): number {
 }
 ```
 
-### **C++**
+#### Rust
 
-贪心：
-
-```cpp
-class Solution {
-public:
-    int maxProfit(vector<int>& prices) {
-        int res = 0;
-        for (int i = 1; i < prices.size(); ++i) {
-            int t = prices[i] - prices[i - 1];
-            res += max(t, 0);
+```rust
+impl Solution {
+    pub fn max_profit(prices: Vec<i32>) -> i32 {
+        let mut res = 0;
+        for i in 1..prices.len() {
+            res += (0).max(prices[i] - prices[i - 1]);
         }
-        return res;
+        res
     }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} prices
+ * @return {number}
+ */
+var maxProfit = function (prices) {
+    let ans = 0;
+    for (let i = 1; i < prices.length; i++) {
+        ans += Math.max(0, prices[i] - prices[i - 1]);
+    }
+    return ans;
 };
 ```
 
-动态规划：
-
-```cpp
-class Solution {
-public:
-    int maxProfit(vector<int>& prices) {
-        int f1 = -prices[0], f2 = 0;
-        for (int i = 1; i < prices.size(); ++i) {
-            f1 = max(f1, f2 - prices[i]);
-            f2 = max(f2, f1 + prices[i]);
-        }
-        return f2;
-    }
-};
-```
-
-### **Go**
-
-贪心：
-
-```go
-func maxProfit(prices []int) int {
-	res := 0
-	for i := 1; i < len(prices); i++ {
-		t := prices[i] - prices[i-1]
-		if t > 0 {
-			res += t
-		}
-	}
-	return res
-}
-```
-
-动态规划：
-
-```go
-func maxProfit(prices []int) int {
-	f1, f2 := -prices[0], 0
-	for _, price := range prices[1:] {
-		f1 = max(f1, f2-price)
-		f2 = max(f2, f1+price)
-	}
-	return f2
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-```
-
-### **C#**
-
-贪心：
+#### C#
 
 ```cs
 public class Solution {
     public int MaxProfit(int[] prices) {
-        int res = 0;
-        for (int i = 1; i < prices.Length; ++i)
-        {
-            int t = prices[i] - prices[i - 1];
-            res += Math.Max(t, 0);
+        int ans = 0;
+        for (int i = 1; i < prices.Length; ++i) {
+            ans += Math.Max(0, prices[i] - prices[i - 1]);
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-动态规划：
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：动态规划
+
+我们设 $f[i][j]$ 表示第 $i$ 天交易完后的最大利润，其中 $j$ 表示当前是否持有股票，持有股票时 $j=0$，不持有股票时 $j=1$。初始状态为 $f[0][0]=-prices[0]$，其余状态均为 $0$。
+
+如果当前持有股票，那么可能是前一天就持有股票，今天什么都不做，即 $f[i][0]=f[i-1][0]$；也可能是前一天不持有股票，今天买入股票，即 $f[i][0]=f[i-1][1]-prices[i]$。
+
+如果当前不持有股票，那么可能是前一天就不持有股票，今天什么都不做，即 $f[i][1]=f[i-1][1]$；也可能是前一天持有股票，今天卖出股票，即 $f[i][1]=f[i-1][0]+prices[i]$。
+
+因此，我们可以写出状态转移方程：
+
+$$
+\begin{cases}
+f[i][0]=\max(f[i-1][0],f[i-1][1]-prices[i])\\
+f[i][1]=\max(f[i-1][1],f[i-1][0]+prices[i])
+\end{cases}
+$$
+
+最终的答案即为 $f[n-1][1]$，其中 $n$ 为数组 `prices` 的长度。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为数组 `prices` 的长度。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        n = len(prices)
+        f = [[0] * 2 for _ in range(n)]
+        f[0][0] = -prices[0]
+        for i in range(1, n):
+            f[i][0] = max(f[i - 1][0], f[i - 1][1] - prices[i])
+            f[i][1] = max(f[i - 1][1], f[i - 1][0] + prices[i])
+        return f[n - 1][1]
+```
+
+#### Java
+
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        int n = prices.length;
+        int[][] f = new int[n][2];
+        f[0][0] = -prices[0];
+        for (int i = 1; i < n; ++i) {
+            f[i][0] = Math.max(f[i - 1][0], f[i - 1][1] - prices[i]);
+            f[i][1] = Math.max(f[i - 1][1], f[i - 1][0] + prices[i]);
+        }
+        return f[n - 1][1];
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        int f[n][2];
+        f[0][0] = -prices[0];
+        f[0][1] = 0;
+        for (int i = 1; i < n; ++i) {
+            f[i][0] = max(f[i - 1][0], f[i - 1][1] - prices[i]);
+            f[i][1] = max(f[i - 1][1], f[i - 1][0] + prices[i]);
+        }
+        return f[n - 1][1];
+    }
+};
+```
+
+#### Go
+
+```go
+func maxProfit(prices []int) int {
+	n := len(prices)
+	f := make([][2]int, n)
+	f[0][0] = -prices[0]
+	for i := 1; i < n; i++ {
+		f[i][0] = max(f[i-1][0], f[i-1][1]-prices[i])
+		f[i][1] = max(f[i-1][1], f[i-1][0]+prices[i])
+	}
+	return f[n-1][1]
+}
+```
+
+#### C#
 
 ```cs
 public class Solution {
@@ -251,10 +288,90 @@ public class Solution {
 }
 ```
 
-### **...**
+<!-- tabs:end -->
 
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法三：动态规划（空间优化）
+
+我们可以发现，在方法二中，第 $i$ 天的状态，只与第 $i-1$ 天的状态有关，因此我们可以只用两个变量来维护第 $i-1$ 天的状态，从而将空间复杂度优化到 $O(1)$。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组 `prices` 的长度。空间复杂度 $O(1)$。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        n = len(prices)
+        f = [-prices[0], 0]
+        for i in range(1, n):
+            g = [0] * 2
+            g[0] = max(f[0], f[1] - prices[i])
+            g[1] = max(f[1], f[0] + prices[i])
+            f = g
+        return f[1]
 ```
 
+#### Java
+
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        int n = prices.length;
+        int[] f = new int[] {-prices[0], 0};
+        for (int i = 1; i < n; ++i) {
+            int[] g = new int[2];
+            g[0] = Math.max(f[0], f[1] - prices[i]);
+            g[1] = Math.max(f[1], f[0] + prices[i]);
+            f = g;
+        }
+        return f[1];
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        int f[2] = {-prices[0], 0};
+        for (int i = 1; i < n; ++i) {
+            int g[2];
+            g[0] = max(f[0], f[1] - prices[i]);
+            g[1] = max(f[1], f[0] + prices[i]);
+            f[0] = g[0], f[1] = g[1];
+        }
+        return f[1];
+    }
+};
+```
+
+#### Go
+
+```go
+func maxProfit(prices []int) int {
+	n := len(prices)
+	f := [2]int{-prices[0], 0}
+	for i := 1; i < n; i++ {
+		g := [2]int{}
+		g[0] = max(f[0], f[1]-prices[i])
+		g[1] = max(f[1], f[0]+prices[i])
+		f = g
+	}
+	return f[1]
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

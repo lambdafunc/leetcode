@@ -1,23 +1,26 @@
 func maxFrequency(nums []int, k int) int {
+	n := len(nums)
 	sort.Ints(nums)
-	ans := 1
-	window := 0
-	l, r, n := 0, 1, len(nums)
-	for r < n {
-		window += (nums[r] - nums[r-1]) * (r - l)
-		r++
-		for window > k {
-			window -= nums[r-1] - nums[l]
-			l++
+	s := make([]int, n+1)
+	for i, x := range nums {
+		s[i+1] = s[i] + x
+	}
+	check := func(m int) bool {
+		for i := m; i <= n; i++ {
+			if nums[i-1]*m-(s[i]-s[i-m]) <= k {
+				return true
+			}
 		}
-		ans = max(ans, r-l)
+		return false
 	}
-	return ans
-}
-
-func max(x, y int) int {
-	if x > y {
-		return x
+	l, r := 1, n
+	for l < r {
+		mid := (l + r + 1) >> 1
+		if check(mid) {
+			l = mid
+		} else {
+			r = mid - 1
+		}
 	}
-	return y
+	return l
 }

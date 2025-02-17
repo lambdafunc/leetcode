@@ -1,16 +1,29 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0371.Sum%20of%20Two%20Integers/README_EN.md
+tags:
+    - Bit Manipulation
+    - Math
+---
+
+<!-- problem:start -->
+
 # [371. Sum of Two Integers](https://leetcode.com/problems/sum-of-two-integers)
 
 [中文文档](/solution/0300-0399/0371.Sum%20of%20Two%20Integers/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given two integers <code>a</code> and <code>b</code>, return <em>the sum of the two integers without using the operators</em> <code>+</code> <em>and</em> <code>-</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 <pre><strong>Input:</strong> a = 1, b = 2
 <strong>Output:</strong> 3
-</pre><p><strong>Example 2:</strong></p>
+</pre><p><strong class="example">Example 2:</strong></p>
 <pre><strong>Input:</strong> a = 2, b = 3
 <strong>Output:</strong> 5
 </pre>
@@ -21,23 +34,29 @@
 	<li><code>-1000 &lt;= a, b &lt;= 1000</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def getSum(self, a: int, b: int) -> int:
-        a, b = a & 0xffffffff, b & 0xffffffff
+        a, b = a & 0xFFFFFFFF, b & 0xFFFFFFFF
         while b:
-            carry = ((a & b) << 1) & 0xffffffff
+            carry = ((a & b) << 1) & 0xFFFFFFFF
             a, b = a ^ b, carry
-        return a if a < 0x80000000 else ~(a ^ 0xffffffff)
+        return a if a < 0x80000000 else ~(a ^ 0xFFFFFFFF)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -47,15 +66,14 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int getSum(int a, int b) {
-        while (b)
-        {
-            unsigned int carry = (unsigned int)(a & b) << 1;
+        while (b) {
+            unsigned int carry = (unsigned int) (a & b) << 1;
             a = a ^ b;
             b = carry;
         }
@@ -64,7 +82,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func getSum(a int, b int) int {
@@ -77,10 +95,8 @@ func getSum(a int, b int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

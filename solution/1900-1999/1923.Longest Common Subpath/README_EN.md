@@ -1,8 +1,26 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1923.Longest%20Common%20Subpath/README_EN.md
+rating: 2661
+source: Weekly Contest 248 Q4
+tags:
+    - Array
+    - Binary Search
+    - Suffix Array
+    - Hash Function
+    - Rolling Hash
+---
+
+<!-- problem:start -->
+
 # [1923. Longest Common Subpath](https://leetcode.com/problems/longest-common-subpath)
 
 [中文文档](/solution/1900-1999/1923.Longest%20Common%20Subpath/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>There is a country of <code>n</code> cities numbered from <code>0</code> to <code>n - 1</code>. In this country, there is a road connecting <b>every pair</b> of cities.</p>
 
@@ -13,7 +31,7 @@
 <p>A <strong>subpath</strong> of a path is a contiguous sequence of cities within that path.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 5, paths = [[0,1,<u>2,3</u>,4],
@@ -23,7 +41,7 @@
 <strong>Explanation:</strong> The longest common subpath is [2,3].
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 3, paths = [[0],[1],[2]]
@@ -31,7 +49,7 @@
 <strong>Explanation:</strong> There is no common subpath shared by the three paths.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 5, paths = [[<u>0</u>,1,2,3,4],
@@ -51,17 +69,59 @@
 	<li>The same city is not listed multiple times consecutively in <code>paths[i]</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
+class Solution:
+    def longestCommonSubpath(self, n: int, paths: List[List[int]]) -> int:
+        def check(k: int) -> bool:
+            cnt = Counter()
+            for h in hh:
+                vis = set()
+                for i in range(1, len(h) - k + 1):
+                    j = i + k - 1
+                    x = (h[j] - h[i - 1] * p[j - i + 1]) % mod
+                    if x not in vis:
+                        vis.add(x)
+                        cnt[x] += 1
+            return max(cnt.values()) == m
 
+        m = len(paths)
+        mx = max(len(path) for path in paths)
+        base = 133331
+        mod = 2**64 + 1
+        p = [0] * (mx + 1)
+        p[0] = 1
+        for i in range(1, len(p)):
+            p[i] = p[i - 1] * base % mod
+        hh = []
+        for path in paths:
+            k = len(path)
+            h = [0] * (k + 1)
+            for i, x in enumerate(path, 1):
+                h[i] = h[i - 1] * base % mod + x
+            hh.append(h)
+        l, r = 0, min(len(path) for path in paths)
+        while l < r:
+            mid = (l + r + 1) >> 1
+            if check(mid):
+                l = mid
+            else:
+                r = mid - 1
+        return l
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -120,10 +180,8 @@ class Solution {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

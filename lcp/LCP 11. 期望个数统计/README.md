@@ -1,8 +1,15 @@
-# [LCP 11. 期望个数统计](https://leetcode-cn.com/problems/qi-wang-ge-shu-tong-ji)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcp/LCP%2011.%20%E6%9C%9F%E6%9C%9B%E4%B8%AA%E6%95%B0%E7%BB%9F%E8%AE%A1/README.md
+---
+
+<!-- problem:start -->
+
+# [LCP 11. 期望个数统计](https://leetcode.cn/problems/qi-wang-ge-shu-tong-ji)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>某互联网公司一年一度的春招开始了，一共有 <code>n</code> 名面试者入选。每名面试者都会提交一份简历，公司会根据提供的简历资料产生一个预估的能力值，数值越大代表越有可能通过面试。</p>
 
@@ -45,32 +52,92 @@
 	<li><code>0 &lt;= scores[i] &lt;= 10^6</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：哈希表
+
+根据题目描述，我们可以得到如下结论：
+
+如果有 $n$ 个人的能力值相同，每个人有 $n$ 种不同的位置，那么每个人在原位的概率是 $\frac{1}{n}$，那么合起来的期望就是 $1$。
+
+因此，我们只需要统计不同的能力值的个数，即为答案。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为数组 `scores` 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def expectNumber(self, scores: List[int]) -> int:
+        return len(set(scores))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int expectNumber(int[] scores) {
+        Set<Integer> s = new HashSet<>();
+        for (int x : scores) {
+            s.add(x);
+        }
+        return s.size();
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int expectNumber(vector<int>& scores) {
+        unordered_set<int> s(scores.begin(), scores.end());
+        return s.size();
+    }
+};
 ```
 
+#### Go
+
+```go
+func expectNumber(scores []int) int {
+	s := map[int]struct{}{}
+	for _, x := range scores {
+		s[x] = struct{}{}
+	}
+	return len(s)
+}
+```
+
+#### TypeScript
+
+```ts
+function expectNumber(scores: number[]): number {
+    const s: Set<number> = new Set<number>(scores);
+    return s.size;
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func expectNumber(_ scores: [Int]) -> Int {
+        let uniqueScores = Set(scores)
+        return uniqueScores.count
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

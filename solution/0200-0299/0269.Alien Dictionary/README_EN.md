@@ -1,33 +1,50 @@
-# [269. Alien Dictionary](https://leetcode.com/problems/alien-dictionary)
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0269.Alien%20Dictionary/README_EN.md
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Graph
+    - Topological Sort
+    - Array
+    - String
+---
+
+<!-- problem:start -->
+
+# [269. Alien Dictionary 🔒](https://leetcode.com/problems/alien-dictionary)
 
 [中文文档](/solution/0200-0299/0269.Alien%20Dictionary/README.md)
 
 ## Description
 
-<p>There is a new alien language that uses the English alphabet. However, the order among the letters is unknown to you.</p>
+<!-- description:start -->
 
-<p>You are given a list of strings <code>words</code> from the alien language&#39;s dictionary, where the strings in <code>words</code> are <strong>sorted lexicographically</strong> by the rules of this new language.</p>
+<p>There is a new alien language that uses the English alphabet. However, the order of the letters is unknown to you.</p>
 
-<p>Return <em>a string of the unique letters in the new alien language sorted in <strong>lexicographically increasing order</strong> by the new language&#39;s rules. If there is no solution, return </em><code>&quot;&quot;</code><em>. If there are multiple solutions, return <strong>any of them</strong></em>.</p>
+<p>You are given a list of strings <code>words</code> from the alien language&#39;s dictionary. Now it is claimed that the strings in <code>words</code> are <span data-keyword="lexicographically-smaller-string-alien"><strong>sorted lexicographically</strong></span> by the rules of this new language.</p>
 
-<p>A string <code>s</code> is <strong>lexicographically smaller</strong> than a string <code>t</code> if at the first letter where they differ, the letter in <code>s</code> comes before the letter in <code>t</code> in the alien language. If the first <code>min(s.length, t.length)</code> letters are the same, then <code>s</code> is smaller if and only if <code>s.length &lt; t.length</code>.</p>
+<p>If this claim is incorrect, and the given arrangement of string in&nbsp;<code>words</code>&nbsp;cannot correspond to any order of letters,&nbsp;return&nbsp;<code>&quot;&quot;.</code></p>
+
+<p>Otherwise, return <em>a string of the unique letters in the new alien language sorted in <strong>lexicographically increasing order</strong> by the new language&#39;s rules</em><em>. </em>If there are multiple solutions, return<em> <strong>any of them</strong></em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> words = [&quot;wrt&quot;,&quot;wrf&quot;,&quot;er&quot;,&quot;ett&quot;,&quot;rftt&quot;]
 <strong>Output:</strong> &quot;wertf&quot;
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> words = [&quot;z&quot;,&quot;x&quot;]
 <strong>Output:</strong> &quot;zx&quot;
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> words = [&quot;z&quot;,&quot;x&quot;,&quot;z&quot;]
@@ -44,11 +61,17 @@
 	<li><code>words[i]</code> consists of only lowercase English letters.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -106,7 +129,7 @@ class Solution:
         return '' if len(ans) < cnt else ''.join(ans)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -185,7 +208,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -195,21 +218,17 @@ public:
         vector<bool> s(26);
         int cnt = 0;
         int n = words.size();
-        for (int i = 0; i < n - 1; ++i)
-        {
-            for (char c : words[i])
-            {
+        for (int i = 0; i < n - 1; ++i) {
+            for (char c : words[i]) {
                 if (cnt == 26) break;
                 c -= 'a';
-                if (!s[c])
-                {
+                if (!s[c]) {
                     ++cnt;
                     s[c] = true;
                 }
             }
             int m = words[i].size();
-            for (int j = 0; j < m; ++j)
-            {
+            for (int j = 0; j < m; ++j) {
                 if (j >= words[i + 1].size()) return "";
                 char c1 = words[i][j], c2 = words[i + 1][j];
                 if (c1 == c2) continue;
@@ -218,12 +237,10 @@ public:
                 break;
             }
         }
-        for (char c : words[n - 1])
-        {
+        for (char c : words[n - 1]) {
             if (cnt == 26) break;
             c -= 'a';
-            if (!s[c])
-            {
+            if (!s[c]) {
                 ++cnt;
                 s[c] = true;
             }
@@ -238,8 +255,7 @@ public:
             if (s[i] && indegree[i] == 0)
                 q.push(i);
         string ans = "";
-        while (!q.empty())
-        {
+        while (!q.empty()) {
             int t = q.front();
             ans += (t + 'a');
             q.pop();
@@ -253,10 +269,8 @@ public:
 };
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

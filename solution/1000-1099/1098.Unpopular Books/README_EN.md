@@ -1,10 +1,22 @@
-# [1098. Unpopular Books](https://leetcode.com/problems/unpopular-books)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1098.Unpopular%20Books/README_EN.md
+tags:
+    - Database
+---
+
+<!-- problem:start -->
+
+# [1098. Unpopular Books 🔒](https://leetcode.com/problems/unpopular-books)
 
 [中文文档](/solution/1000-1099/1098.Unpopular%20Books/README.md)
 
 ## Description
 
-<p>Table:&nbsp;<code>Books</code></p>
+<!-- description:start -->
+
+<p>Table: <code>Books</code></p>
 
 <pre>
 +----------------+---------+
@@ -14,10 +26,12 @@
 | name           | varchar |
 | available_from | date    |
 +----------------+---------+
-book_id is the primary key of this table.
+book_id is the primary key (column with unique values) of this table.
 </pre>
 
-<p>Table:&nbsp;<code>Orders</code></p>
+<p>&nbsp;</p>
+
+<p>Table: <code>Orders</code></p>
 
 <pre>
 +----------------+---------+
@@ -28,17 +42,23 @@ book_id is the primary key of this table.
 | quantity       | int     |
 | dispatch_date  | date    |
 +----------------+---------+
-order_id is the primary key of this table.
-book_id is a foreign key to the Books table.
+order_id is the primary key (column with unique values) of this table.
+book_id is a foreign key (reference column) to the Books table.
 </pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query that reports the&nbsp;<strong>books</strong> that have sold <strong>less than 10</strong> copies in the last year, excluding books that have been available for less than 1 month from today. <strong>Assume today is 2019-06-23</strong>.</p>
+<p>Write a solution to report&nbsp;the <strong>books</strong> that have sold <strong>less than </strong><code>10</code> copies in the last year, excluding books that have been available for less than one month from today. <strong>Assume today is </strong><code>2019-06-23</code>.</p>
 
-<p>The query result format is in the following example:</p>
+<p>Return the result table in <strong>any order</strong>.</p>
+
+<p>The result format is in the following example.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
+<strong>Input:</strong> 
 Books table:
 +---------+--------------------+----------------+
 | book_id | name               | available_from |
@@ -49,7 +69,6 @@ Books table:
 | 4       | &quot;13 Reasons Why&quot;   | 2019-06-01     |
 | 5       | &quot;The Hunger Games&quot; | 2008-09-21     |
 +---------+--------------------+----------------+
-
 Orders table:
 +----------+---------+----------+---------------+
 | order_id | book_id | quantity | dispatch_date |
@@ -62,8 +81,7 @@ Orders table:
 | 6        | 5       | 9        | 2009-02-02    |
 | 7        | 5       | 8        | 2010-04-13    |
 +----------+---------+----------+---------------+
-
-Result table:
+<strong>Output:</strong> 
 +-----------+--------------------+
 | book_id   | name               |
 +-----------+--------------------+
@@ -73,26 +91,31 @@ Result table:
 +-----------+--------------------+
 </pre>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### MySQL
 
-```python
-
-```
-
-### **Java**
-
-```java
-
-```
-
-### **...**
-
-```
-
+```sql
+# Write your MySQL query statement below
+SELECT book_id, name
+FROM
+    Books
+    LEFT JOIN Orders USING (book_id)
+WHERE available_from < '2019-05-23'
+GROUP BY 1
+HAVING SUM(IF(dispatch_date >= '2018-06-23', quantity, 0)) < 10;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,68 +1,126 @@
-# [551. 学生出勤记录 I](https://leetcode-cn.com/problems/student-attendance-record-i)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0551.Student%20Attendance%20Record%20I/README.md
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [551. 学生出勤记录 I](https://leetcode.cn/problems/student-attendance-record-i)
 
 [English Version](/solution/0500-0599/0551.Student%20Attendance%20Record%20I/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个字符串来代表一个学生的出勤记录，这个记录仅包含以下三个字符：</p>
+<p>给你一个字符串 <code>s</code> 表示一个学生的出勤记录，其中的每个字符用来标记当天的出勤情况（缺勤、迟到、到场）。记录中只含下面三种字符：</p>
 
-<ol>
-	<li><strong>&#39;A&#39;</strong> : Absent，缺勤</li>
-	<li><strong>&#39;L&#39;</strong> : Late，迟到</li>
-	<li><strong>&#39;P&#39;</strong> : Present，到场</li>
-</ol>
+<ul>
+	<li><code>'A'</code>：Absent，缺勤</li>
+	<li><code>'L'</code>：Late，迟到</li>
+	<li><code>'P'</code>：Present，到场</li>
+</ul>
 
-<p>如果一个学生的出勤记录中不<strong>超过一个&#39;A&#39;(缺勤)</strong>并且<strong>不超过两个连续的&#39;L&#39;(迟到)</strong>,那么这个学生会被奖赏。</p>
+<p>如果学生能够 <strong>同时</strong> 满足下面两个条件，则可以获得出勤奖励：</p>
 
-<p>你需要根据这个学生的出勤记录判断他是否会被奖赏。</p>
+<ul>
+	<li>按 <strong>总出勤</strong> 计，学生缺勤（<code>'A'</code>）<strong>严格</strong> 少于两天。</li>
+	<li>学生 <strong>不会</strong> 存在 <strong>连续</strong> 3 天或 <strong>连续</strong> 3 天以上的迟到（<code>'L'</code>）记录。</li>
+</ul>
 
-<p><strong>示例 1:</strong></p>
+<p>如果学生可以获得出勤奖励，返回 <code>true</code> ；否则，返回 <code>false</code> 。</p>
 
-<pre><strong>输入:</strong> &quot;PPALLP&quot;
-<strong>输出:</strong> True
+<p>&nbsp;</p>
+
+<p><strong>示例 1：</strong></p>
+
+<pre>
+<strong>输入：</strong>s = "PPALLP"
+<strong>输出：</strong>true
+<strong>解释：</strong>学生缺勤次数少于 2 次，且不存在 3 天或以上的连续迟到记录。
 </pre>
 
-<p><strong>示例 2:</strong></p>
+<p><strong>示例 2：</strong></p>
 
-<pre><strong>输入:</strong> &quot;PPALLL&quot;
-<strong>输出:</strong> False
+<pre>
+<strong>输入：</strong>s = "PPALLL"
+<strong>输出：</strong>false
+<strong>解释：</strong>学生最后三天连续迟到，所以不满足出勤奖励的条件。
 </pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 &lt;= s.length &lt;= 1000</code></li>
+	<li><code>s[i]</code> 为 <code>'A'</code>、<code>'L'</code> 或 <code>'P'</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：字符串遍历
+
+我们可以遍历字符串 $s$，记录字符 `'A'` 和字符串 `"LLL"` 的出现次数。如果字符 `'A'` 的出现次数小于 $2$，且字符串 `"LLL"` 没有出现过，则可以将该字符串视作记录合法，返回 `true`，否则返回 `false`。
+
+时间复杂度 $O(n)$，其中 $n$ 是字符串 $s$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def checkRecord(self, s: str) -> bool:
-        return s.count('A') <= 1 and 'LLL' not in s
+        return s.count('A') < 2 and 'LLL' not in s
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public boolean checkRecord(String s) {
-        int i = s.indexOf("A");
-        return (i == -1 || s.lastIndexOf("A") == i) && !s.contains("LLL");
+        return s.indexOf("A") == s.lastIndexOf("A") && !s.contains("LLL");
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    bool checkRecord(string s) {
+        return count(s.begin(), s.end(), 'A') < 2 && s.find("LLL") == string::npos;
+    }
+};
 ```
 
+#### Go
+
+```go
+func checkRecord(s string) bool {
+	return strings.Count(s, "A") < 2 && !strings.Contains(s, "LLL")
+}
+```
+
+#### TypeScript
+
+```ts
+function checkRecord(s: string): boolean {
+    return s.indexOf('A') === s.lastIndexOf('A') && s.indexOf('LLL') === -1;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

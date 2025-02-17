@@ -1,8 +1,15 @@
-# [剑指 Offer II 054. 所有大于等于节点的值之和](https://leetcode-cn.com/problems/w6cpku)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20054.%20%E6%89%80%E6%9C%89%E5%A4%A7%E4%BA%8E%E7%AD%89%E4%BA%8E%E8%8A%82%E7%82%B9%E7%9A%84%E5%80%BC%E4%B9%8B%E5%92%8C/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 054. 所有大于等于节点的值之和](https://leetcode.cn/problems/w6cpku)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p><span style="font-size:10.5pt"><span style="font-family:Calibri"><span style="font-size:10.5000pt"><span style="font-family:宋体"><font face="宋体">给定一个二叉搜索树，请将它的每个</font></span></span></span></span>节点<span style="font-size:10.5pt"><span style="font-family:Calibri"><span style="font-size:10.5000pt"><span style="font-family:宋体"><font face="宋体">的值替换成树中大于或者等于该</font></span></span></span></span>节点<span style="font-size:10.5pt"><span style="font-family:Calibri"><span style="font-size:10.5000pt"><span style="font-family:宋体"><font face="宋体">值的所有</font></span></span></span></span>节点<span style="font-size:10.5pt"><span style="font-family:Calibri"><span style="font-size:10.5000pt"><span style="font-family:宋体"><font face="宋体">值之和。</font></span></span></span></span></p>
 
@@ -20,7 +27,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20054.%20%E6%89%80%E6%9C%89%E5%A4%A7%E4%BA%8E%E7%AD%89%E4%BA%8E%E8%8A%82%E7%82%B9%E7%9A%84%E5%80%BC%E4%B9%8B%E5%92%8C/images/tree.png" style="height: 364px; width: 534px;" /></strong></p>
+<p><strong><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20054.%20%E6%89%80%E6%9C%89%E5%A4%A7%E4%BA%8E%E7%AD%89%E4%BA%8E%E8%8A%82%E7%82%B9%E7%9A%84%E5%80%BC%E4%B9%8B%E5%92%8C/images/tree.png" style="height: 364px; width: 534px;" /></strong></p>
 
 <pre>
 <strong>输入：</strong>root<strong> </strong>=<strong> </strong>[4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]
@@ -64,21 +71,308 @@
 <p><meta charset="UTF-8" />注意：</p>
 
 <ul>
-	<li>本题与主站 538&nbsp;题相同：&nbsp;<a href="https://leetcode-cn.com/problems/convert-bst-to-greater-tree/">https://leetcode-cn.com/problems/convert-bst-to-greater-tree/</a></li>
-	<li>本题与主站 1038&nbsp;题相同：<a href="https://leetcode-cn.com/problems/binary-search-tree-to-greater-sum-tree/">https://leetcode-cn.com/problems/binary-search-tree-to-greater-sum-tree/</a></li>
+	<li>本题与主站 538&nbsp;题相同：&nbsp;<a href="https://leetcode.cn/problems/convert-bst-to-greater-tree/">https://leetcode.cn/problems/convert-bst-to-greater-tree/</a></li>
+	<li>本题与主站 1038&nbsp;题相同：<a href="https://leetcode.cn/problems/binary-search-tree-to-greater-sum-tree/">https://leetcode.cn/problems/binary-search-tree-to-greater-sum-tree/</a></li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-二叉搜索树的中序遍历（左根右）结果是一个单调递增的有序序列，我们反序进行中序遍历（右根左），即可以得到一个单调递减的有序序列。通过累加单调递减的有序序列，我们可以得到大于等于 node.val 的新值，并重新赋值给 node。
+### 方法一：递归
 
-关于反序中序遍历，有三种方法，一是递归遍历，二是栈实现非递归遍历，三是 Morris 遍历。
+按照“右根左”的顺序，递归遍历二叉搜索树，累加遍历到的所有节点值到 $s$ 中，然后每次赋值给对应的 `node` 节点。
 
-Morris 遍历无需使用栈，空间复杂度为 O(1)。核心思想是：
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 是二叉搜索树的节点数。
 
-定义 s 表示二叉搜索树节点值累加之和。遍历二叉树节点，
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def convertBST(self, root: TreeNode) -> TreeNode:
+        def dfs(root):
+            nonlocal s
+            if root is None:
+                return
+            dfs(root.right)
+            s += root.val
+            root.val = s
+            dfs(root.left)
+
+        s = 0
+        dfs(root)
+        return root
+```
+
+#### Java
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    private int s;
+
+    public TreeNode convertBST(TreeNode root) {
+        dfs(root);
+        return root;
+    }
+
+    private void dfs(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        dfs(root.right);
+        s += root.val;
+        root.val = s;
+        dfs(root.left);
+    }
+}
+```
+
+#### C++
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int s = 0;
+
+    TreeNode* convertBST(TreeNode* root) {
+        dfs(root);
+        return root;
+    }
+
+    void dfs(TreeNode* root) {
+        if (!root) return;
+        dfs(root->right);
+        s += root->val;
+        root->val = s;
+        dfs(root->left);
+    }
+};
+```
+
+#### Go
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func convertBST(root *TreeNode) *TreeNode {
+	s := 0
+	var dfs func(*TreeNode)
+	dfs = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		dfs(root.Right)
+		s += root.Val
+		root.Val = s
+		dfs(root.Left)
+	}
+	dfs(root)
+	return root
+}
+```
+
+#### TypeScript
+
+```ts
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function convertBST(root: TreeNode | null): TreeNode | null {
+    let sum = 0;
+    const dfs = (root: TreeNode | null) => {
+        if (root == null) {
+            return;
+        }
+        dfs(root.right);
+        root.val += sum;
+        sum = root.val;
+        dfs(root.left);
+    };
+    dfs(root);
+    return root;
+}
+```
+
+#### Rust
+
+```rust
+// Definition for a binary tree node.
+// #[derive(Debug, PartialEq, Eq)]
+// pub struct TreeNode {
+//   pub val: i32,
+//   pub left: Option<Rc<RefCell<TreeNode>>>,
+//   pub right: Option<Rc<RefCell<TreeNode>>>,
+// }
+//
+// impl TreeNode {
+//   #[inline]
+//   pub fn new(val: i32) -> Self {
+//     TreeNode {
+//       val,
+//       left: None,
+//       right: None
+//     }
+//   }
+// }
+use std::cell::RefCell;
+use std::rc::Rc;
+impl Solution {
+    fn dfs(root: &Option<Rc<RefCell<TreeNode>>>, sum: &mut i32) {
+        if let Some(node) = root {
+            Self::dfs(&node.borrow().right, sum);
+            node.borrow_mut().val += *sum;
+            *sum = node.borrow().val;
+            Self::dfs(&node.borrow().left, sum);
+        }
+    }
+
+    pub fn convert_bst(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> {
+        Self::dfs(&root, &mut 0);
+        root
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {TreeNode}
+ */
+var convertBST = function (root) {
+    let s = 0;
+    function dfs(root) {
+        if (!root) {
+            return;
+        }
+        dfs(root.right);
+        s += root.val;
+        root.val = s;
+        dfs(root.left);
+    }
+    dfs(root);
+    return root;
+};
+```
+
+#### Swift
+
+```swift
+/* class TreeNode {
+*     var val: Int
+*     var left: TreeNode?
+*     var right: TreeNode?
+*     init() {
+*         self.val = 0
+*         self.left = nil
+*         self.right = nil
+*     }
+*     init(_ val: Int) {
+*         self.val = val
+*         self.left = nil
+*         self.right = nil
+*     }
+*     init(_ val: Int, _ left: TreeNode?, _ right: TreeNode?) {
+*         self.val = val
+*         self.left = left
+*         self.right = right
+*     }
+* }
+*/
+
+class Solution {
+    private var s = 0
+
+    func convertBST(_ root: TreeNode?) -> TreeNode? {
+        dfs(root)
+        return root
+    }
+
+    private func dfs(_ root: TreeNode?) {
+        guard let node = root else {
+            return
+        }
+        dfs(node.right)
+        s += node.val
+        node.val = s
+        dfs(node.left)
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start-->
+
+### 方法二：Morris 遍历
+
+Morris 遍历无需使用栈，时间复杂度 $O(n)$，空间复杂度为 $O(1)$。核心思想是：
+
+定义 s 表示二叉搜索树节点值累加和。遍历二叉树节点：
 
 1. 若当前节点 root 的右子树为空，**将当前节点值添加至 s** 中，更新当前节点值为 s，并将当前节点更新为 `root.left`。
 2. 若当前节点 root 的右子树不为空，找到右子树的最左节点 next（也即是 root 节点在中序遍历下的后继节点）：
@@ -91,31 +385,7 @@ Morris 遍历无需使用栈，空间复杂度为 O(1)。核心思想是：
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-递归遍历：
-
-```python
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
-class Solution:
-    add = 0
-    def convertBST(self, root: TreeNode) -> TreeNode:
-        if root:
-            self.convertBST(root.right)
-            root.val += self.add
-            self.add = root.val
-            self.convertBST(root.left)
-        return root
-```
-
-Morris 遍历：
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -148,28 +418,7 @@ class Solution:
         return node
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-递归遍历：
-
-```java
-class Solution {
-    int add = 0;
-    public TreeNode convertBST(TreeNode root) {
-        if (root != null) {
-            convertBST(root.right);
-            root.val += add;
-            add = root.val;
-            convertBST(root.left);
-        }
-        return root;
-    }
-}
-```
-
-Morris 遍历：
+#### Java
 
 ```java
 /**
@@ -217,9 +466,7 @@ class Solution {
 }
 ```
 
-### **C++**
-
-递归遍历：
+#### C++
 
 ```cpp
 /**
@@ -235,60 +482,23 @@ class Solution {
  */
 class Solution {
 public:
-    int add = 0;
     TreeNode* convertBST(TreeNode* root) {
-        if (root) {
-            convertBST(root->right);
-            root->val += add;
-            add = root->val;
-            convertBST(root->left);
-        }
-        return root;
-    }
-};
-```
-
-Morris 遍历：
-
-```cpp
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
-class Solution {
-public:
-    TreeNode *convertBST(TreeNode *root) {
         int s = 0;
-        TreeNode *node = root;
-        while (root)
-        {
-            if (root->right == nullptr)
-            {
+        TreeNode* node = root;
+        while (root) {
+            if (root->right == nullptr) {
                 s += root->val;
                 root->val = s;
                 root = root->left;
-            }
-            else
-            {
-                TreeNode *next = root->right;
-                while (next->left && next->left != root)
-                {
+            } else {
+                TreeNode* next = root->right;
+                while (next->left && next->left != root) {
                     next = next->left;
                 }
-                if (next->left == nullptr)
-                {
+                if (next->left == nullptr) {
                     next->left = root;
                     root = root->right;
-                }
-                else
-                {
+                } else {
                     s += root->val;
                     root->val = s;
                     next->left = nullptr;
@@ -301,9 +511,7 @@ public:
 };
 ```
 
-### **Go**
-
-Morris 遍历：
+#### Go
 
 ```go
 /**
@@ -342,10 +550,8 @@ func convertBST(root *TreeNode) *TreeNode {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

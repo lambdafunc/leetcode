@@ -1,21 +1,34 @@
 class Solution {
+    private Boolean[][] f;
+    private char[] s;
+    private char[] p;
+    private int m;
+    private int n;
+
     public boolean isMatch(String s, String p) {
-        int i = 0, j = 0, is = -1, ip = -1;
-        char[] ss = s.toCharArray();
-        char[] pp = p.toCharArray();
-        while (i < ss.length) {
-            if (j < pp.length && (ss[i] == pp[j] || pp[j] == '?')) {
-                i++;
-                j++;
-            } else if (j < pp.length && pp[j] == '*') {
-                ip = j++;
-                is = i;
-            } else if (ip != -1) {
-                j = ip + 1;
-                i = ++is;
-            } else return false;
+        this.s = s.toCharArray();
+        this.p = p.toCharArray();
+        m = s.length();
+        n = p.length();
+        f = new Boolean[m][n];
+        return dfs(0, 0);
+    }
+
+    private boolean dfs(int i, int j) {
+        if (i >= m) {
+            return j >= n || (p[j] == '*' && dfs(i, j + 1));
         }
-        while (j < pp.length && pp[j] == '*') j++;
-        return j == p.length();
+        if (j >= n) {
+            return false;
+        }
+        if (f[i][j] != null) {
+            return f[i][j];
+        }
+        if (p[j] == '*') {
+            f[i][j] = dfs(i + 1, j) || dfs(i + 1, j + 1) || dfs(i, j + 1);
+        } else {
+            f[i][j] = (p[j] == '?' || s[i] == p[j]) && dfs(i + 1, j + 1);
+        }
+        return f[i][j];
     }
 }

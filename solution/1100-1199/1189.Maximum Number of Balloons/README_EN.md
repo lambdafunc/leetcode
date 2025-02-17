@@ -1,33 +1,49 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1189.Maximum%20Number%20of%20Balloons/README_EN.md
+rating: 1181
+source: Weekly Contest 154 Q1
+tags:
+    - Hash Table
+    - String
+    - Counting
+---
+
+<!-- problem:start -->
+
 # [1189. Maximum Number of Balloons](https://leetcode.com/problems/maximum-number-of-balloons)
 
 [中文文档](/solution/1100-1199/1189.Maximum%20Number%20of%20Balloons/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given a string <code>text</code>, you want to use the characters of <code>text</code> to form as many instances of the word <strong>&quot;balloon&quot;</strong> as possible.</p>
 
 <p>You can use each character in <code>text</code> <strong>at most once</strong>. Return the maximum number of instances that can be formed.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1100-1199/1189.Maximum%20Number%20of%20Balloons/images/1536_ex1_upd.jpeg" style="width: 132px; height: 35px;" /></strong></p>
+<p><strong><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1100-1199/1189.Maximum%20Number%20of%20Balloons/images/1536_ex1_upd.jpg" style="width: 132px; height: 35px;" /></strong></p>
 
 <pre>
 <strong>Input:</strong> text = &quot;nlaebolko&quot;
 <strong>Output:</strong> 1
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1100-1199/1189.Maximum%20Number%20of%20Balloons/images/1536_ex2_upd.jpeg" style="width: 267px; height: 35px;" /></strong></p>
+<p><strong><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1100-1199/1189.Maximum%20Number%20of%20Balloons/images/1536_ex2_upd.jpg" style="width: 267px; height: 35px;" /></strong></p>
 
 <pre>
 <strong>Input:</strong> text = &quot;loonbalxballpoon&quot;
 <strong>Output:</strong> 2
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> text = &quot;leetcode&quot;
@@ -42,131 +58,111 @@
 	<li><code>text</code> consists of lower case English letters only.</li>
 </ul>
 
+<p>&nbsp;</p>
+<p><strong>Note:</strong> This question is the same as <a href="https://leetcode.com/problems/rearrange-characters-to-make-target-string/description/" target="_blank"> 2287: Rearrange Characters to Make Target String.</a></p>
+
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Counting
+
+We count the frequency of each letter in the string `text`, and then divide the frequency of the letters 'o' and 'l' by 2, because the word `balloon` contains the letters 'o' and 'l' twice.
+
+Next, we traverse each letter in the word `balon`, and find the minimum frequency of each letter in the string `text`. This minimum frequency is the maximum number of times the word `balloon` can appear in the string `text`.
+
+The time complexity is $O(n)$, and the space complexity is $O(C)$. Here, $n$ is the length of the string `text`, and $C$ is the size of the character set. In this problem, $C = 26$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def maxNumberOfBalloons(self, text: str) -> int:
-        counter = Counter(text)
-        counter['l'] >>= 1
-        counter['o'] >>= 1
-        return min(counter[c] for c in 'balon')
+        cnt = Counter(text)
+        cnt['o'] >>= 1
+        cnt['l'] >>= 1
+        return min(cnt[c] for c in 'balon')
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int maxNumberOfBalloons(String text) {
-        int[] counter = new int[26];
-        for (char c : text.toCharArray()) {
-            ++counter[c - 'a'];
+        int[] cnt = new int[26];
+        for (int i = 0; i < text.length(); ++i) {
+            ++cnt[text.charAt(i) - 'a'];
         }
-        counter['l' - 'a'] >>= 1;
-        counter['o' - 'a'] >>= 1;
-        int ans = 10000;
+        cnt['l' - 'a'] >>= 1;
+        cnt['o' - 'a'] >>= 1;
+        int ans = 1 << 30;
         for (char c : "balon".toCharArray()) {
-            ans = Math.min(ans, counter[c - 'a']);
+            ans = Math.min(ans, cnt[c - 'a']);
         }
         return ans;
     }
 }
 ```
 
-### **TypeScript**
-
-```ts
-function maxNumberOfBalloons(text: string): number {
-    let targets: Set<string> = new Set('balloon'.split(''));
-    let cnt = new Array(126).fill(0);
-    for (let char of text) {
-        if (targets.has(char)) {
-            cnt[char.charCodeAt(0)]++;
-        }
-    }
-    cnt['l'.charCodeAt(0)] >>= 1;
-    cnt['o'.charCodeAt(0)] >>= 1;
-    let ans = Number.MAX_SAFE_INTEGER;
-    for (let char of targets) {
-        ans = Math.min(cnt[char.charCodeAt(0)], ans);
-    }
-    return ans;
-};
-```
-
-```ts
-function maxNumberOfBalloons(text: string): number {
-    const map = new Map([
-        ['b', 0],
-        ['a', 0],
-        ['l', 0],
-        ['o', 0],
-        ['n', 0],
-    ]);
-    for (const c of text) {
-        if (map.has(c)) {
-            map.set(c, map.get(c) + 1);
-        }
-    }
-    map.set('l', Math.floor(map.get('l') / 2));
-    map.set('o', Math.floor(map.get('o') / 2));
-    let res = Infinity;
-    for (const value of map.values()) {
-        res = Math.min(res, value);
-    }
-    return res;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int maxNumberOfBalloons(string text) {
-        vector<int> counter(26);
-        for (char& c : text) ++counter[c - 'a'];
-        counter['l' - 'a'] >>= 1;
-        counter['o' - 'a'] >>= 1;
-        int ans = 10000;
+        int cnt[26]{};
+        for (char c : text) {
+            ++cnt[c - 'a'];
+        }
+        cnt['o' - 'a'] >>= 1;
+        cnt['l' - 'a'] >>= 1;
+        int ans = 1 << 30;
         string t = "balon";
-        for (char& c : t) ans = min(ans, counter[c - 'a']);
+        for (char c : t) {
+            ans = min(ans, cnt[c - 'a']);
+        }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func maxNumberOfBalloons(text string) int {
-	counter := make([]int, 26)
-	for i := range text {
-		counter[text[i]-'a']++
+	cnt := [26]int{}
+	for _, c := range text {
+		cnt[c-'a']++
 	}
-	counter['l'-'a'] >>= 1
-	counter['o'-'a'] >>= 1
-	ans := 10000
-	t := "balon"
-	for i := range t {
-		ans = min(ans, counter[t[i]-'a'])
+	cnt['l'-'a'] >>= 1
+	cnt['o'-'a'] >>= 1
+	ans := 1 << 30
+	for _, c := range "balon" {
+		if x := cnt[c-'a']; ans > x {
+			ans = x
+		}
 	}
 	return ans
 }
+```
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+#### TypeScript
+
+```ts
+function maxNumberOfBalloons(text: string): number {
+    const cnt = new Array(26).fill(0);
+    for (const c of text) {
+        cnt[c.charCodeAt(0) - 97]++;
+    }
+    return Math.min(cnt[0], cnt[1], cnt[11] >> 1, cnt[14] >> 1, cnt[13]);
 }
 ```
 
-### **Rust**
+#### Rust
 
 ```rust
 impl Solution {
@@ -174,11 +170,21 @@ impl Solution {
         let mut arr = [0; 5];
         for c in text.chars() {
             match c {
-                'b' => arr[0] += 1,
-                'a' => arr[1] += 1,
-                'l' => arr[2] += 1,
-                'o' => arr[3] += 1,
-                'n' => arr[4] += 1,
+                'b' => {
+                    arr[0] += 1;
+                }
+                'a' => {
+                    arr[1] += 1;
+                }
+                'l' => {
+                    arr[2] += 1;
+                }
+                'o' => {
+                    arr[3] += 1;
+                }
+                'n' => {
+                    arr[4] += 1;
+                }
                 _ => {}
             }
         }
@@ -193,10 +199,38 @@ impl Solution {
 }
 ```
 
-### **...**
+#### PHP
 
-```
-
+```php
+class Solution {
+    /**
+     * @param String $text
+     * @return Integer
+     */
+    function maxNumberOfBalloons($text) {
+        $cnt1 = $cnt2 = $cnt3 = $cnt4 = $cnt5 = 0;
+        for ($i = 0; $i < strlen($text); $i++) {
+            if ($text[$i] == 'b') {
+                $cnt1 += 1;
+            } elseif ($text[$i] == 'a') {
+                $cnt2 += 1;
+            } elseif ($text[$i] == 'l') {
+                $cnt3 += 1;
+            } elseif ($text[$i] == 'o') {
+                $cnt4 += 1;
+            } elseif ($text[$i] == 'n') {
+                $cnt5 += 1;
+            }
+        }
+        $cnt3 = floor($cnt3 / 2);
+        $cnt4 = floor($cnt4 / 2);
+        return min($cnt1, $cnt2, $cnt3, $cnt4, $cnt5);
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

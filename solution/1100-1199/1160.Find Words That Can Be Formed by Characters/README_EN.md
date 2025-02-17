@@ -1,175 +1,235 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1160.Find%20Words%20That%20Can%20Be%20Formed%20by%20Characters/README_EN.md
+rating: 1205
+source: Weekly Contest 150 Q1
+tags:
+    - Array
+    - Hash Table
+    - String
+    - Counting
+---
+
+<!-- problem:start -->
+
 # [1160. Find Words That Can Be Formed by Characters](https://leetcode.com/problems/find-words-that-can-be-formed-by-characters)
 
 [中文文档](/solution/1100-1199/1160.Find%20Words%20That%20Can%20Be%20Formed%20by%20Characters/README.md)
 
 ## Description
 
-<p>You are given an array of strings&nbsp;<code>words</code>&nbsp;and a string&nbsp;<code>chars</code>.</p>
+<!-- description:start -->
 
-<p>A string is <em>good</em>&nbsp;if&nbsp;it can be formed by&nbsp;characters from <code>chars</code>&nbsp;(each character&nbsp;can only be used once).</p>
+<p>You are given an array of strings <code>words</code> and a string <code>chars</code>.</p>
 
-<p>Return the sum of lengths of all good strings in <code>words</code>.</p>
+<p>A string is <strong>good</strong> if it can be formed by characters from <code>chars</code> (each character can only be used once).</p>
+
+<p>Return <em>the sum of lengths of all good strings in words</em>.</p>
 
 <p>&nbsp;</p>
-
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
-<strong>Input: </strong>words = <span id="example-input-1-1">[&quot;cat&quot;,&quot;bt&quot;,&quot;hat&quot;,&quot;tree&quot;]</span>, chars = <span id="example-input-1-2">&quot;atach&quot;</span>
-
-<strong>Output: </strong><span id="example-output-1">6</span>
-
-<strong>Explanation: </strong>
-
-The strings that can be formed are &quot;cat&quot; and &quot;hat&quot; so the answer is 3 + 3 = 6.
-
+<strong>Input:</strong> words = [&quot;cat&quot;,&quot;bt&quot;,&quot;hat&quot;,&quot;tree&quot;], chars = &quot;atach&quot;
+<strong>Output:</strong> 6
+<strong>Explanation:</strong> The strings that can be formed are &quot;cat&quot; and &quot;hat&quot; so the answer is 3 + 3 = 6.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
-<strong>Input: </strong>words = <span id="example-input-2-1">[&quot;hello&quot;,&quot;world&quot;,&quot;leetcode&quot;]</span>, chars = <span id="example-input-2-2">&quot;welldonehoneyr&quot;</span>
-
-<strong>Output: </strong><span id="example-output-2">10</span>
-
-<strong>Explanation: </strong>
-
-The strings that can be formed are &quot;hello&quot; and &quot;world&quot; so the answer is 5 + 5 = 10.
-
+<strong>Input:</strong> words = [&quot;hello&quot;,&quot;world&quot;,&quot;leetcode&quot;], chars = &quot;welldonehoneyr&quot;
+<strong>Output:</strong> 10
+<strong>Explanation:</strong> The strings that can be formed are &quot;hello&quot; and &quot;world&quot; so the answer is 5 + 5 = 10.
 </pre>
 
 <p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><span><strong>Note:</strong></span></p>
-
-<ol>
+<ul>
 	<li><code>1 &lt;= words.length &lt;= 1000</code></li>
-	<li><code>1 &lt;= words[i].length, chars.length&nbsp;&lt;= 100</code></li>
-	<li>All strings contain lowercase English letters only.</li>
-</ol>
+	<li><code>1 &lt;= words[i].length, chars.length &lt;= 100</code></li>
+	<li><code>words[i]</code> and <code>chars</code> consist of lowercase English letters.</li>
+</ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Counting
+
+We can use an array $cnt$ of length $26$ to count the occurrence of each letter in the string $chars$.
+
+Then we traverse the string array $words$. For each string $w$, we use an array $wc$ of length $26$ to count the occurrence of each letter in the string $w$. If for each letter $c$, $wc[c] \leq cnt[c]$, then we can spell the string $w$ with the letters in $chars$, otherwise we cannot spell the string $w$. If we can spell the string $w$, then we add the length of the string $w$ to the answer.
+
+After the traversal, we can get the answer.
+
+The time complexity is $O(L)$, and the space complexity is $O(C)$. Here, $L$ is the sum of the lengths of all strings in the problem, and $C$ is the size of the character set. In this problem, $C = 26$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def countCharacters(self, words: List[str], chars: str) -> int:
-        counter = Counter(chars)
+        cnt = Counter(chars)
         ans = 0
-        for word in words:
-            cnt = Counter(word)
-            if all([counter[c] >= v for c, v in cnt.items()]):
-                ans += len(word)
+        for w in words:
+            wc = Counter(w)
+            if all(cnt[c] >= v for c, v in wc.items()):
+                ans += len(w)
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int countCharacters(String[] words, String chars) {
-        int[] counter = count(chars);
+        int[] cnt = new int[26];
+        for (int i = 0; i < chars.length(); ++i) {
+            ++cnt[chars.charAt(i) - 'a'];
+        }
         int ans = 0;
-        for (String word : words) {
-            int[] cnt = count(word);
-            if (check(counter, cnt)) {
-                ans += word.length();
+        for (String w : words) {
+            int[] wc = new int[26];
+            boolean ok = true;
+            for (int i = 0; i < w.length(); ++i) {
+                int j = w.charAt(i) - 'a';
+                if (++wc[j] > cnt[j]) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                ans += w.length();
             }
         }
         return ans;
     }
-
-    private int[] count(String s) {
-        int[] counter = new int[26];
-        for (char c : s.toCharArray()) {
-            ++counter[c - 'a'];
-        }
-        return counter;
-    }
-
-    private boolean check(int[] cnt1, int[] cnt2) {
-        for (int i = 0; i < 26; ++i) {
-            if (cnt1[i] < cnt2[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int countCharacters(vector<string>& words, string chars) {
-        vector<int> counter = count(chars);
+        int cnt[26]{};
+        for (char& c : chars) {
+            ++cnt[c - 'a'];
+        }
         int ans = 0;
-        for (auto& word : words)
-        {
-            vector<int> cnt = count(word);
-            if (check(counter, cnt)) ans += word.size();
+        for (auto& w : words) {
+            int wc[26]{};
+            bool ok = true;
+            for (auto& c : w) {
+                int i = c - 'a';
+                if (++wc[i] > cnt[i]) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                ans += w.size();
+            }
         }
         return ans;
-    }
-
-    vector<int> count(string s) {
-        vector<int> counter(26);
-        for (char c : s) ++counter[c - 'a'];
-        return counter;
-    }
-
-    bool check(vector<int>& cnt1, vector<int>& cnt2) {
-        for (int i = 0; i < 26; ++i)
-            if (cnt1[i] < cnt2[i]) return false;
-        return true;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func countCharacters(words []string, chars string) int {
-	counter := count(chars)
-	ans := 0
-	for _, word := range words {
-		cnt := count(word)
-		if check(counter, cnt) {
-			ans += len(word)
+func countCharacters(words []string, chars string) (ans int) {
+	cnt := [26]int{}
+	for _, c := range chars {
+		cnt[c-'a']++
+	}
+	for _, w := range words {
+		wc := [26]int{}
+		ok := true
+		for _, c := range w {
+			c -= 'a'
+			wc[c]++
+			if wc[c] > cnt[c] {
+				ok = false
+				break
+			}
+		}
+		if ok {
+			ans += len(w)
 		}
 	}
-	return ans
-}
-
-func count(s string) []int {
-	counter := make([]int, 26)
-	for _, c := range s {
-		counter[c-'a']++
-	}
-	return counter
-}
-
-func check(cnt1, cnt2 []int) bool {
-	for i := 0; i < 26; i++ {
-		if cnt1[i] < cnt2[i] {
-			return false
-		}
-	}
-	return true
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function countCharacters(words: string[], chars: string): number {
+    const idx = (c: string) => c.charCodeAt(0) - 'a'.charCodeAt(0);
+    const cnt = new Array(26).fill(0);
+    for (const c of chars) {
+        cnt[idx(c)]++;
+    }
+    let ans = 0;
+    for (const w of words) {
+        const wc = new Array(26).fill(0);
+        let ok = true;
+        for (const c of w) {
+            if (++wc[idx(c)] > cnt[idx(c)]) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) {
+            ans += w.length;
+        }
+    }
+    return ans;
+}
 ```
 
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param String[] $words
+     * @param String $chars
+     * @return Integer
+     */
+    function countCharacters($words, $chars) {
+        $sum = 0;
+        for ($i = 0; $i < strlen($chars); $i++) {
+            $hashtable[$chars[$i]] += 1;
+        }
+        for ($j = 0; $j < count($words); $j++) {
+            $tmp = $hashtable;
+            $sum += strlen($words[$j]);
+            for ($k = 0; $k < strlen($words[$j]); $k++) {
+                if (!isset($tmp[$words[$j][$k]]) || $tmp[$words[$j][$k]] === 0) {
+                    $sum -= strlen($words[$j]);
+                    break;
+                }
+                $tmp[$words[$j][$k]] -= 1;
+            }
+        }
+        return $sum;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

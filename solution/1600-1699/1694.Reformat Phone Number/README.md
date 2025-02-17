@@ -1,10 +1,22 @@
-# [1694. 重新格式化电话号码](https://leetcode-cn.com/problems/reformat-phone-number)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1694.Reformat%20Phone%20Number/README.md
+rating: 1321
+source: 第 220 场周赛 Q1
+tags:
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1694. 重新格式化电话号码](https://leetcode.cn/problems/reformat-phone-number)
 
 [English Version](/solution/1600-1699/1694.Reformat%20Phone%20Number/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个字符串形式的电话号码 <code>number</code> 。<code>number</code> 由数字、空格 <code>' '</code>、和破折号 <code>'-'</code> 组成。</p>
 
@@ -83,32 +95,158 @@
 	<li><code>number</code> 中至少含 <strong>2</strong> 个数字。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：简单模拟
+
+我们先按照题意，去除字符串中的所有空格和破折号。
+
+记当前字符串长度为 $n$，然后从前往后遍历字符串，每 $3$ 个字符为一组，将其加入结果字符串中，共取 $n / 3$ 组。
+
+若最后剩余 $1$ 个字符，则将前面的最后一组的最后一个字符与该字符组成一个新的两个字符的组，加入结果字符串中；若最后剩余 $2$ 个字符，直接将这连个字符组成一个新的组，加入结果字符串中。
+
+最后将所有组之间加上破折号，返回结果字符串即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为字符串长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def reformatNumber(self, number: str) -> str:
+        number = number.replace("-", "").replace(" ", "")
+        n = len(number)
+        ans = [number[i * 3 : i * 3 + 3] for i in range(n // 3)]
+        if n % 3 == 1:
+            ans[-1] = ans[-1][:2]
+            ans.append(number[-2:])
+        elif n % 3 == 2:
+            ans.append(number[-2:])
+        return "-".join(ans)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public String reformatNumber(String number) {
+        number = number.replace("-", "").replace(" ", "");
+        int n = number.length();
+        List<String> ans = new ArrayList<>();
+        for (int i = 0; i < n / 3; ++i) {
+            ans.add(number.substring(i * 3, i * 3 + 3));
+        }
+        if (n % 3 == 1) {
+            ans.set(ans.size() - 1, ans.get(ans.size() - 1).substring(0, 2));
+            ans.add(number.substring(n - 2));
+        } else if (n % 3 == 2) {
+            ans.add(number.substring(n - 2));
+        }
+        return String.join("-", ans);
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    string reformatNumber(string number) {
+        string s;
+        for (char c : number) {
+            if (c != ' ' && c != '-') {
+                s.push_back(c);
+            }
+        }
+        int n = s.size();
+        vector<string> res;
+        for (int i = 0; i < n / 3; ++i) {
+            res.push_back(s.substr(i * 3, 3));
+        }
+        if (n % 3 == 1) {
+            res.back() = res.back().substr(0, 2);
+            res.push_back(s.substr(n - 2));
+        } else if (n % 3 == 2) {
+            res.push_back(s.substr(n - 2));
+        }
+        string ans;
+        for (auto& v : res) {
+            ans += v;
+            ans += "-";
+        }
+        ans.pop_back();
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func reformatNumber(number string) string {
+	number = strings.ReplaceAll(number, " ", "")
+	number = strings.ReplaceAll(number, "-", "")
+	n := len(number)
+	ans := []string{}
+	for i := 0; i < n/3; i++ {
+		ans = append(ans, number[i*3:i*3+3])
+	}
+	if n%3 == 1 {
+		ans[len(ans)-1] = ans[len(ans)-1][:2]
+		ans = append(ans, number[n-2:])
+	} else if n%3 == 2 {
+		ans = append(ans, number[n-2:])
+	}
+	return strings.Join(ans, "-")
+}
+```
+
+#### TypeScript
+
+```ts
+function reformatNumber(number: string): string {
+    const cs = [...number].filter(c => c !== ' ' && c !== '-');
+    const n = cs.length;
+    return cs
+        .map((v, i) => {
+            if (((i + 1) % 3 === 0 && i < n - 2) || (n % 3 === 1 && n - 3 === i)) {
+                return v + '-';
+            }
+            return v;
+        })
+        .join('');
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn reformat_number(number: String) -> String {
+        let cs: Vec<char> = number.chars().filter(|&c| c != ' ' && c != '-').collect();
+        let n = cs.len();
+        cs.iter()
+            .enumerate()
+            .map(|(i, c)| {
+                if ((i + 1) % 3 == 0 && i < n - 2) || (n % 3 == 1 && i == n - 3) {
+                    return c.to_string() + &"-";
+                }
+                c.to_string()
+            })
+            .collect()
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

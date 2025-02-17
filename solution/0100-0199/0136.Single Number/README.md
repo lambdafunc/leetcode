@@ -1,68 +1,152 @@
-# [136. 只出现一次的数字](https://leetcode-cn.com/problems/single-number)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0136.Single%20Number/README.md
+tags:
+    - 位运算
+    - 数组
+---
+
+<!-- problem:start -->
+
+# [136. 只出现一次的数字](https://leetcode.cn/problems/single-number)
 
 [English Version](/solution/0100-0199/0136.Single%20Number/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个<strong>非空</strong>整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。</p>
+<p>给你一个 <strong>非空</strong> 整数数组 <code>nums</code> ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。</p>
 
-<p><strong>说明：</strong></p>
+<p>你必须设计并实现线性时间复杂度的算法来解决此问题，且该算法只使用常量额外空间。</p>
 
-<p>你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？</p>
+<div class="original__bRMd">
+<div>
+<p>&nbsp;</p>
 
-<p><strong>示例 1:</strong></p>
+<p><strong class="example">示例 1 ：</strong></p>
 
-<pre><strong>输入:</strong> [2,2,1]
-<strong>输出:</strong> 1
-</pre>
+<div class="example-block">
+<p><strong>输入：</strong>nums = [2,2,1]</p>
 
-<p><strong>示例&nbsp;2:</strong></p>
+<p><strong>输出：</strong>1</p>
+</div>
 
-<pre><strong>输入:</strong> [4,1,2,1,2]
-<strong>输出:</strong> 4</pre>
+<p><strong class="example">示例 2 ：</strong></p>
+
+<div class="example-block">
+<p><strong>输入：</strong>nums = [4,1,2,1,2]</p>
+
+<p><strong>输出：</strong>4</p>
+</div>
+
+<p><strong class="example">示例 3 ：</strong></p>
+
+<div class="example-block">
+<p><strong>输入：</strong>nums = [1]</p>
+
+<p><strong>输出：</strong>1</p>
+</div>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 &lt;= nums.length &lt;= 3 * 10<sup>4</sup></code></li>
+	<li><code>-3 * 10<sup>4</sup> &lt;= nums[i] &lt;= 3 * 10<sup>4</sup></code></li>
+	<li>除了某个元素只出现一次以外，其余每个元素均出现两次。</li>
+</ul>
+</div>
+</div>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-异或运算求解。
+### 方法一：位运算
 
-首先明确，两个相同的数异或之后的结果为 0。对该数组所有元素进行异或运算，结果就是那个只出现一次的数字。
+异或运算的性质：
+
+-   任何数和 $0$ 做异或运算，结果仍然是原来的数，即 $x \oplus 0 = x$；
+-   任何数和其自身做异或运算，结果是 $0$，即 $x \oplus x = 0$；
+
+我们对该数组所有元素进行异或运算，结果就是那个只出现一次的数字。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 是数组 $nums$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def singleNumber(self, nums: List[int]) -> int:
-        res = 0
-        for num in nums:
-            res ^= num
-        return res
+        return reduce(xor, nums)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int singleNumber(int[] nums) {
-        int res = 0;
-        for (int num : nums) {
-            res ^= num;
+        int ans = 0;
+        for (int v : nums) {
+            ans ^= v;
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int ans = 0;
+        for (int v : nums) {
+            ans ^= v;
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func singleNumber(nums []int) (ans int) {
+	for _, v := range nums {
+		ans ^= v
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function singleNumber(nums: number[]): number {
+    return nums.reduce((r, v) => r ^ v);
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn single_number(nums: Vec<i32>) -> i32 {
+        nums.into_iter().reduce(|r, v| r ^ v).unwrap()
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -70,59 +154,64 @@ class Solution {
  * @return {number}
  */
 var singleNumber = function (nums) {
-    let res = 0;
-    for (let num of nums) {
-        res ^= num;
-    }
-    return res;
+    return nums.reduce((a, b) => a ^ b);
 };
 ```
 
-### **Go**
+#### C#
 
-```go
-func singleNumber(nums []int) int {
-	res := 0
-	for _, v := range nums {
-		res ^= v
-	}
-	return res
+```cs
+public class Solution {
+    public int SingleNumber(int[] nums) {
+        return nums.Aggregate(0, (a, b) => a ^ b);
+    }
 }
 ```
 
-### **C++**
+#### C
 
-```cpp
+```c
+int singleNumber(int* nums, int numsSize) {
+    int ans = 0;
+    for (int i = 0; i < numsSize; i++) {
+        ans ^= nums[i];
+    }
+    return ans;
+}
+```
+
+#### Swift
+
+```swift
 class Solution {
-public:
-    int singleNumber(vector<int>& nums) {
-        int res = 0;
-        for (auto num : nums) {
-            res ^= num;
-        }
-        return res;
-    }
-};
-```
-
-### **Rust**
-
-```Rust
-impl Solution {
-    pub fn single_number(nums: Vec<i32>) -> i32 {
-        let mut result = 0;
-        for num in nums {
-            result ^= num;
-        }
-        result
+    func singleNumber(_ nums: [Int]) -> Int {
+        return nums.reduce(0, ^)
     }
 }
-```
-
-### **...**
-
-```
-
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二
+
+<!-- tabs:start -->
+
+#### Java
+
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        return Arrays.stream(nums).reduce(0, (a, b) -> a ^ b);
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

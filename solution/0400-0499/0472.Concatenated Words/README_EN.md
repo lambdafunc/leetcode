@@ -1,15 +1,31 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0472.Concatenated%20Words/README_EN.md
+tags:
+    - Depth-First Search
+    - Trie
+    - Array
+    - String
+    - Dynamic Programming
+---
+
+<!-- problem:start -->
+
 # [472. Concatenated Words](https://leetcode.com/problems/concatenated-words)
 
 [中文文档](/solution/0400-0499/0472.Concatenated%20Words/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given an array of strings <code>words</code> (<strong>without duplicates</strong>), return <em>all the <strong>concatenated words</strong> in the given list of</em> <code>words</code>.</p>
 
-<p>A <strong>concatenated word</strong> is defined as a string that is comprised entirely of at least two shorter words in the given array.</p>
+<p>A <strong>concatenated word</strong> is defined as a string that is comprised entirely of at least two shorter words (not necessarily distinct)&nbsp;in the given array.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> words = [&quot;cat&quot;,&quot;cats&quot;,&quot;catsdogcats&quot;,&quot;dog&quot;,&quot;dogcatsdog&quot;,&quot;hippopotamuses&quot;,&quot;rat&quot;,&quot;ratcatdogcat&quot;]
@@ -18,7 +34,7 @@
 &quot;dogcatsdog&quot; can be concatenated by &quot;dog&quot;, &quot;cats&quot; and &quot;dog&quot;; 
 &quot;ratcatdogcat&quot; can be concatenated by &quot;rat&quot;, &quot;cat&quot;, &quot;dog&quot; and &quot;cat&quot;.</pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> words = [&quot;cat&quot;,&quot;dog&quot;,&quot;catdog&quot;]
@@ -30,16 +46,23 @@
 
 <ul>
 	<li><code>1 &lt;= words.length &lt;= 10<sup>4</sup></code></li>
-	<li><code>0 &lt;= words[i].length &lt;= 1000</code></li>
+	<li><code>1 &lt;= words[i].length &lt;= 30</code></li>
 	<li><code>words[i]</code> consists of only lowercase English letters.</li>
-	<li><code>0 &lt;= sum(words[i].length) &lt;= 6 * 10<sup>5</sup></code></li>
+	<li>All the strings of <code>words</code> are <strong>unique</strong>.</li>
+	<li><code>1 &lt;= sum(words[i].length) &lt;= 10<sup>5</sup></code></li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Trie:
@@ -47,221 +70,209 @@ class Trie:
         self.children = [None] * 26
         self.is_end = False
 
+    def insert(self, w):
+        node = self
+        for c in w:
+            idx = ord(c) - ord('a')
+            if node.children[idx] is None:
+                node.children[idx] = Trie()
+            node = node.children[idx]
+        node.is_end = True
+
 
 class Solution:
     def findAllConcatenatedWordsInADict(self, words: List[str]) -> List[str]:
-        trie = Trie()
-        words.sort(key=lambda x: len(x))
-        ans = []
-
-        def insert(word):
+        def dfs(w):
+            if not w:
+                return True
             node = trie
-            for c in word:
+            for i, c in enumerate(w):
                 idx = ord(c) - ord('a')
                 if node.children[idx] is None:
-                    node.children[idx] = Trie()
-                node = node.children[idx]
-            node.is_end = True
-
-        def dfs(word):
-            node = trie
-            if not word:
-                return True
-            for i, c in enumerate(word):
-                idx = ord(c) - ord('a')
-                node = node.children[idx]
-                if node is None:
                     return False
-                if node.is_end:
-                    if dfs(word[i + 1:]):
-                        return True
+                node = node.children[idx]
+                if node.is_end and dfs(w[i + 1 :]):
+                    return True
             return False
 
-        for word in words:
-            if not word:
-                continue
-            if dfs(word):
-                ans.append(word)
+        trie = Trie()
+        ans = []
+        words.sort(key=lambda x: len(x))
+        for w in words:
+            if dfs(w):
+                ans.append(w)
             else:
-                insert(word)
+                trie.insert(w)
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
-class Solution {
-    private Trie trie;
+class Trie {
+    Trie[] children = new Trie[26];
+    boolean isEnd;
 
-    public List<String> findAllConcatenatedWordsInADict(String[] words) {
-        Arrays.sort(words, Comparator.comparingInt(String::length));
-        List<String> ans = new ArrayList<>();
-        trie = new Trie();
-        for (String word : words) {
-            if ("".equals(word)) {
-                continue;
+    void insert(String w) {
+        Trie node = this;
+        for (char c : w.toCharArray()) {
+            c -= 'a';
+            if (node.children[c] == null) {
+                node.children[c] = new Trie();
             }
-            if (dfs(word, 0)) {
-                ans.add(word);
-            } else {
-                insert(word);
-            }
-        }
-        return ans;
-    }
-
-    private boolean dfs(String word, int u) {
-        if (word.length() == u) {
-            return true;
-        }
-        Trie node = trie;
-        for (int i = u; i < word.length(); ++i) {
-            int idx = word.charAt(i) - 'a';
-            node = node.children[idx];
-            if (node == null) {
-                return false;
-            }
-            if (node.isEnd) {
-                if (dfs(word, i + 1)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private void insert(String word) {
-        Trie node = trie;
-        for (char c : word.toCharArray()) {
-            int idx = c - 'a';
-            if (node.children[idx] == null) {
-                node.children[idx] = new Trie();
-            }
-            node = node.children[idx];
+            node = node.children[c];
         }
         node.isEnd = true;
     }
 }
 
-class Trie {
-    Trie[] children = new Trie[26];
-    boolean isEnd;
+class Solution {
+    private Trie trie = new Trie();
+
+    public List<String> findAllConcatenatedWordsInADict(String[] words) {
+        Arrays.sort(words, (a, b) -> a.length() - b.length());
+        List<String> ans = new ArrayList<>();
+        for (String w : words) {
+            if (dfs(w)) {
+                ans.add(w);
+            } else {
+                trie.insert(w);
+            }
+        }
+        return ans;
+    }
+
+    private boolean dfs(String w) {
+        if ("".equals(w)) {
+            return true;
+        }
+        Trie node = trie;
+        for (int i = 0; i < w.length(); ++i) {
+            int idx = w.charAt(i) - 'a';
+            if (node.children[idx] == null) {
+                return false;
+            }
+            node = node.children[idx];
+            if (node.isEnd && dfs(w.substring(i + 1))) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Trie {
 public:
     vector<Trie*> children;
     bool isEnd;
-    Trie(): children(26), isEnd(false) {}
-};
+    Trie()
+        : children(26)
+        , isEnd(false) {}
 
-class Solution {
-public:
-    Trie* trie;
-
-    vector<string> findAllConcatenatedWordsInADict(vector<string>& words) {
-        sort(words.begin(), words.end(), [&](const string & a, const string & b){
-            return a.size() < b.size();
-        });
-        vector<string> ans;
-        trie = new Trie();
-        for (auto& word : words)
-        {
-            if (word.size() == 0) continue;
-            if (dfs(word, 0)) ans.push_back(word);
-            else insert(word);
-        }
-        return ans;
-    }
-
-    bool dfs(string word, int u) {
-        Trie* node = trie;
-        if (u == word.size()) return true;
-        for (int i = u; i < word.size(); ++i)
-        {
-            int idx = word[i] - 'a';
-            node = node->children[idx];
-            if (!node) return false;
-            if (node->isEnd && dfs(word, i + 1)) return true;
-        }
-        return false;
-    }
-
-    void insert(string word) {
-        Trie* node = trie;
-        for (char c : word)
-        {
-            int idx = c - 'a';
-            if (!node->children[idx]) node->children[idx] = new Trie();
-            node = node->children[idx];
+    void insert(string w) {
+        Trie* node = this;
+        for (char c : w) {
+            c -= 'a';
+            if (!node->children[c]) node->children[c] = new Trie();
+            node = node->children[c];
         }
         node->isEnd = true;
     }
 };
+
+class Solution {
+public:
+    Trie* trie = new Trie();
+
+    vector<string> findAllConcatenatedWordsInADict(vector<string>& words) {
+        sort(words.begin(), words.end(), [&](const string& a, const string& b) {
+            return a.size() < b.size();
+        });
+        vector<string> ans;
+        for (auto& w : words) {
+            if (dfs(w))
+                ans.push_back(w);
+            else
+                trie->insert(w);
+        }
+        return ans;
+    }
+
+    bool dfs(string w) {
+        if (w == "") return true;
+        Trie* node = trie;
+        for (int i = 0; i < w.size(); ++i) {
+            int idx = w[i] - 'a';
+            if (!node->children[idx]) return false;
+            node = node->children[idx];
+            if (node->isEnd && dfs(w.substr(i + 1))) return true;
+        }
+        return false;
+    }
+};
 ```
 
-### **Go**
+#### Go
 
 ```go
-type trie struct {
-	children [26]*trie
+type Trie struct {
+	children [26]*Trie
 	isEnd    bool
 }
 
-func (root *trie) insert(word string) {
-	node := root
+func newTrie() *Trie {
+	return &Trie{}
+}
+func (this *Trie) insert(word string) {
+	node := this
 	for _, c := range word {
 		c -= 'a'
 		if node.children[c] == nil {
-			node.children[c] = &trie{}
+			node.children[c] = newTrie()
 		}
 		node = node.children[c]
 	}
 	node.isEnd = true
 }
 
-func (root *trie) dfs(word string) bool {
-	if word == "" {
-		return true
-	}
-	node := root
-	for i, c := range word {
-		node = node.children[c-'a']
-		if node == nil {
-			return false
-		}
-		if node.isEnd && root.dfs(word[i+1:]) {
-			return true
-		}
-	}
-	return false
-}
-
 func findAllConcatenatedWordsInADict(words []string) (ans []string) {
 	sort.Slice(words, func(i, j int) bool { return len(words[i]) < len(words[j]) })
-	root := &trie{}
-	for _, word := range words {
-		if word == "" {
-			continue
+	trie := newTrie()
+	var dfs func(string) bool
+	dfs = func(w string) bool {
+		if w == "" {
+			return true
 		}
-		if root.dfs(word) {
-			ans = append(ans, word)
+		node := trie
+		for i, c := range w {
+			c -= 'a'
+			if node.children[c] == nil {
+				return false
+			}
+			node = node.children[c]
+			if node.isEnd && dfs(w[i+1:]) {
+				return true
+			}
+		}
+		return false
+	}
+	for _, w := range words {
+		if dfs(w) {
+			ans = append(ans, w)
 		} else {
-			root.insert(word)
+			trie.insert(w)
 		}
 	}
 	return
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,79 +1,73 @@
-# [1836. Remove Duplicates From an Unsorted Linked List](https://leetcode-cn.com/problems/remove-duplicates-from-an-unsorted-linked-list)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/README.md
+tags:
+    - 哈希表
+    - 链表
+---
+
+<!-- problem:start -->
+
+# [1836. 从未排序的链表中移除重复元素 🔒](https://leetcode.cn/problems/remove-duplicates-from-an-unsorted-linked-list)
 
 [English Version](/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>Given the <code>head</code> of a linked list, find all the values that appear <strong>more than once</strong> in the list and delete the nodes that have any of those values.</p>
+<p>给定一个链表的第一个节点 <code>head</code> ，找到链表中所有出现<strong>多于一次</strong>的元素，并删除这些元素所在的节点。</p>
 
-<p>Return <em>the linked list after the deletions.</em></p>
+<p>返回删除后的链表。</p>
 
-<p>&nbsp;</p>
+<p> </p>
 
-<p><strong>Example 1:</strong></p>
-
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list.jpg" style="width: 422px; height: 222px;" />
-
-<pre>
-
-<strong>Input:</strong> head = [1,2,3,2]
-
-<strong>Output:</strong> [1,3]
-
-<strong>Explanation:</strong> 2 appears twice in the linked list, so all 2&#39;s should be deleted. After deleting all 2&#39;s, we are left with [1,3].
-
+<p><strong>示例 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list.jpg" style="width: 422px; height: 222px;">
+<pre><strong>输入:</strong> head = [1,2,3,2]
+<strong>输出:</strong> [1,3]
+<strong>解释:</strong> 2 在链表中出现了两次，所以所有的 2 都需要被删除。删除了所有的 2 之后，我们还剩下 [1,3] 。
 </pre>
 
-<p><strong>Example 2:</strong></p>
-
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list-1.jpg" style="width: 422px; height: 151px;" />
-
-<pre>
-
-<strong>Input:</strong> head = [2,1,1,2]
-
-<strong>Output:</strong> []
-
-<strong>Explanation:</strong> 2 and 1 both appear twice. All the elements should be deleted.
-
+<p><strong>示例 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list-1.jpg" style="width: 422px; height: 151px;">
+<pre><strong>输入:</strong> head = [2,1,1,2]
+<strong>输出:</strong> []
+<strong>解释:</strong> 2 和 1 都出现了两次。所有元素都需要被删除。
 </pre>
 
-<p><strong>Example 3:</strong></p>
-
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list-2.jpg" style="width: 500px; height: 142px;" />
-
-<pre>
-
-<strong>Input:</strong> head = [3,2,2,1,3,2,4]
-
-<strong>Output:</strong> [1,4]
-
-<strong>Explanation: </strong>3 appears twice and 2 appears three times. After deleting all 3&#39;s and 2&#39;s, we are left with [1,4].
-
+<p><strong>示例 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list-2.jpg" style="width: 500px; height: 142px;">
+<pre><strong>输入:</strong> head = [3,2,2,1,3,2,4]
+<strong>输出:</strong> [1,4]
+<strong>解释: </strong>3 出现了两次，且 2 出现了三次。移除了所有的 3 和 2 后，我们还剩下 [1,4] 。
 </pre>
 
-<p>&nbsp;</p>
+<p> </p>
 
-<p><strong>Constraints:</strong></p>
+<p><b>提示：</b></p>
 
 <ul>
-	<li>The number of nodes in the list is in the range&nbsp;<code>[1, 10<sup>5</sup>]</code></li>
+	<li>链表中节点个数的范围是 <code>[1, 10<sup>5</sup>]</code></li>
 	<li><code>1 &lt;= Node.val &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-“哈希表”实现。
+### 方法一：哈希表
+
+我们可以用哈希表 $cnt$ 统计链表中每个元素出现的次数，然后遍历链表，删除出现次数大于 1 的元素。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为链表的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -83,16 +77,15 @@
 #         self.next = next
 class Solution:
     def deleteDuplicatesUnsorted(self, head: ListNode) -> ListNode:
+        cnt = Counter()
         cur = head
-        counter = Counter()
         while cur:
-            counter[cur.val] += 1
+            cnt[cur.val] += 1
             cur = cur.next
-
         dummy = ListNode(0, head)
         pre, cur = dummy, head
         while cur:
-            if counter[cur.val] > 1:
+            if cnt[cur.val] > 1:
                 pre.next = cur.next
             else:
                 pre = cur
@@ -100,9 +93,7 @@ class Solution:
         return dummy.next
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -117,14 +108,13 @@ class Solution:
  */
 class Solution {
     public ListNode deleteDuplicatesUnsorted(ListNode head) {
-        Map<Integer, Integer> counter = new HashMap<>();
+        Map<Integer, Integer> cnt = new HashMap<>();
         for (ListNode cur = head; cur != null; cur = cur.next) {
-            counter.put(cur.val, counter.getOrDefault(cur.val, 0) + 1);
+            cnt.put(cur.val, cnt.getOrDefault(cur.val, 0) + 1);
         }
-
         ListNode dummy = new ListNode(0, head);
         for (ListNode pre = dummy, cur = head; cur != null; cur = cur.next) {
-            if (counter.get(cur.val) > 1) {
+            if (cnt.get(cur.val) > 1) {
                 pre.next = cur.next;
             } else {
                 pre = cur;
@@ -135,7 +125,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -151,14 +141,13 @@ class Solution {
 class Solution {
 public:
     ListNode* deleteDuplicatesUnsorted(ListNode* head) {
-        unordered_map<int, int> counter;
-        for (ListNode* cur = head; cur != nullptr; cur = cur->next) {
-            ++counter[cur->val];
+        unordered_map<int, int> cnt;
+        for (ListNode* cur = head; cur; cur = cur->next) {
+            cnt[cur->val]++;
         }
-
         ListNode* dummy = new ListNode(0, head);
-        for (ListNode* pre = dummy, *cur = head; cur != nullptr; cur = cur->next) {
-            if (counter[cur->val] > 1) {
+        for (ListNode *pre = dummy, *cur = head; cur; cur = cur->next) {
+            if (cnt[cur->val] > 1) {
                 pre->next = cur->next;
             } else {
                 pre = cur;
@@ -169,10 +158,68 @@ public:
 };
 ```
 
-### **...**
+#### Go
 
+```go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func deleteDuplicatesUnsorted(head *ListNode) *ListNode {
+	cnt := map[int]int{}
+	for cur := head; cur != nil; cur = cur.Next {
+		cnt[cur.Val]++
+	}
+	dummy := &ListNode{0, head}
+	for pre, cur := dummy, head; cur != nil; cur = cur.Next {
+		if cnt[cur.Val] > 1 {
+			pre.Next = cur.Next
+		} else {
+			pre = cur
+		}
+	}
+	return dummy.Next
+}
 ```
 
+#### TypeScript
+
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+function deleteDuplicatesUnsorted(head: ListNode | null): ListNode | null {
+    const cnt: Map<number, number> = new Map();
+    for (let cur = head; cur; cur = cur.next) {
+        const x = cur.val;
+        cnt.set(x, (cnt.get(x) ?? 0) + 1);
+    }
+    const dummy = new ListNode(0, head);
+    for (let pre = dummy, cur = head; cur; cur = cur.next) {
+        if (cnt.get(cur.val)! > 1) {
+            pre.next = cur.next;
+        } else {
+            pre = cur;
+        }
+    }
+    return dummy.next;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

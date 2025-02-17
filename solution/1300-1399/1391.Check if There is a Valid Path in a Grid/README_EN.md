@@ -1,65 +1,67 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1391.Check%20if%20There%20is%20a%20Valid%20Path%20in%20a%20Grid/README_EN.md
+rating: 1745
+source: Weekly Contest 181 Q3
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Union Find
+    - Array
+    - Matrix
+---
+
+<!-- problem:start -->
+
 # [1391. Check if There is a Valid Path in a Grid](https://leetcode.com/problems/check-if-there-is-a-valid-path-in-a-grid)
 
 [中文文档](/solution/1300-1399/1391.Check%20if%20There%20is%20a%20Valid%20Path%20in%20a%20Grid/README.md)
 
 ## Description
 
-Given a <em>m</em> x <em>n</em> <code>grid</code>. Each cell of the <code>grid</code> represents a street. The street of&nbsp;<code>grid[i][j]</code> can be:
+<!-- description:start -->
+
+<p>You are given an <code>m x n</code> <code>grid</code>. Each cell of <code>grid</code> represents a street. The street of <code>grid[i][j]</code> can be:</p>
 
 <ul>
-	<li><strong>1</strong> which means a street connecting the left cell and the right cell.</li>
-	<li><strong>2</strong> which means a street connecting the upper cell and the lower cell.</li>
-	<li><b>3</b>&nbsp;which means a street connecting the left cell and the lower cell.</li>
-	<li><b>4</b> which means a street connecting the right cell and the lower cell.</li>
-	<li><b>5</b> which means a street connecting the left cell and the upper cell.</li>
-	<li><b>6</b> which means a street connecting the right cell and the upper cell.</li>
+	<li><code>1</code> which means a street connecting the left cell and the right cell.</li>
+	<li><code>2</code> which means a street connecting the upper cell and the lower cell.</li>
+	<li><code>3</code> which means a street connecting the left cell and the lower cell.</li>
+	<li><code>4</code> which means a street connecting the right cell and the lower cell.</li>
+	<li><code>5</code> which means a street connecting the left cell and the upper cell.</li>
+	<li><code>6</code> which means a street connecting the right cell and the upper cell.</li>
 </ul>
-
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1391.Check%20if%20There%20is%20a%20Valid%20Path%20in%20a%20Grid/images/main.png" style="width: 450px; height: 708px;" /></p>
-
-<p>You will initially start at the street of the&nbsp;upper-left cell <code>(0,0)</code>. A valid path in the grid is a path which starts from the upper left&nbsp;cell <code>(0,0)</code> and ends at the bottom-right&nbsp;cell <code>(m - 1, n - 1)</code>. <strong>The path should only follow the streets</strong>.</p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1391.Check%20if%20There%20is%20a%20Valid%20Path%20in%20a%20Grid/images/main.png" style="width: 450px; height: 708px;" />
+<p>You will initially start at the street of the upper-left cell <code>(0, 0)</code>. A valid path in the grid is a path that starts from the upper left cell <code>(0, 0)</code> and ends at the bottom-right cell <code>(m - 1, n - 1)</code>. <strong>The path should only follow the streets</strong>.</p>
 
 <p><strong>Notice</strong> that you are <strong>not allowed</strong> to change any street.</p>
 
-<p>Return <i>true</i>&nbsp;if there is a valid path in the grid or <em>false</em> otherwise.</p>
+<p>Return <code>true</code><em> if there is a valid path in the grid or </em><code>false</code><em> otherwise</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1391.Check%20if%20There%20is%20a%20Valid%20Path%20in%20a%20Grid/images/e1.png" style="width: 455px; height: 311px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1391.Check%20if%20There%20is%20a%20Valid%20Path%20in%20a%20Grid/images/e1.png" style="width: 455px; height: 311px;" />
 <pre>
 <strong>Input:</strong> grid = [[2,4,3],[6,5,2]]
 <strong>Output:</strong> true
 <strong>Explanation:</strong> As shown you can start at cell (0, 0) and visit all the cells of the grid to reach (m - 1, n - 1).
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1391.Check%20if%20There%20is%20a%20Valid%20Path%20in%20a%20Grid/images/e2.png" style="width: 455px; height: 293px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1300-1399/1391.Check%20if%20There%20is%20a%20Valid%20Path%20in%20a%20Grid/images/e2.png" style="width: 455px; height: 293px;" />
 <pre>
 <strong>Input:</strong> grid = [[1,2,1],[1,2,1]]
 <strong>Output:</strong> false
 <strong>Explanation:</strong> As shown you the street at cell (0, 0) is not connected with any street of any other cell and you will get stuck at cell (0, 0)
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> grid = [[1,1,2]]
 <strong>Output:</strong> false
 <strong>Explanation:</strong> You will get stuck at cell (0, 1) and you cannot reach cell (0, 2).
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> grid = [[1,1,1,1,1,1,3]]
-<strong>Output:</strong> true
-</pre>
-
-<p><strong>Example 5:</strong></p>
-
-<pre>
-<strong>Input:</strong> grid = [[2],[2],[2],[2],[2],[2],[6]]
-<strong>Output:</strong> true
 </pre>
 
 <p>&nbsp;</p>
@@ -72,11 +74,17 @@ Given a <em>m</em> x <em>n</em> <code>grid</code>. Each cell of the <code>grid</
 	<li><code>1 &lt;= grid[i][j] &lt;= 6</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -129,7 +137,7 @@ class Solution:
         return find(0) == find(m * n - 1)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -206,10 +214,137 @@ class Solution {
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> p;
+
+    bool hasValidPath(vector<vector<int>>& grid) {
+        int m = grid.size();
+        int n = grid[0].size();
+        p.resize(m * n);
+        for (int i = 0; i < p.size(); ++i) p[i] = i;
+        auto left = [&](int i, int j) {
+            if (j > 0 && (grid[i][j - 1] == 1 || grid[i][j - 1] == 4 || grid[i][j - 1] == 6)) {
+                p[find(i * n + j)] = find(i * n + j - 1);
+            }
+        };
+        auto right = [&](int i, int j) {
+            if (j < n - 1 && (grid[i][j + 1] == 1 || grid[i][j + 1] == 3 || grid[i][j + 1] == 5)) {
+                p[find(i * n + j)] = find(i * n + j + 1);
+            }
+        };
+        auto up = [&](int i, int j) {
+            if (i > 0 && (grid[i - 1][j] == 2 || grid[i - 1][j] == 3 || grid[i - 1][j] == 4)) {
+                p[find(i * n + j)] = find((i - 1) * n + j);
+            }
+        };
+        auto down = [&](int i, int j) {
+            if (i < m - 1 && (grid[i + 1][j] == 2 || grid[i + 1][j] == 5 || grid[i + 1][j] == 6)) {
+                p[find(i * n + j)] = find((i + 1) * n + j);
+            }
+        };
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                int e = grid[i][j];
+                if (e == 1) {
+                    left(i, j);
+                    right(i, j);
+                } else if (e == 2) {
+                    up(i, j);
+                    down(i, j);
+                } else if (e == 3) {
+                    left(i, j);
+                    down(i, j);
+                } else if (e == 4) {
+                    right(i, j);
+                    down(i, j);
+                } else if (e == 5) {
+                    left(i, j);
+                    up(i, j);
+                } else {
+                    right(i, j);
+                    up(i, j);
+                }
+            }
+        }
+        return find(0) == find(m * n - 1);
+    }
+
+    int find(int x) {
+        if (p[x] != x) p[x] = find(p[x]);
+        return p[x];
+    }
+};
 ```
 
+#### Go
+
+```go
+func hasValidPath(grid [][]int) bool {
+	m, n := len(grid), len(grid[0])
+	p := make([]int, m*n)
+	for i := range p {
+		p[i] = i
+	}
+	var find func(x int) int
+	find = func(x int) int {
+		if p[x] != x {
+			p[x] = find(p[x])
+		}
+		return p[x]
+	}
+	left := func(i, j int) {
+		if j > 0 && (grid[i][j-1] == 1 || grid[i][j-1] == 4 || grid[i][j-1] == 6) {
+			p[find(i*n+j)] = find(i*n + j - 1)
+		}
+	}
+	right := func(i, j int) {
+		if j < n-1 && (grid[i][j+1] == 1 || grid[i][j+1] == 3 || grid[i][j+1] == 5) {
+			p[find(i*n+j)] = find(i*n + j + 1)
+		}
+	}
+	up := func(i, j int) {
+		if i > 0 && (grid[i-1][j] == 2 || grid[i-1][j] == 3 || grid[i-1][j] == 4) {
+			p[find(i*n+j)] = find((i-1)*n + j)
+		}
+	}
+	down := func(i, j int) {
+		if i < m-1 && (grid[i+1][j] == 2 || grid[i+1][j] == 5 || grid[i+1][j] == 6) {
+			p[find(i*n+j)] = find((i+1)*n + j)
+		}
+	}
+	for i, row := range grid {
+		for j, e := range row {
+			if e == 1 {
+				left(i, j)
+				right(i, j)
+			} else if e == 2 {
+				up(i, j)
+				down(i, j)
+			} else if e == 3 {
+				left(i, j)
+				down(i, j)
+			} else if e == 4 {
+				right(i, j)
+				down(i, j)
+			} else if e == 5 {
+				left(i, j)
+				up(i, j)
+			} else {
+				right(i, j)
+				up(i, j)
+			}
+		}
+	}
+	return find(0) == find(m*n-1)
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

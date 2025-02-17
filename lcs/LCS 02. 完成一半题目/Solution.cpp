@@ -1,17 +1,16 @@
 class Solution {
 public:
     int halfQuestions(vector<int>& questions) {
-        vector<int> counter(1010);
-        for (int e : questions) ++counter[e];
-        int n = questions.size() >> 1;
-        sort(counter.begin(), counter.end());
-        int res = 0;
-        for (int i = counter.size() - 1; i >= 0; --i)
-        {
-            ++res;
-            if (counter[i] >= n) return res;
-            n -= counter[i];
+        int cnt[1001]{};
+        for (int& x : questions) {
+            ++cnt[x];
         }
-        return res;
+        sort(cnt, cnt + 1001);
+        int ans = 0, n = questions.size() / 2;
+        for (int i = 1000; n > 0; --i) {
+            ++ans;
+            n -= cnt[i];
+        }
+        return ans;
     }
 };

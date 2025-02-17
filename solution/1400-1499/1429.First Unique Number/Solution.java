@@ -1,31 +1,28 @@
 class FirstUnique {
-    private Map<Integer, Integer> counter;
-    private Set<Integer> uniqueNums;
+    private Map<Integer, Integer> cnt = new HashMap<>();
+    private Set<Integer> unique = new LinkedHashSet<>();
 
     public FirstUnique(int[] nums) {
-        counter = new LinkedHashMap<>();
-        uniqueNums = new LinkedHashSet<>();
-        for (int num : nums) {
-            counter.put(num, counter.getOrDefault(num, 0) + 1);
+        for (int v : nums) {
+            cnt.put(v, cnt.getOrDefault(v, 0) + 1);
         }
-        for (Map.Entry<Integer, Integer> entry : counter.entrySet()) {
-            if (entry.getValue() == 1) {
-                uniqueNums.add(entry.getKey());
+        for (int v : nums) {
+            if (cnt.get(v) == 1) {
+                unique.add(v);
             }
         }
     }
-    
+
     public int showFirstUnique() {
-        return uniqueNums.isEmpty() ? -1 : uniqueNums.iterator().next();
+        return unique.isEmpty() ? -1 : unique.iterator().next();
     }
-    
+
     public void add(int value) {
-        if (!counter.containsKey(value)) {
-            counter.put(value, 1);
-            uniqueNums.add(value);
+        cnt.put(value, cnt.getOrDefault(value, 0) + 1);
+        if (cnt.get(value) == 1) {
+            unique.add(value);
         } else {
-            counter.put(value, counter.get(value) + 1);
-            uniqueNums.remove(value);
+            unique.remove(value);
         }
     }
 }

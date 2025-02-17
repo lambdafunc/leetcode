@@ -1,262 +1,265 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0900-0999/0934.Shortest%20Bridge/README_EN.md
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Array
+    - Matrix
+---
+
+<!-- problem:start -->
+
 # [934. Shortest Bridge](https://leetcode.com/problems/shortest-bridge)
 
 [中文文档](/solution/0900-0999/0934.Shortest%20Bridge/README.md)
 
 ## Description
 
-<p>In a given 2D binary array <code>A</code>, there are two islands.&nbsp; (An island is a 4-directionally connected group of&nbsp;<code>1</code>s not connected to any other 1s.)</p>
+<!-- description:start -->
 
-<p>Now, we may change <code>0</code>s to <code>1</code>s so as to connect the two islands together to form 1 island.</p>
+<p>You are given an <code>n x n</code> binary matrix <code>grid</code> where <code>1</code> represents land and <code>0</code> represents water.</p>
 
-<p>Return the smallest number of <code>0</code>s that must be flipped.&nbsp; (It is guaranteed that the answer is at least 1.)</p>
+<p>An <strong>island</strong> is a 4-directionally connected group of <code>1</code>&#39;s not connected to any other <code>1</code>&#39;s. There are <strong>exactly two islands</strong> in <code>grid</code>.</p>
+
+<p>You may change <code>0</code>&#39;s to <code>1</code>&#39;s to connect the two islands to form <strong>one island</strong>.</p>
+
+<p>Return <em>the smallest number of </em><code>0</code><em>&#39;s you must flip to connect the two islands</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<pre><strong>Input:</strong> A = [[0,1],[1,0]]
-<strong>Output:</strong> 1
-</pre><p><strong>Example 2:</strong></p>
-<pre><strong>Input:</strong> A = [[0,1,0],[0,0,0],[0,0,1]]
-<strong>Output:</strong> 2
-</pre><p><strong>Example 3:</strong></p>
-<pre><strong>Input:</strong> A = [[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]
+<p><strong class="example">Example 1:</strong></p>
+
+<pre>
+<strong>Input:</strong> grid = [[0,1],[1,0]]
 <strong>Output:</strong> 1
 </pre>
+
+<p><strong class="example">Example 2:</strong></p>
+
+<pre>
+<strong>Input:</strong> grid = [[0,1,0],[0,0,0],[0,0,1]]
+<strong>Output:</strong> 2
+</pre>
+
+<p><strong class="example">Example 3:</strong></p>
+
+<pre>
+<strong>Input:</strong> grid = [[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]
+<strong>Output:</strong> 1
+</pre>
+
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>2 &lt;= A.length == A[0].length &lt;= 100</code></li>
-	<li><code>A[i][j] == 0</code> or <code>A[i][j] == 1</code></li>
+	<li><code>n == grid.length == grid[i].length</code></li>
+	<li><code>2 &lt;= n &lt;= 100</code></li>
+	<li><code>grid[i][j]</code> is either <code>0</code> or <code>1</code>.</li>
+	<li>There are exactly two islands in <code>grid</code>.</li>
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
-DFS & BFS.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def shortestBridge(self, grid: List[List[int]]) -> int:
-        def find():
-            for i in range(m):
-                for j in range(n):
-                    if grid[i][j] == 1:
-                        return i, j
-
         def dfs(i, j):
             q.append((i, j))
             grid[i][j] = 2
-            for a, b in dirs:
+            for a, b in pairwise(dirs):
                 x, y = i + a, j + b
-                if 0 <= x < m and 0 <= y < n and grid[x][y] == 1:
+                if 0 <= x < n and 0 <= y < n and grid[x][y] == 1:
                     dfs(x, y)
 
-        m, n = len(grid), len(grid[0])
+        n = len(grid)
+        dirs = (-1, 0, 1, 0, -1)
         q = deque()
-        dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]]
-        i, j = find()
+        i, j = next((i, j) for i in range(n) for j in range(n) if grid[i][j])
         dfs(i, j)
-        ans = -1
-        while q:
-            ans += 1
-            for _ in range(len(q), 0, -1):
+        ans = 0
+        while 1:
+            for _ in range(len(q)):
                 i, j = q.popleft()
-                for a, b in dirs:
+                for a, b in pairwise(dirs):
                     x, y = i + a, j + b
-                    if 0 <= x < m and 0 <= y < n:
+                    if 0 <= x < n and 0 <= y < n:
                         if grid[x][y] == 1:
                             return ans
                         if grid[x][y] == 0:
                             grid[x][y] = 2
                             q.append((x, y))
-        return 0
+            ans += 1
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
-    private int[][] grid;
     private int[] dirs = {-1, 0, 1, 0, -1};
-    private int m;
+    private Deque<int[]> q = new ArrayDeque<>();
+    private int[][] grid;
     private int n;
 
     public int shortestBridge(int[][] grid) {
-        m = grid.length;
-        n = grid[0].length;
         this.grid = grid;
-        int[] start = find();
-        Queue<int[]> q = new LinkedList<>();
-        dfs(start[0], start[1], q);
-        int ans = -1;
-        while (!q.isEmpty()) {
-            ++ans;
-            for (int k = q.size(); k > 0; --k) {
-                int[] p = q.poll();
-                for (int i = 0; i < 4; ++i) {
-                    int x = p[0] + dirs[i];
-                    int y = p[1] + dirs[i + 1];
-                    if (x >= 0 && x < m && y >= 0 && y < n) {
+        n = grid.length;
+        for (int i = 0, x = 1; i < n && x == 1; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j] == 1) {
+                    dfs(i, j);
+                    x = 0;
+                    break;
+                }
+            }
+        }
+        int ans = 0;
+        while (true) {
+            for (int i = q.size(); i > 0; --i) {
+                var p = q.pollFirst();
+                for (int k = 0; k < 4; ++k) {
+                    int x = p[0] + dirs[k], y = p[1] + dirs[k + 1];
+                    if (x >= 0 && x < n && y >= 0 && y < n) {
                         if (grid[x][y] == 1) {
                             return ans;
                         }
                         if (grid[x][y] == 0) {
                             grid[x][y] = 2;
-                            q.offer(new int[]{x, y});
+                            q.offer(new int[] {x, y});
                         }
                     }
                 }
             }
+            ++ans;
         }
-        return 0;
     }
 
-    private void dfs(int i, int j, Queue<int[]> q) {
+    private void dfs(int i, int j) {
         grid[i][j] = 2;
-        q.offer(new int[]{i, j});
+        q.offer(new int[] {i, j});
         for (int k = 0; k < 4; ++k) {
-            int x = i + dirs[k];
-            int y = j + dirs[k + 1];
-            if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 1) {
-                dfs(x, y, q);
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x >= 0 && x < n && y >= 0 && y < n && grid[x][y] == 1) {
+                dfs(x, y);
             }
         }
-    }
-
-    private int[] find() {
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (grid[i][j] == 1) {
-                    return new int[]{i, j};
-                }
-            }
-        }
-        return new int[]{0, 0};
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    vector<int> dirs = {-1, 0, 1, 0, -1};
+    const static inline vector<int> dirs = {-1, 0, 1, 0, -1};
 
     int shortestBridge(vector<vector<int>>& grid) {
-        vector<int> start = find(grid);
-        queue<vector<int>> q;
-        dfs(start[0], start[1], q, grid);
-        int ans = -1;
-        while (!q.empty())
-        {
-            ++ans;
-            for (int k = q.size(); k > 0; --k)
-            {
-                auto p = q.front();
+        int n = grid.size();
+        queue<pair<int, int>> q;
+        function<void(int, int)> dfs = [&](int i, int j) {
+            grid[i][j] = 2;
+            q.emplace(i, j);
+            for (int k = 0; k < 4; ++k) {
+                int x = i + dirs[k], y = j + dirs[k + 1];
+                if (x >= 0 && x < n && y >= 0 && y < n && grid[x][y] == 1) {
+                    dfs(x, y);
+                }
+            }
+        };
+        for (int i = 0, x = 1; i < n && x; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j]) {
+                    dfs(i, j);
+                    x = 0;
+                    break;
+                }
+            }
+        }
+        int ans = 0;
+        while (1) {
+            for (int h = q.size(); h; --h) {
+                auto [i, j] = q.front();
                 q.pop();
-                for (int i = 0; i < 4; ++i)
-                {
-                    int x = p[0] + dirs[i];
-                    int y = p[1] + dirs[i + 1];
-                    if (x >= 0 && x < grid.size() && y >= 0 && y < grid[0].size())
-                    {
+                for (int k = 0; k < 4; ++k) {
+                    int x = i + dirs[k], y = j + dirs[k + 1];
+                    if (x >= 0 && x < n && y >= 0 && y < n) {
                         if (grid[x][y] == 1) return ans;
-                        if (grid[x][y] == 0)
-                        {
+                        if (grid[x][y] == 0) {
                             grid[x][y] = 2;
-                            q.push({x, y});
+                            q.emplace(x, y);
                         }
                     }
                 }
             }
+            ++ans;
         }
-        return 0;
-    }
-
-    void dfs(int i, int j, queue<vector<int>>& q, vector<vector<int>>& grid) {
-        grid[i][j] = 2;
-        q.push({i, j});
-        for (int k = 0; k < 4; ++k)
-        {
-            int x = i + dirs[k];
-            int y = j + dirs[k + 1];
-            if (x >= 0 && x < grid.size() && y >= 0 && y < grid[0].size() && grid[x][y] == 1)
-                dfs(x, y, q, grid);
-        }
-    }
-
-    vector<int> find(vector<vector<int>>& grid) {
-        for (int i = 0; i < grid.size(); ++i)
-            for (int j = 0; j < grid[0].size(); ++j)
-                if (grid[i][j] == 1)
-                    return {i, j};
-        return {0, 0};
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func shortestBridge(grid [][]int) int {
-	m, n := len(grid), len(grid[0])
-	find := func() []int {
-		for i := 0; i < m; i++ {
-			for j := 0; j < n; j++ {
-				if grid[i][j] == 1 {
-					return []int{i, j}
-				}
-			}
-		}
-		return []int{0, 0}
-	}
-	start := find()
-	var q [][]int
+func shortestBridge(grid [][]int) (ans int) {
+	n := len(grid)
 	dirs := []int{-1, 0, 1, 0, -1}
-	var dfs func(i, j int)
+	type pair struct{ i, j int }
+	q := []pair{}
+	var dfs func(int, int)
 	dfs = func(i, j int) {
 		grid[i][j] = 2
-		q = append(q, []int{i, j})
+		q = append(q, pair{i, j})
 		for k := 0; k < 4; k++ {
 			x, y := i+dirs[k], j+dirs[k+1]
-			if x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 1 {
+			if x >= 0 && x < n && y >= 0 && y < n && grid[x][y] == 1 {
 				dfs(x, y)
 			}
 		}
 	}
-	dfs(start[0], start[1])
-	ans := -1
-	for len(q) > 0 {
-		ans++
-		for k := len(q); k > 0; k-- {
+	for i, x := 0, 1; i < n && x == 1; i++ {
+		for j := 0; j < n; j++ {
+			if grid[i][j] == 1 {
+				dfs(i, j)
+				x = 0
+				break
+			}
+		}
+	}
+	for {
+		for i := len(q); i > 0; i-- {
 			p := q[0]
 			q = q[1:]
-			for i := 0; i < 4; i++ {
-				x, y := p[0]+dirs[i], p[1]+dirs[i+1]
-				if x >= 0 && x < m && y >= 0 && y < n {
+			for k := 0; k < 4; k++ {
+				x, y := p.i+dirs[k], p.j+dirs[k+1]
+				if x >= 0 && x < n && y >= 0 && y < n {
 					if grid[x][y] == 1 {
-						return ans
+						return
 					}
 					if grid[x][y] == 0 {
 						grid[x][y] = 2
-						q = append(q, []int{x, y})
+						q = append(q, pair{x, y})
 					}
 				}
 			}
 		}
+		ans++
 	}
-	return 0
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

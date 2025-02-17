@@ -1,19 +1,17 @@
 class Solution {
     public boolean canFormArray(int[] arr, int[][] pieces) {
-        Map<Integer, int[]> map = new HashMap<>();
-        for (int[] piece : pieces) {
-            map.put(piece[0], piece);
-        }
         for (int i = 0; i < arr.length;) {
-            int[] vals = map.get(arr[i]);
-            if (vals == null) {
+            int k = 0;
+            while (k < pieces.length && pieces[k][0] != arr[i]) {
+                ++k;
+            }
+            if (k == pieces.length) {
                 return false;
             }
-            for (int val : vals) {
-                if (arr[i] != val) {
-                    return false;
-                }
+            int j = 0;
+            while (j < pieces[k].length && arr[i] == pieces[k][j]) {
                 ++i;
+                ++j;
             }
         }
         return true;

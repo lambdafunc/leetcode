@@ -1,10 +1,22 @@
-# [816. 模糊坐标](https://leetcode-cn.com/problems/ambiguous-coordinates)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0816.Ambiguous%20Coordinates/README.md
+tags:
+    - 字符串
+    - 回溯
+    - 枚举
+---
+
+<!-- problem:start -->
+
+# [816. 模糊坐标](https://leetcode.cn/problems/ambiguous-coordinates)
 
 [English Version](/solution/0800-0899/0816.Ambiguous%20Coordinates/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>我们有一些二维坐标，如&nbsp;<code>&quot;(1, 3)&quot;</code>&nbsp;或&nbsp;<code>&quot;(2, 0.5)&quot;</code>，然后我们移除所有逗号，小数点和空格，得到一个字符串<code>S</code>。返回所有可能的原始字符串到一个列表中。</p>
 
@@ -53,50 +65,46 @@
 
 <p>&nbsp;</p>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-暴力模拟。
+### 方法一：暴力模拟
 
-把 s 按照不同长度去做 x, y 两部分的拆分。
+枚举纵坐标的起始位置，然后分别获取横、纵坐标的所有可能的表示形式，最后将横、纵坐标的所有可能的表示形式组合起来。
 
-将拆分后的 x, y，分别检查是否满足以下条件：
+我们将一个坐标值 $x$ 或 $y$ 按照小数点的位置分成左右两部分，那么两部分应该满足以下条件：
 
-- 左半部分开头不能是 0（除非是 0 本身）
-- 右半部分不能以 0 为结尾
+1. 左半部分不能以 0 开头，除非左半部分只有 0；
+2. 右半部分不能以 0 结尾。
+
+时间复杂度 $O(n^3)$，其中 $n$ 为字符串 $S$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def ambiguousCoordinates(self, s: str) -> List[str]:
-        def convert(i, j):
+        def f(i, j):
             res = []
             for k in range(1, j - i + 1):
-                left, right = s[i: i + k], s[i + k: j]
-                valid = (left == '0' or not left.startswith(
-                    '0')) and not right.endswith('0')
-                if valid:
-                    res.append(left + ('.' if k < j - i else '') + right)
+                l, r = s[i : i + k], s[i + k : j]
+                ok = (l == '0' or not l.startswith('0')) and not r.endswith('0')
+                if ok:
+                    res.append(l + ('.' if k < j - i else '') + r)
             return res
 
         n = len(s)
-        ans = []
-        for i in range(2, n - 1):
-            for x in convert(1, i):
-                for y in convert(i, n - 1):
-                    ans.append(f'({x}, {y})')
-        return ans
+        return [
+            f'({x}, {y})' for i in range(2, n - 1) for x in f(1, i) for y in f(i, n - 1)
+        ]
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -104,8 +112,8 @@ class Solution {
         int n = s.length();
         List<String> ans = new ArrayList<>();
         for (int i = 2; i < n - 1; ++i) {
-            for (String x : convert(s, 1, i)) {
-                for (String y : convert(s, i, n - 1)) {
+            for (String x : f(s, 1, i)) {
+                for (String y : f(s, i, n - 1)) {
                     ans.add(String.format("(%s, %s)", x, y));
                 }
             }
@@ -113,16 +121,14 @@ class Solution {
         return ans;
     }
 
-    private List<String> convert(String s, int i, int j) {
+    private List<String> f(String s, int i, int j) {
         List<String> res = new ArrayList<>();
         for (int k = 1; k <= j - i; ++k) {
-            String left = s.substring(i, i + k);
-            String right = s.substring(i + k, j);
-            // 左半部分开头不能是0（除非是0本身）
-            // 右半部分不能以0为结尾
-            boolean valid = ("0".equals(left) || !left.startsWith("0")) && !right.endsWith("0");
-            if (valid) {
-                res.add(left + (k < j - i ? "." : "") + right);
+            String l = s.substring(i, i + k);
+            String r = s.substring(i + k, j);
+            boolean ok = ("0".equals(l) || !l.startsWith("0")) && !r.endsWith("0");
+            if (ok) {
+                res.add(l + (k < j - i ? "." : "") + r);
             }
         }
         return res;
@@ -130,10 +136,104 @@ class Solution {
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<string> ambiguousCoordinates(string s) {
+        int n = s.size();
+        vector<string> ans;
+        auto f = [&](int i, int j) {
+            vector<string> res;
+            for (int k = 1; k <= j - i; ++k) {
+                string l = s.substr(i, k);
+                string r = s.substr(i + k, j - i - k);
+                bool ok = (l == "0" || l[0] != '0') && r.back() != '0';
+                if (ok) {
+                    res.push_back(l + (k < j - i ? "." : "") + r);
+                }
+            }
+            return res;
+        };
+        for (int i = 2; i < n - 1; ++i) {
+            for (auto& x : f(1, i)) {
+                for (auto& y : f(i, n - 1)) {
+                    ans.emplace_back("(" + x + ", " + y + ")");
+                }
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func ambiguousCoordinates(s string) []string {
+	f := func(i, j int) []string {
+		res := []string{}
+		for k := 1; k <= j-i; k++ {
+			l, r := s[i:i+k], s[i+k:j]
+			ok := (l == "0" || l[0] != '0') && (r == "" || r[len(r)-1] != '0')
+			if ok {
+				t := ""
+				if k < j-i {
+					t = "."
+				}
+				res = append(res, l+t+r)
+			}
+		}
+		return res
+	}
+
+	n := len(s)
+	ans := []string{}
+	for i := 2; i < n-1; i++ {
+		for _, x := range f(1, i) {
+			for _, y := range f(i, n-1) {
+				ans = append(ans, "("+x+", "+y+")")
+			}
+		}
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+function ambiguousCoordinates(s: string): string[] {
+    s = s.slice(1, s.length - 1);
+    const n = s.length;
+    const dfs = (s: string) => {
+        const res: string[] = [];
+        for (let i = 1; i < s.length; i++) {
+            const t = `${s.slice(0, i)}.${s.slice(i)}`;
+            if (`${Number(t)}` === t) {
+                res.push(t);
+            }
+        }
+        if (`${Number(s)}` === s) {
+            res.push(s);
+        }
+        return res;
+    };
+    const ans: string[] = [];
+    for (let i = 1; i < n; i++) {
+        for (const left of dfs(s.slice(0, i))) {
+            for (const right of dfs(s.slice(i))) {
+                ans.push(`(${left}, ${right})`);
+            }
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

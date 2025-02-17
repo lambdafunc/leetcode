@@ -1,10 +1,24 @@
-# [1941. 检查是否所有字符出现次数相同](https://leetcode-cn.com/problems/check-if-all-characters-have-equal-number-of-occurrences)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1941.Check%20if%20All%20Characters%20Have%20Equal%20Number%20of%20Occurrences/README.md
+rating: 1242
+source: 第 57 场双周赛 Q1
+tags:
+    - 哈希表
+    - 字符串
+    - 计数
+---
+
+<!-- problem:start -->
+
+# [1941. 检查是否所有字符出现次数相同](https://leetcode.cn/problems/check-if-all-characters-have-equal-number-of-occurrences)
 
 [English Version](/solution/1900-1999/1941.Check%20if%20All%20Characters%20Have%20Equal%20Number%20of%20Occurrences/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个字符串 <code>s</code> ，如果 <code>s</code> 是一个 <strong>好</strong> 字符串，请你返回 <code>true</code> ，否则请返回 <code>false</code> 。</p>
 
@@ -36,61 +50,144 @@
 	<li><code>s</code> 只包含小写英文字母。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：计数
+
+我们用一个哈希表或者一个长度为 $26$ 的数组 $\textit{cnt}$ 记录字符串 $s$ 中每个字符出现的次数。
+
+接下来遍历 $\textit{cnt}$ 中的每个值，判断所有非零值是否相等即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(|\Sigma|)$。其中 $n$ 是字符串 $s$ 的长度；而 $\Sigma$ 是字符集大小，本题中字符集为小写英文字母，因此 $|\Sigma|=26$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def areOccurrencesEqual(self, s: str) -> bool:
-        counter = Counter(s)
-        cnt = -1
-        for c, times in counter.items():
-            if cnt == -1:
-                cnt = times
-            elif cnt != times:
-                return False
-        return True
+        return len(set(Counter(s).values())) == 1
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public boolean areOccurrencesEqual(String s) {
-        int[] counter = new int[26];
+        int[] cnt = new int[26];
         for (char c : s.toCharArray()) {
-            ++counter[c - 'a'];
+            ++cnt[c - 'a'];
         }
-        int cnt = -1;
-        for (int i = 0; i < 26; ++i) {
-            if (counter[i] == 0) {
+        int v = 0;
+        for (int x : cnt) {
+            if (x == 0) {
                 continue;
             }
-
-            if (cnt == -1) {
-                cnt = counter[i];
-            } else if (cnt != counter[i]) {
+            if (v > 0 && v != x) {
                 return false;
             }
+            v = x;
         }
         return true;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    bool areOccurrencesEqual(string s) {
+        vector<int> cnt(26);
+        for (char c : s) {
+            ++cnt[c - 'a'];
+        }
+        int v = 0;
+        for (int x : cnt) {
+            if (x == 0) {
+                continue;
+            }
+            if (v && v != x) {
+                return false;
+            }
+            v = x;
+        }
+        return true;
+    }
+};
 ```
 
+#### Go
+
+```go
+func areOccurrencesEqual(s string) bool {
+	cnt := [26]int{}
+	for _, c := range s {
+		cnt[c-'a']++
+	}
+	v := 0
+	for _, x := range cnt {
+		if x == 0 {
+			continue
+		}
+		if v > 0 && v != x {
+			return false
+		}
+		v = x
+	}
+	return true
+}
+```
+
+#### TypeScript
+
+```ts
+function areOccurrencesEqual(s: string): boolean {
+    const cnt: number[] = Array(26).fill(0);
+    for (const c of s) {
+        ++cnt[c.charCodeAt(0) - 'a'.charCodeAt(0)];
+    }
+    const v = cnt.find(v => v);
+    return cnt.every(x => !x || v === x);
+}
+```
+
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param String $s
+     * @return Boolean
+     */
+    function areOccurrencesEqual($s) {
+        $cnt = array_fill(0, 26, 0);
+        for ($i = 0; $i < strlen($s); $i++) {
+            $cnt[ord($s[$i]) - ord('a')]++;
+        }
+        $v = 0;
+        foreach ($cnt as $x) {
+            if ($x == 0) {
+                continue;
+            }
+            if ($v && $v != $x) {
+                return false;
+            }
+            $v = $x;
+        }
+        return true;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

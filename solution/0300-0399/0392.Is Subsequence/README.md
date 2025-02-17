@@ -1,10 +1,22 @@
-# [392. 判断子序列](https://leetcode-cn.com/problems/is-subsequence)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0392.Is%20Subsequence/README.md
+tags:
+    - 双指针
+    - 字符串
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [392. 判断子序列](https://leetcode.cn/problems/is-subsequence)
 
 [English Version](/solution/0300-0399/0392.Is%20Subsequence/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给定字符串 <strong>s</strong> 和 <strong>t</strong> ，判断 <strong>s</strong> 是否为 <strong>t</strong> 的子序列。</p>
 
@@ -44,33 +56,34 @@
 	<li>两个字符串都只由小写字符组成。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-双指针遍历即可。
+### 方法一：双指针
+
+我们定义两个指针 $i$ 和 $j$，分别指向字符串 $s$ 和 $t$ 的初始位置。每次我们比较两个指针指向的字符，如果相同，则两个指针同时右移；如果不同，则只有 $j$ 右移。当指针 $i$ 移动到字符串 $s$ 的末尾时，说明 $s$ 是 $t$ 的子序列。
+
+时间复杂度 $O(m + n)$，其中 $m$ 和 $n$ 分别是字符串 $s$ 和 $t$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def isSubsequence(self, s: str, t: str) -> bool:
-        m, n = len(s), len(t)
         i = j = 0
-        while i < m and j < n:
+        while i < len(s) and j < len(t):
             if s[i] == t[j]:
                 i += 1
             j += 1
-        return i == m
+        return i == len(s)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -88,23 +101,7 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function isSubsequence(s: string, t: string): boolean {
-    let m = s.length,
-        n = t.length;
-    let i = 0;
-    for (let j = 0; j < n && i < m; ++j) {
-        if (s.charAt(i) == t.charAt(j)) {
-            ++i;
-        }
-    }
-    return i == m;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -112,17 +109,17 @@ public:
     bool isSubsequence(string s, string t) {
         int m = s.size(), n = t.size();
         int i = 0, j = 0;
-        while (i < m && j < n)
-        {
-            if (s[i] == t[j]) ++i;
-            ++j;
+        for (; i < m && j < n; ++j) {
+            if (s[i] == t[j]) {
+                ++i;
+            }
         }
         return i == m;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func isSubsequence(s string, t string) bool {
@@ -137,10 +134,79 @@ func isSubsequence(s string, t string) bool {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function isSubsequence(s: string, t: string): boolean {
+    const m = s.length;
+    const n = t.length;
+    let i = 0;
+    for (let j = 0; i < m && j < n; ++j) {
+        if (s[i] === t[j]) {
+            ++i;
+        }
+    }
+    return i === m;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn is_subsequence(s: String, t: String) -> bool {
+        let (s, t) = (s.as_bytes(), t.as_bytes());
+        let n = t.len();
+        let mut i = 0;
+        for &c in s.iter() {
+            while i < n && t[i] != c {
+                i += 1;
+            }
+            if i == n {
+                return false;
+            }
+            i += 1;
+        }
+        true
+    }
+}
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public bool IsSubsequence(string s, string t) {
+        int m = s.Length, n = t.Length;
+        int i = 0, j = 0;
+        for (; i < m && j < n; ++j) {
+            if (s[i] == t[j]) {
+                ++i;
+            }
+        }
+        return i == m;
+    }
+}
+```
+
+#### C
+
+```c
+bool isSubsequence(char* s, char* t) {
+    int m = strlen(s);
+    int n = strlen(t);
+    int i = 0;
+    for (int j = 0; i < m && j < n; ++j) {
+        if (s[i] == t[j]) {
+            ++i;
+        }
+    }
+    return i == m;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

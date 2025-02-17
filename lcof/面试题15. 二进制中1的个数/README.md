@@ -1,6 +1,16 @@
-# [面试题 15. 二进制中 1 的个数](https://leetcode-cn.com/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9815.%20%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%B8%AD1%E7%9A%84%E4%B8%AA%E6%95%B0/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 15. 二进制中 1 的个数](https://leetcode.cn/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/)
 
 ## 题目描述
+
+<!-- description:start -->
 
 <p>编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 '1' 的个数（也被称为 <a href="http://en.wikipedia.org/wiki/Hamming_weight" target="_blank">汉明重量</a>).）。</p>
 
@@ -48,15 +58,23 @@
 
 <p> </p>
 
-<p>注意：本题与主站 191 题相同：<a href="https://leetcode-cn.com/problems/number-of-1-bits/">https://leetcode-cn.com/problems/number-of-1-bits/</a></p>
+<p>注意：本题与主站 191 题相同：<a href="https://leetcode.cn/problems/number-of-1-bits/">https://leetcode.cn/problems/number-of-1-bits/</a></p>
+
+<!-- description:end -->
 
 ## 解法
 
-`n & (n - 1)` 会消除 n 中最后一位中的 1。
+<!-- solution:start -->
+
+### 方法一：位运算
+
+由于 $n \& (n - 1)$ 可以消除 $n$ 的二进制表示中最右边的 1，因此不断执行 $n \& (n - 1)$，直到 $n = 0$，统计执行次数即可。
+
+时间复杂度 $O(\log n)$，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -68,7 +86,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 public class Solution {
@@ -76,7 +94,7 @@ public class Solution {
     public int hammingWeight(int n) {
         int ans = 0;
         while (n != 0) {
-            n &= n - 1;
+            n &= (n - 1);
             ++ans;
         }
         return ans;
@@ -84,7 +102,35 @@ public class Solution {
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int hammingWeight(uint32_t n) {
+        int ans = 0;
+        while (n) {
+            n &= (n - 1);
+            ++ans;
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func hammingWeight(n uint32) (ans int) {
+	for n != 0 {
+		n &= n - 1
+		ans++
+	}
+	return
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -93,7 +139,7 @@ public class Solution {
  */
 var hammingWeight = function (n) {
     let ans = 0;
-    while (n != 0) {
+    while (n) {
         n &= n - 1;
         ++ans;
     }
@@ -101,29 +147,73 @@ var hammingWeight = function (n) {
 };
 ```
 
-### **Go**
+#### Swift
 
-```go
-func hammingWeight(num uint32) int {
-	ans := 0
-	for num != 0 {
-		num &= num - 1
-		ans++
-	}
-	return ans
+```swift
+class Solution {
+    func hammingWeight(_ n: Int) -> Int {
+        var n = n
+        var ans = 0
+        while n != 0 {
+            n &= (n - 1)
+            ans += 1
+        }
+        return ans
+    }
 }
 ```
 
-### **C++**
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：位运算（lowbit）
+
+根据位运算的性质，我们知道 $n \& (-n)$ 可以得到 $n$ 的二进制表示中最右边的 $1$，因此不断将 $n$ 减去 $n \& (-n)$，直到 $n = 0$，统计执行次数即可。
+
+时间复杂度 $O(\log n)$，空间复杂度 $O(1)$。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def hammingWeight(self, n: int) -> int:
+        ans = 0
+        while n:
+            n -= n & (-n)
+            ans += 1
+        return ans
+```
+
+#### Java
+
+```java
+public class Solution {
+    // you need to treat n as an unsigned value
+    public int hammingWeight(int n) {
+        int ans = 0;
+        while (n != 0) {
+            n -= n & -n;
+            ++ans;
+        }
+        return ans;
+    }
+}
+```
+
+#### C++
 
 ```cpp
 class Solution {
 public:
     int hammingWeight(uint32_t n) {
         int ans = 0;
-        while (n)
-        {
-            n &= n - 1;
+        while (n) {
+            n -= n & -n;
             ++ans;
         }
         return ans;
@@ -131,10 +221,20 @@ public:
 };
 ```
 
-### **...**
+#### Go
 
-```
-
+```go
+func hammingWeight(n uint32) (ans int) {
+	for n != 0 {
+		n -= n & -n
+		ans++
+	}
+	return
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

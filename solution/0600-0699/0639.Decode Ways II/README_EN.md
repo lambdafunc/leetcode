@@ -1,8 +1,21 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0639.Decode%20Ways%20II/README_EN.md
+tags:
+    - String
+    - Dynamic Programming
+---
+
+<!-- problem:start -->
+
 # [639. Decode Ways II](https://leetcode.com/problems/decode-ways-ii)
 
 [中文文档](/solution/0600-0699/0639.Decode%20Ways%20II/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A message containing letters from <code>A-Z</code> can be <strong>encoded</strong> into numbers using the following mapping:</p>
 
@@ -24,12 +37,12 @@
 
 <p><strong>In addition</strong> to the mapping above, an encoded message may contain the <code>&#39;*&#39;</code> character, which can represent any digit from <code>&#39;1&#39;</code> to <code>&#39;9&#39;</code> (<code>&#39;0&#39;</code> is excluded). For example, the encoded message <code>&quot;1*&quot;</code> may represent any of the encoded messages <code>&quot;11&quot;</code>, <code>&quot;12&quot;</code>, <code>&quot;13&quot;</code>, <code>&quot;14&quot;</code>, <code>&quot;15&quot;</code>, <code>&quot;16&quot;</code>, <code>&quot;17&quot;</code>, <code>&quot;18&quot;</code>, or <code>&quot;19&quot;</code>. Decoding <code>&quot;1*&quot;</code> is equivalent to decoding <strong>any</strong> of the encoded messages it can represent.</p>
 
-<p>Given a string <code>s</code> containing digits and the <code>&#39;*&#39;</code> character, return <em>the <strong>number</strong> of ways to <strong>decode</strong> it</em>.</p>
+<p>Given a string <code>s</code> consisting of digits and <code>&#39;*&#39;</code> characters, return <em>the <strong>number</strong> of ways to <strong>decode</strong> it</em>.</p>
 
 <p>Since the answer may be very large, return it <strong>modulo</strong> <code>10<sup>9</sup> + 7</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;*&quot;
@@ -39,7 +52,7 @@ Each of these can be decoded to the strings &quot;A&quot;, &quot;B&quot;, &quot;
 Hence, there are a total of 9 ways to decode &quot;*&quot;.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;1*&quot;
@@ -49,7 +62,7 @@ Each of these encoded messages have 2 ways to be decoded (e.g. &quot;11&quot; ca
 Hence, there are a total of 9 * 2 = 18 ways to decode &quot;1*&quot;.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;2*&quot;
@@ -67,13 +80,17 @@ Hence, there are a total of (6 * 2) + (3 * 1) = 12 + 3 = 15 ways to decode &quot
 	<li><code>s[i]</code> is a digit or <code>&#39;*&#39;</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-It's just that some conditional judgments about `*` have been added to the [91. Decode Ways](/solution/0000-0099/0091.Decode%20Ways/README_EN.md).
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -117,7 +134,7 @@ class Solution:
         return c
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -170,7 +187,7 @@ class Solution {
 }
 ```
 
-### **Go**
+#### Go
 
 ```go
 const mod int = 1e9 + 7
@@ -217,10 +234,8 @@ func numDecodings(s string) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

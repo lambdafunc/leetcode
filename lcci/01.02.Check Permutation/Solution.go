@@ -1,16 +1,13 @@
 func CheckPermutation(s1 string, s2 string) bool {
-	freq := make(map[rune]int)
-	for _, r := range s1 {
-		freq[r]++
+	if len(s1) != len(s2) {
+		return false
 	}
-	for _, r := range s2 {
-		if freq[r] == 0 {
-			return false
-		}
-		freq[r]--
+	cnt := make([]int, 26)
+	for _, c := range s1 {
+		cnt[c-'a']++
 	}
-	for _, v := range freq {
-		if v != 0 {
+	for _, c := range s2 {
+		if cnt[c-'a']--; cnt[c-'a'] < 0 {
 			return false
 		}
 	}

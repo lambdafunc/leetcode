@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1944.Number%20of%20Visible%20People%20in%20a%20Queue/README_EN.md
+rating: 2104
+source: Biweekly Contest 57 Q4
+tags:
+    - Stack
+    - Array
+    - Monotonic Stack
+---
+
+<!-- problem:start -->
+
 # [1944. Number of Visible People in a Queue](https://leetcode.com/problems/number-of-visible-people-in-a-queue)
 
 [中文文档](/solution/1900-1999/1944.Number%20of%20Visible%20People%20in%20a%20Queue/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>There are <code>n</code> people standing in a queue, and they numbered from <code>0</code> to <code>n - 1</code> in <strong>left to right</strong> order. You are given an array <code>heights</code> of <strong>distinct</strong> integers where <code>heights[i]</code> represents the height of the <code>i<sup>th</sup></code> person.</p>
 
@@ -11,9 +27,9 @@
 <p>Return <em>an array </em><code>answer</code><em> of length </em><code>n</code><em> where </em><code>answer[i]</code><em> is the <strong>number of people</strong> the </em><code>i<sup>th</sup></code><em> person can <strong>see</strong> to their right in the queue</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
-<p><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1944.Number%20of%20Visible%20People%20in%20a%20Queue/images/queue-plane.jpg" style="width: 600px; height: 247px;" /></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1900-1999/1944.Number%20of%20Visible%20People%20in%20a%20Queue/images/queue-plane.jpg" style="width: 600px; height: 247px;" /></p>
 
 <pre>
 <strong>Input:</strong> heights = [10,6,8,5,11,9]
@@ -27,7 +43,7 @@ Person 4 can see person 5.
 Person 5 can see no one since nobody is to the right of them.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> heights = [5,1,2,3,10]
@@ -44,40 +60,58 @@ Person 5 can see no one since nobody is to the right of them.
 	<li>All the values of <code>heights</code> are <strong>unique</strong>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-Monotonic stack.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def canSeePersonsCount(self, heights: List[int]) -> List[int]:
         n = len(heights)
         ans = [0] * n
-        stack = list()
-
+        stk = []
         for i in range(n - 1, -1, -1):
-            while stack:
-                ans[i] += 1;
-                if heights[i] > stack[-1]:
-                    stack.pop()
-                else:
-                    break
-            stack.append(heights[i])
-
+            while stk and stk[-1] < heights[i]:
+                ans[i] += 1
+                stk.pop()
+            if stk:
+                ans[i] += 1
+            stk.append(heights[i])
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public int[] canSeePersonsCount(int[] heights) {
+        int n = heights.length;
+        int[] ans = new int[n];
+        Deque<Integer> stk = new ArrayDeque<>();
+        for (int i = n - 1; i >= 0; --i) {
+            while (!stk.isEmpty() && stk.peek() < heights[i]) {
+                stk.pop();
+                ++ans[i];
+            }
+            if (!stk.isEmpty()) {
+                ++ans[i];
+            }
+            stk.push(heights[i]);
+        }
+        return ans;
+    }
+}
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -86,13 +120,13 @@ public:
         int n = heights.size();
         vector<int> ans(n);
         stack<int> stk;
-        for (int i = n  - 1; i >= 0; --i)
-        {
-            while (!stk.empty())
-            {
-                ans[i]++;
-                if (heights[i] <= stk.top()) break;
+        for (int i = n - 1; ~i; --i) {
+            while (stk.size() && stk.top() < heights[i]) {
+                ++ans[i];
                 stk.pop();
+            }
+            if (stk.size()) {
+                ++ans[i];
             }
             stk.push(heights[i]);
         }
@@ -101,4 +135,99 @@ public:
 };
 ```
 
+#### Go
+
+```go
+func canSeePersonsCount(heights []int) []int {
+	n := len(heights)
+	ans := make([]int, n)
+	stk := []int{}
+	for i := n - 1; i >= 0; i-- {
+		for len(stk) > 0 && stk[len(stk)-1] < heights[i] {
+			ans[i]++
+			stk = stk[:len(stk)-1]
+		}
+		if len(stk) > 0 {
+			ans[i]++
+		}
+		stk = append(stk, heights[i])
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+function canSeePersonsCount(heights: number[]): number[] {
+    const n = heights.length;
+    const ans: number[] = new Array(n).fill(0);
+    const stk: number[] = [];
+    for (let i = n - 1; ~i; --i) {
+        while (stk.length && stk.at(-1) < heights[i]) {
+            ++ans[i];
+            stk.pop();
+        }
+        if (stk.length) {
+            ++ans[i];
+        }
+        stk.push(heights[i]);
+    }
+    return ans;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn can_see_persons_count(heights: Vec<i32>) -> Vec<i32> {
+        let n = heights.len();
+        let mut ans = vec![0; n];
+        let mut stack = Vec::new();
+        for i in (0..n).rev() {
+            while !stack.is_empty() {
+                ans[i] += 1;
+                if heights[i] <= heights[*stack.last().unwrap()] {
+                    break;
+                }
+                stack.pop();
+            }
+            stack.push(i);
+        }
+        ans
+    }
+}
+```
+
+#### C
+
+```c
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* canSeePersonsCount(int* heights, int heightsSize, int* returnSize) {
+    int* ans = malloc(sizeof(int) * heightsSize);
+    memset(ans, 0, sizeof(int) * heightsSize);
+    int stack[heightsSize];
+    int i = 0;
+    for (int j = heightsSize - 1; j >= 0; j--) {
+        while (i) {
+            ans[j]++;
+            if (heights[j] <= heights[stack[i - 1]]) {
+                break;
+            }
+            i--;
+        }
+        stack[i++] = j;
+    }
+    *returnSize = heightsSize;
+    return ans;
+}
+```
+
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

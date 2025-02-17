@@ -12,25 +12,24 @@
 class Solution {
 public:
     bool checkEquivalence(Node* root1, Node* root2) {
-        return dfs(root1) == dfs(root2);
-    }
-
-    vector<int> dfs(Node* root) {
-        vector<int> ans(26);
-        if (!root) return ans;
-        if (root->val == '+' || root->val == '-')
-        {
-            auto left = dfs(root->left);
-            auto right = dfs(root->right);
-            calc(ans, left, right, root->val);
-            return ans;
+        int cnt[26]{};
+        function<void(Node*, int)> dfs = [&](Node* root, int v) {
+            if (!root) {
+                return;
+            }
+            if (root->val != '+') {
+                cnt[root->val - 'a'] += v;
+            }
+            dfs(root->left, v);
+            dfs(root->right, v);
+        };
+        dfs(root1, 1);
+        dfs(root2, -1);
+        for (int& x : cnt) {
+            if (x) {
+                return false;
+            }
         }
-        ++ans[root->val - 'a'];
-        return ans;
-    }
-
-    void calc(vector<int>& ans, vector<int>& left, vector<int>& right, char op) {
-        for (int i = 0; i < 26; ++i)
-            ans[i] = op == '+' ? left[i] + right[i] : left[i] - right[i];
+        return true;
     }
 };

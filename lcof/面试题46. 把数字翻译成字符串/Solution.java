@@ -1,14 +1,26 @@
 class Solution {
+    private int n;
+    private char[] s;
+    private Integer[] f;
+
     public int translateNum(int num) {
-        return cal(String.valueOf(num));
+        s = String.valueOf(num).toCharArray();
+        n = s.length;
+        f = new Integer[n];
+        return dfs(0);
     }
 
-    private int cal(String s) {
-        int n = s.length();
-        if (n < 2) {
+    private int dfs(int i) {
+        if (i >= n - 1) {
             return 1;
         }
-        int t = Integer.parseInt(s.substring(0, 2));
-        return t < 10 || t > 25 ? cal(s.substring(1)) : cal(s.substring(1)) + cal(s.substring(2));
+        if (f[i] != null) {
+            return f[i];
+        }
+        int ans = dfs(i + 1);
+        if (s[i] == '1' || (s[i] == '2' && s[i + 1] < '6')) {
+            ans += dfs(i + 2);
+        }
+        return f[i] = ans;
     }
 }

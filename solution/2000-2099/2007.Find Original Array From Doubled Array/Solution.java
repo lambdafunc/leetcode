@@ -1,30 +1,25 @@
 class Solution {
     public int[] findOriginalArray(int[] changed) {
-        if (changed.length % 2 != 0) {
-            return new int[]{};
-        }
-        int n = 100010;
-        int[] counter = new int[n];
+        int n = changed.length;
+        Arrays.sort(changed);
+        int[] cnt = new int[changed[n - 1] + 1];
         for (int x : changed) {
-            ++counter[x];
+            ++cnt[x];
         }
-        if (counter[0] % 2 != 0) {
-            return new int[]{};
-        }
-        int[] res = new int[changed.length / 2];
-        int j = counter[0] / 2;
-        for (int i = 1; i < n; ++i) {
-            if (counter[i] == 0) {
+        int[] ans = new int[n >> 1];
+        int i = 0;
+        for (int x : changed) {
+            if (cnt[x] == 0) {
                 continue;
             }
-            if (i * 2 >= n || counter[i] > counter[i * 2]) {
-                return new int[]{};
+            --cnt[x];
+            int y = x << 1;
+            if (y >= cnt.length || cnt[y] <= 0) {
+                return new int[0];
             }
-            counter[i * 2] -= counter[i];
-            while (counter[i]-- > 0) {
-                res[j++] = i;
-            }
+            --cnt[y];
+            ans[i++] = x;
         }
-        return res;
+        return ans;
     }
 }

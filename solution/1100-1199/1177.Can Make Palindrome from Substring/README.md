@@ -1,10 +1,26 @@
-# [1177. 构建回文串检测](https://leetcode-cn.com/problems/can-make-palindrome-from-substring)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1177.Can%20Make%20Palindrome%20from%20Substring/README.md
+rating: 1848
+source: 第 152 场周赛 Q3
+tags:
+    - 位运算
+    - 数组
+    - 哈希表
+    - 字符串
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [1177. 构建回文串检测](https://leetcode.cn/problems/can-make-palindrome-from-substring)
 
 [English Version](/solution/1100-1199/1177.Can%20Make%20Palindrome%20from%20Substring/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个字符串&nbsp;<code>s</code>，请你对&nbsp;<code>s</code>&nbsp;的子串进行检测。</p>
 
@@ -41,32 +57,145 @@ queries[4] :&nbsp;子串 = &quot;abcda&quot;，可以变成回文的 &quot;abcba
 	<li><code>s</code> 中只有小写英文字母</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：前缀和
+
+我们先考虑一个子串能否在经过最多 $k$ 次替换后变成回文串，显然，我们需要统计子串中每个字符出现的次数，这可以通过前缀和来实现。对于出现偶数次的字符，我们不需要进行替换，对于出现奇数次的字符，我们需要进行替换，替换的次数为 $\lfloor \frac{x}{2} \rfloor$，其中 $x$ 为出现奇数次的字符的个数。如果 $\lfloor \frac{x}{2} \rfloor \leq k$，那么这个子串就可以变成回文串。
+
+因此，我们定义一个前缀和数组 $ss$，其中 $ss[i][j]$ 表示字符串 $s$ 的前 $i$ 个字符中，字符 $j$ 出现的次数。那么对于一个子串 $s[l..r]$，我们可以通过 $ss[r + 1][j] - ss[l][j]$ 得到子串中字符 $j$ 出现的次数。我们遍历所有的查询，对于每个查询 $[l, r, k]$，我们统计子串 $s[l..r]$ 中出现奇数次的字符的个数 $x$，如果 $\lfloor \frac{x}{2} \rfloor \leq k$，那么这个子串就可以变成回文串。
+
+时间复杂度 $O((n + m) \times C)$，空间复杂度 $O(n \times C)$，其中 $n$ 和 $m$ 分别为字符串 $s$ 和查询数组的长度；而 $C$ 为字符集的大小，本题中字符集为小写英文字母，因此 $C = 26$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def canMakePaliQueries(self, s: str, queries: List[List[int]]) -> List[bool]:
+        n = len(s)
+        ss = [[0] * 26 for _ in range(n + 1)]
+        for i, c in enumerate(s, 1):
+            ss[i] = ss[i - 1][:]
+            ss[i][ord(c) - ord("a")] += 1
+        ans = []
+        for l, r, k in queries:
+            cnt = sum((ss[r + 1][j] - ss[l][j]) & 1 for j in range(26))
+            ans.append(cnt // 2 <= k)
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public List<Boolean> canMakePaliQueries(String s, int[][] queries) {
+        int n = s.length();
+        int[][] ss = new int[n + 1][26];
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 0; j < 26; ++j) {
+                ss[i][j] = ss[i - 1][j];
+            }
+            ss[i][s.charAt(i - 1) - 'a']++;
+        }
+        List<Boolean> ans = new ArrayList<>();
+        for (var q : queries) {
+            int l = q[0], r = q[1], k = q[2];
+            int x = 0;
+            for (int j = 0; j < 26; ++j) {
+                x += (ss[r + 1][j] - ss[l][j]) & 1;
+            }
+            ans.add(x / 2 <= k);
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<bool> canMakePaliQueries(string s, vector<vector<int>>& queries) {
+        int n = s.size();
+        int ss[n + 1][26];
+        memset(ss, 0, sizeof(ss));
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 0; j < 26; ++j) {
+                ss[i][j] = ss[i - 1][j];
+            }
+            ss[i][s[i - 1] - 'a']++;
+        }
+        vector<bool> ans;
+        for (auto& q : queries) {
+            int l = q[0], r = q[1], k = q[2];
+            int x = 0;
+            for (int j = 0; j < 26; ++j) {
+                x += (ss[r + 1][j] - ss[l][j]) & 1;
+            }
+            ans.emplace_back(x / 2 <= k);
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func canMakePaliQueries(s string, queries [][]int) (ans []bool) {
+	n := len(s)
+	ss := make([][26]int, n+1)
+	for i := 1; i <= n; i++ {
+		for j := 0; j < 26; j++ {
+			ss[i][j] = ss[i-1][j]
+		}
+		ss[i][s[i-1]-'a']++
+	}
+	for _, q := range queries {
+		l, r, k := q[0], q[1], q[2]
+		x := 0
+		for j := 0; j < 26; j++ {
+			x += (ss[r+1][j] - ss[l][j]) & 1
+		}
+		ans = append(ans, x/2 <= k)
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function canMakePaliQueries(s: string, queries: number[][]): boolean[] {
+    const n = s.length;
+    const ss: number[][] = Array(n + 1)
+        .fill(0)
+        .map(() => Array(26).fill(0));
+    for (let i = 1; i <= n; ++i) {
+        ss[i] = ss[i - 1].slice();
+        ++ss[i][s.charCodeAt(i - 1) - 97];
+    }
+    const ans: boolean[] = [];
+    for (const [l, r, k] of queries) {
+        let x = 0;
+        for (let j = 0; j < 26; ++j) {
+            x += (ss[r + 1][j] - ss[l][j]) & 1;
+        }
+        ans.push(x >> 1 <= k);
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,280 +1,260 @@
-# [444. 序列重建](https://leetcode-cn.com/problems/sequence-reconstruction)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0444.Sequence%20Reconstruction/README.md
+tags:
+    - 图
+    - 拓扑排序
+    - 数组
+---
+
+<!-- problem:start -->
+
+# [444. 序列重建 🔒](https://leetcode.cn/problems/sequence-reconstruction)
 
 [English Version](/solution/0400-0499/0444.Sequence%20Reconstruction/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>验证原始的序列&nbsp;<code>org</code>&nbsp;是否可以从序列集&nbsp;<code>seqs</code>&nbsp;中唯一地重建。序列&nbsp;<code>org</code>&nbsp;是 1 到 n 整数的排列，其中 1 &le; n &le; 10<sup>4</sup>。重建是指在序列集 <code>seqs</code> 中构建最短的公共超序列。（即使得所有 &nbsp;<code>seqs</code>&nbsp;中的序列都是该最短序列的子序列）。确定是否只可以从 <code>seqs</code> 重建唯一的序列，且该序列就是 <code>org</code> 。</p>
+<p>给定一个长度为 <code>n</code> 的整数数组 <code>nums</code> ，其中 <code>nums</code> 是范围为 <code>[1，n]</code> 的整数的排列。还提供了一个 2D 整数数组&nbsp;<code>sequences</code>&nbsp;，其中&nbsp;<code>sequences[i]</code>&nbsp;是&nbsp;<code>nums</code>&nbsp;的子序列。<br />
+检查 <code>nums</code> 是否是唯一的最短&nbsp;<strong>超序列</strong> 。最短 <strong>超序列</strong> 是 <strong>长度最短</strong> 的序列，并且所有序列&nbsp;<code>sequences[i]</code>&nbsp;都是它的子序列。对于给定的数组&nbsp;<code>sequences</code>&nbsp;，可能存在多个有效的 <strong>超序列</strong> 。</p>
+
+<ul>
+	<li>例如，对于&nbsp;<code>sequences = [[1,2],[1,3]]</code>&nbsp;，有两个最短的 <strong>超序列</strong> ，<code>[1,2,3]</code> 和 <code>[1,3,2]</code> 。</li>
+	<li>而对于&nbsp;<code>sequences = [[1,2],[1,3],[1,2,3]]</code>&nbsp;，唯一可能的最短 <strong>超序列</strong> 是 <code>[1,2,3]</code> 。<code>[1,2,3,4]</code> 是可能的超序列，但不是最短的。</li>
+</ul>
+
+<p><em>如果 <code>nums</code> 是序列的唯一最短 <strong>超序列</strong> ，则返回 <code>true</code> ，否则返回 <code>false</code> 。</em><br />
+<strong>子序列</strong> 是一个可以通过从另一个序列中删除一些元素或不删除任何元素，而不改变其余元素的顺序的序列。</p>
+
+<p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入：</strong>
-org: [1,2,3], seqs: [[1,2],[1,3]]
-
-<strong>输出：</strong>
-false
-
-<strong>解释：</strong>
-[1,2,3] 不是可以被重建的唯一的序列，因为 [1,3,2] 也是一个合法的序列。
+<pre>
+<strong>输入：</strong>nums = [1,2,3], sequences = [[1,2],[1,3]]
+<strong>输出：</strong>false
+<strong>解释：</strong>有两种可能的超序列：[1,2,3]和[1,3,2]。
+序列 [1,2] 是[<u><strong>1,2</strong></u>,3]和[<u><strong>1</strong></u>,3,<u><strong>2</strong></u>]的子序列。
+序列 [1,3] 是[<u><strong>1</strong></u>,2,<u><strong>3</strong></u>]和[<u><strong>1,3</strong></u>,2]的子序列。
+因为 nums 不是唯一最短的超序列，所以返回false。
 </pre>
-
-<p>&nbsp;</p>
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入：</strong>
-org: [1,2,3], seqs: [[1,2]]
-
-<strong>输出：</strong>
-false
-
-<strong>解释：</strong>
-可以重建的序列只有 [1,2]。
+<pre>
+<strong>输入：</strong>nums = [1,2,3], sequences = [[1,2]]
+<strong>输出：</strong>false
+<strong>解释：</strong>最短可能的超序列为 [1,2]。
+序列 [1,2] 是它的子序列：[<u><strong>1,2</strong></u>]。
+因为 nums 不是最短的超序列，所以返回false。
 </pre>
-
-<p>&nbsp;</p>
 
 <p><strong>示例 3：</strong></p>
 
-<pre><strong>输入：</strong>
-org: [1,2,3], seqs: [[1,2],[1,3],[2,3]]
-
-<strong>输出：</strong>
-true
-
-<strong>解释：</strong>
-序列 [1,2], [1,3] 和 [2,3] 可以被唯一地重建为原始的序列 [1,2,3]。
-</pre>
+<pre>
+<strong>输入：</strong>nums = [1,2,3], sequences = [[1,2],[1,3],[2,3]]
+<strong>输出：</strong>true
+<strong>解释：</strong>最短可能的超序列为[1,2,3]。
+序列 [1,2] 是它的一个子序列：[<strong>1,2</strong>,3]。
+序列 [1,3] 是它的一个子序列：[<u><strong>1</strong></u>,2,<u><strong>3</strong></u>]。
+序列 [2,3] 是它的一个子序列：[1,<u><strong>2,3</strong></u>]。
+因为 nums 是唯一最短的超序列，所以返回true。</pre>
 
 <p>&nbsp;</p>
 
-<p><strong>示例 4：</strong></p>
+<p><strong>提示：</strong></p>
 
-<pre><strong>输入：</strong>
-org: [4,1,5,2,6,3], seqs: [[5,2,6,3],[4,1,5,2]]
+<ul>
+	<li><code>n == nums.length</code></li>
+	<li><code>1 &lt;= n &lt;= 10<sup>4</sup></code></li>
+	<li><code>nums</code>&nbsp;是&nbsp;<code>[1, n]</code>&nbsp;范围内所有整数的排列</li>
+	<li><code>1 &lt;= sequences.length &lt;= 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= sequences[i].length &lt;= 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= sum(sequences[i].length) &lt;= 10<sup>5</sup></code></li>
+	<li><code>1 &lt;= sequences[i][j] &lt;= n</code></li>
+	<li><code>sequences</code>&nbsp;的所有数组都是 <strong>唯一 </strong>的</li>
+	<li><code>sequences[i]</code>&nbsp;是&nbsp;<code>nums</code> 的一个子序列</li>
+</ul>
 
-<strong>输出：</strong>
-true
-</pre>
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-拓扑排序，BFS 实现。
+### 方法一：拓扑排序
+
+我们可以先遍历每个子序列 `seq`，对于每个相邻的元素 $a$ 和 $b$，我们在 $a$ 和 $b$ 之间建立一条有向边 $a \to b$。同时统计每个节点的入度，最后将所有入度为 $0$ 的节点加入队列中。
+
+当队列中的节点个数等于 $1$ 时，我们取出队首节点 $i$，将 $i$ 从图中删除，并将 $i$ 的所有相邻节点的入度减 $1$。如果减 $1$ 后相邻节点的入度为 $0$，则将这些节点加入队列中。重复上述操作，直到队列的长度不为 $1$。此时判断队列是否为空，如果不为空，说明有多个最短超序列，返回 `false`；如果为空，说明只有一个最短超序列，返回 `true`。
+
+时间复杂度 $O(n + m)$，空间复杂度 $O(n + m)$。其中 $n$ 和 $m$ 分别是节点的个数和边的个数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-    def sequenceReconstruction(self, org: List[int], seqs: List[List[int]]) -> bool:
-        n = len(org)
-        nums = set()
-        for seq in seqs:
-            for num in seq:
-                if num < 1 or num > n:
-                    return False
-                nums.add(num)
-        if len(nums) < n:
-            return False
-
-        edges = defaultdict(list)
-        indegree = [0] * (n + 1)
-        for seq in seqs:
-            i = seq[0]
-            for j in seq[1:]:
-                edges[i].append(j)
-                indegree[j] += 1
-                i = j
-        q = deque()
-        for i in range(1, n + 1):
-            if indegree[i] == 0:
-                q.append(i)
-        cnt = 0
-        while q:
-            if len(q) > 1 or org[cnt] != q[0]:
-                return False
+    def sequenceReconstruction(
+        self, nums: List[int], sequences: List[List[int]]
+    ) -> bool:
+        n = len(nums)
+        g = [[] for _ in range(n)]
+        indeg = [0] * n
+        for seq in sequences:
+            for a, b in pairwise(seq):
+                a, b = a - 1, b - 1
+                g[a].append(b)
+                indeg[b] += 1
+        q = deque(i for i, x in enumerate(indeg) if x == 0)
+        while len(q) == 1:
             i = q.popleft()
-            cnt += 1
-            for j in edges[i]:
-                indegree[j] -= 1
-                if indegree[j] == 0:
+            for j in g[i]:
+                indeg[j] -= 1
+                if indeg[j] == 0:
                     q.append(j)
-        return cnt == n
+        return len(q) == 0
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
-    public boolean sequenceReconstruction(int[] org, List<List<Integer>> seqs) {
-        int n = org.length;
-        Set<Integer> nums = new HashSet<>();
-        for (List<Integer> seq : seqs) {
-            for (int num : seq) {
-                if (num < 1 || num > n) {
-                    return false;
-                }
-                nums.add(num);
+    public boolean sequenceReconstruction(int[] nums, List<List<Integer>> sequences) {
+        int n = nums.length;
+        int[] indeg = new int[n];
+        List<Integer>[] g = new List[n];
+        Arrays.setAll(g, k -> new ArrayList<>());
+        for (var seq : sequences) {
+            for (int i = 1; i < seq.size(); ++i) {
+                int a = seq.get(i - 1) - 1, b = seq.get(i) - 1;
+                g[a].add(b);
+                ++indeg[b];
             }
         }
-        if (nums.size() < n) {
-            return false;
-        }
-        List<Integer>[] edges = new List[n + 1];
-        for (int i = 0; i < edges.length; ++i) {
-            edges[i] = new ArrayList<>();
-        }
-        int[] indegree = new int[n + 1];
-        for (List<Integer> seq : seqs) {
-            int i = seq.get(0);
-            for (int j = 1; j < seq.size(); ++j) {
-                edges[i].add(seq.get(j));
-                ++indegree[seq.get(j)];
-                i = seq.get(j);
-            }
-        }
-        Queue<Integer> q = new LinkedList<>();
-        for (int i = 1; i <= n; ++i) {
-            if (indegree[i] == 0) {
+        Deque<Integer> q = new ArrayDeque<>();
+        for (int i = 0; i < n; ++i) {
+            if (indeg[i] == 0) {
                 q.offer(i);
             }
         }
-        int cnt = 0;
-        while (!q.isEmpty()) {
-            if (q.size() > 1 || q.peek() != org[cnt]) {
-                return false;
-            }
-            ++cnt;
+        while (q.size() == 1) {
             int i = q.poll();
-            for (int j : edges[i]) {
-                --indegree[j];
-                if (indegree[j] == 0) {
+            for (int j : g[i]) {
+                if (--indeg[j] == 0) {
                     q.offer(j);
                 }
             }
         }
-        return cnt == n;
+        return q.isEmpty();
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    bool sequenceReconstruction(vector<int>& org, vector<vector<int>>& seqs) {
-        int n = org.size();
-        unordered_set<int> nums;
-        for (auto& seq : seqs)
-        {
-            for (int num : seq)
-            {
-                if (num < 1 || num > n) return false;
-                nums.insert(num);
-            }
-        }
-        if (nums.size() < n) return false;
-        vector<vector<int>> edges(n + 1);
-        vector<int> indegree(n + 1);
-        for (auto& seq : seqs)
-        {
-            int i = seq[0];
-            for (int j = 1; j < seq.size(); ++j)
-            {
-                edges[i].push_back(seq[j]);
-                ++indegree[seq[j]];
-                i = seq[j];
+    bool sequenceReconstruction(vector<int>& nums, vector<vector<int>>& sequences) {
+        int n = nums.size();
+        vector<int> indeg(n);
+        vector<int> g[n];
+        for (auto& seq : sequences) {
+            for (int i = 1; i < seq.size(); ++i) {
+                int a = seq[i - 1] - 1, b = seq[i] - 1;
+                g[a].push_back(b);
+                ++indeg[b];
             }
         }
         queue<int> q;
-        for (int i = 1; i <= n; ++i)
-        {
-            if (indegree[i] == 0) q.push(i);
-        }
-        int cnt = 0;
-        while (!q.empty())
-        {
-            if (q.size() > 1 || q.front() != org[cnt]) return false;
-            ++cnt;
-            int i = q.front();
-            q.pop();
-            for (int j : edges[i])
-            {
-                --indegree[j];
-                if (indegree[j] == 0) q.push(j);
+        for (int i = 0; i < n; ++i) {
+            if (indeg[i] == 0) {
+                q.push(i);
             }
         }
-        return cnt == n;
+        while (q.size() == 1) {
+            int i = q.front();
+            q.pop();
+            for (int j : g[i]) {
+                if (--indeg[j] == 0) {
+                    q.push(j);
+                }
+            }
+        }
+        return q.empty();
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func sequenceReconstruction(org []int, seqs [][]int) bool {
-	n := len(org)
-	nums := make(map[int]bool)
-	for _, seq := range seqs {
-		for _, num := range seq {
-			if num < 1 || num > n {
-				return false
-			}
-			nums[num] = true
+func sequenceReconstruction(nums []int, sequences [][]int) bool {
+	n := len(nums)
+	indeg := make([]int, n)
+	g := make([][]int, n)
+	for _, seq := range sequences {
+		for i, b := range seq[1:] {
+			a := seq[i] - 1
+			b -= 1
+			g[a] = append(g[a], b)
+			indeg[b]++
 		}
 	}
-	if len(nums) < n {
-		return false
-	}
-	edges := make([][]int, n+1)
-	indegree := make([]int, n+1)
-	for _, seq := range seqs {
-		i := seq[0]
-		for _, j := range seq[1:] {
-			edges[i] = append(edges[i], j)
-			indegree[j]++
-			i = j
-		}
-	}
-	var q []int
-	for i := 1; i <= n; i++ {
-		if indegree[i] == 0 {
+	q := []int{}
+	for i, x := range indeg {
+		if x == 0 {
 			q = append(q, i)
 		}
 	}
-	cnt := 0
-	for len(q) > 0 {
-		if len(q) > 1 || org[cnt] != q[0] {
-			return false
-		}
+	for len(q) == 1 {
 		i := q[0]
 		q = q[1:]
-		cnt++
-		for _, j := range edges[i] {
-			indegree[j]--
-			if indegree[j] == 0 {
+		for _, j := range g[i] {
+			indeg[j]--
+			if indeg[j] == 0 {
 				q = append(q, j)
 			}
 		}
 	}
-	return cnt == n
+	return len(q) == 0
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function sequenceReconstruction(nums: number[], sequences: number[][]): boolean {
+    const n = nums.length;
+    const g: number[][] = Array.from({ length: n }, () => []);
+    const indeg: number[] = Array(n).fill(0);
+    for (const seq of sequences) {
+        for (let i = 1; i < seq.length; ++i) {
+            const [a, b] = [seq[i - 1] - 1, seq[i] - 1];
+            g[a].push(b);
+            ++indeg[b];
+        }
+    }
+    const q: number[] = indeg.map((v, i) => (v === 0 ? i : -1)).filter(v => v !== -1);
+    while (q.length === 1) {
+        const i = q.pop()!;
+        for (const j of g[i]) {
+            if (--indeg[j] === 0) {
+                q.push(j);
+            }
+        }
+    }
+    return q.length === 0;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

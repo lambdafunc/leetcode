@@ -1,8 +1,16 @@
-var isMonotonic = function (A) {
-    var check =
-        A[0] <= A[A.length - 1] ? (a1, a2) => a1 <= a2 : (a1, a2) => a1 >= a2;
-    for (var i = 0; i < A.length - 1; i++) {
-        if (!check(A[i], A[i + 1])) {
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+var isMonotonic = function (nums) {
+    let [asc, desc] = [false, false];
+    for (let i = 1; i < nums.length; ++i) {
+        if (nums[i - 1] < nums[i]) {
+            asc = true;
+        } else if (nums[i - 1] > nums[i]) {
+            desc = true;
+        }
+        if (asc && desc) {
             return false;
         }
     }

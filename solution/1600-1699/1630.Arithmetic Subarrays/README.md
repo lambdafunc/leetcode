@@ -1,10 +1,24 @@
-# [1630. 等差子数组](https://leetcode-cn.com/problems/arithmetic-subarrays)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1630.Arithmetic%20Subarrays/README.md
+rating: 1421
+source: 第 212 场周赛 Q2
+tags:
+    - 数组
+    - 哈希表
+    - 排序
+---
+
+<!-- problem:start -->
+
+# [1630. 等差子数组](https://leetcode.cn/problems/arithmetic-subarrays)
 
 [English Version](/solution/1600-1699/1630.Arithmetic%20Subarrays/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>如果一个数列由至少两个元素组成，且每两个连续元素之间的差值都相同，那么这个序列就是 <strong>等差数列</strong> 。更正式地，数列 <code>s</code> 是等差数列，只需要满足：对于每个有效的 <code>i</code> ， <code>s[i+1] - s[i] == s[1] - s[0]</code> 都成立。</p>
 
@@ -53,68 +67,72 @@
 	<li><code>-10<sup>5</sup> &lt;= nums[i] &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：数学 + 模拟
+
+我们设计一个函数 $check(nums, l, r)$，用于判断子数组 $nums[l], nums[l+1], \dots, nums[r]$ 是否可以重新排列形成等差数列。
+
+函数 $check(nums, l, r)$ 的实现逻辑如下：
+
+-   首先，我们计算子数组的长度 $n = r - l + 1$，并将子数组中的元素放入集合 $s$ 中，方便后续的查找；
+-   然后，我们获取子数组中的最小值 $a_1$ 和最大值 $a_n$，如果 $a_n - a_1$ 不能被 $n - 1$ 整除，那么子数组不可能形成等差数列，直接返回 $false$；否则，我们计算等差数列的公差 $d = \frac{a_n - a_1}{n - 1}$；
+-   接下来从 $a_1$ 开始，依次计算等差数列中第 $i$ 项元素，如果第 $i$ 项元素 $a_1 + (i - 1) \times d$ 不在集合 $s$ 中，那么子数组不可能形成等差数列，直接返回 $false$；否则，当我们遍历完所有的元素，说明子数组可以重新排列形成等差数列，返回 $true$。
+
+在主函数中，我们遍历所有的查询，对于每个查询 $l[i]$ 和 $r[i]$，我们调用函数 $check(nums, l[i], r[i])$ 判断子数组是否可以重新排列形成等差数列，将结果存入答案数组中。
+
+时间复杂度 $O(n \times m)$，空间复杂度 $O(n)$。其中 $n$ 和 $m$ 分别为数组 $nums$ 的长度以及查询的组数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-    def checkArithmeticSubarrays(self, nums: List[int], l: List[int], r: List[int]) -> List[bool]:
+    def checkArithmeticSubarrays(
+        self, nums: List[int], l: List[int], r: List[int]
+    ) -> List[bool]:
         def check(nums, l, r):
-            if r - l < 2:
-                return True
-            s = set(nums[l: r + 1])
-            mx = max(nums[l: r + 1])
-            mi = min(nums[l: r + 1])
-            if (mx - mi) % (r - l) != 0:
-                return False
-            delta = (mx - mi) / (r - l)
-            for i in range(1, r - l + 1):
-                if (mi + delta * i) not in s:
-                    return False
-            return True
+            n = r - l + 1
+            s = set(nums[l : l + n])
+            a1, an = min(nums[l : l + n]), max(nums[l : l + n])
+            d, mod = divmod(an - a1, n - 1)
+            return mod == 0 and all((a1 + (i - 1) * d) in s for i in range(1, n))
 
-        return [check(nums, l[i], r[i]) for i in range(len(l))]
+        return [check(nums, left, right) for left, right in zip(l, r)]
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public List<Boolean> checkArithmeticSubarrays(int[] nums, int[] l, int[] r) {
-        List<Boolean> res = new ArrayList<>();
+        List<Boolean> ans = new ArrayList<>();
         for (int i = 0; i < l.length; ++i) {
-            res.add(check(nums, l[i], r[i]));
+            ans.add(check(nums, l[i], r[i]));
         }
-        return res;
+        return ans;
     }
 
     private boolean check(int[] nums, int l, int r) {
-        if (r - l < 2) {
-            return true;
-        }
         Set<Integer> s = new HashSet<>();
-        int mx = Integer.MIN_VALUE;
-        int mi = Integer.MAX_VALUE;
+        int n = r - l + 1;
+        int a1 = 1 << 30, an = -a1;
         for (int i = l; i <= r; ++i) {
             s.add(nums[i]);
-            mx = Math.max(mx, nums[i]);
-            mi = Math.min(mi, nums[i]);
+            a1 = Math.min(a1, nums[i]);
+            an = Math.max(an, nums[i]);
         }
-        if ((mx - mi) % (r - l) != 0) {
+        if ((an - a1) % (n - 1) != 0) {
             return false;
         }
-        int delta = (mx - mi) / (r - l);
-        for (int i = 1; i <= r - l; ++i) {
-            if (!s.contains(mi + delta * i)) {
+        int d = (an - a1) / (n - 1);
+        for (int i = 1; i < n; ++i) {
+            if (!s.contains(a1 + (i - 1) * d)) {
                 return false;
             }
         }
@@ -123,93 +141,162 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<bool> checkArithmeticSubarrays(vector<int>& nums, vector<int>& l, vector<int>& r) {
-        vector<bool> res;
+        vector<bool> ans;
+        auto check = [](vector<int>& nums, int l, int r) {
+            unordered_set<int> s;
+            int n = r - l + 1;
+            int a1 = 1 << 30, an = -a1;
+            for (int i = l; i <= r; ++i) {
+                s.insert(nums[i]);
+                a1 = min(a1, nums[i]);
+                an = max(an, nums[i]);
+            }
+            if ((an - a1) % (n - 1)) {
+                return false;
+            }
+            int d = (an - a1) / (n - 1);
+            for (int i = 1; i < n; ++i) {
+                if (!s.count(a1 + (i - 1) * d)) {
+                    return false;
+                }
+            }
+            return true;
+        };
         for (int i = 0; i < l.size(); ++i) {
-            res.push_back(check(nums, l[i], r[i]));
+            ans.push_back(check(nums, l[i], r[i]));
         }
-        return res;
-    }
-
-    bool check(vector<int>& nums, int l, int r) {
-        if (r - l < 2) return true;
-        unordered_set<int> s;
-        int mx = -100010;
-        int mi = 100010;
-        for (int i = l; i <= r; ++i) {
-            s.insert(nums[i]);
-            mx = max(mx, nums[i]);
-            mi = min(mi, nums[i]);
-        }
-        if ((mx - mi) % (r - l) != 0) return false;
-        int delta = (mx - mi) / (r - l);
-        for (int i = 1; i <= r - l; ++i) {
-            if (!s.count(mi + delta * i)) return false;
-        }
-        return true;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func checkArithmeticSubarrays(nums []int, l []int, r []int) []bool {
-	n := len(l)
-	var res []bool
-	for i := 0; i < n; i++ {
-		res = append(res, check(nums, l[i], r[i]))
-	}
-	return res
-}
-
-func check(nums []int, l, r int) bool {
-	if r-l < 2 {
-		return true
-	}
-	s := make(map[int]bool)
-	mx, mi := -100010, 100010
-	for i := l; i <= r; i++ {
-		s[nums[i]] = true
-		mx = max(mx, nums[i])
-		mi = min(mi, nums[i])
-	}
-	if (mx-mi)%(r-l) != 0 {
-		return false
-	}
-	delta := (mx - mi) / (r - l)
-	for i := 1; i <= r-l; i++ {
-		if !s[mi+delta*i] {
+func checkArithmeticSubarrays(nums []int, l []int, r []int) (ans []bool) {
+	check := func(nums []int, l, r int) bool {
+		s := map[int]struct{}{}
+		n := r - l + 1
+		a1, an := 1<<30, -(1 << 30)
+		for _, x := range nums[l : r+1] {
+			s[x] = struct{}{}
+			if a1 > x {
+				a1 = x
+			}
+			if an < x {
+				an = x
+			}
+		}
+		if (an-a1)%(n-1) != 0 {
 			return false
 		}
+		d := (an - a1) / (n - 1)
+		for i := 1; i < n; i++ {
+			if _, ok := s[a1+(i-1)*d]; !ok {
+				return false
+			}
+		}
+		return true
 	}
-	return true
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
+	for i := range l {
+		ans = append(ans, check(nums, l[i], r[i]))
 	}
-	return b
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function checkArithmeticSubarrays(nums: number[], l: number[], r: number[]): boolean[] {
+    const check = (nums: number[], l: number, r: number): boolean => {
+        const s = new Set<number>();
+        const n = r - l + 1;
+        let a1 = 1 << 30;
+        let an = -a1;
+        for (let i = l; i <= r; ++i) {
+            s.add(nums[i]);
+            a1 = Math.min(a1, nums[i]);
+            an = Math.max(an, nums[i]);
+        }
+        if ((an - a1) % (n - 1) !== 0) {
+            return false;
+        }
+        const d = Math.floor((an - a1) / (n - 1));
+        for (let i = 1; i < n; ++i) {
+            if (!s.has(a1 + (i - 1) * d)) {
+                return false;
+            }
+        }
+        return true;
+    };
+    const ans: boolean[] = [];
+    for (let i = 0; i < l.length; ++i) {
+        ans.push(check(nums, l[i], r[i]));
+    }
+    return ans;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn check_arithmetic_subarrays(nums: Vec<i32>, l: Vec<i32>, r: Vec<i32>) -> Vec<bool> {
+        let m = l.len();
+        let mut res = vec![true; m];
+        for i in 0..m {
+            let mut arr = nums[l[i] as usize..=r[i] as usize].to_vec();
+            arr.sort();
+            for j in 2..arr.len() {
+                if arr[j - 2] - arr[j - 1] != arr[j - 1] - arr[j] {
+                    res[i] = false;
+                    break;
+                }
+            }
+        }
+        res
+    }
+}
+```
+
+#### C#
+
+```cs
+class Solution {
+    public bool Check(int[] arr) {
+        Array.Sort(arr);
+        int diff = arr[1] - arr[0];
+        for (int i = 2; i < arr.Length; i++) {
+            if (arr[i] - arr[i - 1] != diff) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public IList<bool> CheckArithmeticSubarrays(int[] nums, int[] l, int[] r) {
+        List<bool> ans = new List<bool>();
+        for (int i = 0; i < l.Length; i++) {
+            int[] arr = new int[r[i] - l[i] + 1];
+            for (int j = 0; j < arr.Length; j++) {
+                arr[j] = nums[l[i] + j];
+            }
+            ans.Add(Check(arr));
+        }
+        return ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

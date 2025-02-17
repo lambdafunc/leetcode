@@ -1,10 +1,23 @@
-# [1014. 最佳观光组合](https://leetcode-cn.com/problems/best-sightseeing-pair)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1014.Best%20Sightseeing%20Pair/README.md
+rating: 1730
+source: 第 129 场周赛 Q3
+tags:
+    - 数组
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [1014. 最佳观光组合](https://leetcode.cn/problems/best-sightseeing-pair)
 
 [English Version](/solution/1000-1099/1014.Best%20Sightseeing%20Pair/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个正整数数组 <code>values</code>，其中 <code>values[i]</code> 表示第 <code>i</code> 个观光景点的评分，并且两个景点 <code>i</code> 和 <code>j</code> 之间的 <strong>距离</strong> 为 <code>j - i</code>。</p>
 
@@ -38,83 +51,107 @@
 	<li><code>1 <= values[i] <= 1000</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：枚举
+
+我们可以从左到右枚举 $j$，同时维护 $j$ 左侧元素中 $values[i] + i$ 的最大值 $mx$，这样对于每个 $j$，最大得分为 $mx + values[j] - j$。我们取所有位置的最大得分的最大值即为答案。
+
+时间复杂度 $O(n)$，其中 $n$ 为数组 $\textit{values}$ 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def maxScoreSightseeingPair(self, values: List[int]) -> int:
-        res, mx = 0, values[0]
-        for i in range(1, len(values)):
-            res = max(res, values[i] - i + mx)
-            mx = max(mx, values[i] + i)
-        return res
+        ans = mx = 0
+        for j, x in enumerate(values):
+            ans = max(ans, mx + x - j)
+            mx = max(mx, x + j)
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int maxScoreSightseeingPair(int[] values) {
-        int res = 0, mx = values[0];
-        for (int i = 1; i < values.length; ++i) {
-            res = Math.max(res, values[i] - i + mx);
-            mx = Math.max(mx, values[i] + i);
+        int ans = 0, mx = 0;
+        for (int j = 0; j < values.length; ++j) {
+            ans = Math.max(ans, mx + values[j] - j);
+            mx = Math.max(mx, values[j] + j);
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int maxScoreSightseeingPair(vector<int>& values) {
-        int res = 0, mx = values[0];
-        for (int i = 1; i < values.size(); ++i) {
-            res = max(res, values[i] - i + mx);
-            mx = max(mx, values[i] + i);
+        int ans = 0, mx = 0;
+        for (int j = 0; j < values.size(); ++j) {
+            ans = max(ans, mx + values[j] - j);
+            mx = max(mx, values[j] + j);
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func maxScoreSightseeingPair(values []int) int {
-	res, mx := 0, values[0]
-	for i := 1; i < len(values); i++ {
-		res = max(res, values[i]-i+mx)
-		mx = max(mx, values[i]+i)
+func maxScoreSightseeingPair(values []int) (ans int) {
+	mx := 0
+	for j, x := range values {
+		ans = max(ans, mx+x-j)
+		mx = max(mx, x+j)
 	}
-	return res
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function maxScoreSightseeingPair(values: number[]): number {
+    let [ans, mx] = [0, 0];
+    for (let j = 0; j < values.length; ++j) {
+        ans = Math.max(ans, mx + values[j] - j);
+        mx = Math.max(mx, values[j] + j);
+    }
+    return ans;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn max_score_sightseeing_pair(values: Vec<i32>) -> i32 {
+        let mut ans = 0;
+        let mut mx = 0;
+        for (j, &x) in values.iter().enumerate() {
+            ans = ans.max(mx + x - j as i32);
+            mx = mx.max(x + j as i32);
+        }
+        ans
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

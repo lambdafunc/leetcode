@@ -1,13 +1,25 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0693.Binary%20Number%20with%20Alternating%20Bits/README_EN.md
+tags:
+    - Bit Manipulation
+---
+
+<!-- problem:start -->
+
 # [693. Binary Number with Alternating Bits](https://leetcode.com/problems/binary-number-with-alternating-bits)
 
 [中文文档](/solution/0600-0699/0693.Binary%20Number%20with%20Alternating%20Bits/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given a positive integer, check whether it has alternating bits: namely, if two adjacent bits will always have different values.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 5
@@ -15,33 +27,19 @@
 <strong>Explanation:</strong> The binary representation of 5 is: 101
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 7
 <strong>Output:</strong> false
 <strong>Explanation:</strong> The binary representation of 7 is: 111.</pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 11
 <strong>Output:</strong> false
 <strong>Explanation:</strong> The binary representation of 11 is: 1011.</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> n = 10
-<strong>Output:</strong> true
-<strong>Explanation:</strong> The binary representation of 10 is: 1010.</pre>
-
-<p><strong>Example 5:</strong></p>
-
-<pre>
-<strong>Input:</strong> n = 3
-<strong>Output:</strong> false
-</pre>
 
 <p>&nbsp;</p>
 <p><strong>Constraints:</strong></p>
@@ -50,31 +48,136 @@
 	<li><code>1 &lt;= n &lt;= 2<sup>31</sup> - 1</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def hasAlternatingBits(self, n: int) -> bool:
-        n = (n ^ (n >> 1)) + 1
-        return (n & (n - 1)) == 0
+        prev = -1
+        while n:
+            curr = n & 1
+            if prev == curr:
+                return False
+            prev = curr
+            n >>= 1
+        return True
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public boolean hasAlternatingBits(int n) {
-        n = (n ^ (n >> 1)) + 1;
-        return (n & (n - 1)) == 0;
+        int prev = -1;
+        while (n != 0) {
+            int curr = n & 1;
+            if (prev == curr) {
+                return false;
+            }
+            prev = curr;
+            n >>= 1;
+        }
+        return true;
     }
 }
 ```
 
-### **C++**
+#### C++
+
+```cpp
+class Solution {
+public:
+    bool hasAlternatingBits(int n) {
+        int prev = -1;
+        while (n) {
+            int curr = n & 1;
+            if (prev == curr) return false;
+            prev = curr;
+            n >>= 1;
+        }
+        return true;
+    }
+};
+```
+
+#### Go
+
+```go
+func hasAlternatingBits(n int) bool {
+	prev := -1
+	for n != 0 {
+		curr := n & 1
+		if prev == curr {
+			return false
+		}
+		prev = curr
+		n >>= 1
+	}
+	return true
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn has_alternating_bits(mut n: i32) -> bool {
+        let u = n & 3;
+        if u != 1 && u != 2 {
+            return false;
+        }
+        while n != 0 {
+            if (n & 3) != u {
+                return false;
+            }
+            n >>= 2;
+        }
+        true
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def hasAlternatingBits(self, n: int) -> bool:
+        n ^= n >> 1
+        return (n & (n + 1)) == 0
+```
+
+#### Java
+
+```java
+class Solution {
+    public boolean hasAlternatingBits(int n) {
+        n ^= (n >> 1);
+        return (n & (n + 1)) == 0;
+    }
+}
+```
+
+#### C++
 
 ```cpp
 class Solution {
@@ -86,10 +189,28 @@ public:
 };
 ```
 
-### **...**
+#### Go
 
+```go
+func hasAlternatingBits(n int) bool {
+	n ^= (n >> 1)
+	return (n & (n + 1)) == 0
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn has_alternating_bits(n: i32) -> bool {
+        let t = n ^ (n >> 1);
+        (t & (t + 1)) == 0
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

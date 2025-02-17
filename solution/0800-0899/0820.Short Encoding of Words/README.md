@@ -1,10 +1,23 @@
-# [820. 单词的压缩编码](https://leetcode-cn.com/problems/short-encoding-of-words)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0820.Short%20Encoding%20of%20Words/README.md
+tags:
+    - 字典树
+    - 数组
+    - 哈希表
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [820. 单词的压缩编码](https://leetcode.cn/problems/short-encoding-of-words)
 
 [English Version](/solution/0800-0899/0820.Short%20Encoding%20of%20Words/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>单词数组 <code>words</code> 的 <strong>有效编码</strong> 由任意助记字符串 <code>s</code> 和下标数组 <code>indices</code> 组成，且满足：</p>
 
@@ -47,17 +60,21 @@ words[2] = "bell" ，s 开始于 indices[2] = 5 到下一个 '#' 结束的子字
 	<li><code>words[i]</code> 仅由小写字母组成</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：前缀树
 
 题目大意：充分利用重叠的后缀，使有效编码尽可能短。
 
+判断当前单词是否是其他单词的后缀，若是，就不用写入助记字符串中，否则需要写入并且加上一个 # 后缀。
+
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Trie:
@@ -70,8 +87,8 @@ class Solution:
         root = Trie()
         for w in words:
             cur = root
-            for i in range(len(w) - 1, -1, -1):
-                idx = ord(w[i]) - ord('a')
+            for c in w[::-1]:
+                idx = ord(c) - ord("a")
                 if cur.children[idx] == None:
                     cur.children[idx] = Trie()
                 cur = cur.children[idx]
@@ -88,19 +105,7 @@ class Solution:
         return ans
 ```
 
-```python
-class Solution:
-    def minimumLengthEncoding(self, words: List[str]) -> int:
-        s = set(words)
-        for word in words:
-            for i in range(1, len(word)):
-                s.discard(word[i:])
-        return sum(len(word) + 1 for word in s)
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Trie {
@@ -140,84 +145,11 @@ class Solution {
 }
 ```
 
-```java
-class Solution {
-    public int minimumLengthEncoding(String[] words) {
-        Set<String> s = new HashSet<>(Arrays.asList(words));
-        for (String word : words) {
-            for (int i = 1; i < word.length(); ++i) {
-                s.remove(word.substring(i));
-            }
-        }
-        int ans = 0;
-        for (String word : s) {
-            ans += word.length() + 1;
-        }
-        return ans;
-    }
-}
-```
-
-### **Go**
-
-```go
-type trie struct {
-	children [26]*trie
-}
-
-func minimumLengthEncoding(words []string) int {
-	root := new(trie)
-	for _, w := range words {
-		cur := root
-		for i := len(w) - 1; i >= 0; i-- {
-			if cur.children[w[i]-'a'] == nil {
-				cur.children[w[i]-'a'] = new(trie)
-			}
-			cur = cur.children[w[i]-'a']
-		}
-	}
-	return dfs(root, 1)
-}
-
-func dfs(cur *trie, l int) int {
-	isLeaf, ans := true, 0
-	for i := 0; i < 26; i++ {
-		if cur.children[i] != nil {
-			isLeaf = false
-			ans += dfs(cur.children[i], l+1)
-		}
-	}
-	if isLeaf {
-		ans += l
-	}
-	return ans
-}
-```
-
-```go
-func minimumLengthEncoding(words []string) int {
-	s := make(map[string]bool)
-	for _, word := range words {
-		s[word] = true
-	}
-	for _, word := range words {
-		for i, n := 1, len(word); i < n; i++ {
-			delete(s, word[i:n])
-		}
-	}
-	ans := 0
-	for word := range s {
-		ans += len(word) + 1
-	}
-	return ans
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 struct Trie {
-    Trie* children[26] = { nullptr };
+    Trie* children[26] = {nullptr};
 };
 
 class Solution {
@@ -254,26 +186,192 @@ private:
 };
 ```
 
+#### Go
+
+```go
+type trie struct {
+	children [26]*trie
+}
+
+func minimumLengthEncoding(words []string) int {
+	root := new(trie)
+	for _, w := range words {
+		cur := root
+		for i := len(w) - 1; i >= 0; i-- {
+			if cur.children[w[i]-'a'] == nil {
+				cur.children[w[i]-'a'] = new(trie)
+			}
+			cur = cur.children[w[i]-'a']
+		}
+	}
+	return dfs(root, 1)
+}
+
+func dfs(cur *trie, l int) int {
+	isLeaf, ans := true, 0
+	for i := 0; i < 26; i++ {
+		if cur.children[i] != nil {
+			isLeaf = false
+			ans += dfs(cur.children[i], l+1)
+		}
+	}
+	if isLeaf {
+		ans += l
+	}
+	return ans
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Trie:
+    def __init__(self):
+        self.children = [None] * 26
+
+    def insert(self, w):
+        node = self
+        pref = True
+        for c in w:
+            idx = ord(c) - ord("a")
+            if node.children[idx] is None:
+                node.children[idx] = Trie()
+                pref = False
+            node = node.children[idx]
+        return 0 if pref else len(w) + 1
+
+
+class Solution:
+    def minimumLengthEncoding(self, words: List[str]) -> int:
+        words.sort(key=lambda x: -len(x))
+        trie = Trie()
+        return sum(trie.insert(w[::-1]) for w in words)
+```
+
+#### Java
+
+```java
+class Trie {
+    Trie[] children = new Trie[26];
+
+    int insert(String w) {
+        Trie node = this;
+        boolean pref = true;
+        for (int i = w.length() - 1; i >= 0; --i) {
+            int idx = w.charAt(i) - 'a';
+            if (node.children[idx] == null) {
+                pref = false;
+                node.children[idx] = new Trie();
+            }
+            node = node.children[idx];
+        }
+        return pref ? 0 : w.length() + 1;
+    }
+}
+
+class Solution {
+    public int minimumLengthEncoding(String[] words) {
+        Arrays.sort(words, (a, b) -> b.length() - a.length());
+        int ans = 0;
+        Trie trie = new Trie();
+        for (String w : words) {
+            ans += trie.insert(w);
+        }
+        return ans;
+    }
+}
+```
+
+#### C++
+
 ```cpp
+class Trie {
+public:
+    vector<Trie*> children;
+    Trie()
+        : children(26) {}
+
+    int insert(string w) {
+        Trie* node = this;
+        bool pref = true;
+        for (char c : w) {
+            c -= 'a';
+            if (!node->children[c]) {
+                pref = false;
+                node->children[c] = new Trie();
+            }
+            node = node->children[c];
+        }
+        return pref ? 0 : w.size() + 1;
+    }
+};
+
 class Solution {
 public:
     int minimumLengthEncoding(vector<string>& words) {
-        unordered_set<string> s(words.begin(), words.end());
-        for (auto& word : words)
-            for (int i = 1; i < word.size(); ++i)
-                s.erase(word.substr(i));
+        sort(words.begin(), words.end(), [](string& a, string& b) { return a.size() > b.size(); });
+        Trie* trie = new Trie();
         int ans = 0;
-        for (auto& word : s)
-            ans += word.size() + 1;
+        for (auto& w : words) {
+            reverse(w.begin(), w.end());
+            ans += trie->insert(w);
+        }
         return ans;
     }
 };
 ```
 
-### **...**
+#### Go
 
-```
+```go
+type Trie struct {
+	children [26]*Trie
+}
 
+func newTrie() *Trie {
+	return &Trie{}
+}
+
+func (this *Trie) insert(w string) int {
+	node := this
+	pref := true
+	for i := len(w) - 1; i >= 0; i-- {
+		idx := w[i] - 'a'
+		if node.children[idx] == nil {
+			pref = false
+			node.children[idx] = newTrie()
+		}
+		node = node.children[idx]
+	}
+	if pref {
+		return 0
+	}
+	return len(w) + 1
+}
+
+func minimumLengthEncoding(words []string) int {
+	sort.Slice(words, func(i, j int) bool { return len(words[i]) > len(words[j]) })
+	trie := newTrie()
+	ans := 0
+	for _, w := range words {
+		ans += trie.insert(w)
+	}
+	return ans
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

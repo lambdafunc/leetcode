@@ -1,133 +1,91 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0900-0999/0990.Satisfiability%20of%20Equality%20Equations/README_EN.md
+tags:
+    - Union Find
+    - Graph
+    - Array
+    - String
+---
+
+<!-- problem:start -->
+
 # [990. Satisfiability of Equality Equations](https://leetcode.com/problems/satisfiability-of-equality-equations)
 
 [中文文档](/solution/0900-0999/0990.Satisfiability%20of%20Equality%20Equations/README.md)
 
 ## Description
 
-<p>Given an array <font face="monospace">equations</font>&nbsp;of strings that represent relationships between variables, each string <code>equations[i]</code>&nbsp;has length <code>4</code> and takes one of two different forms: <code>&quot;a==b&quot;</code> or <code>&quot;a!=b&quot;</code>.&nbsp; Here, <code>a</code> and <code>b</code> are lowercase letters (not necessarily different) that represent one-letter variable names.</p>
+<!-- description:start -->
 
-<p>Return <code>true</code>&nbsp;if and only if it is possible to assign integers to variable names&nbsp;so as to satisfy all the given equations.</p>
+<p>You are given an array of strings <code>equations</code> that represent relationships between variables where each string <code>equations[i]</code> is of length <code>4</code> and takes one of two different forms: <code>&quot;x<sub>i</sub>==y<sub>i</sub>&quot;</code> or <code>&quot;x<sub>i</sub>!=y<sub>i</sub>&quot;</code>.Here, <code>x<sub>i</sub></code> and <code>y<sub>i</sub></code> are lowercase letters (not necessarily different) that represent one-letter variable names.</p>
+
+<p>Return <code>true</code><em> if it is possible to assign integers to variable names so as to satisfy all the given equations, or </em><code>false</code><em> otherwise</em>.</p>
 
 <p>&nbsp;</p>
-
-<ol>
-
-</ol>
-
-<div>
-
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-
-<strong>Input: </strong><span id="example-input-1-1">[&quot;a==b&quot;,&quot;b!=a&quot;]</span>
-
-<strong>Output: </strong><span id="example-output-1">false</span>
-
-<strong>Explanation: </strong>If we assign say, a = 1 and b = 1, then the first equation is satisfied, but not the second.  There is no way to assign the variables to satisfy both equations.
-
+<strong>Input:</strong> equations = [&quot;a==b&quot;,&quot;b!=a&quot;]
+<strong>Output:</strong> false
+<strong>Explanation:</strong> If we assign say, a = 1 and b = 1, then the first equation is satisfied, but not the second.
+There is no way to assign the variables to satisfy both equations.
 </pre>
 
-<div>
-
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
-<strong>Input: </strong><span id="example-input-2-1">[&quot;b==a&quot;,&quot;a==b&quot;]</span>
-
-<strong>Output: </strong><span id="example-output-2">true</span>
-
-<strong>Explanation: </strong>We could assign a = 1 and b = 1 to satisfy both equations.
-
-</pre>
-
-<div>
-
-<p><strong>Example 3:</strong></p>
-
-<pre>
-
-<strong>Input: </strong><span id="example-input-3-1">[&quot;a==b&quot;,&quot;b==c&quot;,&quot;a==c&quot;]</span>
-
-<strong>Output: </strong><span id="example-output-3">true</span>
-
-</pre>
-
-<div>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-
-<strong>Input: </strong><span id="example-input-4-1">[&quot;a==b&quot;,&quot;b!=c&quot;,&quot;c==a&quot;]</span>
-
-<strong>Output: </strong><span id="example-output-4">false</span>
-
-</pre>
-
-<div>
-
-<p><strong>Example 5:</strong></p>
-
-<pre>
-
-<strong>Input: </strong><span id="example-input-5-1">[&quot;c==c&quot;,&quot;b==d&quot;,&quot;x!=z&quot;]</span>
-
-<strong>Output: </strong><span id="example-output-5">true</span>
-
+<strong>Input:</strong> equations = [&quot;b==a&quot;,&quot;a==b&quot;]
+<strong>Output:</strong> true
+<strong>Explanation:</strong> We could assign a = 1 and b = 1 to satisfy both equations.
 </pre>
 
 <p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><strong>Note:</strong></p>
-
-<ol>
+<ul>
 	<li><code>1 &lt;= equations.length &lt;= 500</code></li>
 	<li><code>equations[i].length == 4</code></li>
-	<li><code>equations[i][0]</code> and <code>equations[i][3]</code> are lowercase letters</li>
-	<li><code>equations[i][1]</code> is either <code>&#39;=&#39;</code> or <code>&#39;!&#39;</code></li>
-	<li><code>equations[i][2]</code> is&nbsp;<code>&#39;=&#39;</code></li>
-</ol>
+	<li><code>equations[i][0]</code> is a lowercase letter.</li>
+	<li><code>equations[i][1]</code> is either <code>&#39;=&#39;</code> or <code>&#39;!&#39;</code>.</li>
+	<li><code>equations[i][2]</code> is <code>&#39;=&#39;</code>.</li>
+	<li><code>equations[i][3]</code> is a lowercase letter.</li>
+</ul>
 
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def equationsPossible(self, equations: List[str]) -> bool:
-        p = [i for i in range(26)]
-
         def find(x):
             if p[x] != x:
                 p[x] = find(p[x])
             return p[x]
 
+        p = list(range(26))
         for e in equations:
-            a, r, b = ord(e[0]) - ord('a'), e[1:3], ord(e[3]) - ord('a')
-            if r == '==':
+            a, b = ord(e[0]) - ord('a'), ord(e[-1]) - ord('a')
+            if e[1] == '=':
                 p[find(a)] = find(b)
         for e in equations:
-            a, r, b = ord(e[0]) - ord('a'), e[1:3], ord(e[3]) - ord('a')
-            if r == '!=' and find(a) == find(b):
+            a, b = ord(e[0]) - ord('a'), ord(e[-1]) - ord('a')
+            if e[1] == '!' and find(a) == find(b):
                 return False
         return True
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -140,15 +98,13 @@ class Solution {
         }
         for (String e : equations) {
             int a = e.charAt(0) - 'a', b = e.charAt(3) - 'a';
-            String r = e.substring(1, 3);
-            if ("==".equals(r)) {
+            if (e.charAt(1) == '=') {
                 p[find(a)] = find(b);
             }
         }
         for (String e : equations) {
             int a = e.charAt(0) - 'a', b = e.charAt(3) - 'a';
-            String r = e.substring(1, 3);
-            if ("!=".equals(r) && find(a) == find(b)) {
+            if (e.charAt(1) == '!' && find(a) == find(b)) {
                 return false;
             }
         }
@@ -164,7 +120,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -173,72 +129,103 @@ public:
 
     bool equationsPossible(vector<string>& equations) {
         p.resize(26);
-        for (int i = 0; i < 26; ++i)
-            p[i] = i;
-        for (auto e : equations)
-        {
+        for (int i = 0; i < 26; ++i) p[i] = i;
+        for (auto& e : equations) {
             int a = e[0] - 'a', b = e[3] - 'a';
-            char r = e[1];
-            if (r == '=')
-                p[find(a)] = find(b);
+            if (e[1] == '=') p[find(a)] = find(b);
         }
-        for (auto e : equations)
-        {
+        for (auto& e : equations) {
             int a = e[0] - 'a', b = e[3] - 'a';
-            char r = e[1];
-            if (r == '!' && find(a) == find(b))
-                return false;
+            if (e[1] == '!' && find(a) == find(b)) return false;
         }
         return true;
     }
 
     int find(int x) {
-        if (p[x] != x)
-            p[x] = find(p[x]);
+        if (p[x] != x) p[x] = find(p[x]);
         return p[x];
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-var p []int
-
 func equationsPossible(equations []string) bool {
-	p = make([]int, 26)
+	p := make([]int, 26)
 	for i := 1; i < 26; i++ {
 		p[i] = i
 	}
+	var find func(x int) int
+	find = func(x int) int {
+		if p[x] != x {
+			p[x] = find(p[x])
+		}
+		return p[x]
+	}
 	for _, e := range equations {
 		a, b := int(e[0]-'a'), int(e[3]-'a')
-		r := e[1]
-		if r == '=' {
+		if e[1] == '=' {
 			p[find(a)] = find(b)
 		}
 	}
 	for _, e := range equations {
 		a, b := int(e[0]-'a'), int(e[3]-'a')
-		r := e[1]
-		if r == '!' && find(a) == find(b) {
+		if e[1] == '!' && find(a) == find(b) {
 			return false
 		}
 	}
 	return true
 }
+```
 
-func find(x int) int {
-	if p[x] != x {
-		p[x] = find(p[x])
-	}
-	return p[x]
+#### TypeScript
+
+```ts
+class UnionFind {
+    private parent: number[];
+
+    constructor() {
+        this.parent = Array.from({ length: 26 }).map((_, i) => i);
+    }
+
+    find(index: number) {
+        if (this.parent[index] === index) {
+            return index;
+        }
+        this.parent[index] = this.find(this.parent[index]);
+        return this.parent[index];
+    }
+
+    union(index1: number, index2: number) {
+        this.parent[this.find(index1)] = this.find(index2);
+    }
+}
+
+function equationsPossible(equations: string[]): boolean {
+    const uf = new UnionFind();
+    for (const [a, s, _, b] of equations) {
+        if (s === '=') {
+            const index1 = a.charCodeAt(0) - 'a'.charCodeAt(0);
+            const index2 = b.charCodeAt(0) - 'a'.charCodeAt(0);
+            uf.union(index1, index2);
+        }
+    }
+    for (const [a, s, _, b] of equations) {
+        if (s === '!') {
+            const index1 = a.charCodeAt(0) - 'a'.charCodeAt(0);
+            const index2 = b.charCodeAt(0) - 'a'.charCodeAt(0);
+            if (uf.find(index1) === uf.find(index2)) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

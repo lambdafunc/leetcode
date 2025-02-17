@@ -1,19 +1,18 @@
 class Solution {
-    public int[] prevPermOpt1(int[] A) {
-        for (int i = A.length - 2; i >= 0; --i) {
-            if (A[i] > A[i + 1]) {
-                int k = i + 1;
-                for (int j = k + 1; j < A.length; ++j) {
-                    if (A[j] < A[i] && A[j] > A[k]) {
-                        k = j;
+    public int[] prevPermOpt1(int[] arr) {
+        int n = arr.length;
+        for (int i = n - 1; i > 0; --i) {
+            if (arr[i - 1] > arr[i]) {
+                for (int j = n - 1; j > i - 1; --j) {
+                    if (arr[j] < arr[i - 1] && arr[j] != arr[j - 1]) {
+                        int t = arr[i - 1];
+                        arr[i - 1] = arr[j];
+                        arr[j] = t;
+                        return arr;
                     }
                 }
-                int t = A[i];
-                A[i] = A[k];
-                A[k] = t;
-                return A;
             }
         }
-        return A;
+        return arr;
     }
 }

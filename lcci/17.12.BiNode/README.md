@@ -1,10 +1,19 @@
-# [面试题 17.12. BiNode](https://leetcode-cn.com/problems/binode-lcci)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcci/17.12.BiNode/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 17.12. BiNode](https://leetcode.cn/problems/binode-lcci)
 
 [English Version](/lcci/17.12.BiNode/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
+
 <p>二叉树数据结构<code>TreeNode</code>可用来表示单向链表（其中<code>left</code>置空，<code>right</code>为下一个链表节点）。实现一个方法，把二叉搜索树转换为单向链表，要求值的顺序保持不变，转换操作应是原址的，也就是在原始的二叉搜索树上直接修改。</p>
 
 <p>返回转换后的单向链表的头节点。</p>
@@ -25,19 +34,23 @@
 	<li>节点数量不会超过 100000。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-递归将左子树、右子树转换为左、右链表 left 和 right。然后将左链表 left 的最后一个结点的 right 指针指向 root，root 的 right 指针指向右链表 right，并将 root 的 left 指针值为空。
+### 方法一：中序遍历
 
-同 [897. 递增顺序查找树](/solution/0800-0899/0897.Increasing%20Order%20Search%20Tree/README.md)。
+中序遍历过程中改变指针指向。
+
+时间复杂度 $O(n)$。
+
+同 [897. 递增顺序查找树](https://github.com/doocs/leetcode/blob/main/solution/0800-0899/0897.Increasing%20Order%20Search%20Tree/README.md)。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -47,27 +60,26 @@
 #         self.left = None
 #         self.right = None
 
+
 class Solution:
     def convertBiNode(self, root: TreeNode) -> TreeNode:
-        if root is None:
-            return None
-        left = self.convertBiNode(root.left)
-        right = self.convertBiNode(root.right)
-        if left is None:
-            root.right = right
-            return root
-        res = left
-        while left and left.right:
-            left = left.right
-        left.right = root
-        root.right = right
-        root.left = None
-        return res
+        def dfs(root):
+            if root is None:
+                return
+            nonlocal prev
+            dfs(root.left)
+            prev.right = root
+            root.left = None
+            prev = root
+            dfs(root.right)
+
+        dummy = TreeNode(val=0, right=root)
+        prev = dummy
+        dfs(root)
+        return dummy.right
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -80,30 +92,115 @@ class Solution:
  * }
  */
 class Solution {
+    private TreeNode prev;
+
     public TreeNode convertBiNode(TreeNode root) {
-        if (root == null) return null;
-        TreeNode left = convertBiNode(root.left);
-        TreeNode right = convertBiNode(root.right);
-        if (left == null) {
-            root.right = right;
-            return root;
+        TreeNode dummy = new TreeNode(0, null, root);
+        prev = dummy;
+        dfs(root);
+        return dummy.right;
+    }
+
+    private void dfs(TreeNode root) {
+        if (root == null) {
+            return;
         }
-        TreeNode res = left;
-        while (left != null && left.right != null) {
-            left = left.right;
-        }
-        left.right = root;
-        root.right = right;
+        dfs(root.left);
+        prev.right = root;
         root.left = null;
-        return res;
+        prev = root;
+        dfs(root.right);
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* prev;
+
+    TreeNode* convertBiNode(TreeNode* root) {
+        TreeNode* dummy = new TreeNode(0, nullptr, root);
+        prev = dummy;
+        dfs(root);
+        return dummy->right;
+    }
+
+    void dfs(TreeNode* root) {
+        if (!root) return;
+        dfs(root->left);
+        prev->right = root;
+        root->left = nullptr;
+        prev = root;
+        dfs(root->right);
+    }
+};
 ```
 
+#### Go
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func convertBiNode(root *TreeNode) *TreeNode {
+	dummy := &TreeNode{Val: 0, Right: root}
+	prev := dummy
+	var dfs func(root *TreeNode)
+	dfs = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		dfs(root.Left)
+		prev.Right = root
+		root.Left = nil
+		prev = root
+		dfs(root.Right)
+	}
+	dfs(root)
+	return dummy.Right
+}
+```
+
+#### JavaScript
+
+```js
+const convertBiNode = root => {
+    const dfs = root => {
+        if (!root) {
+            return;
+        }
+        dfs(root.left);
+        prev.right = root;
+        root.left = null;
+        prev = root;
+        dfs(root.right);
+    };
+    const dummy = new TreeNode(0);
+    let prev = dummy;
+    dfs(root);
+    return dummy.right;
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

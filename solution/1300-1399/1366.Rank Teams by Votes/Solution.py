@@ -1,8 +1,8 @@
 class Solution:
     def rankTeams(self, votes: List[str]) -> str:
-        d = defaultdict(lambda: [0] * len(votes[0]))
+        m = len(votes[0])
+        cnt = defaultdict(lambda: [0] * m)
         for vote in votes:
-            for i, v in enumerate(vote):
-                d[v][i] -= 1
-        ans = sorted(votes[0], key=lambda x: (d[x], x))
-        return ''.join(ans)
+            for i, c in enumerate(vote):
+                cnt[c][i] += 1
+        return "".join(sorted(cnt, key=lambda c: (cnt[c], -ord(c)), reverse=True))

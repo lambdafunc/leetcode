@@ -1,45 +1,25 @@
 class Solution {
-    private int[] res;
-    private int index;
-
     public int[] spiralOrder(int[][] matrix) {
-        int m, n;
-        if (matrix == null || (m = matrix.length) == 0 || matrix[0] == null || (n = matrix[0].length) == 0)
-            return new int[]{};
-        res = new int[m * n];
-        index = 0;
-        int i1 = 0, i2 = m - 1;
-        int j1 = 0, j2 = n - 1;
-        while (i1 <= i2 && j1 <= j2) {
-            add(matrix, i1++, j1++, i2--, j2--);
+        if (matrix.length == 0 || matrix[0].length == 0) {
+            return new int[] {};
         }
-        return res;
-    }
-
-    private void add(int[][] matrix, int i1, int j1, int i2, int j2) {
-        if (i1 == i2) {
-            for (int j = j1; j <= j2; ++j) {
-                res[index++] = matrix[i1][j];
+        int m = matrix.length, n = matrix[0].length;
+        boolean[][] vis = new boolean[m][n];
+        int[] ans = new int[m * n];
+        int i = 0, j = 0, k = 0;
+        int[] dirs = {0, 1, 0, -1, 0};
+        for (int h = 0; h < m * n; ++h) {
+            ans[h] = matrix[i][j];
+            vis[i][j] = true;
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x < 0 || y < 0 || x >= m || y >= n || vis[x][y]) {
+                k = (k + 1) % 4;
+                x = i + dirs[k];
+                y = j + dirs[k + 1];
             }
-            return;
+            i = x;
+            j = y;
         }
-        if (j1 == j2) {
-            for (int i = i1; i <= i2; ++i) {
-                res[index++] = matrix[i][j1];
-            }
-            return;
-        }
-        for (int j = j1; j < j2; ++j) {
-            res[index++] = matrix[i1][j];
-        }
-        for (int i = i1; i < i2; ++i) {
-            res[index++] = matrix[i][j2];
-        }
-        for (int j = j2; j > j1; --j) {
-            res[index++] = matrix[i2][j];
-        }
-        for (int i = i2; i > i1; --i) {
-            res[index++] = matrix[i][j1];
-        }
+        return ans;
     }
 }

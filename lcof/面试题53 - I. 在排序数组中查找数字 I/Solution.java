@@ -1,33 +1,23 @@
 class Solution {
-    public int search(int[] nums, int target) {
-        if (nums.length == 0) {
-            return 0;
-        }
-        // find first position
-        int left = 0, right = nums.length - 1;
-        while (left < right) {
-            int mid = (left + right) >>> 1;
-            if (nums[mid] >= target) {
-                right = mid;
-            } else {
-                left = mid + 1;
-            }
-        }
-        if (nums[left] != target) {
-            return 0;
-        }
-        int l = left;
+    private int[] nums;
 
-        // find last position
-        right = nums.length - 1;
-        while (left < right) {
-            int mid = (left + right + 1) >>> 1;
-            if (nums[mid] <= target) {
-                left = mid;
+    public int search(int[] nums, int target) {
+        this.nums = nums;
+        int l = search(target);
+        int r = search(target + 1);
+        return r - l;
+    }
+
+    private int search(int x) {
+        int l = 0, r = nums.length;
+        while (l < r) {
+            int mid = (l + r) >>> 1;
+            if (nums[mid] >= x) {
+                r = mid;
             } else {
-                right = mid - 1;
+                l = mid + 1;
             }
         }
-        return left - l + 1;
+        return l;
     }
 }

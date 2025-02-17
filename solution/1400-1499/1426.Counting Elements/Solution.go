@@ -1,13 +1,13 @@
-func countElements(arr []int) int {
-	s := make(map[int]bool)
-	for _, num := range arr {
-		s[num] = true
+func countElements(arr []int) (ans int) {
+	mx := slices.Max(arr)
+	cnt := make([]int, mx+1)
+	for _, x := range arr {
+		cnt[x]++
 	}
-	res := 0
-	for _, num := range arr {
-		if s[num+1] {
-			res++
+	for x := 0; x < mx; x++ {
+		if cnt[x+1] > 0 {
+			ans += cnt[x]
 		}
 	}
-	return res
+	return
 }

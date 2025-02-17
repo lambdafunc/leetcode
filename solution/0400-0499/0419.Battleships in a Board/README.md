@@ -1,56 +1,75 @@
-# [419. 甲板上的战舰](https://leetcode-cn.com/problems/battleships-in-a-board)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0419.Battleships%20in%20a%20Board/README.md
+tags:
+    - 深度优先搜索
+    - 数组
+    - 矩阵
+---
+
+<!-- problem:start -->
+
+# [419. 棋盘上的战舰](https://leetcode.cn/problems/battleships-in-a-board)
 
 [English Version](/solution/0400-0499/0419.Battleships%20in%20a%20Board/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个二维的甲板， 请计算其中有多少艘战舰。&nbsp;战舰用&nbsp;<code>&#39;X&#39;</code>表示，空位用&nbsp;<code>&#39;.&#39;</code>表示。&nbsp;你需要遵守以下规则：</p>
+<p>给你一个大小为 <code>m x n</code> 的矩阵 <code>board</code> 表示棋盘，其中，每个单元格可以是一艘战舰 <code>'X'</code> 或者是一个空位 <code>'.'</code> ，返回在棋盘 <code>board</code> 上放置的 <strong>舰队</strong> 的数量。</p>
+
+<p><strong>舰队</strong> 只能水平或者垂直放置在 <code>board</code> 上。换句话说，舰队只能按 <code>1 x k</code>（<code>1</code> 行，<code>k</code> 列）或 <code>k x 1</code>（<code>k</code> 行，<code>1</code> 列）的形状放置，其中 <code>k</code> 可以是任意大小。两个舰队之间至少有一个水平或垂直的空格分隔 （即没有相邻的舰队）。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>示例 1：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0419.Battleships%20in%20a%20Board/images/1719200420-KKnzye-image.png" style="width: 333px; height: 333px;" />
+<pre>
+<strong>输入：</strong>board = [["X",".",".","X"],[".",".",".","X"],[".",".",".","X"]]
+<strong>输出：</strong>2
+</pre>
+
+<p><strong>示例 2：</strong></p>
+
+<pre>
+<strong>输入：</strong>board = [["."]]
+<strong>输出：</strong>0
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
 
 <ul>
-	<li>给你一个有效的甲板，仅由战舰或者空位组成。</li>
-	<li>战舰只能水平或者垂直放置。换句话说,战舰只能由&nbsp;<code>1xN</code> (1 行, N 列)组成，或者&nbsp;<code>Nx1</code> (N 行, 1 列)组成，其中N可以是任意大小。</li>
-	<li>两艘战舰之间至少有一个水平或垂直的空位分隔&nbsp;- 即没有相邻的战舰。</li>
+	<li><code>m == board.length</code></li>
+	<li><code>n == board[i].length</code></li>
+	<li><code>1 &lt;= m, n &lt;= 200</code></li>
+	<li><code>board[i][j]</code> 是 <code>'.'</code> 或 <code>'X'</code></li>
 </ul>
 
-<p><strong>示例 :</strong></p>
+<p>&nbsp;</p>
 
-<pre>
-X..X
-...X
-...X
-</pre>
+<p><strong>进阶：</strong>你可以实现一次扫描算法，并只使用<strong> </strong><code>O(1)</code><strong> </strong>额外空间，并且不修改 <code>board</code> 的值来解决这个问题吗？</p>
 
-<p>在上面的甲板中有2艘战舰。</p>
-
-<p><strong>无效样例 :</strong></p>
-
-<pre>
-...X
-XXXX
-...X
-</pre>
-
-<p>你不会收到这样的无效甲板&nbsp;- 因为战舰之间至少会有一个空位将它们分开。</p>
-
-<p><strong>进阶:</strong></p>
-
-<p>你可以用<strong>一次扫描算法</strong>，只使用<strong>O(1)额外空间，</strong>并且<strong>不修改</strong>甲板的值来解决这个问题吗？</p>
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-初始化结果数 ans = 0。
+### 方法一：直接遍历
 
-遍历二维甲板，若 X 的左方、上方不为 X，则结果 ans 加 1。
+我们可以遍历矩阵，找到每个战舰的左上角，即当前位置为 `X` 且上方和左方都不是 `X` 的位置，将答案加一。
+
+遍历结束后，返回答案即可。
+
+时间复杂度 $O(m \times n)$，其中 $m$ 和 $n$ 分别是矩阵的行数和列数。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -69,9 +88,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -97,7 +114,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -105,13 +122,17 @@ public:
     int countBattleships(vector<vector<char>>& board) {
         int m = board.size(), n = board[0].size();
         int ans = 0;
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (board[i][j] == '.') continue;
-                if (i > 0 && board[i - 1][j] == 'X') continue;
-                if (j > 0 && board[i][j - 1] == 'X') continue;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (board[i][j] == '.') {
+                    continue;
+                }
+                if (i > 0 && board[i - 1][j] == 'X') {
+                    continue;
+                }
+                if (j > 0 && board[i][j - 1] == 'X') {
+                    continue;
+                }
                 ++ans;
             }
         }
@@ -120,15 +141,13 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func countBattleships(board [][]byte) int {
-	m, n := len(board), len(board[0])
-	ans := 0
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if board[i][j] == '.' {
+func countBattleships(board [][]byte) (ans int) {
+	for i, row := range board {
+		for j, c := range row {
+			if c == '.' {
 				continue
 			}
 			if i > 0 && board[i-1][j] == 'X' {
@@ -140,14 +159,37 @@ func countBattleships(board [][]byte) int {
 			ans++
 		}
 	}
-	return ans
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function countBattleships(board: string[][]): number {
+    const m = board.length;
+    const n = board[0].length;
+    let ans = 0;
+    for (let i = 0; i < m; ++i) {
+        for (let j = 0; j < n; ++j) {
+            if (board[i][j] === '.') {
+                continue;
+            }
+            if (i && board[i - 1][j] === 'X') {
+                continue;
+            }
+            if (j && board[i][j - 1] === 'X') {
+                continue;
+            }
+            ++ans;
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

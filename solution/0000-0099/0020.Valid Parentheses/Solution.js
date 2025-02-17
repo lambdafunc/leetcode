@@ -1,14 +1,21 @@
-const isValid = function (s) {
-    let arr = [];
-    for (let i = 0; i < s.length; i++) {
-        if (s[i] === "{" || s[i] === "[" || s[i] === "(") {
-            arr.push(s[i]);
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isValid = function (s) {
+    let stk = [];
+    for (const c of s) {
+        if (c == '(' || c == '{' || c == '[') {
+            stk.push(c);
+        } else if (stk.length == 0 || !match(stk[stk.length - 1], c)) {
+            return false;
         } else {
-            if (s[i] === ")" && arr[arr.length - 1] === "(") arr.pop();
-            else if (s[i] === "]" && arr[arr.length - 1] === "[") arr.pop();
-            else if (s[i] === "}" && arr[arr.length - 1] === "{") arr.pop();
-            else return false;
+            stk.pop();
         }
     }
-    return arr.length === 0;
+    return stk.length == 0;
 };
+
+function match(l, r) {
+    return (l == '(' && r == ')') || (l == '[' && r == ']') || (l == '{' && r == '}');
+}

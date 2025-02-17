@@ -5,18 +5,14 @@
 #         self.left = None
 #         self.right = None
 
-class Solution:
-    def inorderSuccessor(self, root: TreeNode, p: TreeNode) -> TreeNode:
-        def dfs(root):
-            if root is None:
-                return
-            dfs(root.left)
-            nonlocal ans, prev
-            if prev == p:
-                ans = root
-            prev = root
-            dfs(root.right)
 
-        ans = prev = None
-        dfs(root)
+class Solution:
+    def inorderSuccessor(self, root: TreeNode, p: TreeNode) -> Optional[TreeNode]:
+        ans = None
+        while root:
+            if root.val > p.val:
+                ans = root
+                root = root.left
+            else:
+                root = root.right
         return ans

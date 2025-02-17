@@ -1,43 +1,34 @@
 class RandomizedSet {
-    private Map<Integer, Integer> m;
-    private List<Integer> l;
-    private Random rnd;
+    private Map<Integer, Integer> d = new HashMap<>();
+    private List<Integer> q = new ArrayList<>();
+    private Random rnd = new Random();
 
-    /** Initialize your data structure here. */
     public RandomizedSet() {
-        m = new HashMap<>();
-        l = new ArrayList<>();
-        rnd = new Random();
     }
-    
-    /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+
     public boolean insert(int val) {
-        if (m.containsKey(val)) {
+        if (d.containsKey(val)) {
             return false;
         }
-        m.put(val, l.size());
-        l.add(val);
+        d.put(val, q.size());
+        q.add(val);
         return true;
     }
-    
-    /** Removes a value from the set. Returns true if the set contained the specified element. */
+
     public boolean remove(int val) {
-        if (!m.containsKey(val)) {
+        if (!d.containsKey(val)) {
             return false;
         }
-        int idx = m.get(val);
-        int lastIdx = l.size() - 1;
-        m.put(l.get(lastIdx), idx);
-        m.remove(val);
-        l.set(idx, l.get(lastIdx));
-        l.remove(lastIdx);
+        int i = d.get(val);
+        d.put(q.get(q.size() - 1), i);
+        q.set(i, q.get(q.size() - 1));
+        q.remove(q.size() - 1);
+        d.remove(val);
         return true;
     }
-    
-    /** Get a random element from the set. */
+
     public int getRandom() {
-        int idx = rnd.nextInt(l.size());
-        return l.get(idx);
+        return q.get(rnd.nextInt(q.size()));
     }
 }
 

@@ -1,83 +1,100 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1009.Complement%20of%20Base%2010%20Integer/README_EN.md
+rating: 1234
+source: Weekly Contest 128 Q1
+tags:
+    - Bit Manipulation
+---
+
+<!-- problem:start -->
+
 # [1009. Complement of Base 10 Integer](https://leetcode.com/problems/complement-of-base-10-integer)
 
 [中文文档](/solution/1000-1099/1009.Complement%20of%20Base%2010%20Integer/README.md)
 
 ## Description
 
-<p>Every non-negative integer <code>N</code>&nbsp;has a binary representation.&nbsp; For example,&nbsp;<code>5</code> can be represented as <code>&quot;101&quot;</code>&nbsp;in binary, <code>11</code> as <code>&quot;1011&quot;</code>&nbsp;in binary, and so on.&nbsp; Note that except for <code>N = 0</code>, there are no leading zeroes in any&nbsp;binary representation.</p>
+<!-- description:start -->
 
-<p>The <em>complement</em>&nbsp;of a binary representation&nbsp;is the number in binary you get when changing every <code>1</code> to a <code>0</code> and <code>0</code> to a <code>1</code>.&nbsp; For example, the complement of <code>&quot;101&quot;</code> in binary is <code>&quot;010&quot;</code> in binary.</p>
+<p>The <strong>complement</strong> of an integer is the integer you get when you flip all the <code>0</code>&#39;s to <code>1</code>&#39;s and all the <code>1</code>&#39;s to <code>0</code>&#39;s in its binary representation.</p>
 
-<p>For a given number <code>N</code> in base-10, return the complement of it&#39;s binary representation as a&nbsp;base-10 integer.</p>
+<ul>
+	<li>For example, The integer <code>5</code> is <code>&quot;101&quot;</code> in binary and its <strong>complement</strong> is <code>&quot;010&quot;</code> which is the integer <code>2</code>.</li>
+</ul>
+
+<p>Given an integer <code>n</code>, return <em>its complement</em>.</p>
 
 <p>&nbsp;</p>
-
-<ol>
-</ol>
-
-<div>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
-<strong>Input: </strong><span id="example-input-1-1">5</span>
-<strong>Output: </strong><span id="example-output-1">2</span>
-<strong>Explanation: </strong>5 is &quot;101&quot; in binary, with complement &quot;010&quot; in binary, which is 2 in base-10.
+<strong>Input:</strong> n = 5
+<strong>Output:</strong> 2
+<strong>Explanation:</strong> 5 is &quot;101&quot; in binary, with complement &quot;010&quot; in binary, which is 2 in base-10.
 </pre>
 
-<div>
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-<strong>Input: </strong><span id="example-input-2-1">7</span>
-<strong>Output: </strong><span id="example-output-2">0</span>
-<span id="example-output-1"><strong>Explanation: </strong>7 is &quot;111&quot; in binary, with complement &quot;000&quot; in binary, which is 0 in base-10.
-</span></pre>
+<strong>Input:</strong> n = 7
+<strong>Output:</strong> 0
+<strong>Explanation:</strong> 7 is &quot;111&quot; in binary, with complement &quot;000&quot; in binary, which is 0 in base-10.
+</pre>
 
-<div>
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
-<strong>Input: </strong><span id="example-input-3-1">10</span>
-<strong>Output: </strong><span id="example-output-3">5</span>
-<strong>Explanation: </strong>10 is &quot;1010&quot; in binary, with complement &quot;0101&quot; in binary, which is 5 in base-10.
+<strong>Input:</strong> n = 10
+<strong>Output:</strong> 5
+<strong>Explanation:</strong> 10 is &quot;1010&quot; in binary, with complement &quot;0101&quot; in binary, which is 5 in base-10.
 </pre>
 
 <p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><strong>Note:</strong></p>
+<ul>
+	<li><code>0 &lt;= n &lt; 10<sup>9</sup></code></li>
+</ul>
 
-<ol>
-	<li><code>0 &lt;= N &lt; 10^9</code></li>
-	<li>This question is the same as 476:&nbsp;<a href="https://leetcode.com/problems/number-complement/">https://leetcode.com/problems/number-complement/</a></li>
-</ol>
-</div>
-</div>
-</div>
+<p>&nbsp;</p>
+<p><strong>Note:</strong> This question is the same as 476: <a href="https://leetcode.com/problems/number-complement/" target="_blank">https://leetcode.com/problems/number-complement/</a></p>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Bit Manipulation
+
+First, we check if $n$ is $0$. If it is, we return $1$.
+
+Next, we define two variables $\textit{ans}$ and $i$, both initialized to $0$. Then we iterate through $n$. In each iteration, we set the $i$-th bit of $\textit{ans}$ to the inverse of the $i$-th bit of $n$, increment $i$ by $1$, and right shift $n$ by $1$.
+
+Finally, we return $\textit{ans}$.
+
+The time complexity is $O(\log n)$, where $n$ is the given decimal number. The space complexity is $O(1)$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def bitwiseComplement(self, n: int) -> int:
         if n == 0:
             return 1
-        ans = 0
-        find = False
-        for i in range(30, -1, -1):
-            b = n & (1 << i)
-            if not find and b == 0:
-                continue
-            find = True
-            if b == 0:
-                ans |= (1 << i)
+        ans = i = 0
+        while n:
+            ans |= ((n & 1 ^ 1) << i)
+            i += 1
+            n >>= 1
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -85,71 +102,87 @@ class Solution {
         if (n == 0) {
             return 1;
         }
-        int ans = 0;
-        boolean find = false;
-        for (int i = 30; i >= 0; --i) {
-            int b = n & (1 << i);
-            if (!find && b == 0) {
-                continue;
-            }
-            find = true;
-            if (b == 0) {
-                ans |= (1 << i);
-            }
+        int ans = 0, i = 0;
+        while (n != 0) {
+            ans |= (n & 1 ^ 1) << (i++);
+            n >>= 1;
         }
         return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int bitwiseComplement(int n) {
-        if (n == 0) return 1;
-        int ans = 0;
-        bool find = false;
-        for (int i = 30; i >= 0; --i)
-        {
-            int b = n & (1 << i);
-            if (!find && b == 0) continue;
-            find = true;
-            if (b == 0) ans |= (1 << i);
+        if (n == 0) {
+            return 1;
+        }
+        int ans = 0, i = 0;
+        while (n != 0) {
+            ans |= (n & 1 ^ 1) << (i++);
+            n >>= 1;
         }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func bitwiseComplement(n int) int {
+func bitwiseComplement(n int) (ans int) {
 	if n == 0 {
 		return 1
 	}
-	ans := 0
-	find := false
-	for i := 30; i >= 0; i-- {
-		b := n & (1 << i)
-		if !find && b == 0 {
-			continue
-		}
-		find = true
-		if b == 0 {
-			ans |= (1 << i)
-		}
+	for i := 0; n != 0; n >>= 1 {
+		ans |= (n&1 ^ 1) << i
+		i++
 	}
-	return ans
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function bitwiseComplement(n: number): number {
+    if (n === 0) {
+        return 1;
+    }
+    let ans = 0;
+    for (let i = 0; n; n >>= 1) {
+        ans |= ((n & 1) ^ 1) << i++;
+    }
+    return ans;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn bitwise_complement(mut n: i32) -> i32 {
+        if n == 0 {
+            return 1;
+        }
+        let mut ans = 0;
+        let mut i = 0;
+        while n != 0 {
+            ans |= ((n & 1) ^ 1) << i;
+            n >>= 1;
+            i += 1;
+        }
+        ans
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

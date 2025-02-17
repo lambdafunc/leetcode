@@ -1,16 +1,19 @@
 func nextGreaterElements(nums []int) []int {
 	n := len(nums)
-	res := make([]int, n)
-	for i := range res {
-		res[i] = -1
+	ans := make([]int, n)
+	for i := range ans {
+		ans[i] = -1
 	}
-	var stk []int
-	for i := 0; i < (n << 1); i++ {
-		for len(stk) > 0 && nums[stk[len(stk)-1]] < nums[i%n] {
-			res[stk[len(stk)-1]] = nums[i%n]
+	stk := []int{}
+	for i := n*2 - 1; i >= 0; i-- {
+		j := i % n
+		for len(stk) > 0 && stk[len(stk)-1] <= nums[j] {
 			stk = stk[:len(stk)-1]
 		}
-		stk = append(stk, i%n)
+		if len(stk) > 0 {
+			ans[j] = stk[len(stk)-1]
+		}
+		stk = append(stk, nums[j])
 	}
-	return res
+	return ans
 }

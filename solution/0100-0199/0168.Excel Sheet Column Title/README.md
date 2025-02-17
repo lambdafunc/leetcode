@@ -1,52 +1,86 @@
-# [168. Excel 表列名称](https://leetcode-cn.com/problems/excel-sheet-column-title)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0168.Excel%20Sheet%20Column%20Title/README.md
+tags:
+    - 数学
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [168. Excel 表列名称](https://leetcode.cn/problems/excel-sheet-column-title)
 
 [English Version](/solution/0100-0199/0168.Excel%20Sheet%20Column%20Title/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个正整数，返回它在 Excel 表中相对应的列名称。</p>
+<p>给你一个整数 <code>columnNumber</code> ，返回它在 Excel 表中相对应的列名称。</p>
 
-<p>例如，</p>
+<p>例如：</p>
 
-<pre>    1 -&gt; A
-    2 -&gt; B
-    3 -&gt; C
-    ...
-    26 -&gt; Z
-    27 -&gt; AA
-    28 -&gt; AB 
-    ...
+<pre>
+A -> 1
+B -> 2
+C -> 3
+...
+Z -> 26
+AA -> 27
+AB -> 28 
+...
 </pre>
 
-<p><strong>示例 1:</strong></p>
+<p> </p>
 
-<pre><strong>输入:</strong> 1
-<strong>输出:</strong> &quot;A&quot;
+<p><strong>示例 1：</strong></p>
+
+<pre>
+<strong>输入：</strong>columnNumber = 1
+<strong>输出：</strong>"A"
 </pre>
 
-<p><strong>示例&nbsp;2:</strong></p>
+<p><strong>示例 2：</strong></p>
 
-<pre><strong>输入:</strong> 28
-<strong>输出:</strong> &quot;AB&quot;
+<pre>
+<strong>输入：</strong>columnNumber = 28
+<strong>输出：</strong>"AB"
 </pre>
 
-<p><strong>示例&nbsp;3:</strong></p>
+<p><strong>示例 3：</strong></p>
 
-<pre><strong>输入:</strong> 701
-<strong>输出:</strong> &quot;ZY&quot;
+<pre>
+<strong>输入：</strong>columnNumber = 701
+<strong>输出：</strong>"ZY"
 </pre>
+
+<p><strong>示例 4：</strong></p>
+
+<pre>
+<strong>输入：</strong>columnNumber = 2147483647
+<strong>输出：</strong>"FXSHRXW"
+</pre>
+
+<p> </p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 <= columnNumber <= 2<sup>31</sup> - 1</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -59,9 +93,7 @@ class Solution:
         return ''.join(res[::-1])
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -77,7 +109,21 @@ class Solution {
 }
 ```
 
-### **TypeScript**
+#### Go
+
+```go
+func convertToTitle(columnNumber int) string {
+	res := []rune{}
+	for columnNumber != 0 {
+		columnNumber -= 1
+		res = append([]rune{rune(columnNumber%26 + int('A'))}, res...)
+		columnNumber /= 26
+	}
+	return string(res)
+}
+```
+
+#### TypeScript
 
 ```ts
 function convertToTitle(columnNumber: number): string {
@@ -88,11 +134,37 @@ function convertToTitle(columnNumber: number): string {
         res.unshift(String.fromCharCode(num + 65));
         columnNumber = Math.floor(columnNumber / 26);
     }
-    return res.join("");
+    return res.join('');
 }
 ```
 
-### **C#**
+#### Rust
+
+```rust
+impl Solution {
+    #[allow(dead_code)]
+    pub fn convert_to_title(column_number: i32) -> String {
+        let mut ret = String::from("");
+        let mut column_number = column_number;
+
+        while column_number > 0 {
+            if column_number <= 26 {
+                ret.push((('A' as u8) + (column_number as u8) - 1) as char);
+                break;
+            } else {
+                let mut left = column_number % 26;
+                left = if left == 0 { 26 } else { left };
+                ret.push((('A' as u8) + (left as u8) - 1) as char);
+                column_number = (column_number - 1) / 26;
+            }
+        }
+
+        ret.chars().rev().collect()
+    }
+}
+```
+
+#### C#
 
 ```cs
 public class Solution {
@@ -108,10 +180,8 @@ public class Solution {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

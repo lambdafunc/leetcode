@@ -1,27 +1,10 @@
 func minEatingSpeed(piles []int, h int) int {
-	mx := 0
-	for _, pile := range piles {
-		mx = max(mx, pile)
-	}
-	left, right := 1, mx
-	for left < right {
-		mid := (left + right) >> 1
+	return 1 + sort.Search(slices.Max(piles), func(k int) bool {
+		k++
 		s := 0
-		for _, pile := range piles {
-			s += (pile + mid - 1) / mid
+		for _, x := range piles {
+			s += (x + k - 1) / k
 		}
-		if s <= h {
-			right = mid
-		} else {
-			left = mid + 1
-		}
-	}
-	return left
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+		return s <= h
+	})
 }

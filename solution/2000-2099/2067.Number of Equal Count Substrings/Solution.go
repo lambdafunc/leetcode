@@ -1,42 +1,30 @@
-func equalCountSubstrings(s string, count int) int {
+func equalCountSubstrings(s string, count int) (ans int) {
 	n := len(s)
-	if count > n {
-		return 0
-	}
-	counter := make([][]int, n+1)
-	for i := range counter {
-		counter[i] = make([]int, 26)
-	}
-	ans := 0
-	check := func(i, j int) bool {
-		c1, c2 := counter[i], counter[j+1]
-		for k := 0; k < 26; k++ {
-			if c2[k] == 0 || c1[k] == c2[k] {
-				continue
+	for i := 1; i < 27 && i*count <= n; i++ {
+		k := i * count
+		cnt := [26]int{}
+		t := 0
+		for j, c := range s {
+			a := c - 'a'
+			cnt[a]++
+			if cnt[a] == count {
+				t++
+			} else if cnt[a] == count+1 {
+				t--
 			}
-			if c2[k]-c1[k] != count {
-				return false
+			if j >= k {
+				b := s[j-k] - 'a'
+				cnt[b]--
+				if cnt[b] == count {
+					t++
+				} else if cnt[b] == count-1 {
+					t--
+				}
 			}
-		}
-		return true
-	}
-	for i, c := range s {
-		idx := c - 'a'
-		for j := 0; j < 26; j++ {
-			counter[i+1][j] = counter[i][j]
-		}
-		counter[i+1][idx] = counter[i][idx] + 1
-		l := 0
-		for k := 0; k < 26; k++ {
-			l += count
-			j := i - l + 1
-			if j < 0 {
-				break
-			}
-			if check(j, i) {
+			if i == t {
 				ans++
 			}
 		}
 	}
-	return ans
+	return
 }

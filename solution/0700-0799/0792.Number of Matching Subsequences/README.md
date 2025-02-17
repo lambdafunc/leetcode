@@ -1,157 +1,444 @@
-# [792. 匹配子序列的单词数](https://leetcode-cn.com/problems/number-of-matching-subsequences)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0700-0799/0792.Number%20of%20Matching%20Subsequences/README.md
+tags:
+    - 字典树
+    - 数组
+    - 哈希表
+    - 字符串
+    - 二分查找
+    - 动态规划
+    - 排序
+---
+
+<!-- problem:start -->
+
+# [792. 匹配子序列的单词数](https://leetcode.cn/problems/number-of-matching-subsequences)
 
 [English Version](/solution/0700-0799/0792.Number%20of%20Matching%20Subsequences/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定字符串 <code>S</code> 和单词字典 <code>words</code>, 求&nbsp;<code>words[i]</code>&nbsp;中是&nbsp;<code>S</code>&nbsp;的子序列的单词个数。</p>
+<p>给定字符串 <code>s</code>&nbsp;和字符串数组&nbsp;<code>words</code>, 返回&nbsp;&nbsp;<em><code>words[i]</code>&nbsp;中是<code>s</code>的子序列的单词个数</em>&nbsp;。</p>
 
-<pre>
-<strong>示例:</strong>
-<strong>输入:</strong> 
-S = &quot;abcde&quot;
-words = [&quot;a&quot;, &quot;bb&quot;, &quot;acd&quot;, &quot;ace&quot;]
-<strong>输出:</strong> 3
-<strong>解释:</strong> 有三个是&nbsp;S 的子序列的单词: &quot;a&quot;, &quot;acd&quot;, &quot;ace&quot;。
-</pre>
-
-<p><strong>注意:</strong></p>
+<p>字符串的 <strong>子序列</strong> 是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是none)，而不改变其余字符的相对顺序。</p>
 
 <ul>
-	<li>所有在<code>words</code>和&nbsp;<code>S</code>&nbsp;里的单词都只由小写字母组成。</li>
-	<li><code>S</code> 的长度在&nbsp;<code>[1, 50000]</code>。</li>
-	<li><code>words</code>&nbsp;的长度在&nbsp;<code>[1, 5000]</code>。</li>
-	<li><code>words[i]</code>的长度在<code>[1, 50]</code>。</li>
+	<li>例如， <code>“ace”</code> 是 <code>“abcde”</code> 的子序列。</li>
 </ul>
+
+<p>&nbsp;</p>
+
+<p><strong>示例 1:</strong></p>
+
+<pre>
+<strong>输入:</strong> s = "abcde", words = ["a","bb","acd","ace"]
+<strong>输出:</strong> 3
+<strong>解释:</strong> 有三个是&nbsp;s 的子序列的单词: "a", "acd", "ace"。
+</pre>
+
+<p><strong>Example 2:</strong></p>
+
+<pre>
+<strong>输入: </strong>s = "dsahjpjauf", words = ["ahjpjau","ja","ahbwzgqnuk","tnmlanowax"]
+<strong>输出:</strong> 2
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= s.length &lt;= 5 * 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= words.length &lt;= 5000</code></li>
+	<li><code>1 &lt;= words[i].length &lt;= 50</code></li>
+	<li><code>words[i]</code>和 <font color="#c7254e" face="Menlo, Monaco, Consolas, Courier New, monospace"><span style="font-size: 12.6px; background-color: rgb(249, 242, 244);">s</span></font>&nbsp;都只由小写字母组成。</li>
+</ul>
+<span style="display:block"><span style="height:0px"><span style="position:absolute">​​​​</span></span></span>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-由于字符串 S 长度较大，如果暴力求解，会报超时错误，因此要避免对 S 的多次遍历。
+### 方法一：分桶
 
-可以将所有单词根据首字母不同放入不同的 buckets 中，比如对于 `words = ["a", "bb", "acd", "ace"]`，可以初始化 buckets 为如下形式：
+题目中字符串 $s$ 的数据规模最高达到 $5 \times 10^4$，如果暴力枚举 $words$ 中的每个字符串 $w$，判断其是否为 $s$ 的子序列，很有可能会超时。
 
-```python
-buckets = {
-	'a': ["a", "acd", "ace"],
-	'b': ["bb"],
-}
+我们不妨将 $words$ 中的所有单词根据首字母来分桶，即：把所有单词按照首字母分到 $26$ 个桶中，每个桶中存储的是所有以该字母开头的所有单词。
+
+比如对于 `words = ["a", "bb", "acd", "ace"]`，我们得到以下的分桶结果：
+
+```text
+a: ["a", "acd", "ace"]
+b: ["bb"]
 ```
 
-然后遍历 S 中每个字符 c，在 buckets 中找到对应的 bucket 并取出所有元素 old。对于每个元素 t，如果长度为 1，说明 t 对应的单词已经遍历结束，该单词属于 S 的一个子序列，累加 res；否则将 t 取子串 `t[1:]` 放入 buckets 中。继续往下遍历 S，直至结束。
+然后我们从 $s$ 的第一个字符开始遍历，假设当前字符为 `'a'`，我们从 `'a'` 开头的桶中取出所有单词。对于取出的每个单词，如果此时单词长度为 $1$，说明该单词已经匹配完毕，我们将答案加 $1$；否则我们将单词的首字母去掉，然后放入下一个字母开头的桶中，比如对于单词 `"acd"`，去掉首字母 `'a'` 后，我们将其放入 `'c'` 开头的桶中。这一轮结束后，分桶结果变为：
 
-最后返回 res 即可。
+```text
+c: ["cd", "ce"]
+b: ["bb"]
+```
+
+遍历完 $s$ 后，我们就得到了答案。
+
+实际上，每个桶可以只存储单词的下标 $i$ 以及该单词当前匹配到的位置 $j$，这样可以节省空间。
+
+时间复杂度 $O(n + \sum_{i=0}^{m-1} |w_i|)$，空间复杂度 $O(m)$。其中 $n$ 和 $m$ 分别为 $s$ 和 $words$ 的长度，而 $|w_i|$ 为 $words[i]$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def numMatchingSubseq(self, s: str, words: List[str]) -> int:
-        buckets = defaultdict(list)
-        for word in words:
-            buckets[word[0]].append(word)
-        res = 0
+        d = defaultdict(deque)
+        for w in words:
+            d[w[0]].append(w)
+        ans = 0
         for c in s:
-            old = buckets[c][::1]
-            buckets[c].clear()
-            for t in old:
+            for _ in range(len(d[c])):
+                t = d[c].popleft()
                 if len(t) == 1:
-                    res += 1
+                    ans += 1
                 else:
-                    buckets[t[1]].append(t[1:])
-        return res
+                    d[t[1]].append(t[1:])
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int numMatchingSubseq(String s, String[] words) {
-        List<String>[] buckets = new List[26];
-        for (int i = 0; i < buckets.length; ++i) {
-            buckets[i] = new ArrayList<>();
+        Deque<String>[] d = new Deque[26];
+        Arrays.setAll(d, k -> new ArrayDeque<>());
+        for (String w : words) {
+            d[w.charAt(0) - 'a'].add(w);
         }
-        for (String word : words) {
-            buckets[word.charAt(0) - 'a'].add(word);
-        }
-        int res = 0;
+        int ans = 0;
         for (char c : s.toCharArray()) {
-            List<String> old = new ArrayList<>(buckets[c - 'a']);
-            buckets[c - 'a'].clear();
-            for (String t : old) {
+            var q = d[c - 'a'];
+            for (int k = q.size(); k > 0; --k) {
+                String t = q.pollFirst();
                 if (t.length() == 1) {
-                    ++res;
+                    ++ans;
                 } else {
-                    buckets[t.charAt(1) - 'a'].add(t.substring(1));
+                    d[t.charAt(1) - 'a'].offer(t.substring(1));
                 }
             }
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int numMatchingSubseq(string s, vector<string>& words) {
-        vector<vector<string>> buckets(26);
-        for (auto word : words) buckets[word[0] - 'a'].push_back(word);
-        int res = 0;
-        for (auto c : s)
-        {
-            auto old = buckets[c - 'a'];
-            buckets[c - 'a'].clear();
-            for (auto t : old)
-            {
-                if (t.size() == 1) ++res;
-                else buckets[t[1] - 'a'].push_back(t.substr(1));
+        vector<queue<string>> d(26);
+        for (auto& w : words) d[w[0] - 'a'].emplace(w);
+        int ans = 0;
+        for (char& c : s) {
+            auto& q = d[c - 'a'];
+            for (int k = q.size(); k; --k) {
+                auto t = q.front();
+                q.pop();
+                if (t.size() == 1)
+                    ++ans;
+                else
+                    d[t[1] - 'a'].emplace(t.substr(1));
             }
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func numMatchingSubseq(s string, words []string) int {
-	buckets := make([][]string, 26)
-	for _, word := range words {
-		buckets[word[0]-'a'] = append(buckets[word[0]-'a'], word)
+func numMatchingSubseq(s string, words []string) (ans int) {
+	d := [26][]string{}
+	for _, w := range words {
+		d[w[0]-'a'] = append(d[w[0]-'a'], w)
 	}
-	res := 0
 	for _, c := range s {
-		old := buckets[c-'a']
-		buckets[c-'a'] = nil
-		for _, t := range old {
+		q := d[c-'a']
+		d[c-'a'] = nil
+		for _, t := range q {
 			if len(t) == 1 {
-				res++
+				ans++
 			} else {
-				buckets[t[1]-'a'] = append(buckets[t[1]-'a'], t[1:])
+				d[t[1]-'a'] = append(d[t[1]-'a'], t[1:])
 			}
 		}
 	}
-	return res
+	return
 }
 ```
 
-### **...**
+<!-- tabs:end -->
 
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二：二分查找
+
+我们还可以先用数组或哈希表 $d$ 存放字符串 $s$ 每个字符的下标，即 $d[c]$ 为 $s$ 中所有字符 $c$ 的下标组成的数组。
+
+然后我们遍历 $words$ 中的每个单词 $w$，我们通过二分查找的方法，判断 $w$ 是否为 $s$ 的子序列，是则答案加 $1$。判断逻辑如下：
+
+1. 定义指针 $i$ 表示当前指向字符串 $s$ 的第 $i$ 个字符，初始化为 $-1$。
+1. 遍历字符串 $w$ 中的每个字符 $c$，在 $d[c]$ 中二分查找第一个大于 $i$ 的位置 $j$，如果不存在，则说明 $w$ 不是 $s$ 的子序列，直接跳出循环；否则，将 $i$ 更新为 $d[c][j]$，继续遍历下一个字符。
+1. 如果遍历完 $w$ 中的所有字符，说明 $w$ 是 $s$ 的子序列。
+
+时间复杂度 $O(\sum_{i=0}^{m-1} |w_i| \times \log n)$，空间复杂度 $O(m)$。其中 $n$ 和 $m$ 分别为 $s$ 和 $words$ 的长度，而 $|w_i|$ 为 $words[i]$ 的长度。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def numMatchingSubseq(self, s: str, words: List[str]) -> int:
+        d = defaultdict(deque)
+        for i, w in enumerate(words):
+            d[w[0]].append((i, 0))
+        ans = 0
+        for c in s:
+            for _ in range(len(d[c])):
+                i, j = d[c].popleft()
+                j += 1
+                if j == len(words[i]):
+                    ans += 1
+                else:
+                    d[words[i][j]].append((i, j))
+        return ans
 ```
 
+#### Java
+
+```java
+class Solution {
+    public int numMatchingSubseq(String s, String[] words) {
+        Deque<int[]>[] d = new Deque[26];
+        Arrays.setAll(d, k -> new ArrayDeque<>());
+        for (int i = 0; i < words.length; ++i) {
+            d[words[i].charAt(0) - 'a'].offer(new int[] {i, 0});
+        }
+        int ans = 0;
+        for (char c : s.toCharArray()) {
+            var q = d[c - 'a'];
+            for (int t = q.size(); t > 0; --t) {
+                var p = q.pollFirst();
+                int i = p[0], j = p[1] + 1;
+                if (j == words[i].length()) {
+                    ++ans;
+                } else {
+                    d[words[i].charAt(j) - 'a'].offer(new int[] {i, j});
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int numMatchingSubseq(string s, vector<string>& words) {
+        vector<queue<pair<int, int>>> d(26);
+        for (int i = 0; i < words.size(); ++i) d[words[i][0] - 'a'].emplace(i, 0);
+        int ans = 0;
+        for (char& c : s) {
+            auto& q = d[c - 'a'];
+            for (int t = q.size(); t; --t) {
+                auto [i, j] = q.front();
+                q.pop();
+                if (++j == words[i].size())
+                    ++ans;
+                else
+                    d[words[i][j] - 'a'].emplace(i, j);
+            }
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func numMatchingSubseq(s string, words []string) (ans int) {
+	type pair struct{ i, j int }
+	d := [26][]pair{}
+	for i, w := range words {
+		d[w[0]-'a'] = append(d[w[0]-'a'], pair{i, 0})
+	}
+	for _, c := range s {
+		q := d[c-'a']
+		d[c-'a'] = nil
+		for _, p := range q {
+			i, j := p.i, p.j+1
+			if j == len(words[i]) {
+				ans++
+			} else {
+				d[words[i][j]-'a'] = append(d[words[i][j]-'a'], pair{i, j})
+			}
+		}
+	}
+	return
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法三
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def numMatchingSubseq(self, s: str, words: List[str]) -> int:
+        def check(w):
+            i = -1
+            for c in w:
+                j = bisect_right(d[c], i)
+                if j == len(d[c]):
+                    return False
+                i = d[c][j]
+            return True
+
+        d = defaultdict(list)
+        for i, c in enumerate(s):
+            d[c].append(i)
+        return sum(check(w) for w in words)
+```
+
+#### Java
+
+```java
+class Solution {
+    private List<Integer>[] d = new List[26];
+
+    public int numMatchingSubseq(String s, String[] words) {
+        Arrays.setAll(d, k -> new ArrayList<>());
+        for (int i = 0; i < s.length(); ++i) {
+            d[s.charAt(i) - 'a'].add(i);
+        }
+        int ans = 0;
+        for (String w : words) {
+            if (check(w)) {
+                ++ans;
+            }
+        }
+        return ans;
+    }
+
+    private boolean check(String w) {
+        int i = -1;
+        for (int k = 0; k < w.length(); ++k) {
+            int c = w.charAt(k) - 'a';
+            int j = search(d[c], i);
+            if (j == d[c].size()) {
+                return false;
+            }
+            i = d[c].get(j);
+        }
+        return true;
+    }
+
+    private int search(List<Integer> t, int x) {
+        int left = 0, right = t.size();
+        while (left < right) {
+            int mid = (left + right) >> 1;
+            if (t.get(mid) > x) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int numMatchingSubseq(string s, vector<string>& words) {
+        vector<vector<int>> d(26);
+        for (int i = 0; i < s.size(); ++i) d[s[i] - 'a'].emplace_back(i);
+        int ans = 0;
+        auto check = [&](string& w) {
+            int i = -1;
+            for (char& c : w) {
+                auto& t = d[c - 'a'];
+                int j = upper_bound(t.begin(), t.end(), i) - t.begin();
+                if (j == t.size()) return false;
+                i = t[j];
+            }
+            return true;
+        };
+        for (auto& w : words) ans += check(w);
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func numMatchingSubseq(s string, words []string) (ans int) {
+	d := [26][]int{}
+	for i, c := range s {
+		d[c-'a'] = append(d[c-'a'], i)
+	}
+	check := func(w string) bool {
+		i := -1
+		for _, c := range w {
+			t := d[c-'a']
+			j := sort.SearchInts(t, i+1)
+			if j == len(t) {
+				return false
+			}
+			i = t[j]
+		}
+		return true
+	}
+	for _, w := range words {
+		if check(w) {
+			ans++
+		}
+	}
+	return
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

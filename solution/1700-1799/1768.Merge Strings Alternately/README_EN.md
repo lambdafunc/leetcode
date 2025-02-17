@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1768.Merge%20Strings%20Alternately/README_EN.md
+rating: 1166
+source: Weekly Contest 229 Q1
+tags:
+    - Two Pointers
+    - String
+---
+
+<!-- problem:start -->
+
 # [1768. Merge Strings Alternately](https://leetcode.com/problems/merge-strings-alternately)
 
 [中文文档](/solution/1700-1799/1768.Merge%20Strings%20Alternately/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given two strings <code>word1</code> and <code>word2</code>. Merge the strings by adding letters in alternating order, starting with <code>word1</code>. If a string is longer than the other, append the additional letters onto the end of the merged string.</p>
 
@@ -10,7 +25,7 @@
 
 <p>&nbsp;</p>
 
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 
@@ -28,7 +43,7 @@ merged: a p b q c r
 
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 
@@ -46,7 +61,7 @@ merged: a p b q   r   s
 
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 
@@ -69,75 +84,156 @@ merged: a p b q c   d
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li><code>1 &lt;= word1.length, word2.length &lt;= 100</code></li>
-	<li><code>word1</code> and <code>word2</code> consist of lowercase English letters.</li>
+
+    <li><code>1 &lt;= word1.length, word2.length &lt;= 100</code></li>
+
+    <li><code>word1</code> and <code>word2</code> consist of lowercase English letters.</li>
+
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Direct Simulation
+
+We traverse the two strings `word1` and `word2`, take out the characters one by one, and append them to the result string. The Python code can be simplified into one line.
+
+The time complexity is $O(m + n)$, where $m$ and $n$ are the lengths of the two strings respectively. Ignoring the space consumption of the answer, the space complexity is $O(1)$.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def mergeAlternately(self, word1: str, word2: str) -> str:
-        i, m, n = 0, len(word1), len(word2)
-        res = []
-        while i < m or i < n:
-            if i < m:
-                res.append(word1[i])
-            if i < n:
-                res.append(word2[i])
-            i += 1
-        return ''.join(res)
+        return ''.join(a + b for a, b in zip_longest(word1, word2, fillvalue=''))
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public String mergeAlternately(String word1, String word2) {
         int m = word1.length(), n = word2.length();
-        StringBuilder res = new StringBuilder();
+        StringBuilder ans = new StringBuilder();
         for (int i = 0; i < m || i < n; ++i) {
             if (i < m) {
-                res.append(word1.charAt(i));
+                ans.append(word1.charAt(i));
             }
             if (i < n) {
-                res.append(word2.charAt(i));
+                ans.append(word2.charAt(i));
             }
         }
-        return res.toString();
+        return ans.toString();
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     string mergeAlternately(string word1, string word2) {
         int m = word1.size(), n = word2.size();
-        string res;
+        string ans;
         for (int i = 0; i < m || i < n; ++i) {
-            if (i < m) {
-                res.push_back(word1[i]);
-            }
-            if (i < n) {
-                res.push_back(word2[i]);
-            }
+            if (i < m) ans += word1[i];
+            if (i < n) ans += word2[i];
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **...**
+#### Go
 
+```go
+func mergeAlternately(word1 string, word2 string) string {
+	m, n := len(word1), len(word2)
+	ans := make([]byte, 0, m+n)
+	for i := 0; i < m || i < n; i++ {
+		if i < m {
+			ans = append(ans, word1[i])
+		}
+		if i < n {
+			ans = append(ans, word2[i])
+		}
+	}
+	return string(ans)
+}
 ```
 
+#### TypeScript
+
+```ts
+function mergeAlternately(word1: string, word2: string): string {
+    const ans: string[] = [];
+    const [m, n] = [word1.length, word2.length];
+    for (let i = 0; i < m || i < n; ++i) {
+        if (i < m) {
+            ans.push(word1[i]);
+        }
+        if (i < n) {
+            ans.push(word2[i]);
+        }
+    }
+    return ans.join('');
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn merge_alternately(word1: String, word2: String) -> String {
+        let s1 = word1.as_bytes();
+        let s2 = word2.as_bytes();
+        let n = s1.len().max(s2.len());
+        let mut res = vec![];
+        for i in 0..n {
+            if s1.get(i).is_some() {
+                res.push(s1[i]);
+            }
+            if s2.get(i).is_some() {
+                res.push(s2[i]);
+            }
+        }
+        String::from_utf8(res).unwrap()
+    }
+}
+```
+
+#### C
+
+```c
+char* mergeAlternately(char* word1, char* word2) {
+    int m = strlen(word1);
+    int n = strlen(word2);
+    char* ans = malloc(sizeof(char) * (n + m + 1));
+    int i = 0;
+    int j = 0;
+    while (i + j != m + n) {
+        if (i < m) {
+            ans[i + j] = word1[i];
+            i++;
+        }
+        if (j < n) {
+            ans[i + j] = word2[j];
+            j++;
+        }
+    }
+    ans[n + m] = '\0';
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

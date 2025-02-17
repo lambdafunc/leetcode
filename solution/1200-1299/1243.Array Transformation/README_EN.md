@@ -1,8 +1,23 @@
-# [1243. Array Transformation](https://leetcode.com/problems/array-transformation)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1200-1299/1243.Array%20Transformation/README_EN.md
+rating: 1558
+source: Biweekly Contest 12 Q2
+tags:
+    - Array
+    - Simulation
+---
+
+<!-- problem:start -->
+
+# [1243. Array Transformation 🔒](https://leetcode.com/problems/array-transformation)
 
 [中文文档](/solution/1200-1299/1243.Array%20Transformation/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given an initial array <code>arr</code>, every day you produce a new array using the array of the previous day.</p>
 
@@ -17,7 +32,7 @@
 <p>After some days, the array does not change. Return that final array.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> arr = [6,2,3,4]
@@ -27,7 +42,7 @@ On the first day, the array is changed from [6,2,3,4] to [6,3,3,4].
 No more operations can be done to this array.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> arr = [1,6,3,4,3,5]
@@ -46,64 +61,120 @@ No more operations can be done to this array.
 	<li><code>1 &lt;= arr[i] &lt;= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Simulation
+
+Simulate each day. For each element, if it is greater than its left and right neighbors, it decreases by 1, otherwise, it increases by 1. If the array no longer changes on a certain day, return that array.
+
+The time complexity is $O(n \times m)$, and the space complexity is $O(n)$. Where $n$ is the length of the array, and $m$ is the maximum value in the array.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def transformArray(self, arr: List[int]) -> List[int]:
-        copy = [e for e in arr]
-        has_change, n = True, len(arr)
-        while has_change:
-            has_change = False
-            for i in range(1, n - 1):
-                if arr[i] < copy[i - 1] and arr[i] < copy[i + 1]:
-                    arr[i] += 1
-                    has_change = True
-                elif arr[i] > copy[i - 1] and arr[i] > copy[i + 1]:
+        f = True
+        while f:
+            f = False
+            t = arr[:]
+            for i in range(1, len(t) - 1):
+                if t[i] > t[i - 1] and t[i] > t[i + 1]:
                     arr[i] -= 1
-                    has_change = True
-            copy = [e for e in arr]
+                    f = True
+                if t[i] < t[i - 1] and t[i] < t[i + 1]:
+                    arr[i] += 1
+                    f = True
         return arr
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public List<Integer> transformArray(int[] arr) {
-        int n = arr.length;
-        int[] copy = Arrays.copyOf(arr, n);
-        boolean hasChange = true;
-        while (hasChange) {
-            hasChange = false;
-            for (int i = 1; i < n - 1; ++i) {
-                if (arr[i] < copy[i - 1] && arr[i] < copy[i + 1]) {
-                    ++arr[i];
-                    hasChange = true;
-                } else if (arr[i] > copy[i - 1] && arr[i] > copy[i + 1]) {
+        boolean f = true;
+        while (f) {
+            f = false;
+            int[] t = arr.clone();
+            for (int i = 1; i < t.length - 1; ++i) {
+                if (t[i] > t[i - 1] && t[i] > t[i + 1]) {
                     --arr[i];
-                    hasChange = true;
+                    f = true;
+                }
+                if (t[i] < t[i - 1] && t[i] < t[i + 1]) {
+                    ++arr[i];
+                    f = true;
                 }
             }
-            System.arraycopy(arr, 0, copy, 0, n);
         }
-        List<Integer> res = new ArrayList<>();
-        for (int e : arr) {
-            res.add(e);
+        List<Integer> ans = new ArrayList<>();
+        for (int x : arr) {
+            ans.add(x);
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> transformArray(vector<int>& arr) {
+        bool f = true;
+        while (f) {
+            f = false;
+            vector<int> t = arr;
+            for (int i = 1; i < arr.size() - 1; ++i) {
+                if (t[i] > t[i - 1] && t[i] > t[i + 1]) {
+                    --arr[i];
+                    f = true;
+                }
+                if (t[i] < t[i - 1] && t[i] < t[i + 1]) {
+                    ++arr[i];
+                    f = true;
+                }
+            }
+        }
+        return arr;
+    }
+};
 ```
 
+#### Go
+
+```go
+func transformArray(arr []int) []int {
+	f := true
+	for f {
+		f = false
+		t := make([]int, len(arr))
+		copy(t, arr)
+		for i := 1; i < len(arr)-1; i++ {
+			if t[i] > t[i-1] && t[i] > t[i+1] {
+				arr[i]--
+				f = true
+			}
+			if t[i] < t[i-1] && t[i] < t[i+1] {
+				arr[i]++
+				f = true
+			}
+		}
+	}
+	return arr
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

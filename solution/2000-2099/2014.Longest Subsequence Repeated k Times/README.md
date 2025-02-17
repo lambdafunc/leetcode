@@ -1,10 +1,26 @@
-# [2014. 重复 K 次的最长子序列](https://leetcode-cn.com/problems/longest-subsequence-repeated-k-times)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2014.Longest%20Subsequence%20Repeated%20k%20Times/README.md
+rating: 2558
+source: 第 259 场周赛 Q4
+tags:
+    - 贪心
+    - 字符串
+    - 回溯
+    - 计数
+    - 枚举
+---
+
+<!-- problem:start -->
+
+# [2014. 重复 K 次的最长子序列](https://leetcode.cn/problems/longest-subsequence-repeated-k-times)
 
 [English Version](/solution/2000-2099/2014.Longest%20Subsequence%20Repeated%20k%20Times/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个长度为 <code>n</code> 的字符串 <code>s</code> ，和一个整数 <code>k</code> 。请你找出字符串 <code>s</code> 中 <strong>重复</strong> <code>k</code> 次的 <strong>最长子序列</strong> 。</p>
 
@@ -22,7 +38,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="example 1" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2014.Longest%20Subsequence%20Repeated%20k%20Times/images/longest-subsequence-repeat-k-times.png" style="width: 457px; height: 99px;" /></p>
+<p><img alt="example 1" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2014.Longest%20Subsequence%20Repeated%20k%20Times/images/longest-subsequence-repeat-k-times.png" style="width: 457px; height: 99px;" /></p>
 
 <pre>
 <strong>输入：</strong>s = "letsleetcode", k = 2
@@ -47,14 +63,6 @@
 <strong>解释：</strong>不存在重复 2 次的最长子序列。返回空字符串。
 </pre>
 
-<p><strong>示例 4：</strong></p>
-
-<pre>
-<strong>输入：</strong>s = "bbabbabbbbabaababab", k = 3
-<strong>输出：</strong>"bbbb"
-<strong>解释：</strong>在 "<strong><em>bb</em></strong>a<em><strong>bb</strong></em>a<em><strong>bbbb</strong></em>a<em><strong>b</strong></em>aa<em><strong>b</strong></em>a<em><strong>b</strong></em>a<em><strong>b</strong></em>" 中重复 3 次的最长子序列是 "bbbb" 。
-</pre>
-
 <p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
@@ -66,32 +74,42 @@
 	<li><code>s</code> 由小写英文字母组成</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 
 ```
 
-### **...**
+#### C++
+
+```cpp
 
 ```
+
+#### Go
+
+```go
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

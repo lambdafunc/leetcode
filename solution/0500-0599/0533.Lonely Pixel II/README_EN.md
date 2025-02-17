@@ -1,289 +1,266 @@
-# [533. Lonely Pixel II](https://leetcode.com/problems/lonely-pixel-ii)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0533.Lonely%20Pixel%20II/README_EN.md
+tags:
+    - Array
+    - Hash Table
+    - Matrix
+---
+
+<!-- problem:start -->
+
+# [533. Lonely Pixel II 🔒](https://leetcode.com/problems/lonely-pixel-ii)
 
 [中文文档](/solution/0500-0599/0533.Lonely%20Pixel%20II/README.md)
 
 ## Description
 
-<p>Given a picture consisting of black and white pixels, and a positive integer N, find the number of black pixels located at some specific row <b>R</b> and column <b>C</b> that align with all the following rules:</p>
+<!-- description:start -->
 
-<ol>
+<p>Given an <code>m x n</code> <code>picture</code> consisting of black <code>&#39;B&#39;</code> and white <code>&#39;W&#39;</code> pixels and an integer target, return <em>the number of <b>black</b> lonely pixels</em>.</p>
 
-<li> Row R and column C both contain exactly N black pixels.</li>
+<p>A black lonely pixel is a character <code>&#39;B&#39;</code> that located at a specific position <code>(r, c)</code> where:</p>
 
-<li> For all rows that have a black pixel at column C, they should be exactly the same as row R</li>
+<ul>
+	<li>Row <code>r</code> and column <code>c</code> both contain exactly <code>target</code> black pixels.</li>
+	<li>For all rows that have a black pixel at column <code>c</code>, they should be exactly the same as row <code>r</code>.</li>
+</ul>
 
-</ol>
-
-<p>The picture is represented by a 2D char array consisting of 'B' and 'W', which means black and white pixels respectively. </p>
-
-<p><b>Example:</b><br />
-
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0500-0599/0533.Lonely%20Pixel%20II/images/pixel2-1-grid.jpg" style="width: 493px; height: 333px;" />
 <pre>
-
-<b>Input:</b>                                            
-
-[['W', 'B', 'W', 'B', 'B', 'W'],    
-
- ['W', 'B', 'W', 'B', 'B', 'W'],    
-
- ['W', 'B', 'W', 'B', 'B', 'W'],    
-
- ['W', 'W', 'B', 'W', 'B', 'W']] 
-
-
-
-N = 3
-
-<b>Output:</b> 6
-
-<b>Explanation:</b> All the bold 'B' are the black pixels we need (all 'B's at column 1 and 3).
-
-        0    1    2    3    4    5         column index                                            
-
-0    [['W', <b>'B'</b>, 'W', <b>'B'</b>, 'B', 'W'],    
-
-1     ['W', <b>'B'</b>, 'W', <b>'B'</b>, 'B', 'W'],    
-
-2     ['W', <b>'B'</b>, 'W', <b>'B'</b>, 'B', 'W'],    
-
-3     ['W', 'W', 'B', 'W', 'B', 'W']]    
-
-row index
-
-
-
-Take 'B' at row R = 0 and column C = 1 as an example:
-
-Rule 1, row R = 0 and column C = 1 both have exactly N = 3 black pixels. 
-
-Rule 2, the rows have black pixel at column C = 1 are row 0, row 1 and row 2. They are exactly the same as row R = 0.
-
-
-
+<strong>Input:</strong> picture = [[&quot;W&quot;,&quot;B&quot;,&quot;W&quot;,&quot;B&quot;,&quot;B&quot;,&quot;W&quot;],[&quot;W&quot;,&quot;B&quot;,&quot;W&quot;,&quot;B&quot;,&quot;B&quot;,&quot;W&quot;],[&quot;W&quot;,&quot;B&quot;,&quot;W&quot;,&quot;B&quot;,&quot;B&quot;,&quot;W&quot;],[&quot;W&quot;,&quot;W&quot;,&quot;B&quot;,&quot;W&quot;,&quot;B&quot;,&quot;W&quot;]], target = 3
+<strong>Output:</strong> 6
+<strong>Explanation:</strong> All the green &#39;B&#39; are the black pixels we need (all &#39;B&#39;s at column 1 and 3).
+Take &#39;B&#39; at row r = 0 and column c = 1 as an example:
+ - Rule 1, row r = 0 and column c = 1 both have exactly target = 3 black pixels. 
+ - Rule 2, the rows have black pixel at column c = 1 are row 0, row 1 and row 2. They are exactly the same as row r = 0.
 </pre>
 
-</p>
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0500-0599/0533.Lonely%20Pixel%20II/images/pixel2-2-grid.jpg" style="width: 253px; height: 253px;" />
+<pre>
+<strong>Input:</strong> picture = [[&quot;W&quot;,&quot;W&quot;,&quot;B&quot;],[&quot;W&quot;,&quot;W&quot;,&quot;B&quot;],[&quot;W&quot;,&quot;W&quot;,&quot;B&quot;]], target = 1
+<strong>Output:</strong> 0
+</pre>
 
-<p><b>Note:</b><br>
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<ol>
+<ul>
+	<li><code>m ==&nbsp;picture.length</code></li>
+	<li><code>n ==&nbsp;picture[i].length</code></li>
+	<li><code>1 &lt;= m, n &lt;= 200</code></li>
+	<li><code>picture[i][j]</code> is <code>&#39;W&#39;</code> or <code>&#39;B&#39;</code>.</li>
+	<li><code>1 &lt;= target &lt;= min(m, n)</code></li>
+</ul>
 
-<li>The range of width and height of the input 2D array is [1,200].</li>
-
-</ol>
-
-</p>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Counting
+
+The second condition in the problem is equivalent to requiring that for each column containing black pixels, these rows are exactly the same.
+
+Therefore, we can use an adjacency list $g$ to store all the rows containing black pixels in each column, i.e., $g[j]$ represents the set of all rows containing black pixels in the $j$-th column. In addition, we use an array $rows$ to store the number of black pixels in each row.
+
+Next, we traverse each column. For each column, we find the first row $i_1$ containing black pixels. If the number of black pixels in this row is not equal to $target$, then this column cannot contain lonely pixels, and we skip it directly. Otherwise, we check whether all the rows containing black pixels in this column are exactly the same as the $i_1$-th row. If so, all the black pixels in this column are lonely pixels, and we add $target$ to the answer.
+
+After the traversal, we return the answer.
+
+The time complexity is $O(m \times n^2)$, and the space complexity is $O(m \times n)$, where $m$ and $n$ are the number of rows and columns in the matrix respectively.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def findBlackPixel(self, picture: List[List[str]], target: int) -> int:
-        m, n = len(picture), len(picture[0])
-        rows = [0] * m
-        cols = defaultdict(list)
-        for i in range(m):
-            for j in range(n):
-                if picture[i][j] == 'B':
+        rows = [0] * len(picture)
+        g = defaultdict(list)
+        for i, row in enumerate(picture):
+            for j, x in enumerate(row):
+                if x == "B":
                     rows[i] += 1
-                    cols[j].append(i)
-        t = [[False] * m for _ in range(m)]
-        for i in range(m):
-            for k in range(i, m):
-                if i == k:
-                    t[i][k] = True
-                else:
-                    t[i][k] = all([picture[i][j] == picture[k][j] for j in range(n)])
-                t[k][i] = t[i][k]
-        res = 0
-        for i in range(m):
-            if rows[i] == target:
-                for j in range(n):
-                    if len(cols[j]) == target and all([t[i][k] for k in cols[j]]):
-                        res += 1
-        return res
+                    g[j].append(i)
+        ans = 0
+        for j in g:
+            i1 = g[j][0]
+            if rows[i1] != target:
+                continue
+            if len(g[j]) == rows[i1] and all(picture[i2] == picture[i1] for i2 in g[j]):
+                ans += target
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int findBlackPixel(char[][] picture, int target) {
-        int m = picture.length, n = picture[0].length;
+        int m = picture.length;
+        int n = picture[0].length;
+        List<Integer>[] g = new List[n];
+        Arrays.setAll(g, k -> new ArrayList<>());
         int[] rows = new int[m];
-        Map<Integer, List<Integer>> cols = new HashMap<>();
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
                 if (picture[i][j] == 'B') {
                     ++rows[i];
-                    cols.computeIfAbsent(j, k -> new ArrayList<>()).add(i);
+                    g[j].add(i);
                 }
             }
         }
-        boolean[][] t = new boolean[m][m];
-        for (int i = 0; i < m; ++i) {
-            for (int k = i; k < m; ++k) {
-                t[i][k] = i == k || all(picture[i], picture[k]);
-                t[k][i] = t[i][k];
+        int ans = 0;
+        for (int j = 0; j < n; ++j) {
+            if (g[j].isEmpty() || (rows[g[j].get(0)] != target)) {
+                continue;
             }
-        }
-        int res = 0;
-        for (int i = 0; i < m; ++i) {
-            if (rows[i] == target) {
-                for (int j = 0; j < n; ++j) {
-                    List<Integer> col = cols.get(j);
-                    if (col != null && col.size() == target) {
-                        boolean check = true;
-                        for (int k : col) {
-                            check = check && t[i][k];
-                        }
-                        if (check) {
-                            ++res;
-                        }
+            int i1 = g[j].get(0);
+            int ok = 0;
+            if (g[j].size() == rows[i1]) {
+                ok = target;
+                for (int i2 : g[j]) {
+                    if (!Arrays.equals(picture[i1], picture[i2])) {
+                        ok = 0;
+                        break;
                     }
                 }
             }
+            ans += ok;
         }
-        return res;
-    }
-
-    private boolean all(char[] row1, char[] row2) {
-        int n = row1.length;
-        for (int j = 0; j < n; ++j) {
-            if (row1[j] != row2[j]) {
-                return false;
-            }
-        }
-        return true;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int findBlackPixel(vector<vector<char>>& picture, int target) {
-        int m = picture.size(), n = picture[0].size();
+        int m = picture.size();
+        int n = picture[0].size();
+        vector<int> g[n];
         vector<int> rows(m);
-        unordered_map<int, vector<int>> cols;
-        for (int i = 0; i < m; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                if (picture[i][j] == 'B')
-                {
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (picture[i][j] == 'B') {
                     ++rows[i];
-                    cols[j].push_back(i);
+                    g[j].push_back(i);
                 }
             }
         }
-        vector<vector<bool>> t(m, vector<bool>(m, false));
-        for (int i = 0; i < m; ++i)
-        {
-            for (int k = i; k < m; ++k)
-            {
-                t[i][k] = i == k || all(picture[i], picture[k]);
-                t[k][i] = t[i][k];
+
+        int ans = 0;
+        for (int j = 0; j < n; ++j) {
+            if (g[j].empty() || (rows[g[j][0]] != target)) {
+                continue;
             }
-        }
-        int res = 0;
-        for (int i = 0; i < m; ++i)
-        {
-            if (rows[i] == target)
-            {
-                for (int j = 0; j < n; ++j)
-                {
-                    if (cols[j].size() == target)
-                    {
-                        bool check = true;
-                        for (int k : cols[j]) check = check && t[i][k];
-                        if (check) ++res;
+            int i1 = g[j][0];
+            int ok = 0;
+            if (g[j].size() == rows[i1]) {
+                ok = target;
+                for (int i2 : g[j]) {
+                    if (picture[i1] != picture[i2]) {
+                        ok = 0;
+                        break;
                     }
                 }
             }
+            ans += ok;
         }
-        return res;
-    }
-
-    bool all(vector<char>& row1, vector<char>& row2) {
-        int n = row1.size();
-        for (int j = 0; j < n; ++j)
-            if (row1[j] != row2[j]) return false;
-        return true;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func findBlackPixel(picture [][]byte, target int) int {
-	m, n := len(picture), len(picture[0])
+func findBlackPixel(picture [][]byte, target int) (ans int) {
+	m := len(picture)
+	n := len(picture[0])
+	g := make([][]int, n)
 	rows := make([]int, m)
-	cols := make(map[int][]int)
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if picture[i][j] == 'B' {
+	for i, row := range picture {
+		for j, x := range row {
+			if x == 'B' {
 				rows[i]++
-				cols[j] = append(cols[j], i)
+				g[j] = append(g[j], i)
 			}
 		}
 	}
-	t := make([][]bool, m)
-	for i := 0; i < m; i++ {
-		t[i] = make([]bool, m)
-	}
-	for i := 0; i < m; i++ {
-		for k := i; k < m; k++ {
-			if i == k {
-				t[i][k] = true
-			} else {
-				t[i][k] = all(picture[i], picture[k])
-			}
-			t[k][i] = t[i][k]
+	for j := 0; j < n; j++ {
+		if len(g[j]) == 0 || rows[g[j][0]] != target {
+			continue
 		}
-	}
-	res := 0
-	for i := 0; i < m; i++ {
-		if rows[i] == target {
-			for j := 0; j < n; j++ {
-				col, ok := cols[j]
-				if ok && len(col) == target {
-					check := true
-					for _, k := range col {
-						check = check && t[i][k]
-					}
-					if check {
-						res++
-					}
+		i1 := g[j][0]
+		ok := 0
+		if len(g[j]) == rows[i1] {
+			ok = target
+			for _, i2 := range g[j] {
+				if !bytes.Equal(picture[i1], picture[i2]) {
+					ok = 0
+					break
 				}
 			}
 		}
+		ans += ok
 	}
-	return res
-}
-
-func all(row1, row2 []byte) bool {
-	n := len(row1)
-	for i := 0; i < n; i++ {
-		if row1[i] != row2[i] {
-			return false
-		}
-	}
-	return true
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+function findBlackPixel(picture: string[][], target: number): number {
+    const m: number = picture.length;
+    const n: number = picture[0].length;
+    const g: number[][] = Array.from({ length: n }, () => []);
+    const rows: number[] = Array(m).fill(0);
 
+    for (let i = 0; i < m; ++i) {
+        for (let j = 0; j < n; ++j) {
+            if (picture[i][j] === 'B') {
+                ++rows[i];
+                g[j].push(i);
+            }
+        }
+    }
+
+    let ans: number = 0;
+    for (let j = 0; j < n; ++j) {
+        if (g[j].length === 0 || rows[g[j][0]] !== target) {
+            continue;
+        }
+        const i1: number = g[j][0];
+        let ok: number = 0;
+        if (g[j].length === rows[i1]) {
+            ok = target;
+            for (const i2 of g[j]) {
+                if (picture[i1].join('') !== picture[i2].join('')) {
+                    ok = 0;
+                    break;
+                }
+            }
+        }
+        ans += ok;
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

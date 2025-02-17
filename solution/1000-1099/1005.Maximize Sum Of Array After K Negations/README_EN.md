@@ -1,215 +1,246 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1005.Maximize%20Sum%20Of%20Array%20After%20K%20Negations/README_EN.md
+rating: 1274
+source: Weekly Contest 127 Q1
+tags:
+    - Greedy
+    - Array
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [1005. Maximize Sum Of Array After K Negations](https://leetcode.com/problems/maximize-sum-of-array-after-k-negations)
 
 [中文文档](/solution/1000-1099/1005.Maximize%20Sum%20Of%20Array%20After%20K%20Negations/README.md)
 
 ## Description
 
-<p>Given an array <code>A</code> of integers, we <strong>must</strong>&nbsp;modify the array in the following way: we choose an <code>i</code>&nbsp;and replace&nbsp;<code>A[i]</code> with <code>-A[i]</code>, and we repeat this process <code>K</code> times in total.&nbsp; (We may choose the same index <code>i</code> multiple times.)</p>
+<!-- description:start -->
 
-<p>Return the largest possible sum of the array after modifying it in this way.</p>
+<p>Given an integer array <code>nums</code> and an integer <code>k</code>, modify the array in the following way:</p>
 
-<p>&nbsp;</p>
+<ul>
+	<li>choose an index <code>i</code> and replace <code>nums[i]</code> with <code>-nums[i]</code>.</li>
+</ul>
 
-<p><strong>Example 1:</strong></p>
+<p>You should apply this process exactly <code>k</code> times. You may choose the same index <code>i</code> multiple times.</p>
 
-<pre>
-
-<strong>Input: </strong>A = <span id="example-input-1-1">[4,2,3]</span>, K = <span id="example-input-1-2">1</span>
-
-<strong>Output: </strong><span id="example-output-1">5
-
-<strong>Explanation: </strong>Choose indices (1,) and A becomes [4,-2,3].</span>
-
-</pre>
-
-<div>
-
-<p><strong>Example 2:</strong></p>
-
-<pre>
-
-<strong>Input: </strong>A = <span id="example-input-2-1">[3,-1,0,2]</span>, K = <span id="example-input-2-2">3</span>
-
-<strong>Output: </strong>6
-
-<span id="example-output-1"><strong>Explanation: </strong>Choose indices (1, 2, 2) and A becomes [3,1,0,2].</span>
-
-</pre>
-
-<div>
-
-<p><strong>Example 3:</strong></p>
-
-<pre>
-
-<strong>Input: </strong>A = <span id="example-input-3-1">[2,-3,-1,5,-4]</span>, K = <span id="example-input-3-2">2</span>
-
-<strong>Output: </strong><span id="example-output-3">13
-
-</span><span id="example-output-1"><strong>Explanation: </strong>Choose indices (1, 4) and A becomes [2,3,-1,5,4].</span>
-
-</pre>
-
-</div>
-
-</div>
+<p>Return <em>the largest possible sum of the array after modifying it in this way</em>.</p>
 
 <p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
-<p><strong>Note:</strong></p>
+<pre>
+<strong>Input:</strong> nums = [4,2,3], k = 1
+<strong>Output:</strong> 5
+<strong>Explanation:</strong> Choose index 1 and nums becomes [4,-2,3].
+</pre>
 
-<ol>
-	<li><code>1 &lt;= A.length &lt;= 10000</code></li>
-	<li><code>1 &lt;= K &lt;= 10000</code></li>
-	<li><code>-100 &lt;= A[i] &lt;= 100</code></li>
-</ol>
+<p><strong class="example">Example 2:</strong></p>
+
+<pre>
+<strong>Input:</strong> nums = [3,-1,0,2], k = 3
+<strong>Output:</strong> 6
+<strong>Explanation:</strong> Choose indices (1, 2, 2) and nums becomes [3,1,0,2].
+</pre>
+
+<p><strong class="example">Example 3:</strong></p>
+
+<pre>
+<strong>Input:</strong> nums = [2,-3,-1,5,-4], k = 2
+<strong>Output:</strong> 13
+<strong>Explanation:</strong> Choose indices (1, 4) and nums becomes [2,3,-1,5,4].
+</pre>
+
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= nums.length &lt;= 10<sup>4</sup></code></li>
+	<li><code>-100 &lt;= nums[i] &lt;= 100</code></li>
+	<li><code>1 &lt;= k &lt;= 10<sup>4</sup></code></li>
+</ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Greedy + Counting
+
+We observe that to maximize the sum of the array, we should try to turn the smallest negative numbers into positive numbers.
+
+Given that the range of elements is $[-100, 100]$, we can use a hash table $\textit{cnt}$ to count the occurrences of each element in the array $\textit{nums}$. Then, starting from $-100$, we iterate through $x$. If $x$ exists in the hash table, we take $m = \min(\textit{cnt}[x], k)$ as the number of times to negate the element $x$. We then subtract $m$ from $\textit{cnt}[x]$, add $m$ to $\textit{cnt}[-x]$, and subtract $m$ from $k$. If $k$ becomes $0$, the operation is complete, and we exit the loop.
+
+If $k$ is still odd and $\textit{cnt}[0] = 0$, we need to take the smallest positive number $x$ in $\textit{cnt}$, subtract $1$ from $\textit{cnt}[x]$, and add $1$ to $\textit{cnt}[-x]$.
+
+Finally, we traverse the hash table $\textit{cnt}$ and sum the products of $x$ and $\textit{cnt}[x]$ to get the answer.
+
+The time complexity is $O(n + M)$, and the space complexity is $O(M)$. Here, $n$ and $M$ are the length of the array $\textit{nums}$ and the size of the data range of $\textit{nums}$, respectively.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def largestSumAfterKNegations(self, nums: List[int], k: int) -> int:
-        counter = Counter(nums)
-        ans = sum(nums)
-        for i in range(-100, 0):
-            if counter[i]:
-                ops = min(counter[i], k)
-                ans -= (i * ops * 2)
-                counter[i] -= ops
-                counter[-i] += ops
-                k -= ops
+        cnt = Counter(nums)
+        for x in range(-100, 0):
+            if cnt[x]:
+                m = min(cnt[x], k)
+                cnt[x] -= m
+                cnt[-x] += m
+                k -= m
                 if k == 0:
                     break
-        if k > 0 and k % 2 == 1 and not counter[0]:
-            for i in range(1, 101):
-                if counter[i]:
-                    ans -= 2 * i
+        if k & 1 and cnt[0] == 0:
+            for x in range(1, 101):
+                if cnt[x]:
+                    cnt[x] -= 1
+                    cnt[-x] += 1
                     break
-        return ans
+        return sum(x * v for x, v in cnt.items())
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int largestSumAfterKNegations(int[] nums, int k) {
+        Map<Integer, Integer> cnt = new HashMap<>();
+        for (int x : nums) {
+            cnt.merge(x, 1, Integer::sum);
+        }
+        for (int x = -100; x < 0 && k > 0; ++x) {
+            if (cnt.getOrDefault(x, 0) > 0) {
+                int m = Math.min(cnt.get(x), k);
+                cnt.merge(x, -m, Integer::sum);
+                cnt.merge(-x, m, Integer::sum);
+                k -= m;
+            }
+        }
+        if ((k & 1) == 1 && cnt.getOrDefault(0, 0) == 0) {
+            for (int x = 1; x <= 100; ++x) {
+                if (cnt.getOrDefault(x, 0) > 0) {
+                    cnt.merge(x, -1, Integer::sum);
+                    cnt.merge(-x, 1, Integer::sum);
+                    break;
+                }
+            }
+        }
         int ans = 0;
-        Map<Integer, Integer> counter = new HashMap<>();
-        for (int num : nums) {
-            ans += num;
-            counter.put(num, counter.getOrDefault(num, 0) + 1);
-        }
-        for (int i = -100; i < 0; ++i) {
-            if (counter.getOrDefault(i, 0) > 0) {
-                int ops = Math.min(counter.get(i), k);
-                ans -= (i * ops * 2);
-                counter.put(i, counter.getOrDefault(i, 0) - ops);
-                counter.put(-i, counter.getOrDefault(-i, 0) + ops);
-                k -= ops;
-                if (k == 0) {
-                    break;
-                }
-            }
-        }
-        if (k > 0 && (k % 2) == 1 && counter.get(0) == null) {
-            for (int i = 1; i < 101; ++i) {
-                if (counter.getOrDefault(i, 0) > 0) {
-                    ans -= 2 * i;
-                    break;
-                }
-            }
+        for (var e : cnt.entrySet()) {
+            ans += e.getKey() * e.getValue();
         }
         return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int largestSumAfterKNegations(vector<int>& nums, int k) {
-        unordered_map<int, int> counter;
-        for (int num: nums) ++counter[num];
-        int ans = accumulate(nums.begin(), nums.end(), 0);
-        for (int i = -100; i < 0; ++i)
-        {
-            if (counter[i])
-            {
-                int ops = min(counter[i], k);
-                ans -= (i * ops * 2);
-                counter[i] -= ops;
-                counter[-i] += ops;
-                k -= ops;
-                if (k == 0) break;
+        unordered_map<int, int> cnt;
+        for (int& x : nums) {
+            ++cnt[x];
+        }
+        for (int x = -100; x < 0 && k > 0; ++x) {
+            if (cnt[x]) {
+                int m = min(cnt[x], k);
+                cnt[x] -= m;
+                cnt[-x] += m;
+                k -= m;
             }
         }
-        if (k > 0 && k % 2 == 1 && !counter[0])
-        {
-            for (int i = 1; i < 101; ++i)
-            {
-                if (counter[i])
-                {
-                    ans -= 2 * i;
+        if ((k & 1) && !cnt[0]) {
+            for (int x = 1; x <= 100; ++x) {
+                if (cnt[x]) {
+                    --cnt[x];
+                    ++cnt[-x];
                     break;
                 }
             }
+        }
+        int ans = 0;
+        for (auto& [x, v] : cnt) {
+            ans += x * v;
         }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
-```cpp
-func largestSumAfterKNegations(nums []int, k int) int {
-	ans := 0
-	counter := make(map[int]int)
-	for _, num := range nums {
-		ans += num
-		counter[num]++
+```go
+func largestSumAfterKNegations(nums []int, k int) (ans int) {
+	cnt := map[int]int{}
+	for _, x := range nums {
+		cnt[x]++
 	}
-	for i := -100; i < 0; i++ {
-		if counter[i] > 0 {
-			ops := min(counter[i], k)
-			ans -= (i * ops * 2)
-			counter[i] -= ops
-			counter[-i] += ops
-			k -= ops
-			if k == 0 {
+	for x := -100; x < 0 && k > 0; x++ {
+		if cnt[x] > 0 {
+			m := min(k, cnt[x])
+			cnt[x] -= m
+			cnt[-x] += m
+			k -= m
+		}
+	}
+	if k&1 == 1 && cnt[0] == 0 {
+		for x := 1; x <= 100; x++ {
+			if cnt[x] > 0 {
+				cnt[x]--
+				cnt[-x]++
 				break
 			}
 		}
 	}
-	if k > 0 && k%2 == 1 && counter[0] == 0 {
-		for i := 1; i < 101; i++ {
-			if counter[i] > 0 {
-				ans -= 2 * i
-				break
-			}
-		}
+	for x, v := range cnt {
+		ans += x * v
 	}
-	return ans
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function largestSumAfterKNegations(nums: number[], k: number): number {
+    const cnt: Map<number, number> = new Map();
+    for (const x of nums) {
+        cnt.set(x, (cnt.get(x) || 0) + 1);
+    }
+    for (let x = -100; x < 0 && k > 0; ++x) {
+        if (cnt.get(x)! > 0) {
+            const m = Math.min(cnt.get(x) || 0, k);
+            cnt.set(x, (cnt.get(x) || 0) - m);
+            cnt.set(-x, (cnt.get(-x) || 0) + m);
+            k -= m;
+        }
+    }
+    if ((k & 1) === 1 && (cnt.get(0) || 0) === 0) {
+        for (let x = 1; x <= 100; ++x) {
+            if (cnt.get(x)! > 0) {
+                cnt.set(x, (cnt.get(x) || 0) - 1);
+                cnt.set(-x, (cnt.get(-x) || 0) + 1);
+                break;
+            }
+        }
+    }
+    return Array.from(cnt.entries()).reduce((acc, [k, v]) => acc + k * v, 0);
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

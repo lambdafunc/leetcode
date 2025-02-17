@@ -1,21 +1,34 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0000-0099/0082.Remove%20Duplicates%20from%20Sorted%20List%20II/README_EN.md
+tags:
+    - Linked List
+    - Two Pointers
+---
+
+<!-- problem:start -->
+
 # [82. Remove Duplicates from Sorted List II](https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii)
 
 [中文文档](/solution/0000-0099/0082.Remove%20Duplicates%20from%20Sorted%20List%20II/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given the <code>head</code> of a sorted linked list, <em>delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list</em>. Return <em>the linked list <strong>sorted</strong> as well</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0082.Remove%20Duplicates%20from%20Sorted%20List%20II/images/linkedlist1.jpg" style="width: 500px; height: 142px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0082.Remove%20Duplicates%20from%20Sorted%20List%20II/images/linkedlist1.jpg" style="width: 500px; height: 142px;" />
 <pre>
 <strong>Input:</strong> head = [1,2,3,3,4,4,5]
 <strong>Output:</strong> [1,2,5]
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0082.Remove%20Duplicates%20from%20Sorted%20List%20II/images/linkedlist2.jpg" style="width: 500px; height: 205px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0000-0099/0082.Remove%20Duplicates%20from%20Sorted%20List%20II/images/linkedlist2.jpg" style="width: 500px; height: 205px;" />
 <pre>
 <strong>Input:</strong> head = [1,1,1,2,3]
 <strong>Output:</strong> [2,3]
@@ -30,11 +43,25 @@
 	<li>The list is guaranteed to be <strong>sorted</strong> in ascending order.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Single Pass
+
+First, we create a dummy head node $dummy$, and set $dummy.next = head$. Then we create a pointer $pre$ pointing to $dummy$, and a pointer $cur$ pointing to $head$, and start traversing the linked list.
+
+When the node value pointed by $cur$ is the same as the node value pointed by $cur.next$, we let $cur$ keep moving forward until the node value pointed by $cur$ is different from the node value pointed by $cur.next$. At this point, we check whether $pre.next$ is equal to $cur$. If they are equal, it means there are no duplicate nodes between $pre$ and $cur$, so we move $pre$ to the position of $cur$; otherwise, it means there are duplicate nodes between $pre$ and $cur$, so we set $pre.next$ to $cur.next$. Then we continue to move $cur$ forward. Continue the above operation until $cur$ is null, and the traversal ends.
+
+Finally, return $dummy.next$.
+
+The time complexity is $O(n)$, and the space complexity is $O(1)$. Here, $n$ is the length of the linked list.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -43,20 +70,21 @@
 #         self.val = val
 #         self.next = next
 class Solution:
-    def deleteDuplicates(self, head: ListNode) -> ListNode:
-        dummy = ListNode(-1, head)
-        cur = dummy
-        while cur.next and cur.next.next:
-            if cur.next.val == cur.next.next.val:
-                val = cur.next.val
-                while cur.next and cur.next.val == val:
-                    cur.next = cur.next.next
-            else:
+    def deleteDuplicates(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        dummy = pre = ListNode(next=head)
+        cur = head
+        while cur:
+            while cur.next and cur.next.val == cur.val:
                 cur = cur.next
+            if pre.next == cur:
+                pre = cur
+            else:
+                pre.next = cur.next
+            cur = cur.next
         return dummy.next
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -71,24 +99,26 @@ class Solution:
  */
 class Solution {
     public ListNode deleteDuplicates(ListNode head) {
-        ListNode dummy = new ListNode(-1, head);
-        ListNode cur = dummy;
-        while (cur.next != null && cur.next.next != null) {
-            if (cur.next.val == cur.next.next.val) {
-                int val = cur.next.val;
-                while (cur.next != null && cur.next.val == val) {
-                    cur.next = cur.next.next;
-                }
-            } else {
+        ListNode dummy = new ListNode(0, head);
+        ListNode pre = dummy;
+        ListNode cur = head;
+        while (cur != null) {
+            while (cur.next != null && cur.next.val == cur.val) {
                 cur = cur.next;
             }
+            if (pre.next == cur) {
+                pre = cur;
+            } else {
+                pre.next = cur.next;
+            }
+            cur = cur.next;
         }
         return dummy.next;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -104,24 +134,128 @@ class Solution {
 class Solution {
 public:
     ListNode* deleteDuplicates(ListNode* head) {
-        ListNode* dummy = new ListNode(-1, head);
-        ListNode* cur = dummy;
-        while (cur->next != nullptr && cur->next->next != nullptr) {
-            if (cur->next->val == cur->next->next->val) {
-                int val = cur->next->val;
-                while (cur->next != nullptr && cur->next->val == val) {
-                    cur->next = cur->next->next;
-                }
-            } else {
+        ListNode* dummy = new ListNode(0, head);
+        ListNode* pre = dummy;
+        ListNode* cur = head;
+        while (cur) {
+            while (cur->next && cur->next->val == cur->val) {
                 cur = cur->next;
             }
+            if (pre->next == cur) {
+                pre = cur;
+            } else {
+                pre->next = cur->next;
+            }
+            cur = cur->next;
         }
         return dummy->next;
     }
 };
 ```
 
-### **JavaScript**
+#### Go
+
+```go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func deleteDuplicates(head *ListNode) *ListNode {
+	dummy := &ListNode{Next: head}
+	pre, cur := dummy, head
+	for cur != nil {
+		for cur.Next != nil && cur.Next.Val == cur.Val {
+			cur = cur.Next
+		}
+		if pre.Next == cur {
+			pre = cur
+		} else {
+			pre.Next = cur.Next
+		}
+		cur = cur.Next
+	}
+	return dummy.Next
+}
+```
+
+#### TypeScript
+
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+function deleteDuplicates(head: ListNode | null): ListNode | null {
+    const dummy = new ListNode(0, head);
+    let pre = dummy;
+    let cur = head;
+    while (cur) {
+        while (cur.next && cur.val === cur.next.val) {
+            cur = cur.next;
+        }
+        if (pre.next === cur) {
+            pre = cur;
+        } else {
+            pre.next = cur.next;
+        }
+        cur = cur.next;
+    }
+    return dummy.next;
+}
+```
+
+#### Rust
+
+```rust
+// Definition for singly-linked list.
+// #[derive(PartialEq, Eq, Clone, Debug)]
+// pub struct ListNode {
+//   pub val: i32,
+//   pub next: Option<Box<ListNode>>
+// }
+//
+// impl ListNode {
+//   #[inline]
+//   fn new(val: i32) -> Self {
+//     ListNode {
+//       next: None,
+//       val
+//     }
+//   }
+// }
+impl Solution {
+    pub fn delete_duplicates(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+        let mut dummy = Some(Box::new(ListNode::new(101)));
+        let mut pev = dummy.as_mut().unwrap();
+        let mut cur = head;
+        let mut pre = 101;
+        while let Some(mut node) = cur {
+            cur = node.next.take();
+            if node.val == pre || (cur.is_some() && cur.as_ref().unwrap().val == node.val) {
+                pre = node.val;
+            } else {
+                pre = node.val;
+                pev.next = Some(node);
+                pev = pev.next.as_mut().unwrap();
+            }
+        }
+        dummy.unwrap().next
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -136,36 +270,61 @@ public:
  * @return {ListNode}
  */
 var deleteDuplicates = function (head) {
+    const dummy = new ListNode(0, head);
+    let pre = dummy;
     let cur = head;
-    let pre = new ListNode(0);
-    pre.next = head;
-    let dummy = pre;
-    let rep = false;
-    if (!head || !head.next) {
-        return head;
-    }
     while (cur) {
-        while (cur.next && cur.val == cur.next.val) {
+        while (cur.next && cur.val === cur.next.val) {
             cur = cur.next;
-            rep = true;
         }
-        if (rep) {
-            pre.next = cur.next;
-            cur = cur.next;
-        } else {
+        if (pre.next === cur) {
             pre = cur;
-            cur = cur.next;
+        } else {
+            pre.next = cur.next;
         }
-        rep = false;
+        cur = cur.next;
     }
     return dummy.next;
 };
 ```
 
-### **...**
+#### C#
 
-```
-
+```cs
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     public int val;
+ *     public ListNode next;
+ *     public ListNode(int val=0, ListNode next=null) {
+ *         this.val = val;
+ *         this.next = next;
+ *     }
+ * }
+ */
+public class Solution {
+    public ListNode DeleteDuplicates(ListNode head) {
+        ListNode dummy = new ListNode(0, head);
+        ListNode pre = dummy;
+        ListNode cur = head;
+        while (cur != null) {
+            while (cur.next != null && cur.next.val == cur.val) {
+                cur = cur.next;
+            }
+            if (pre.next == cur) {
+                pre = cur;
+            } else {
+                pre.next = cur.next;
+            }
+            cur = cur.next;
+        }
+        return dummy.next;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

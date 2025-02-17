@@ -1,8 +1,25 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2172.Maximum%20AND%20Sum%20of%20Array/README_EN.md
+rating: 2392
+source: Weekly Contest 280 Q4
+tags:
+    - Bit Manipulation
+    - Array
+    - Dynamic Programming
+    - Bitmask
+---
+
+<!-- problem:start -->
+
 # [2172. Maximum AND Sum of Array](https://leetcode.com/problems/maximum-and-sum-of-array)
 
 [中文文档](/solution/2100-2199/2172.Maximum%20AND%20Sum%20of%20Array/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given an integer array <code>nums</code> of length <code>n</code> and an integer <code>numSlots</code> such that <code>2 * numSlots &gt;= n</code>. There are <code>numSlots</code> slots numbered from <code>1</code> to <code>numSlots</code>.</p>
 
@@ -15,7 +32,7 @@
 <p>Return <em>the maximum possible <strong>AND sum</strong> of </em><code>nums</code><em> given </em><code>numSlots</code><em> slots.</em></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,2,3,4,5,6], numSlots = 3
@@ -24,7 +41,7 @@
 This gives the maximum AND sum of (1 AND <u>1</u>) + (4 AND <u>1</u>) + (2 AND <u>2</u>) + (6 AND <u>2</u>) + (3 AND <u>3</u>) + (5 AND <u>3</u>) = 1 + 0 + 2 + 2 + 3 + 1 = 9.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,3,10,4,7,1], numSlots = 9
@@ -44,32 +61,135 @@ Note that slots 2, 5, 6, and 8 are empty which is permitted.
 	<li><code>1 &lt;= nums[i] &lt;= 15</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def maximumANDSum(self, nums: List[int], numSlots: int) -> int:
+        n = len(nums)
+        m = numSlots << 1
+        f = [0] * (1 << m)
+        for i in range(1 << m):
+            cnt = i.bit_count()
+            if cnt > n:
+                continue
+            for j in range(m):
+                if i >> j & 1:
+                    f[i] = max(f[i], f[i ^ (1 << j)] + (nums[cnt - 1] & (j // 2 + 1)))
+        return max(f)
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public int maximumANDSum(int[] nums, int numSlots) {
+        int n = nums.length;
+        int m = numSlots << 1;
+        int[] f = new int[1 << m];
+        int ans = 0;
+        for (int i = 0; i < 1 << m; ++i) {
+            int cnt = Integer.bitCount(i);
+            if (cnt > n) {
+                continue;
+            }
+            for (int j = 0; j < m; ++j) {
+                if ((i >> j & 1) == 1) {
+                    f[i] = Math.max(f[i], f[i ^ (1 << j)] + (nums[cnt - 1] & (j / 2 + 1)));
+                }
+            }
+            ans = Math.max(ans, f[i]);
+        }
+        return ans;
+    }
+}
 ```
 
-### **TypeScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int maximumANDSum(vector<int>& nums, int numSlots) {
+        int n = nums.size();
+        int m = numSlots << 1;
+        int f[1 << m];
+        memset(f, 0, sizeof(f));
+        for (int i = 0; i < 1 << m; ++i) {
+            int cnt = __builtin_popcount(i);
+            if (cnt > n) {
+                continue;
+            }
+            for (int j = 0; j < m; ++j) {
+                if (i >> j & 1) {
+                    f[i] = max(f[i], f[i ^ (1 << j)] + (nums[cnt - 1] & (j / 2 + 1)));
+                }
+            }
+        }
+        return *max_element(f, f + (1 << m));
+    }
+};
+```
+
+#### Go
+
+```go
+func maximumANDSum(nums []int, numSlots int) int {
+	n := len(nums)
+	m := numSlots << 1
+	f := make([]int, 1<<m)
+	for i := range f {
+		cnt := bits.OnesCount(uint(i))
+		if cnt > n {
+			continue
+		}
+		for j := 0; j < m; j++ {
+			if i>>j&1 == 1 {
+				f[i] = max(f[i], f[i^(1<<j)]+(nums[cnt-1]&(j/2+1)))
+			}
+		}
+	}
+	return slices.Max(f)
+}
+```
+
+#### TypeScript
 
 ```ts
-
-```
-
-### **...**
-
-```
-
+function maximumANDSum(nums: number[], numSlots: number): number {
+    const n = nums.length;
+    const m = numSlots << 1;
+    const f: number[] = new Array(1 << m).fill(0);
+    for (let i = 0; i < 1 << m; ++i) {
+        const cnt = i
+            .toString(2)
+            .split('')
+            .filter(c => c === '1').length;
+        if (cnt > n) {
+            continue;
+        }
+        for (let j = 0; j < m; ++j) {
+            if (((i >> j) & 1) === 1) {
+                f[i] = Math.max(f[i], f[i ^ (1 << j)] + (nums[cnt - 1] & ((j >> 1) + 1)));
+            }
+        }
+    }
+    return Math.max(...f);
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

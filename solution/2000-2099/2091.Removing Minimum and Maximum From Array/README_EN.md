@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2091.Removing%20Minimum%20and%20Maximum%20From%20Array/README_EN.md
+rating: 1384
+source: Weekly Contest 269 Q3
+tags:
+    - Greedy
+    - Array
+---
+
+<!-- problem:start -->
+
 # [2091. Removing Minimum and Maximum From Array](https://leetcode.com/problems/removing-minimum-and-maximum-from-array)
 
 [中文文档](/solution/2000-2099/2091.Removing%20Minimum%20and%20Maximum%20From%20Array/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a <strong>0-indexed</strong> array of <strong>distinct</strong> integers <code>nums</code>.</p>
 
@@ -13,7 +28,7 @@
 <p>Return <em>the <strong>minimum</strong> number of deletions it would take to remove <strong>both</strong> the minimum and maximum element from the array.</em></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [2,<u><strong>10</strong></u>,7,5,4,<u><strong>1</strong></u>,8,6]
@@ -25,7 +40,7 @@ We can remove both the minimum and maximum by removing 2 elements from the front
 This results in 2 + 3 = 5 deletions, which is the minimum number possible.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [0,<u><strong>-4</strong></u>,<u><strong>19</strong></u>,1,8,-2,-3,5]
@@ -37,7 +52,7 @@ We can remove both the minimum and maximum by removing 3 elements from the front
 This results in only 3 deletions, which is the minimum number possible.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [<u><strong>101</strong></u>]
@@ -56,11 +71,17 @@ We can remove it with 1 deletion.
 	<li>The integers in <code>nums</code> are <strong>distinct</strong>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -76,7 +97,7 @@ class Solution:
         return min(mx + 1, len(nums) - mi, mi + 1 + len(nums) - mx)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -100,34 +121,18 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function minimumDeletions(nums: number[]): number {
-    const n = nums.length;
-    if (n == 1) return 1;
-    let i = nums.indexOf(Math.min(...nums));
-    let j = nums.indexOf(Math.max(...nums));
-    let left = Math.min(i, j);
-    let right = Math.max(i, j);
-    return Math.min(left + 1 + n - right, right + 1, n - left);
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int minimumDeletions(vector<int>& nums) {
         int mi = 0, mx = 0, n = nums.size();
-        for (int i = 0; i < n; ++i)
-        {
+        for (int i = 0; i < n; ++i) {
             if (nums[i] < nums[mi]) mi = i;
             if (nums[i] > nums[mx]) mx = i;
         }
-        if (mi > mx)
-        {
+        if (mi > mx) {
             int t = mi;
             mi = mx;
             mx = t;
@@ -137,7 +142,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func minimumDeletions(nums []int) int {
@@ -155,19 +160,27 @@ func minimumDeletions(nums []int) int {
 	}
 	return min(min(mx+1, n-mi), mi+1+n-mx)
 }
+```
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+#### TypeScript
+
+```ts
+function minimumDeletions(nums: number[]): number {
+    const n = nums.length;
+    if (n == 1) return 1;
+    let i = nums.indexOf(Math.min(...nums));
+    let j = nums.indexOf(Math.max(...nums));
+    let left = Math.min(i, j);
+    let right = Math.max(i, j);
+    // 左右 left + 1 + n - right
+    // 两个都是左边 left + 1 + right - left = right + 1
+    // 都是右边 n - right + right - left = n - left
+    return Math.min(left + 1 + n - right, right + 1, n - left);
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

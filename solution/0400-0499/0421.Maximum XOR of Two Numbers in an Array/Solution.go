@@ -1,66 +1,42 @@
-const highest = 30
-
-type trie struct {
-	left, right *trie
+type Trie struct {
+	children [2]*Trie
 }
 
-func (root *trie) add(num int) {
-	node := root
-	for i := highest; i >= 0; i-- {
-		bit := (num >> i) & 1
-		if bit == 0 {
-			if node.left == nil {
-				node.left = &trie{}
-			}
-			node = node.left
+func newTrie() *Trie {
+	return &Trie{}
+}
+
+func (t *Trie) insert(x int) {
+	node := t
+	for i := 30; i >= 0; i-- {
+		v := x >> i & 1
+		if node.children[v] == nil {
+			node.children[v] = newTrie()
+		}
+		node = node.children[v]
+	}
+}
+
+func (t *Trie) search(x int) int {
+	node := t
+	ans := 0
+	for i := 30; i >= 0; i-- {
+		v := x >> i & 1
+		if node.children[v^1] != nil {
+			ans |= 1 << i
+			node = node.children[v^1]
 		} else {
-			if node.right == nil {
-				node.right = &trie{}
-			}
-			node = node.right
+			node = node.children[v]
 		}
 	}
+	return ans
 }
 
-func (root *trie) cal(num int) int {
-	node := root
-	res := 0
-	for i := highest; i >= 0; i-- {
-		bit := (num >> i) & 1
-		if bit == 0 {
-			if node.right != nil {
-				res = res*2 + 1
-				node = node.right
-			} else {
-				res = res * 2
-				node = node.left
-			}
-		} else {
-			if node.left != nil {
-				res = res*2 + 1
-				node = node.left
-			} else {
-				res = res * 2
-				node = node.right
-			}
-		}
+func findMaximumXOR(nums []int) (ans int) {
+	trie := newTrie()
+	for _, x := range nums {
+		trie.insert(x)
+		ans = max(ans, trie.search(x))
 	}
-	return res
-}
-
-func findMaximumXOR(nums []int) int {
-	root := &trie{}
-	res := 0
-	for i := 1; i < len(nums); i++ {
-		root.add(nums[i-1])
-		res = max(res, root.cal(nums[i]))
-	}
-	return res
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return ans
 }

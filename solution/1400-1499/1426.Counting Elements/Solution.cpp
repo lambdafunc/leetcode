@@ -1,11 +1,16 @@
 class Solution {
 public:
     int countElements(vector<int>& arr) {
-        unordered_set<int> s;
-        for (int num : arr) s.insert(num);
-        int res = 0;
-        for (int num : arr)
-            if (s.count(num + 1)) ++res;
-        return res;
+        int cnt[1001]{};
+        for (int x : arr) {
+            ++cnt[x];
+        }
+        int ans = 0;
+        for (int x = 0; x < 1000; ++x) {
+            if (cnt[x + 1]) {
+                ans += cnt[x];
+            }
+        }
+        return ans;
     }
 };

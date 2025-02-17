@@ -1,10 +1,23 @@
-# [1768. 交替合并字符串](https://leetcode-cn.com/problems/merge-strings-alternately)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1768.Merge%20Strings%20Alternately/README.md
+rating: 1166
+source: 第 229 场周赛 Q1
+tags:
+    - 双指针
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [1768. 交替合并字符串](https://leetcode.cn/problems/merge-strings-alternately)
 
 [English Version](/solution/1700-1799/1768.Merge%20Strings%20Alternately/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你两个字符串 <code>word1</code> 和 <code>word2</code> 。请你从 <code>word1</code> 开始，通过交替添加字母来合并字符串。如果一个字符串比另一个字符串长，就将多出来的字母追加到合并后字符串的末尾。</p>
 
@@ -54,77 +67,149 @@ word2：    p   q
 	<li><code>word1</code> 和 <code>word2</code> 由小写英文字母组成</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：直接模拟
+
+我们遍历 `word1`, `word2` 两个字符串，依次取出字符，拼接到结果字符串中。Python 代码可以简化为一行。
+
+时间复杂度 $O(m + n)$，其中 $m$ 和 $n$ 分别是两个字符串的长度。忽略答案的空间消耗，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def mergeAlternately(self, word1: str, word2: str) -> str:
-        i, m, n = 0, len(word1), len(word2)
-        res = []
-        while i < m or i < n:
-            if i < m:
-                res.append(word1[i])
-            if i < n:
-                res.append(word2[i])
-            i += 1
-        return ''.join(res)
+        return ''.join(a + b for a, b in zip_longest(word1, word2, fillvalue=''))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public String mergeAlternately(String word1, String word2) {
         int m = word1.length(), n = word2.length();
-        StringBuilder res = new StringBuilder();
+        StringBuilder ans = new StringBuilder();
         for (int i = 0; i < m || i < n; ++i) {
             if (i < m) {
-                res.append(word1.charAt(i));
+                ans.append(word1.charAt(i));
             }
             if (i < n) {
-                res.append(word2.charAt(i));
+                ans.append(word2.charAt(i));
             }
         }
-        return res.toString();
+        return ans.toString();
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     string mergeAlternately(string word1, string word2) {
         int m = word1.size(), n = word2.size();
-        string res;
+        string ans;
         for (int i = 0; i < m || i < n; ++i) {
-            if (i < m) {
-                res.push_back(word1[i]);
-            }
-            if (i < n) {
-                res.push_back(word2[i]);
-            }
+            if (i < m) ans += word1[i];
+            if (i < n) ans += word2[i];
         }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **...**
+#### Go
 
+```go
+func mergeAlternately(word1 string, word2 string) string {
+	m, n := len(word1), len(word2)
+	ans := make([]byte, 0, m+n)
+	for i := 0; i < m || i < n; i++ {
+		if i < m {
+			ans = append(ans, word1[i])
+		}
+		if i < n {
+			ans = append(ans, word2[i])
+		}
+	}
+	return string(ans)
+}
 ```
 
+#### TypeScript
+
+```ts
+function mergeAlternately(word1: string, word2: string): string {
+    const ans: string[] = [];
+    const [m, n] = [word1.length, word2.length];
+    for (let i = 0; i < m || i < n; ++i) {
+        if (i < m) {
+            ans.push(word1[i]);
+        }
+        if (i < n) {
+            ans.push(word2[i]);
+        }
+    }
+    return ans.join('');
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn merge_alternately(word1: String, word2: String) -> String {
+        let s1 = word1.as_bytes();
+        let s2 = word2.as_bytes();
+        let n = s1.len().max(s2.len());
+        let mut res = vec![];
+        for i in 0..n {
+            if s1.get(i).is_some() {
+                res.push(s1[i]);
+            }
+            if s2.get(i).is_some() {
+                res.push(s2[i]);
+            }
+        }
+        String::from_utf8(res).unwrap()
+    }
+}
+```
+
+#### C
+
+```c
+char* mergeAlternately(char* word1, char* word2) {
+    int m = strlen(word1);
+    int n = strlen(word2);
+    char* ans = malloc(sizeof(char) * (n + m + 1));
+    int i = 0;
+    int j = 0;
+    while (i + j != m + n) {
+        if (i < m) {
+            ans[i + j] = word1[i];
+            i++;
+        }
+        if (j < n) {
+            ans[i + j] = word2[j];
+            j++;
+        }
+    }
+    ans[n + m] = '\0';
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

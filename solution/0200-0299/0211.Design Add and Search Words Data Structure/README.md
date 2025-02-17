@@ -1,10 +1,23 @@
-# [211. 添加与搜索单词 - 数据结构设计](https://leetcode-cn.com/problems/design-add-and-search-words-data-structure)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0211.Design%20Add%20and%20Search%20Words%20Data%20Structure/README.md
+tags:
+    - 深度优先搜索
+    - 设计
+    - 字典树
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [211. 添加与搜索单词 - 数据结构设计](https://leetcode.cn/problems/design-add-and-search-words-data-structure)
 
 [English Version](/solution/0200-0299/0211.Design%20Add%20and%20Search%20Words%20Data%20Structure/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>请你设计一个数据结构，支持 添加新单词 和 查找字符串是否与任何先前添加的字符串匹配 。</p>
 
@@ -13,10 +26,10 @@
 <ul>
 	<li><code>WordDictionary()</code> 初始化词典对象</li>
 	<li><code>void addWord(word)</code> 将 <code>word</code> 添加到数据结构中，之后可以对它进行匹配</li>
-	<li><code>bool search(word)</code> 如果数据结构中存在字符串与 <code>word</code> 匹配，则返回 <code>true</code> ；否则，返回  <code>false</code> 。<code>word</code> 中可能包含一些 <code>'.'</code> ，每个 <code>.</code> 都可以表示任何一个字母。</li>
+	<li><code>bool search(word)</code> 如果数据结构中存在字符串与&nbsp;<code>word</code> 匹配，则返回 <code>true</code> ；否则，返回&nbsp; <code>false</code> 。<code>word</code> 中可能包含一些 <code>'.'</code> ，每个&nbsp;<code>.</code> 都可以表示任何一个字母。</li>
 </ul>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>示例：</strong></p>
 
@@ -32,45 +45,43 @@ WordDictionary wordDictionary = new WordDictionary();
 wordDictionary.addWord("bad");
 wordDictionary.addWord("dad");
 wordDictionary.addWord("mad");
-wordDictionary.search("pad"); // return False
-wordDictionary.search("bad"); // return True
-wordDictionary.search(".ad"); // return True
-wordDictionary.search("b.."); // return True
+wordDictionary.search("pad"); // 返回 False
+wordDictionary.search("bad"); // 返回 True
+wordDictionary.search(".ad"); // 返回 True
+wordDictionary.search("b.."); // 返回 True
 </pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>1 <= word.length <= 500</code></li>
+	<li><code>1 &lt;= word.length &lt;= 25</code></li>
 	<li><code>addWord</code> 中的 <code>word</code> 由小写英文字母组成</li>
 	<li><code>search</code> 中的 <code>word</code> 由 '.' 或小写英文字母组成</li>
-	<li>最多调用 <code>50000</code> 次 <code>addWord</code> 和 <code>search</code></li>
+	<li>最多调用 <code>10<sup>4</sup></code> 次 <code>addWord</code> 和 <code>search</code></li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-“前缀树”实现。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Trie:
-
     def __init__(self):
         self.children = [None] * 26
         self.is_end = False
 
 
 class WordDictionary:
-
     def __init__(self):
         self.trie = Trie()
 
@@ -92,7 +103,7 @@ class WordDictionary:
                     return False
                 if c == '.':
                     for child in node.children:
-                        if child is not None and search(word[i + 1:], child):
+                        if child is not None and search(word[i + 1 :], child):
                             return True
                     return False
                 node = node.children[idx]
@@ -100,15 +111,14 @@ class WordDictionary:
 
         return search(word, self.trie)
 
+
 # Your WordDictionary object will be instantiated and called as such:
 # obj = WordDictionary()
 # obj.addWord(word)
 # param_2 = obj.search(word)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Trie {
@@ -169,7 +179,79 @@ class WordDictionary {
  */
 ```
 
-### **Go**
+#### C++
+
+```cpp
+class trie {
+public:
+    vector<trie*> children;
+    bool is_end;
+
+    trie() {
+        children = vector<trie*>(26, nullptr);
+        is_end = false;
+    }
+
+    void insert(const string& word) {
+        trie* cur = this;
+        for (char c : word) {
+            c -= 'a';
+            if (cur->children[c] == nullptr) {
+                cur->children[c] = new trie;
+            }
+            cur = cur->children[c];
+        }
+        cur->is_end = true;
+    }
+};
+
+class WordDictionary {
+private:
+    trie* root;
+
+public:
+    WordDictionary()
+        : root(new trie) {}
+
+    void addWord(string word) {
+        root->insert(word);
+    }
+
+    bool search(string word) {
+        return dfs(word, 0, root);
+    }
+
+private:
+    bool dfs(const string& word, int i, trie* cur) {
+        if (i == word.size()) {
+            return cur->is_end;
+        }
+        char c = word[i];
+        if (c != '.') {
+            trie* child = cur->children[c - 'a'];
+            if (child != nullptr && dfs(word, i + 1, child)) {
+                return true;
+            }
+        } else {
+            for (trie* child : cur->children) {
+                if (child != nullptr && dfs(word, i + 1, child)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary* obj = new WordDictionary();
+ * obj->addWord(word);
+ * bool param_2 = obj->search(word);
+ */
+```
+
+#### Go
 
 ```go
 type WordDictionary struct {
@@ -236,81 +318,80 @@ func (t *trie) insert(word string) {
  */
 ```
 
-### **C++**
+#### C#
 
-```cpp
-class trie {
-public:
-    vector<trie*> children;
-    bool is_end;
+```cs
+using System.Collections.Generic;
+using System.Linq;
 
-    trie() {
-        children = vector<trie*>(26, nullptr);
-        is_end = false;
+class TrieNode {
+    public bool IsEnd { get; set; }
+    public TrieNode[] Children { get; set; }
+    public TrieNode() {
+        Children = new TrieNode[26];
+    }
+}
+
+public class WordDictionary {
+    private TrieNode root;
+
+    public WordDictionary() {
+        root = new TrieNode();
     }
 
-    void insert(const string& word) {
-        trie* cur = this;
-        for (char c : word) {
-            c -= 'a';
-            if (cur->children[c] == nullptr) {
-                cur->children[c] = new trie;
+    public void AddWord(string word) {
+        var node = root;
+        for (var i = 0; i < word.Length; ++i)
+        {
+            TrieNode nextNode;
+            var index = word[i] - 'a';
+            nextNode = node.Children[index];
+            if (nextNode == null)
+            {
+                nextNode = new TrieNode();
+                node.Children[index] = nextNode;
             }
-            cur = cur->children[c];
+            node = nextNode;
         }
-        cur->is_end = true;
-    }
-};
-
-class WordDictionary {
-private:
-    trie* root;
-
-public:
-    WordDictionary() : root(new trie) {}
-
-    void addWord(string word) {
-        root->insert(word);
+        node.IsEnd = true;
     }
 
-    bool search(string word) {
-        return dfs(word, 0, root);
-    }
-
-private:
-    bool dfs(const string& word, int i, trie* cur) {
-        if (i == word.size()) {
-            return cur->is_end;
-        }
-        char c = word[i];
-        if (c != '.') {
-            trie* child = cur->children[c - 'a'];
-            if (child != nullptr && dfs(word, i + 1, child)) {
-                return true;
-            }
-        } else {
-            for (trie* child : cur->children) {
-                if (child != nullptr && dfs(word, i + 1, child)) {
-                    return true;
+    public bool Search(string word) {
+        var queue = new Queue<TrieNode>();
+        queue.Enqueue(root);
+        for (var i = 0; i < word.Length; ++i)
+        {
+            var count = queue.Count;
+            while (count-- > 0)
+            {
+                var node = queue.Dequeue();
+                if (word[i] == '.')
+                {
+                    foreach (var nextNode in node.Children)
+                    {
+                        if (nextNode != null)
+                        {
+                            queue.Enqueue(nextNode);
+                        }
+                    }
+                }
+                else
+                {
+                    var nextNode = node.Children[word[i] - 'a'];
+                    if (nextNode != null)
+                    {
+                        queue.Enqueue(nextNode);
+                    }
                 }
             }
         }
-        return false;
+        return queue.Any(n => n.IsEnd);
     }
-};
-
-/**
- * Your WordDictionary object will be instantiated and called as such:
- * WordDictionary* obj = new WordDictionary();
- * obj->addWord(word);
- * bool param_2 = obj->search(word);
- */
-```
-
-### **...**
-
-```
-
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

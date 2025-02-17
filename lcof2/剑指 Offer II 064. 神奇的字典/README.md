@@ -1,8 +1,15 @@
-# [剑指 Offer II 064. 神奇的字典](https://leetcode-cn.com/problems/US1pGT)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20064.%20%E7%A5%9E%E5%A5%87%E7%9A%84%E5%AD%97%E5%85%B8/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 064. 神奇的字典](https://leetcode.cn/problems/US1pGT)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>设计一个使用单词列表进行初始化的数据结构，单词列表中的单词 <strong>互不相同</strong> 。 如果给出一个单词，请判定能否只将这个单词中<strong>一个</strong>字母换成另一个字母，使得所形成的新单词存在于已构建的神奇字典中。</p>
 
@@ -57,39 +64,39 @@ magicDictionary.search(&quot;leetcoded&quot;); // 返回 False
 
 <p>&nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 676&nbsp;题相同：&nbsp;<a href="https://leetcode-cn.com/problems/implement-magic-dictionary/">https://leetcode-cn.com/problems/implement-magic-dictionary/</a></p>
+<p><meta charset="UTF-8" />注意：本题与主站 676&nbsp;题相同：&nbsp;<a href="https://leetcode.cn/problems/implement-magic-dictionary/">https://leetcode.cn/problems/implement-magic-dictionary/</a></p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-哈希表实现。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class MagicDictionary:
-
     def __init__(self):
         """
         Initialize your data structure here.
         """
 
     def _patterns(self, word):
-        return [word[:i] + '*' + word[i + 1:] for i in range(len(word))]
+        return [word[:i] + '*' + word[i + 1 :] for i in range(len(word))]
 
     def buildDict(self, dictionary: List[str]) -> None:
         self.words = set(dictionary)
-        self.counter = Counter(
-            p for word in dictionary for p in self._patterns(word))
+        self.counter = Counter(p for word in dictionary for p in self._patterns(word))
 
     def search(self, searchWord: str) -> bool:
         for p in self._patterns(searchWord):
-            if self.counter[p] > 1 or (self.counter[p] == 1 and searchWord not in self.words):
+            if self.counter[p] > 1 or (
+                self.counter[p] == 1 and searchWord not in self.words
+            ):
                 return True
         return False
 
@@ -100,9 +107,7 @@ class MagicDictionary:
 # param_2 = obj.search(searchWord)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class MagicDictionary {
@@ -155,27 +160,24 @@ class MagicDictionary {
  */
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class MagicDictionary {
 public:
     /** Initialize your data structure here. */
     MagicDictionary() {
-
     }
 
     void buildDict(vector<string> dictionary) {
-        for (string word : dictionary)
-        {
+        for (string word : dictionary) {
             words.insert(word);
             for (string p : patterns(word)) ++counter[p];
         }
     }
 
     bool search(string searchWord) {
-        for (string p : patterns(searchWord))
-        {
+        for (string p : patterns(searchWord)) {
             if (counter[p] > 1 || (counter[p] == 1 && !words.count(searchWord))) return true;
         }
         return false;
@@ -187,8 +189,7 @@ private:
 
     vector<string> patterns(string word) {
         vector<string> res;
-        for (int i = 0; i < word.size(); ++i)
-        {
+        for (int i = 0; i < word.size(); ++i) {
             char c = word[i];
             word[i] = '*';
             res.push_back(word);
@@ -206,7 +207,7 @@ private:
  */
 ```
 
-### **Go**
+#### Go
 
 ```go
 type MagicDictionary struct {
@@ -256,10 +257,64 @@ func patterns(word string) []string {
  */
 ```
 
-### **...**
+#### Swift
 
-```
+```swift
+class MagicDictionary {
+    private var words: Set<String>
+    private var counter: [String: Int]
+
+    init() {
+        words = Set<String>()
+        counter = [String: Int]()
+    }
+
+    func buildDict(_ dictionary: [String]) {
+        for word in dictionary {
+            words.insert(word)
+            for pattern in patterns(word) {
+                counter[pattern, default: 0] += 1
+            }
+        }
+    }
+
+    func search(_ searchWord: String) -> Bool {
+        for pattern in patterns(searchWord) {
+            let count = counter[pattern, default: 0]
+            if count > 1 || (count == 1 && !words.contains(searchWord)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private func patterns(_ word: String) -> [String] {
+        var result = [String]()
+        var chars = Array(word)
+        for i in 0..<chars.count {
+            let originalChar = chars[i]
+            chars[i] = "*"
+            result.append(String(chars))
+            chars[i] = originalChar
+        }
+        return result
+    }
+}
+
+/**
+ * Example usage:
+ * let obj = MagicDictionary()
+ * obj.buildDict(["hello", "hallo", "leetcode"])
+ * let param_2 = obj.search("hello")
+ * let param_3 = obj.search("hhllo")
+ * let param_4 = obj.search("hell")
+ * let param_5 = obj.search("leetcoded")
+ */
 
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

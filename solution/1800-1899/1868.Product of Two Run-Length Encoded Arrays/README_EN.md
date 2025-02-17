@@ -1,8 +1,21 @@
-# [1868. Product of Two Run-Length Encoded Arrays](https://leetcode.com/problems/product-of-two-run-length-encoded-arrays)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1868.Product%20of%20Two%20Run-Length%20Encoded%20Arrays/README_EN.md
+tags:
+    - Array
+    - Two Pointers
+---
+
+<!-- problem:start -->
+
+# [1868. Product of Two Run-Length Encoded Arrays 🔒](https://leetcode.com/problems/product-of-two-run-length-encoded-arrays)
 
 [中文文档](/solution/1800-1899/1868.Product%20of%20Two%20Run-Length%20Encoded%20Arrays/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p><strong>Run-length encoding</strong> is a compression algorithm that allows for an integer array <code>nums</code> with many segments of <strong>consecutive repeated</strong> numbers to be represented by a (generally smaller) 2D array <code>encoded</code>. Each <code>encoded[i] = [val<sub>i</sub>, freq<sub>i</sub>]</code> describes the <code>i<sup>th</sup></code> segment of repeated numbers in <code>nums</code> where <code>val<sub>i</sub></code> is the value that is repeated <code>freq<sub>i</sub></code> times.</p>
 
@@ -25,7 +38,7 @@
 <p><strong>Note:</strong> Compression should be done such that the run-length encoded array has the <strong>minimum</strong> possible length.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> encoded1 = [[1,3],[2,3]], encoded2 = [[6,3],[3,3]]
@@ -34,7 +47,7 @@
 prodNums = [6,6,6,6,6,6], which is compressed into the run-length encoded array [[6,6]].
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> encoded1 = [[1,3],[2,1],[3,2]], encoded2 = [[2,3],[3,3]]
@@ -55,26 +68,128 @@ prodNums = [2,2,2,6,9,9], which is compressed into the run-length encoded array 
 	<li>The full arrays that <code>encoded1</code> and <code>encoded2</code> represent are the same length.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def findRLEArray(
+        self, encoded1: List[List[int]], encoded2: List[List[int]]
+    ) -> List[List[int]]:
+        ans = []
+        j = 0
+        for vi, fi in encoded1:
+            while fi:
+                f = min(fi, encoded2[j][1])
+                v = vi * encoded2[j][0]
+                if ans and ans[-1][0] == v:
+                    ans[-1][1] += f
+                else:
+                    ans.append([v, f])
+                fi -= f
+                encoded2[j][1] -= f
+                if encoded2[j][1] == 0:
+                    j += 1
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public List<List<Integer>> findRLEArray(int[][] encoded1, int[][] encoded2) {
+        List<List<Integer>> ans = new ArrayList<>();
+        int j = 0;
+        for (var e : encoded1) {
+            int vi = e[0], fi = e[1];
+            while (fi > 0) {
+                int f = Math.min(fi, encoded2[j][1]);
+                int v = vi * encoded2[j][0];
+                int m = ans.size();
+                if (m > 0 && ans.get(m - 1).get(0) == v) {
+                    ans.get(m - 1).set(1, ans.get(m - 1).get(1) + f);
+                } else {
+                    ans.add(new ArrayList<>(List.of(v, f)));
+                }
+                fi -= f;
+                encoded2[j][1] -= f;
+                if (encoded2[j][1] == 0) {
+                    ++j;
+                }
+            }
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<vector<int>> findRLEArray(vector<vector<int>>& encoded1, vector<vector<int>>& encoded2) {
+        vector<vector<int>> ans;
+        int j = 0;
+        for (auto& e : encoded1) {
+            int vi = e[0], fi = e[1];
+            while (fi) {
+                int f = min(fi, encoded2[j][1]);
+                int v = vi * encoded2[j][0];
+                if (!ans.empty() && ans.back()[0] == v) {
+                    ans.back()[1] += f;
+                } else {
+                    ans.push_back({v, f});
+                }
+                fi -= f;
+                encoded2[j][1] -= f;
+                if (encoded2[j][1] == 0) {
+                    ++j;
+                }
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func findRLEArray(encoded1 [][]int, encoded2 [][]int) (ans [][]int) {
+	j := 0
+	for _, e := range encoded1 {
+		vi, fi := e[0], e[1]
+		for fi > 0 {
+			f := min(fi, encoded2[j][1])
+			v := vi * encoded2[j][0]
+			if len(ans) > 0 && ans[len(ans)-1][0] == v {
+				ans[len(ans)-1][1] += f
+			} else {
+				ans = append(ans, []int{v, f})
+			}
+			fi -= f
+			encoded2[j][1] -= f
+			if encoded2[j][1] == 0 {
+				j++
+			}
+		}
+	}
+	return
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,22 @@
-# [949. 给定数字能组成的最大时间](https://leetcode-cn.com/problems/largest-time-for-given-digits)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0900-0999/0949.Largest%20Time%20for%20Given%20Digits/README.md
+tags:
+    - 数组
+    - 字符串
+    - 枚举
+---
+
+<!-- problem:start -->
+
+# [949. 给定数字能组成的最大时间](https://leetcode.cn/problems/largest-time-for-given-digits)
 
 [English Version](/solution/0900-0999/0949.Largest%20Time%20for%20Given%20Digits/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给定一个由 4 位数字组成的数组，返回可以设置的符合 24 小时制的最大时间。</p>
 
@@ -53,32 +65,145 @@
 	<li><code>0 <= arr[i] <= 9</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：暴力枚举
+
+我们可以枚举所有的 4 个数字的排列，然后判断每个排列是否满足题目要求，如果满足则更新答案。
+
+时间复杂度 $O(4^3)$，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def largestTimeFromDigits(self, arr: List[int]) -> str:
+        cnt = [0] * 10
+        for v in arr:
+            cnt[v] += 1
+        for h in range(23, -1, -1):
+            for m in range(59, -1, -1):
+                t = [0] * 10
+                t[h // 10] += 1
+                t[h % 10] += 1
+                t[m // 10] += 1
+                t[m % 10] += 1
+                if cnt == t:
+                    return f'{h:02}:{m:02}'
+        return ''
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public String largestTimeFromDigits(int[] arr) {
+        int ans = -1;
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                for (int k = 0; k < 4; ++k) {
+                    if (i != j && j != k && i != k) {
+                        int h = arr[i] * 10 + arr[j];
+                        int m = arr[k] * 10 + arr[6 - i - j - k];
+                        if (h < 24 && m < 60) {
+                            ans = Math.max(ans, h * 60 + m);
+                        }
+                    }
+                }
+            }
+        }
+        return ans < 0 ? "" : String.format("%02d:%02d", ans / 60, ans % 60);
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    string largestTimeFromDigits(vector<int>& arr) {
+        int ans = -1;
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                for (int k = 0; k < 4; ++k) {
+                    if (i != j && j != k && i != k) {
+                        int h = arr[i] * 10 + arr[j];
+                        int m = arr[k] * 10 + arr[6 - i - j - k];
+                        if (h < 24 && m < 60) {
+                            ans = max(ans, h * 60 + m);
+                        }
+                    }
+                }
+            }
+        }
+        if (ans < 0) return "";
+        int h = ans / 60, m = ans % 60;
+        return to_string(h / 10) + to_string(h % 10) + ":" + to_string(m / 10) + to_string(m % 10);
+    }
+};
 ```
 
+#### Go
+
+```go
+func largestTimeFromDigits(arr []int) string {
+	ans := -1
+	for i := 0; i < 4; i++ {
+		for j := 0; j < 4; j++ {
+			for k := 0; k < 4; k++ {
+				if i != j && j != k && i != k {
+					h := arr[i]*10 + arr[j]
+					m := arr[k]*10 + arr[6-i-j-k]
+					if h < 24 && m < 60 {
+						ans = max(ans, h*60+m)
+					}
+				}
+			}
+		}
+	}
+	if ans < 0 {
+		return ""
+	}
+	return fmt.Sprintf("%02d:%02d", ans/60, ans%60)
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### 方法二
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def largestTimeFromDigits(self, arr: List[int]) -> str:
+        ans = -1
+        for i in range(4):
+            for j in range(4):
+                for k in range(4):
+                    if i != j and i != k and j != k:
+                        h = arr[i] * 10 + arr[j]
+                        m = arr[k] * 10 + arr[6 - i - j - k]
+                        if h < 24 and m < 60:
+                            ans = max(ans, h * 60 + m)
+        return '' if ans < 0 else f'{ans // 60:02}:{ans % 60:02}'
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

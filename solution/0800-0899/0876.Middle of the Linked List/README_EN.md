@@ -1,64 +1,62 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0876.Middle%20of%20the%20Linked%20List/README_EN.md
+tags:
+    - Linked List
+    - Two Pointers
+---
+
+<!-- problem:start -->
+
 # [876. Middle of the Linked List](https://leetcode.com/problems/middle-of-the-linked-list)
 
 [中文文档](/solution/0800-0899/0876.Middle%20of%20the%20Linked%20List/README.md)
 
 ## Description
 
-<p>Given a non-empty, singly&nbsp;linked list with head node <code>head</code>, return&nbsp;a&nbsp;middle node of linked list.</p>
+<!-- description:start -->
 
-<p>If there are two middle nodes, return the second middle node.</p>
+<p>Given the <code>head</code> of a singly linked list, return <em>the middle node of the linked list</em>.</p>
+
+<p>If there are two middle nodes, return <strong>the second middle</strong> node.</p>
 
 <p>&nbsp;</p>
-
-<div>
-
-<p><strong>Example 1:</strong></p>
-
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0800-0899/0876.Middle%20of%20the%20Linked%20List/images/lc-midlist1.jpg" style="width: 544px; height: 65px;" />
 <pre>
-
-<strong>Input: </strong><span id="example-input-1-1">[1,2,3,4,5]</span>
-
-<strong>Output: </strong>Node 3 from this list (Serialization: <span id="example-output-1">[3,4,5]</span>)
-
-The returned node has value 3.  (The judge&#39;s serialization of this node is [3,4,5]).
-
-Note that we returned a ListNode object ans, such that:
-
-ans.val = 3, ans.next.val = 4, ans.next.next.val = 5, and ans.next.next.next = NULL.
-
+<strong>Input:</strong> head = [1,2,3,4,5]
+<strong>Output:</strong> [3,4,5]
+<strong>Explanation:</strong> The middle node of the list is node 3.
 </pre>
 
-<div>
-
-<p><strong>Example 2:</strong></p>
-
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0800-0899/0876.Middle%20of%20the%20Linked%20List/images/lc-midlist2.jpg" style="width: 664px; height: 65px;" />
 <pre>
-
-<strong>Input: </strong><span id="example-input-2-1">[1,2,3,4,5,6]</span>
-
-<strong>Output: </strong>Node 4 from this list (Serialization: <span id="example-output-2">[4,5,6]</span>)
-
-Since the list has two middle nodes with values 3 and 4, we return the second one.
-
+<strong>Input:</strong> head = [1,2,3,4,5,6]
+<strong>Output:</strong> [4,5,6]
+<strong>Explanation:</strong> Since the list has two middle nodes with values 3 and 4, we return the second one.
 </pre>
 
 <p>&nbsp;</p>
-
-<p><strong>Note:</strong></p>
+<p><strong>Constraints:</strong></p>
 
 <ul>
-	<li>The number of nodes in the given list will be between <code>1</code>&nbsp;and <code>100</code>.</li>
+	<li>The number of nodes in the list is in the range <code>[1, 100]</code>.</li>
+	<li><code>1 &lt;= Node.val &lt;= 100</code></li>
 </ul>
 
-</div>
-
-</div>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -74,7 +72,7 @@ class Solution:
         return slow
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -99,33 +97,7 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-/**
- * Definition for singly-linked list.
- * class ListNode {
- *     val: number
- *     next: ListNode | null
- *     constructor(val?: number, next?: ListNode | null) {
- *         this.val = (val===undefined ? 0 : val)
- *         this.next = (next===undefined ? null : next)
- *     }
- * }
- */
-
-function middleNode(head: ListNode | null): ListNode | null {
-    let fast = head,
-        slow = head;
-    while (fast != null && fast.next != null) {
-        fast = fast.next.next;
-        slow = slow.next;
-    }
-    return slow;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -151,7 +123,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -170,10 +142,124 @@ func middleNode(head *ListNode) *ListNode {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+function middleNode(head: ListNode | null): ListNode | null {
+    let fast = head,
+        slow = head;
+    while (fast != null && fast.next != null) {
+        fast = fast.next.next;
+        slow = slow.next;
+    }
+    return slow;
+}
 ```
 
+#### Rust
+
+```rust
+// Definition for singly-linked list.
+// #[derive(PartialEq, Eq, Clone, Debug)]
+// pub struct ListNode {
+//   pub val: i32,
+//   pub next: Option<Box<ListNode>>
+// }
+//
+// impl ListNode {
+//   #[inline]
+//   fn new(val: i32) -> Self {
+//     ListNode {
+//       next: None,
+//       val
+//     }
+//   }
+// }
+impl Solution {
+    pub fn middle_node(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+        let mut slow = &head;
+        let mut fast = &head;
+        while fast.is_some() && fast.as_ref().unwrap().next.is_some() {
+            slow = &slow.as_ref().unwrap().next;
+            fast = &fast.as_ref().unwrap().next.as_ref().unwrap().next;
+        }
+        slow.clone()
+    }
+}
+```
+
+#### PHP
+
+```php
+/**
+ * Definition for a singly-linked list.
+ * class ListNode {
+ *     public $val = 0;
+ *     public $next = null;
+ *     function __construct($val = 0, $next = null) {
+ *         $this->val = $val;
+ *         $this->next = $next;
+ *     }
+ * }
+ */
+class Solution {
+    /**
+     * @param ListNode $head
+     * @return ListNode
+     */
+    function middleNode($head) {
+        $count = 0;
+        $tmpHead = $head;
+        while ($tmpHead != null) {
+            $tmpHead = $tmpHead->next;
+            $count++;
+        }
+        $len = $count - floor($count / 2);
+        while ($count != $len) {
+            $head = $head->next;
+            $count--;
+        }
+        return $head;
+    }
+}
+```
+
+#### C
+
+```c
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+
+struct ListNode* middleNode(struct ListNode* head) {
+    struct ListNode* fast = head;
+    struct ListNode* slow = head;
+    while (fast && fast->next) {
+        fast = fast->next->next;
+        slow = slow->next;
+    }
+    return slow;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,24 +1,39 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0162.Find%20Peak%20Element/README_EN.md
+tags:
+    - Array
+    - Binary Search
+---
+
+<!-- problem:start -->
+
 # [162. Find Peak Element](https://leetcode.com/problems/find-peak-element)
 
 [中文文档](/solution/0100-0199/0162.Find%20Peak%20Element/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>A peak element is an element that is strictly greater than its neighbors.</p>
 
-<p>Given an integer array <code>nums</code>, find a peak element, and return its index. If&nbsp;the array contains multiple peaks, return the index to <strong>any of the peaks</strong>.</p>
+<p>Given a <strong>0-indexed</strong> integer array <code>nums</code>, find a peak element, and return its index. If the array contains multiple peaks, return the index to <strong>any of the peaks</strong>.</p>
 
-<p>You may imagine that <code>nums[-1] = nums[n] = -&infin;</code>.</p>
+<p>You may imagine that <code>nums[-1] = nums[n] = -&infin;</code>. In other words, an element is always considered to be strictly greater than a neighbor that is outside the array.</p>
+
+<p>You must write an algorithm that runs in <code>O(log n)</code> time.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,2,3,1]
 <strong>Output:</strong> 2
 <strong>Explanation:</strong> 3 is a peak element and your function should return the index number 2.</pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,2,1,3,5,6,4]
@@ -34,16 +49,25 @@
 	<li><code>nums[i] != nums[i + 1]</code> for all valid <code>i</code>.</li>
 </ul>
 
-<p>&nbsp;</p>
-<strong>Follow up:</strong>&nbsp;Could you implement a solution with logarithmic complexity?
+<!-- description:end -->
 
 ## Solutions
 
-Binary search.
+<!-- solution:start -->
+
+### Solution 1: Binary Search
+
+We define the left boundary of binary search as $left=0$ and the right boundary as $right=n-1$, where $n$ is the length of the array. In each step of binary search, we find the middle element $mid$ of the current interval, and compare the values of $mid$ and its right neighbor $mid+1$:
+
+-   If the value of $mid$ is greater than the value of $mid+1$, there exists a peak element on the left side, and we update the right boundary $right$ to $mid$.
+-   Otherwise, there exists a peak element on the right side, and we update the left boundary $left$ to $mid+1$.
+-   Finally, when the left boundary $left$ is equal to the right boundary $right$, we have found the peak element of the array.
+
+The time complexity is $O(\log n)$, where $n$ is the length of the array $nums$. Each step of binary search can reduce the search interval by half, so the time complexity is $O(\log n)$. The space complexity is $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -58,7 +82,7 @@ class Solution:
         return left
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -77,42 +101,7 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function findPeakElement(nums: number[]): number {
-    let left = 0,
-        right = nums.length - 1;
-    while (left < right) {
-        let mid: number = (left + right) >> 1;
-        if (nums[mid] <= nums[mid + 1]) {
-            left = mid + 1;
-        } else {
-            right = mid;
-        }
-    }
-    return left;
-}
-```
-
-### **Go**
-
-```go
-func findPeakElement(nums []int) int {
-	left, right := 0, len(nums)-1
-	for left < right {
-		mid := (left + right) >> 1
-		if nums[mid] > nums[mid+1] {
-			right = mid
-		} else {
-			left = mid + 1
-		}
-	}
-	return left
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -132,10 +121,42 @@ public:
 };
 ```
 
-### **...**
+#### Go
 
+```go
+func findPeakElement(nums []int) int {
+	left, right := 0, len(nums)-1
+	for left < right {
+		mid := (left + right) >> 1
+		if nums[mid] > nums[mid+1] {
+			right = mid
+		} else {
+			left = mid + 1
+		}
+	}
+	return left
+}
 ```
 
+#### TypeScript
+
+```ts
+function findPeakElement(nums: number[]): number {
+    let [left, right] = [0, nums.length - 1];
+    while (left < right) {
+        const mid = (left + right) >> 1;
+        if (nums[mid] > nums[mid + 1]) {
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+    return left;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -2,17 +2,25 @@ class Solution {
 public:
     string longestNiceSubstring(string s) {
         int n = s.size();
-        string ans = "";
-        for (int i = 0; i < n; ++i)
-        {
-            int lower = 0, upper = 0;
-            for (int j = i; j < n; ++j)
-            {
-                if (islower(s[j])) lower |= 1 << (s[j] - 'a');
-                else upper |= 1 << (s[j] - 'A');
-                if (lower == upper && j - i + 1 > ans.size()) ans = s.substr(i, j - i + 1);
+        int k = -1, mx = 0;
+        for (int i = 0; i < n; ++i) {
+            unordered_set<char> ss;
+            for (int j = i; j < n; ++j) {
+                ss.insert(s[j]);
+                bool ok = true;
+                for (auto& a : ss) {
+                    char b = a ^ 32;
+                    if (!(ss.count(a) && ss.count(b))) {
+                        ok = false;
+                        break;
+                    }
+                }
+                if (ok && mx < j - i + 1) {
+                    mx = j - i + 1;
+                    k = i;
+                }
             }
         }
-        return ans;
+        return k == -1 ? "" : s.substr(k, mx);
     }
 };

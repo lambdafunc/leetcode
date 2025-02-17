@@ -1,13 +1,11 @@
 class Solution {
 public:
     vector<int> sumZero(int n) {
-        int presum = 0;
-        vector<int> res;
-        for (int i = 1; i < n; ++i) {
-            res.push_back(i);
-            presum += i;
+        vector<int> ans(n);
+        for (int i = 1, j = 0; i <= n / 2; ++i) {
+            ans[j++] = i;
+            ans[j++] = -i;
         }
-        res.push_back(-presum);
-        return res;
+        return ans;
     }
 };

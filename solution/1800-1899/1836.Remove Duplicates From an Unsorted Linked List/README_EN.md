@@ -1,8 +1,21 @@
-# [1836. Remove Duplicates From an Unsorted Linked List](https://leetcode.com/problems/remove-duplicates-from-an-unsorted-linked-list)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/README_EN.md
+tags:
+    - Hash Table
+    - Linked List
+---
+
+<!-- problem:start -->
+
+# [1836. Remove Duplicates From an Unsorted Linked List 🔒](https://leetcode.com/problems/remove-duplicates-from-an-unsorted-linked-list)
 
 [中文文档](/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given the <code>head</code> of a linked list, find all the values that appear <strong>more than once</strong> in the list and delete the nodes that have any of those values.</p>
 
@@ -10,9 +23,9 @@
 
 <p>&nbsp;</p>
 
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list.jpg" style="width: 422px; height: 222px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list.jpg" style="width: 422px; height: 222px;" />
 
 <pre>
 
@@ -24,9 +37,9 @@
 
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list-1.jpg" style="width: 422px; height: 151px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list-1.jpg" style="width: 422px; height: 151px;" />
 
 <pre>
 
@@ -38,9 +51,9 @@
 
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list-2.jpg" style="width: 500px; height: 142px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1800-1899/1836.Remove%20Duplicates%20From%20an%20Unsorted%20Linked%20List/images/tmp-linked-list-2.jpg" style="width: 500px; height: 142px;" />
 
 <pre>
 
@@ -57,15 +70,28 @@
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li>The number of nodes in the list is in the range&nbsp;<code>[1, 10<sup>5</sup>]</code></li>
-	<li><code>1 &lt;= Node.val &lt;= 10<sup>5</sup></code></li>
+
+    <li>The number of nodes in the list is in the range&nbsp;<code>[1, 10<sup>5</sup>]</code></li>
+
+    <li><code>1 &lt;= Node.val &lt;= 10<sup>5</sup></code></li>
+
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Hash Table
+
+We can use a hash table $cnt$ to count the number of occurrences of each element in the linked list, and then traverse the linked list to delete elements that appear more than once.
+
+The time complexity is $O(n)$, and the space complexity is $O(n)$, where $n$ is the length of the linked list.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -75,16 +101,15 @@
 #         self.next = next
 class Solution:
     def deleteDuplicatesUnsorted(self, head: ListNode) -> ListNode:
+        cnt = Counter()
         cur = head
-        counter = Counter()
         while cur:
-            counter[cur.val] += 1
+            cnt[cur.val] += 1
             cur = cur.next
-
         dummy = ListNode(0, head)
         pre, cur = dummy, head
         while cur:
-            if counter[cur.val] > 1:
+            if cnt[cur.val] > 1:
                 pre.next = cur.next
             else:
                 pre = cur
@@ -92,7 +117,7 @@ class Solution:
         return dummy.next
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -107,14 +132,13 @@ class Solution:
  */
 class Solution {
     public ListNode deleteDuplicatesUnsorted(ListNode head) {
-        Map<Integer, Integer> counter = new HashMap<>();
+        Map<Integer, Integer> cnt = new HashMap<>();
         for (ListNode cur = head; cur != null; cur = cur.next) {
-            counter.put(cur.val, counter.getOrDefault(cur.val, 0) + 1);
+            cnt.put(cur.val, cnt.getOrDefault(cur.val, 0) + 1);
         }
-
         ListNode dummy = new ListNode(0, head);
         for (ListNode pre = dummy, cur = head; cur != null; cur = cur.next) {
-            if (counter.get(cur.val) > 1) {
+            if (cnt.get(cur.val) > 1) {
                 pre.next = cur.next;
             } else {
                 pre = cur;
@@ -125,7 +149,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -141,14 +165,13 @@ class Solution {
 class Solution {
 public:
     ListNode* deleteDuplicatesUnsorted(ListNode* head) {
-        unordered_map<int, int> counter;
-        for (ListNode* cur = head; cur != nullptr; cur = cur->next) {
-            ++counter[cur->val];
+        unordered_map<int, int> cnt;
+        for (ListNode* cur = head; cur; cur = cur->next) {
+            cnt[cur->val]++;
         }
-
         ListNode* dummy = new ListNode(0, head);
-        for (ListNode* pre = dummy, *cur = head; cur != nullptr; cur = cur->next) {
-            if (counter[cur->val] > 1) {
+        for (ListNode *pre = dummy, *cur = head; cur; cur = cur->next) {
+            if (cnt[cur->val] > 1) {
                 pre->next = cur->next;
             } else {
                 pre = cur;
@@ -159,10 +182,68 @@ public:
 };
 ```
 
-### **...**
+#### Go
 
+```go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func deleteDuplicatesUnsorted(head *ListNode) *ListNode {
+	cnt := map[int]int{}
+	for cur := head; cur != nil; cur = cur.Next {
+		cnt[cur.Val]++
+	}
+	dummy := &ListNode{0, head}
+	for pre, cur := dummy, head; cur != nil; cur = cur.Next {
+		if cnt[cur.Val] > 1 {
+			pre.Next = cur.Next
+		} else {
+			pre = cur
+		}
+	}
+	return dummy.Next
+}
 ```
 
+#### TypeScript
+
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+function deleteDuplicatesUnsorted(head: ListNode | null): ListNode | null {
+    const cnt: Map<number, number> = new Map();
+    for (let cur = head; cur; cur = cur.next) {
+        const x = cur.val;
+        cnt.set(x, (cnt.get(x) ?? 0) + 1);
+    }
+    const dummy = new ListNode(0, head);
+    for (let pre = dummy, cur = head; cur; cur = cur.next) {
+        if (cnt.get(cur.val)! > 1) {
+            pre.next = cur.next;
+        } else {
+            pre = cur;
+        }
+    }
+    return dummy.next;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

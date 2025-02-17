@@ -1,56 +1,75 @@
-# [1087. 花括号展开](https://leetcode-cn.com/problems/brace-expansion)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1000-1099/1087.Brace%20Expansion/README.md
+rating: 1480
+source: 第 2 场双周赛 Q3
+tags:
+    - 广度优先搜索
+    - 字符串
+    - 回溯
+---
+
+<!-- problem:start -->
+
+# [1087. 花括号展开 🔒](https://leetcode.cn/problems/brace-expansion)
 
 [English Version](/solution/1000-1099/1087.Brace%20Expansion/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>我们用一个特殊的字符串&nbsp;<code>S</code>&nbsp;来表示一份单词列表，之所以能展开成为一个列表，是因为这个字符串&nbsp;<code>S</code>&nbsp;中存在一个叫做「选项」的概念：</p>
+<p>给定一个表示单词列表的字符串&nbsp;<code>s</code>&nbsp;。单词中的每个字母都有一个或多个选项。</p>
 
-<p>单词中的每个字母可能只有一个选项或存在多个备选项。如果只有一个选项，那么该字母按原样表示。</p>
+<ul>
+	<li>如果有一个选项，则字母按原样表示。</li>
+	<li>如果有多个选项，则用大括号分隔选项。例如,<meta charset="UTF-8" />&nbsp;&nbsp;<code>"{a,b,c}"</code>&nbsp; 表示选项<meta charset="UTF-8" />&nbsp;&nbsp;<code>["a", "b", "c"]</code>&nbsp; 。</li>
+</ul>
 
-<p>如果存在多个选项，就会以花括号包裹来表示这些选项（使它们与其他字母分隔开），例如 <code>&quot;{a,b,c}&quot;</code> 表示&nbsp;<code>[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</code>。</p>
+<p>例如，如果<meta charset="UTF-8" />&nbsp;&nbsp;<code>s = "a{b,c}"</code>&nbsp; ，第一个字符总是 <code>'a'</code> ，但第二个字符可以是 <code>'b'</code> 或 <code>'c'</code> 。原来的列表是<meta charset="UTF-8" />&nbsp;<code>["ab", "ac"]</code>&nbsp;。</p>
 
-<p><strong>例子：</strong><code>&quot;{a,b,c}d{e,f}&quot;</code>&nbsp;可以表示单词列表&nbsp;<code>[&quot;ade&quot;, &quot;adf&quot;, &quot;bde&quot;, &quot;bdf&quot;, &quot;cde&quot;, &quot;cdf&quot;]</code>。</p>
-
-<p>请你按字典顺序，返回所有以这种方式形成的单词。</p>
+<p>请你 <strong>按字典顺序</strong> ，返回所有以这种方式形成的单词。</p>
 
 <p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入：</strong>&quot;{a,b}c{d,e}f&quot;
-<strong>输出：</strong>[&quot;acdf&quot;,&quot;acef&quot;,&quot;bcdf&quot;,&quot;bcef&quot;]
+<pre>
+<strong>输入：</strong>s = "{a,b}c{d,e}f"
+<strong>输出：</strong>["acdf","acef","bcdf","bcef"]
 </pre>
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入：</strong>&quot;abcd&quot;
-<strong>输出：</strong>[&quot;abcd&quot;]
+<pre>
+<strong>输入：</strong>s = "abcd"
+<strong>输出：</strong>["abcd"]
 </pre>
 
 <p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
-<ol>
+<ul>
 	<li><code>1 &lt;= S.length &lt;= 50</code></li>
-	<li>你可以假设题目中不存在嵌套的花括号</li>
-	<li>在一对连续的花括号（开花括号与闭花括号）之间的所有字母都不会相同</li>
-</ol>
+	<li><meta charset="UTF-8" /><code>s</code>&nbsp;由括号 <code>'{}'</code>&nbsp;, <code>','</code> 和小写英文字母组成。</li>
+	<li><meta charset="UTF-8" /><code>s</code>&nbsp;保证是一个有效的输入。</li>
+	<li>没有嵌套的大括号。</li>
+	<li>在一对连续的左括号和右括号内的所有字符都是不同的。</li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-先将字符串 s 进行 convert 转换，比如 `"{a,b}{z,x,y}"` 转换为 `[['a', 'b'], ['z', 'x', 'y']]`，然后利用 DFS 回溯获取每一个单词，放到 ans 中，最后对 ans 进行排序并返回即可。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -60,12 +79,12 @@ class Solution:
                 return
             if s[0] == '{':
                 j = s.find('}')
-                items.append(s[1: j].split(','))
-                convert(s[j + 1:])
+                items.append(s[1:j].split(','))
+                convert(s[j + 1 :])
             else:
                 j = s.find('{')
                 if j != -1:
-                    items.append(s[: j].split(','))
+                    items.append(s[:j].split(','))
                     convert(s[j:])
                 else:
                     items.append(s.split(','))
@@ -87,9 +106,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -138,10 +155,8 @@ class Solution {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,24 @@
-# [1347. 制造字母异位词的最小步骤数](https://leetcode-cn.com/problems/minimum-number-of-steps-to-make-two-strings-anagram)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1347.Minimum%20Number%20of%20Steps%20to%20Make%20Two%20Strings%20Anagram/README.md
+rating: 1330
+source: 第 175 场周赛 Q2
+tags:
+    - 哈希表
+    - 字符串
+    - 计数
+---
+
+<!-- problem:start -->
+
+# [1347. 制造字母异位词的最小步骤数](https://leetcode.cn/problems/minimum-number-of-steps-to-make-two-strings-anagram)
 
 [English Version](/solution/1300-1399/1347.Minimum%20Number%20of%20Steps%20to%20Make%20Two%20Strings%20Anagram/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你两个长度相等的字符串&nbsp;<code>s</code> 和 <code>t</code>。每一个步骤中，你可以选择将&nbsp;<code>t</code>&nbsp;中的 <strong>任一字符</strong> 替换为 <strong>另一个字符</strong>。</p>
 
@@ -57,98 +71,135 @@
 	<li><code>s</code> 和 <code>t</code>&nbsp;只包含小写英文字母</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-“哈希表”实现。
+### 方法一：计数
 
-<!-- tabs:start -->
+我们可以使用一个哈希表或者数组 $\textit{cnt}$ 来统计字符串 $\textit{s}$ 中每个字符出现的次数，然后遍历字符串 $\textit{t}$，对于每个字符，我们在 $\textit{cnt}$ 中将其出现的次数减一，如果减一后的值小于 $0$，说明这个字符在字符串 $\textit{t}$ 中出现的次数比在字符串 $\textit{s}$ 中多，我们需要将这个字符替换掉，将答案加一。
 
-### **Python3**
+遍历结束后，返回答案即可。
 
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+时间复杂度 $O(m + n)$，空间复杂度 $O(|\Sigma|)$，其中 $m$ 和 $n$ 分别是字符串 $\textit{s}$ 和 $\textit{t}$ 的长度，而 $|\Sigma|$ 是字符集的大小，本题中字符集为小写字母，因此 $|\Sigma| = 26$。
+
+#### Python3
 
 ```python
 class Solution:
     def minSteps(self, s: str, t: str) -> int:
-        counter = Counter(s)
-        res = 0
+        cnt = Counter(s)
+        ans = 0
         for c in t:
-            if counter[c] > 0:
-                counter[c] -= 1
-            else:
-                res += 1
-        return res
+            cnt[c] -= 1
+            ans += cnt[c] < 0
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int minSteps(String s, String t) {
-        int[] counter = new int[26];
+        int[] cnt = new int[26];
         for (char c : s.toCharArray()) {
-            ++counter[c - 'a'];
+            cnt[c - 'a']++;
         }
-        int res = 0;
+        int ans = 0;
         for (char c : t.toCharArray()) {
-            if (counter[c - 'a'] > 0) {
-                --counter[c - 'a'];
-            } else {
-                ++res;
+            if (--cnt[c - 'a'] < 0) {
+                ans++;
             }
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int minSteps(string s, string t) {
-        vector<int> counter(26);
-        for (char c : s) ++counter[c - 'a'];
-        int res = 0;
-        for (char c : t)
-        {
-            if (counter[c - 'a'] > 0) --counter[c - 'a'];
-            else ++res;
+        int cnt[26]{};
+        for (char c : s) {
+            ++cnt[c - 'a'];
         }
-        return res;
+        int ans = 0;
+        for (char c : t) {
+            if (--cnt[c - 'a'] < 0) {
+                ++ans;
+            }
+        }
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func minSteps(s string, t string) int {
-	counter := make([]int, 26)
+func minSteps(s string, t string) (ans int) {
+	cnt := [26]int{}
 	for _, c := range s {
-		counter[c-'a']++
+		cnt[c-'a']++
 	}
-	res := 0
 	for _, c := range t {
-		if counter[c-'a'] > 0 {
-			counter[c-'a']--
-		} else {
-			res++
+		cnt[c-'a']--
+		if cnt[c-'a'] < 0 {
+			ans++
 		}
 	}
-	return res
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function minSteps(s: string, t: string): number {
+    const cnt: number[] = Array(26).fill(0);
+    for (const c of s) {
+        ++cnt[c.charCodeAt(0) - 97];
+    }
+    let ans = 0;
+    for (const c of t) {
+        if (--cnt[c.charCodeAt(0) - 97] < 0) {
+            ++ans;
+        }
+    }
+    return ans;
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * @param {string} s
+ * @param {string} t
+ * @return {number}
+ */
+var minSteps = function (s, t) {
+    const cnt = Array(26).fill(0);
+    for (const c of s) {
+        ++cnt[c.charCodeAt(0) - 97];
+    }
+    let ans = 0;
+    for (const c of t) {
+        if (--cnt[c.charCodeAt(0) - 97] < 0) {
+            ++ans;
+        }
+    }
+    return ans;
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

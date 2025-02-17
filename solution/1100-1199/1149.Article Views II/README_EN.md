@@ -1,8 +1,20 @@
-# [1149. Article Views II](https://leetcode.com/problems/article-views-ii)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1149.Article%20Views%20II/README_EN.md
+tags:
+    - Database
+---
+
+<!-- problem:start -->
+
+# [1149. Article Views II 🔒](https://leetcode.com/problems/article-views-ii)
 
 [中文文档](/solution/1100-1199/1149.Article%20Views%20II/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Table: <code>Views</code></p>
 
@@ -15,17 +27,23 @@
 | viewer_id     | int     |
 | view_date     | date    |
 +---------------+---------+
-There is no primary key for this table, it may have duplicate rows.
+This table may have duplicate rows.
 Each row of this table indicates that some viewer viewed an article (written by some author) on some date. 
 Note that equal author_id and viewer_id indicate the same person.</pre>
 
 <p>&nbsp;</p>
 
-<p>Write an SQL query to find all the people who viewed more than one article on the same date, sorted in ascending order by their id.</p>
+<p>Write a solution to find all the people who viewed more than one article on the same date.</p>
 
-<p>The query result format is in the following example:</p>
+<p>Return the result table sorted by <code>id</code> in ascending order.</p>
+
+<p>The result format is in the following example.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
+<strong>Input:</strong> 
 Views table:
 +------------+-----------+-----------+------------+
 | article_id | author_id | viewer_id | view_date  |
@@ -39,33 +57,38 @@ Views table:
 | 3          | 4         | 4         | 2019-07-21 |
 | 3          | 4         | 4         | 2019-07-21 |
 +------------+-----------+-----------+------------+
-
-Result table:
+<strong>Output:</strong> 
 +------+
 | id   |
 +------+
 | 5    |
 | 6    |
-+------+</pre>
++------+
+</pre>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **SQL**
+#### MySQL
 
 ```sql
 # Write your MySQL query statement below
-SELECT
-    DISTINCT(viewer_id) as id
-FROM
-    Views
-GROUP BY
-    view_date, viewer_id
-HAVING
-    COUNT(DISTINCT(article_id)) > 1
-ORDER BY
-    id;
+SELECT DISTINCT viewer_id AS id
+FROM Views
+GROUP BY viewer_id, view_date
+HAVING COUNT(DISTINCT article_id) > 1
+ORDER BY 1;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,30 +1,32 @@
+#include <semaphore.h>
+
 class FooBar {
 private:
     int n;
-    std::mutex _mutex1;
-    std::mutex _mutex2;
+    sem_t f, b;
 
 public:
     FooBar(int n) {
         this->n = n;
-        _mutex2.lock();
+        sem_init(&f, 0, 1);
+        sem_init(&b, 0, 0);
     }
 
     void foo(function<void()> printFoo) {
-        
         for (int i = 0; i < n; i++) {
-            _mutex1.lock();
-        	printFoo();
-            _mutex2.unlock();
+            sem_wait(&f);
+            // printFoo() outputs "foo". Do not change or remove this line.
+            printFoo();
+            sem_post(&b);
         }
     }
 
     void bar(function<void()> printBar) {
-        
         for (int i = 0; i < n; i++) {
-            _mutex2.lock();
-        	printBar();
-            _mutex1.unlock();
+            sem_wait(&b);
+            // printBar() outputs "bar". Do not change or remove this line.
+            printBar();
+            sem_post(&f);
         }
     }
 };

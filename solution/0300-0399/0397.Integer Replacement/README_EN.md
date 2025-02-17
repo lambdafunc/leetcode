@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0397.Integer%20Replacement/README_EN.md
+tags:
+    - Greedy
+    - Bit Manipulation
+    - Memoization
+    - Dynamic Programming
+---
+
+<!-- problem:start -->
+
 # [397. Integer Replacement](https://leetcode.com/problems/integer-replacement)
 
 [中文文档](/solution/0300-0399/0397.Integer%20Replacement/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given a positive integer <code>n</code>,&nbsp;you can apply one of the following&nbsp;operations:</p>
 
@@ -11,10 +26,10 @@
 	<li>If <code>n</code> is odd, replace <code>n</code> with either <code>n + 1</code> or <code>n - 1</code>.</li>
 </ol>
 
-<p>Return <em>the minimum number of operations needed for <code>n</code> to become <code>1</code></em>.</p>
+<p>Return <em>the minimum number of operations needed for</em> <code>n</code> <em>to become</em> <code>1</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 8
@@ -22,7 +37,7 @@
 <strong>Explanation:</strong> 8 -&gt; 4 -&gt; 2 -&gt; 1
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 7
@@ -31,7 +46,7 @@
 or 7 -&gt; 6 -&gt; 3 -&gt; 2 -&gt; 1
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 4
@@ -45,11 +60,17 @@ or 7 -&gt; 6 -&gt; 3 -&gt; 2 -&gt; 1
 	<li><code>1 &lt;= n &lt;= 2<sup>31</sup> - 1</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -66,7 +87,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -87,7 +108,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -95,11 +116,13 @@ public:
     int integerReplacement(int N) {
         int ans = 0;
         long n = N;
-        while (n != 1)
-        {
-            if ((n & 1) == 0) n >>= 1;
-            else if (n != 3 && (n & 3) == 3) ++n;
-            else --n;
+        while (n != 1) {
+            if ((n & 1) == 0)
+                n >>= 1;
+            else if (n != 3 && (n & 3) == 3)
+                ++n;
+            else
+                --n;
             ++ans;
         }
         return ans;
@@ -107,7 +130,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func integerReplacement(n int) int {
@@ -126,10 +149,8 @@ func integerReplacement(n int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

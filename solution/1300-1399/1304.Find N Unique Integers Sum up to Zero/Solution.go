@@ -1,10 +1,9 @@
 func sumZero(n int) []int {
-	presum := 0
-	var res []int
-	for i := 1; i < n; i++ {
-		res = append(res, i)
-		presum += i
+	ans := make([]int, n)
+	for i, j := 1, 0; i <= n/2; i, j = i+1, j+1 {
+		ans[j] = i
+		j++
+		ans[j] = -i
 	}
-	res = append(res, -presum)
-	return res
+	return ans
 }

@@ -1,45 +1,23 @@
-class Trie {
-public:
-    string root;
-    vector<Trie*> children;
-
-    Trie() {
-        root = "";
-        children.resize(26);
-    }
-};
-
 class Solution {
 public:
     string replaceWords(vector<string>& dictionary, string sentence) {
-        Trie* trie = new Trie();
-        for (auto root : dictionary)
-        {
-            Trie* cur = trie;
-            for (char c : root)
-            {
-                if (!cur->children[c - 'a']) cur->children[c - 'a'] = new Trie();
-                cur = cur->children[c - 'a'];
-            }
-            cur->root = root;
-        }
-
-        string ans = "";
+        unordered_set<string> s(dictionary.begin(), dictionary.end());
         istringstream is(sentence);
-        vector<string> ss;
-        string s;
-        while (is >> s) ss.push_back(s);
-        for (auto word : ss)
-        {
-            Trie* cur = trie;
-            for (char c : word)
-            {
-                if (!cur->children[c - 'a'] || cur->root != "") break;
-                cur = cur->children[c - 'a'];
+        vector<string> words;
+        string ss;
+        while (is >> ss) words.push_back(ss);
+        for (int i = 0; i < words.size(); ++i) {
+            string word = words[i];
+            for (int j = 1; j <= word.size(); ++j) {
+                string t = word.substr(0, j);
+                if (s.count(t)) {
+                    words[i] = t;
+                    break;
+                }
             }
-            ans += cur->root == "" ? word : cur->root;
-            ans += " ";
         }
+        string ans = "";
+        for (string& word : words) ans += word + " ";
         ans.pop_back();
         return ans;
     }

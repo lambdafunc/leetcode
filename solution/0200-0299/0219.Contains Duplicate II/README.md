@@ -1,127 +1,214 @@
-# [219. 存在重复元素 II](https://leetcode-cn.com/problems/contains-duplicate-ii)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0219.Contains%20Duplicate%20II/README.md
+tags:
+    - 数组
+    - 哈希表
+    - 滑动窗口
+---
+
+<!-- problem:start -->
+
+# [219. 存在重复元素 II](https://leetcode.cn/problems/contains-duplicate-ii)
 
 [English Version](/solution/0200-0299/0219.Contains%20Duplicate%20II/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个整数数组和一个整数&nbsp;<em>k</em>，判断数组中是否存在两个不同的索引<em>&nbsp;i</em>&nbsp;和<em>&nbsp;j</em>，使得&nbsp;<strong>nums [i] = nums [j]</strong>，并且 <em>i</em> 和 <em>j</em>&nbsp;的差的 <strong>绝对值</strong> 至多为 <em>k</em>。</p>
+<p>给你一个整数数组&nbsp;<code>nums</code> 和一个整数&nbsp;<code>k</code> ，判断数组中是否存在两个 <strong>不同的索引</strong><em>&nbsp;</em><code>i</code>&nbsp;和<em>&nbsp;</em><code>j</code> ，满足 <code>nums[i] == nums[j]</code> 且 <code>abs(i - j) &lt;= k</code> 。如果存在，返回 <code>true</code> ；否则，返回 <code>false</code> 。</p>
 
 <p>&nbsp;</p>
 
-<p><strong>示例&nbsp;1:</strong></p>
+<p><strong>示例&nbsp;1：</strong></p>
 
-<pre><strong>输入:</strong> nums = [1,2,3,1], k<em> </em>= 3
-<strong>输出:</strong> true</pre>
+<pre>
+<strong>输入：</strong>nums = [1,2,3,1], k<em> </em>= 3
+<strong>输出：</strong>true</pre>
 
-<p><strong>示例 2:</strong></p>
+<p><strong>示例 2：</strong></p>
 
-<pre><strong>输入: </strong>nums = [1,0,1,1], k<em> </em>=<em> </em>1
-<strong>输出:</strong> true</pre>
+<pre>
+<strong>输入：</strong>nums = [1,0,1,1], k<em> </em>=<em> </em>1
+<strong>输出：</strong>true</pre>
 
-<p><strong>示例 3:</strong></p>
+<p><strong>示例 3：</strong></p>
 
-<pre><strong>输入: </strong>nums = [1,2,3,1,2,3], k<em> </em>=<em> </em>2
-<strong>输出:</strong> false</pre>
+<pre>
+<strong>输入：</strong>nums = [1,2,3,1,2,3], k<em> </em>=<em> </em>2
+<strong>输出：</strong>false</pre>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 &lt;= nums.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>-10<sup>9</sup> &lt;= nums[i] &lt;= 10<sup>9</sup></code></li>
+	<li><code>0 &lt;= k &lt;= 10<sup>5</sup></code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：哈希表
+
+我们用一个哈希表 $\textit{d}$ 存放最近遍历到的数以及对应的下标。
+
+遍历数组 $\textit{nums}$，对于当前遍历到的元素 $\textit{nums}[i]$，如果在哈希表中存在，并且下标与当前元素的下标之差不超过 $k$，则返回 $\text{true}$，否则将当前元素加入哈希表中。
+
+遍历结束后，返回 $\text{false}$。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为数组 $\textit{nums}$ 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:
-        mp = {}
-        for i, v in enumerate(nums):
-            if v in mp and i - mp[v] <= k:
+        d = {}
+        for i, x in enumerate(nums):
+            if x in d and i - d[x] <= k:
                 return True
-            mp[v] = i
+            d[x] = i
         return False
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public boolean containsNearbyDuplicate(int[] nums, int k) {
-        Map<Integer, Integer> mp = new HashMap<>();
+        Map<Integer, Integer> d = new HashMap<>();
         for (int i = 0; i < nums.length; ++i) {
-            if (mp.containsKey(nums[i]) && i - mp.get(nums[i]) <= k) {
+            if (i - d.getOrDefault(nums[i], -1000000) <= k) {
                 return true;
             }
-            mp.put(nums[i], i);
+            d.put(nums[i], i);
         }
         return false;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     bool containsNearbyDuplicate(vector<int>& nums, int k) {
-        unordered_map<int, int> mp;
-        for (int i = 0; i < nums.size(); ++i)
-        {
-            if (mp.count(nums[i]) && i - mp[nums[i]] <= k) return true;
-            mp[nums[i]] = i;
+        unordered_map<int, int> d;
+        for (int i = 0; i < nums.size(); ++i) {
+            if (d.count(nums[i]) && i - d[nums[i]] <= k) {
+                return true;
+            }
+            d[nums[i]] = i;
         }
         return false;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func containsNearbyDuplicate(nums []int, k int) bool {
-	mp := make(map[int]int)
-	for i, v := range nums {
-		if j, ok := mp[v]; ok {
-			if i-j <= k {
-				return true
-			}
+	d := map[int]int{}
+	for i, x := range nums {
+		if j, ok := d[x]; ok && i-j <= k {
+			return true
 		}
-		mp[v] = i
+		d[x] = i
 	}
 	return false
 }
 ```
 
-### **C#**
+#### TypeScript
+
+```ts
+function containsNearbyDuplicate(nums: number[], k: number): boolean {
+    const d: Map<number, number> = new Map();
+    for (let i = 0; i < nums.length; ++i) {
+        if (d.has(nums[i]) && i - d.get(nums[i])! <= k) {
+            return true;
+        }
+        d.set(nums[i], i);
+    }
+    return false;
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {boolean}
+ */
+var containsNearbyDuplicate = function (nums, k) {
+    const d = new Map();
+    for (let i = 0; i < nums.length; ++i) {
+        if (d.has(nums[i]) && i - d.get(nums[i]) <= k) {
+            return true;
+        }
+        d.set(nums[i], i);
+    }
+    return false;
+};
+```
+
+#### C#
 
 ```cs
 public class Solution {
     public bool ContainsNearbyDuplicate(int[] nums, int k) {
-        var mp = new Dictionary<int, int>();
-        for (int i = 0; i < nums.Length; ++i)
-        {
-            if (mp.ContainsKey(nums[i]) && i - mp[nums[i]] <= k)
-            {
+        var d = new Dictionary<int, int>();
+        for (int i = 0; i < nums.Length; ++i) {
+            if (d.ContainsKey(nums[i]) && i - d[nums[i]] <= k) {
                 return true;
             }
-            mp[nums[i]] = i;
+            d[nums[i]] = i;
         }
         return false;
     }
 }
 ```
 
-### **...**
+#### PHP
 
-```
-
+```php
+class Solution {
+    /**
+     * @param Integer[] $nums
+     * @param Integer $k
+     * @return Boolean
+     */
+    function containsNearbyDuplicate($nums, $k) {
+        $d = [];
+        for ($i = 0; $i < count($nums); ++$i) {
+            if (array_key_exists($nums[$i], $d) && $i - $d[$nums[$i]] <= $k) {
+                return true;
+            }
+            $d[$nums[$i]] = $i;
+        }
+        return false;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

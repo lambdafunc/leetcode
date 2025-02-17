@@ -1,79 +1,81 @@
-# [461. 汉明距离](https://leetcode-cn.com/problems/hamming-distance)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0461.Hamming%20Distance/README.md
+tags:
+    - 位运算
+---
+
+<!-- problem:start -->
+
+# [461. 汉明距离](https://leetcode.cn/problems/hamming-distance)
 
 [English Version](/solution/0400-0499/0461.Hamming%20Distance/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>两个整数之间的<a href="https://baike.baidu.com/item/%E6%B1%89%E6%98%8E%E8%B7%9D%E7%A6%BB">汉明距离</a>指的是这两个数字对应二进制位不同的位置的数目。</p>
+<p>两个整数之间的 <a href="https://baike.baidu.com/item/%E6%B1%89%E6%98%8E%E8%B7%9D%E7%A6%BB">汉明距离</a> 指的是这两个数字对应二进制位不同的位置的数目。</p>
 
-<p>给出两个整数 <code>x</code> 和 <code>y</code>，计算它们之间的汉明距离。</p>
+<p>给你两个整数 <code>x</code> 和 <code>y</code>，计算并返回它们之间的汉明距离。</p>
 
-<p><strong>注意：</strong><br />
-0 &le; <code>x</code>, <code>y</code> &lt; 2<sup>31</sup>.</p>
+<p>&nbsp;</p>
 
-<p><strong>示例:</strong></p>
+<p><strong>示例 1：</strong></p>
 
 <pre>
-<strong>输入:</strong> x = 1, y = 4
-
-<strong>输出:</strong> 2
-
-<strong>解释:</strong>
+<strong>输入：</strong>x = 1, y = 4
+<strong>输出：</strong>2
+<strong>解释：</strong>
 1   (0 0 0 1)
 4   (0 1 0 0)
-       &uarr;   &uarr;
-
+       ↑   ↑
 上面的箭头指出了对应二进制位不同的位置。
 </pre>
 
+<p><strong>示例 2：</strong></p>
+
+<pre>
+<strong>输入：</strong>x = 3, y = 1
+<strong>输出：</strong>1
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>0 &lt;=&nbsp;x, y &lt;= 2<sup>31</sup> - 1</code></li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><strong>注意：</strong>本题与&nbsp;<a href="https://leetcode.cn/problems/minimum-bit-flips-to-convert-number/">2220. 转换数字的最少位翻转次数</a>&nbsp;相同。</p>
+
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-利用异或运算的规律找出不同的位
+### 方法一：位运算
 
-- 0 ^ 0 = 0
-- 1 ^ 1 = 0
-- 0 ^ 1 = 1
-- 1 ^ 0 = 1
+我们将 $x$ 和 $y$ 按位异或，得到的结果中的 $1$ 的个数就是汉明距离。
+
+时间复杂度 $O(1)$，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def hammingDistance(self, x: int, y: int) -> int:
-        num, count = x ^ y, 0
-        while num != 0:
-            num &= num - 1
-            count += 1
-        return count
+        return (x ^ y).bit_count()
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```java
-class Solution {
-    public int hammingDistance(int x, int y) {
-        int num = x ^ y;
-        int count = 0;
-        while (num != 0) {
-            num &= num - 1;
-            count++;
-        }
-        return count;
-    }
-}
-```
-
-或者利用库函数 `Integer.bitCount()`
+#### Java
 
 ```java
 class Solution {
@@ -83,7 +85,40 @@ class Solution {
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+        return __builtin_popcount(x ^ y);
+    }
+};
+```
+
+#### Go
+
+```go
+func hammingDistance(x int, y int) int {
+	return bits.OnesCount(uint(x ^ y))
+}
+```
+
+#### TypeScript
+
+```ts
+function hammingDistance(x: number, y: number): number {
+    x ^= y;
+    let ans = 0;
+    while (x) {
+        x -= x & -x;
+        ++ans;
+    }
+    return ans;
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -92,51 +127,18 @@ class Solution {
  * @return {number}
  */
 var hammingDistance = function (x, y) {
-    let distance = x ^ y;
-    let count = 0;
-    while (distance != 0) {
-        count++;
-        distance &= distance - 1;
+    x ^= y;
+    let ans = 0;
+    while (x) {
+        x -= x & -x;
+        ++ans;
     }
-    return count;
+    return ans;
 };
-```
-
-### **C++**
-
-```cpp
-class Solution {
-public:
-    int hammingDistance(int x, int y) {
-        x ^= y;
-        int count = 0;
-        while (x) {
-            ++count;
-            x &= (x - 1);
-        }
-        return count;
-    }
-};
-```
-
-### **Go**
-
-```go
-func hammingDistance(x int, y int) int {
-	x ^= y
-	count := 0
-	for x != 0 {
-		count++
-		x &= (x - 1)
-	}
-	return count
-}
-```
-
-### **...**
-
-```
-
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,40 +1,24 @@
 public class Solution {
     public int Candy(int[] ratings) {
-        if (ratings.Length == 0) return 0;
-        var result = 0;
-        var previousRating = ratings[0];
-        var previousCandy = 0;
-        var downCount = 0;
-        int? downCountThreshold = null;
-        foreach (var rating in ratings)
-        {
-            if (rating == previousRating)
-            {
-                result += 1;
-                previousCandy = 1;
-                downCount = 1;
-                downCountThreshold = null;
+        int n = ratings.Length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+        Array.Fill(left, 1);
+        Array.Fill(right, 1);
+        for (int i = 1; i < n; ++i) {
+            if (ratings[i] > ratings[i - 1]) {
+                left[i] = left[i - 1] + 1;
             }
-            else if (rating > previousRating)
-            {
-                ++previousCandy;
-                result += previousCandy;
-                downCount = 1;
-                downCountThreshold = null;
-            }
-            else
-            {
-                if (downCountThreshold == null)
-                {
-                    downCountThreshold = previousCandy - 1;
-                }
-                previousCandy = 1;
-                result += downCount + (downCount > downCountThreshold.Value ? 1 : 0);
-                ++downCount;
-            }
-            previousRating = rating;
-            //System.Console.WriteLine("{0} {1}", previousCandy, result);
         }
-        return result;
+        for (int i = n - 2; i >= 0; --i) {
+            if (ratings[i] > ratings[i + 1]) {
+                right[i] = right[i + 1] + 1;
+            }
+        }
+        int ans = 0;
+        for (int i = 0; i < n; ++i) {
+            ans += Math.Max(left[i], right[i]);
+        }
+        return ans;
     }
 }

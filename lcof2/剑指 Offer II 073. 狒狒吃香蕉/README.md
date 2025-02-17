@@ -1,8 +1,15 @@
-# [剑指 Offer II 073. 狒狒吃香蕉](https://leetcode-cn.com/problems/nZZqjQ)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20073.%20%E7%8B%92%E7%8B%92%E5%90%83%E9%A6%99%E8%95%89/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 073. 狒狒吃香蕉](https://leetcode.cn/problems/nZZqjQ)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>狒狒喜欢吃香蕉。这里有&nbsp;<code>N</code>&nbsp;堆香蕉，第 <code>i</code> 堆中有&nbsp;<code>piles[i]</code>&nbsp;根香蕉。警卫已经离开了，将在&nbsp;<code>H</code>&nbsp;小时后回来。</p>
 
@@ -50,19 +57,19 @@
 
 <p>&nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 875&nbsp;题相同：&nbsp;<a href="https://leetcode-cn.com/problems/koko-eating-bananas/">https://leetcode-cn.com/problems/koko-eating-bananas/</a></p>
+<p><meta charset="UTF-8" />注意：本题与主站 875&nbsp;题相同：&nbsp;<a href="https://leetcode.cn/problems/koko-eating-bananas/">https://leetcode.cn/problems/koko-eating-bananas/</a></p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-二分查找。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -78,9 +85,7 @@ class Solution:
         return left
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -107,35 +112,32 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int minEatingSpeed(vector<int>& piles, int h) {
         int left = 1, right = *max_element(piles.begin(), piles.end());
-        while (left < right)
-        {
+        while (left < right) {
             int mid = left + right >> 1;
             int s = 0;
             for (int pile : piles) s += (pile + mid - 1) / mid;
-            if (s <= h) right = mid;
-            else left = mid + 1;
+            if (s <= h)
+                right = mid;
+            else
+                left = mid + 1;
         }
         return left;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func minEatingSpeed(piles []int, h int) int {
-	mx := 0
-	for _, pile := range piles {
-		mx = max(mx, pile)
-	}
-	left, right := 1, mx
+	left, right := 1, slices.Max(piles)
 	for left < right {
 		mid := (left + right) >> 1
 		s := 0
@@ -150,16 +152,9 @@ func minEatingSpeed(piles []int, h int) int {
 	}
 	return left
 }
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
 ```
 
-### **C#**
+#### C#
 
 ```cs
 public class Solution {
@@ -187,10 +182,36 @@ public class Solution {
 }
 ```
 
-### **...**
+#### Swift
 
-```
+```swift
+class Solution {
+    func minEatingSpeed(_ piles: [Int], _ h: Int) -> Int {
+        var left = 1
+        var right = piles.max() ?? 0
 
+        while left < right {
+            let mid = (left + right) / 2
+            var hours = 0
+
+            for pile in piles {
+                hours += (pile + mid - 1) / mid
+            }
+
+            if hours <= h {
+                right = mid
+            } else {
+                left = mid + 1
+            }
+        }
+
+        return left
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

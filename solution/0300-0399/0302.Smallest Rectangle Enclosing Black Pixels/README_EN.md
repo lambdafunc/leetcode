@@ -1,24 +1,42 @@
-# [302. Smallest Rectangle Enclosing Black Pixels](https://leetcode.com/problems/smallest-rectangle-enclosing-black-pixels)
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0302.Smallest%20Rectangle%20Enclosing%20Black%20Pixels/README_EN.md
+tags:
+    - Depth-First Search
+    - Breadth-First Search
+    - Array
+    - Binary Search
+    - Matrix
+---
+
+<!-- problem:start -->
+
+# [302. Smallest Rectangle Enclosing Black Pixels 🔒](https://leetcode.com/problems/smallest-rectangle-enclosing-black-pixels)
 
 [中文文档](/solution/0300-0399/0302.Smallest%20Rectangle%20Enclosing%20Black%20Pixels/README.md)
 
 ## Description
 
-<p>You are given an <code>image</code> that is represented by a binary matrix with <code>0</code> as a white pixel and <code>1</code> as a black pixel.</p>
+<!-- description:start -->
+
+<p>You are given an <code>m x n</code> binary matrix <code>image</code> where <code>0</code> represents a white pixel and <code>1</code> represents a black pixel.</p>
 
 <p>The black pixels are connected (i.e., there is only one black region). Pixels are connected horizontally and vertically.</p>
 
-<p>Given two integers <code>x</code> and <code>y</code> that represent the location of one of the black pixels, return <em>the area of the smallest (axis-aligned) rectangle that encloses all black pixels</em>.</p>
+<p>Given two integers <code>x</code> and <code>y</code> that represents the location of one of the black pixels, return <em>the area of the smallest (axis-aligned) rectangle that encloses all black pixels</em>.</p>
+
+<p>You must write an algorithm with less than <code>O(mn)</code> runtime complexity</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0302.Smallest%20Rectangle%20Enclosing%20Black%20Pixels/images/pixel-grid.jpg" style="width: 333px; height: 253px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0302.Smallest%20Rectangle%20Enclosing%20Black%20Pixels/images/pixel-grid.jpg" style="width: 333px; height: 253px;" />
 <pre>
 <strong>Input:</strong> image = [[&quot;0&quot;,&quot;0&quot;,&quot;1&quot;,&quot;0&quot;],[&quot;0&quot;,&quot;1&quot;,&quot;1&quot;,&quot;0&quot;],[&quot;0&quot;,&quot;1&quot;,&quot;0&quot;,&quot;0&quot;]], x = 0, y = 2
 <strong>Output:</strong> 6
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> image = [[&quot;1&quot;]], x = 0, y = 0
@@ -33,19 +51,23 @@
 	<li><code>n == image[i].length</code></li>
 	<li><code>1 &lt;= m, n &lt;= 100</code></li>
 	<li><code>image[i][j]</code> is either <code>&#39;0&#39;</code> or <code>&#39;1&#39;</code>.</li>
-	<li><code>1 &lt;= x &lt; m</code></li>
-	<li><code>1 &lt;= y &lt; n</code></li>
+	<li><code>0 &lt;= x &lt; m</code></li>
+	<li><code>0 &lt;= y &lt; n</code></li>
 	<li><code>image[x][y] == &#39;1&#39;.</code></li>
 	<li>The black pixels in the <code>image</code> only form <strong>one component</strong>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-Binary search.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -98,7 +120,7 @@ class Solution:
         return (d - u + 1) * (r - l + 1)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -167,10 +189,9 @@ class Solution {
         return (d - u + 1) * (r - l + 1);
     }
 }
-
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -178,46 +199,50 @@ public:
     int minArea(vector<vector<char>>& image, int x, int y) {
         int m = image.size(), n = image[0].size();
         int left = 0, right = x;
-        while (left < right)
-        {
+        while (left < right) {
             int mid = (left + right) >> 1;
             int c = 0;
             while (c < n && image[mid][c] == '0') ++c;
-            if (c < n) right = mid;
-            else left = mid + 1;
+            if (c < n)
+                right = mid;
+            else
+                left = mid + 1;
         }
         int u = left;
         left = x;
         right = m - 1;
-        while (left < right)
-        {
+        while (left < right) {
             int mid = (left + right + 1) >> 1;
             int c = 0;
             while (c < n && image[mid][c] == '0') ++c;
-            if (c < n) left = mid;
-            else right = mid - 1;
+            if (c < n)
+                left = mid;
+            else
+                right = mid - 1;
         }
         int d = left;
         left = 0;
         right = y;
-        while (left < right)
-        {
+        while (left < right) {
             int mid = (left + right) >> 1;
             int r = 0;
             while (r < m && image[r][mid] == '0') ++r;
-            if (r < m) right = mid;
-            else left = mid + 1;
+            if (r < m)
+                right = mid;
+            else
+                left = mid + 1;
         }
         int l = left;
         left = y;
         right = n - 1;
-        while (left < right)
-        {
+        while (left < right) {
             int mid = (left + right + 1) >> 1;
             int r = 0;
             while (r < m && image[r][mid] == '0') ++r;
-            if (r < m) left = mid;
-            else right = mid - 1;
+            if (r < m)
+                left = mid;
+            else
+                right = mid - 1;
         }
         int r = left;
         return (d - u + 1) * (r - l + 1);
@@ -225,7 +250,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func minArea(image [][]byte, x int, y int) int {
@@ -290,10 +315,8 @@ func minArea(image [][]byte, x int, y int) int {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

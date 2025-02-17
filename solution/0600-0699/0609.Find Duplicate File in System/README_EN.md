@@ -1,8 +1,22 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0609.Find%20Duplicate%20File%20in%20System/README_EN.md
+tags:
+    - Array
+    - Hash Table
+    - String
+---
+
+<!-- problem:start -->
+
 # [609. Find Duplicate File in System](https://leetcode.com/problems/find-duplicate-file-in-system)
 
 [中文文档](/solution/0600-0699/0609.Find%20Duplicate%20File%20in%20System/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given a list <code>paths</code> of directory info, including the directory path, and all the files with contents in this directory, return <em>all the duplicate files in the file system in terms of their paths</em>. You may return the answer in <strong>any order</strong>.</p>
 
@@ -23,10 +37,10 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 <pre><strong>Input:</strong> paths = ["root/a 1.txt(abcd) 2.txt(efgh)","root/c 3.txt(abcd)","root/c/d 4.txt(efgh)","root 4.txt(efgh)"]
 <strong>Output:</strong> [["root/a/2.txt","root/c/d/4.txt","root/4.txt"],["root/a/1.txt","root/c/3.txt"]]
-</pre><p><strong>Example 2:</strong></p>
+</pre><p><strong class="example">Example 2:</strong></p>
 <pre><strong>Input:</strong> paths = ["root/a 1.txt(abcd) 2.txt(efgh)","root/c 3.txt(abcd)","root/c/d 4.txt(efgh)"]
 <strong>Output:</strong> [["root/a/2.txt","root/c/d/4.txt"],["root/a/1.txt","root/c/3.txt"]]
 </pre>
@@ -53,26 +67,138 @@
 	<li>How to make sure the duplicated files you find are not false positive?</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def findDuplicate(self, paths: List[str]) -> List[List[str]]:
+        d = defaultdict(list)
+        for p in paths:
+            ps = p.split()
+            for f in ps[1:]:
+                i = f.find('(')
+                name, content = f[:i], f[i + 1 : -1]
+                d[content].append(ps[0] + '/' + name)
+        return [v for v in d.values() if len(v) > 1]
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public List<List<String>> findDuplicate(String[] paths) {
+        Map<String, List<String>> d = new HashMap<>();
+        for (String p : paths) {
+            String[] ps = p.split(" ");
+            for (int i = 1; i < ps.length; ++i) {
+                int j = ps[i].indexOf('(');
+                String content = ps[i].substring(j + 1, ps[i].length() - 1);
+                String name = ps[0] + '/' + ps[i].substring(0, j);
+                d.computeIfAbsent(content, k -> new ArrayList<>()).add(name);
+            }
+        }
+        List<List<String>> ans = new ArrayList<>();
+        for (var e : d.values()) {
+            if (e.size() > 1) {
+                ans.add(e);
+            }
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<vector<string>> findDuplicate(vector<string>& paths) {
+        unordered_map<string, vector<string>> d;
+        for (auto& p : paths) {
+            auto ps = split(p, ' ');
+            for (int i = 1; i < ps.size(); ++i) {
+                int j = ps[i].find('(');
+                auto content = ps[i].substr(j + 1, ps[i].size() - j - 2);
+                auto name = ps[0] + '/' + ps[i].substr(0, j);
+                d[content].push_back(name);
+            }
+        }
+        vector<vector<string>> ans;
+        for (auto& [_, e] : d) {
+            if (e.size() > 1) {
+                ans.push_back(e);
+            }
+        }
+        return ans;
+    }
+
+    vector<string> split(string& s, char c) {
+        vector<string> res;
+        stringstream ss(s);
+        string t;
+        while (getline(ss, t, c)) {
+            res.push_back(t);
+        }
+        return res;
+    }
+};
 ```
 
+#### Go
+
+```go
+func findDuplicate(paths []string) [][]string {
+	d := map[string][]string{}
+	for _, p := range paths {
+		ps := strings.Split(p, " ")
+		for i := 1; i < len(ps); i++ {
+			j := strings.IndexByte(ps[i], '(')
+			content := ps[i][j+1 : len(ps[i])-1]
+			name := ps[0] + "/" + ps[i][:j]
+			d[content] = append(d[content], name)
+		}
+	}
+	ans := [][]string{}
+	for _, e := range d {
+		if len(e) > 1 {
+			ans = append(ans, e)
+		}
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+function findDuplicate(paths: string[]): string[][] {
+    const d = new Map<string, string[]>();
+    for (const p of paths) {
+        const [root, ...fs] = p.split(' ');
+        for (const f of fs) {
+            const [name, content] = f.split(/\(|\)/g).filter(Boolean);
+            const t = d.get(content) ?? [];
+            t.push(root + '/' + name);
+            d.set(content, t);
+        }
+    }
+    return [...d.values()].filter(e => e.length > 1);
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

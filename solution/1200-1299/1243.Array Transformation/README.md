@@ -1,10 +1,23 @@
-# [1243. 数组变换](https://leetcode-cn.com/problems/array-transformation)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1200-1299/1243.Array%20Transformation/README.md
+rating: 1558
+source: 第 12 场双周赛 Q2
+tags:
+    - 数组
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [1243. 数组变换 🔒](https://leetcode.cn/problems/array-transformation)
 
 [English Version](/solution/1200-1299/1243.Array%20Transformation/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>首先，给你一个初始数组 <code>arr</code>。然后，每天你都要根据前一天的数组生成一个新的数组。</p>
 
@@ -48,70 +61,120 @@
 	<li><code>1 &lt;= arr[i] &lt;= 100</code></li>
 </ol>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：模拟
+
+每次模拟一天，对于每个元素，如果它大于左右邻居，则自减 1，否则自增 1。如果数组在某一天不再发生变化，则返回该数组。
+
+时间复杂度 $O(n \times m)$，空间复杂度 $O(n)$。其中 $n$ 和 $m$ 分别为数组长度和数组元素的最大值。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def transformArray(self, arr: List[int]) -> List[int]:
-        copy = [e for e in arr]
-        has_change, n = True, len(arr)
-        while has_change:
-            has_change = False
-            for i in range(1, n - 1):
-                if arr[i] < copy[i - 1] and arr[i] < copy[i + 1]:
-                    arr[i] += 1
-                    has_change = True
-                elif arr[i] > copy[i - 1] and arr[i] > copy[i + 1]:
+        f = True
+        while f:
+            f = False
+            t = arr[:]
+            for i in range(1, len(t) - 1):
+                if t[i] > t[i - 1] and t[i] > t[i + 1]:
                     arr[i] -= 1
-                    has_change = True
-            copy = [e for e in arr]
+                    f = True
+                if t[i] < t[i - 1] and t[i] < t[i + 1]:
+                    arr[i] += 1
+                    f = True
         return arr
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public List<Integer> transformArray(int[] arr) {
-        int n = arr.length;
-        int[] copy = Arrays.copyOf(arr, n);
-        boolean hasChange = true;
-        while (hasChange) {
-            hasChange = false;
-            for (int i = 1; i < n - 1; ++i) {
-                if (arr[i] < copy[i - 1] && arr[i] < copy[i + 1]) {
-                    ++arr[i];
-                    hasChange = true;
-                } else if (arr[i] > copy[i - 1] && arr[i] > copy[i + 1]) {
+        boolean f = true;
+        while (f) {
+            f = false;
+            int[] t = arr.clone();
+            for (int i = 1; i < t.length - 1; ++i) {
+                if (t[i] > t[i - 1] && t[i] > t[i + 1]) {
                     --arr[i];
-                    hasChange = true;
+                    f = true;
+                }
+                if (t[i] < t[i - 1] && t[i] < t[i + 1]) {
+                    ++arr[i];
+                    f = true;
                 }
             }
-            System.arraycopy(arr, 0, copy, 0, n);
         }
-        List<Integer> res = new ArrayList<>();
-        for (int e : arr) {
-            res.add(e);
+        List<Integer> ans = new ArrayList<>();
+        for (int x : arr) {
+            ans.add(x);
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> transformArray(vector<int>& arr) {
+        bool f = true;
+        while (f) {
+            f = false;
+            vector<int> t = arr;
+            for (int i = 1; i < arr.size() - 1; ++i) {
+                if (t[i] > t[i - 1] && t[i] > t[i + 1]) {
+                    --arr[i];
+                    f = true;
+                }
+                if (t[i] < t[i - 1] && t[i] < t[i + 1]) {
+                    ++arr[i];
+                    f = true;
+                }
+            }
+        }
+        return arr;
+    }
+};
 ```
 
+#### Go
+
+```go
+func transformArray(arr []int) []int {
+	f := true
+	for f {
+		f = false
+		t := make([]int, len(arr))
+		copy(t, arr)
+		for i := 1; i < len(arr)-1; i++ {
+			if t[i] > t[i-1] && t[i] > t[i+1] {
+				arr[i]--
+				f = true
+			}
+			if t[i] < t[i-1] && t[i] < t[i+1] {
+				arr[i]++
+				f = true
+			}
+		}
+	}
+	return arr
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

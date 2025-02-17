@@ -10,16 +10,18 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def isSubPath(self, head: ListNode, root: TreeNode) -> bool:
+    def isSubPath(self, head: Optional[ListNode], root: Optional[TreeNode]) -> bool:
         def dfs(head, root):
             if head is None:
                 return True
-            if root is None:
-                return False
-            if root.val != head.val:
+            if root is None or root.val != head.val:
                 return False
             return dfs(head.next, root.left) or dfs(head.next, root.right)
-        
+
         if root is None:
             return False
-        return dfs(head, root) or self.isSubPath(head, root.left) or self.isSubPath(head, root.right)
+        return (
+            dfs(head, root)
+            or self.isSubPath(head, root.left)
+            or self.isSubPath(head, root.right)
+        )

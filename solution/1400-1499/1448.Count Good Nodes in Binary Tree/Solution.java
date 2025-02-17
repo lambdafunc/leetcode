@@ -14,12 +14,11 @@
  * }
  */
 class Solution {
-    private int ans;
+    private int ans = 0;
 
     public int goodNodes(TreeNode root) {
-        ans = 0;
-        dfs(root, -10000);
-        return ans;    
+        dfs(root, -100000);
+        return ans;
     }
 
     private void dfs(TreeNode root, int mx) {

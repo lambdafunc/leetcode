@@ -1,15 +1,30 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1967.Number%20of%20Strings%20That%20Appear%20as%20Substrings%20in%20Word/README_EN.md
+rating: 1231
+source: Weekly Contest 254 Q1
+tags:
+    - Array
+    - String
+---
+
+<!-- problem:start -->
+
 # [1967. Number of Strings That Appear as Substrings in Word](https://leetcode.com/problems/number-of-strings-that-appear-as-substrings-in-word)
 
 [中文文档](/solution/1900-1999/1967.Number%20of%20Strings%20That%20Appear%20as%20Substrings%20in%20Word/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given an array of strings <code>patterns</code> and a string <code>word</code>, return <em>the <strong>number</strong> of strings in </em><code>patterns</code><em> that exist as a <strong>substring</strong> in </em><code>word</code>.</p>
 
 <p>A <strong>substring</strong> is a contiguous sequence of characters within a string.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> patterns = [&quot;a&quot;,&quot;abc&quot;,&quot;bc&quot;,&quot;d&quot;], word = &quot;abc&quot;
@@ -22,7 +37,7 @@
 3 of the strings in patterns appear as a substring in word.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> patterns = [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;], word = &quot;aaaaabbbbb&quot;
@@ -34,7 +49,7 @@
 2 of the strings in patterns appear as a substring in word.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> patterns = [&quot;a&quot;,&quot;a&quot;,&quot;a&quot;], word = &quot;ab&quot;
@@ -52,81 +67,94 @@
 	<li><code>patterns[i]</code> and <code>word</code> consist of lowercase English letters.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Simulation
+
+Traverse each string $p$ in the array $\textit{patterns}$ and check if it is a substring of $\textit{word}$. If it is, increment the answer by one.
+
+After traversing, return the answer.
+
+The time complexity is $O(n \times m)$, and the space complexity is $O(1)$. Here, $n$ and $m$ are the lengths of $\textit{patterns}$ and $\textit{word}$, respectively.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def numOfStrings(self, patterns: List[str], word: str) -> int:
-        return sum(1 for p in patterns if p in word)
+        return sum(p in word for p in patterns)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int numOfStrings(String[] patterns, String word) {
-        int res = 0;
+        int ans = 0;
         for (String p : patterns) {
             if (word.contains(p)) {
-                ++res;
+                ++ans;
             }
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **TypeScript**
-
-```ts
-function numOfStrings(patterns: string[], word: string): number {
-    let ans = 0;
-    for (let pattern of patterns) {
-        if (word.includes(pattern)) {
-            ans++;
-        }
-    }
-    return ans;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    int numOfStrings(vector<string> &patterns, string word) {
-        int res = 0;
-        for (auto p : patterns)
-            if (word.find(p) != string::npos)
-                ++res;
-        return res;
+    int numOfStrings(vector<string>& patterns, string word) {
+        int ans = 0;
+        for (auto& p : patterns) {
+            ans += word.find(p) != string::npos;
+        }
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func numOfStrings(patterns []string, word string) int {
-    res := 0
-    for _, p := range patterns {
+func numOfStrings(patterns []string, word string) (ans int) {
+	for _, p := range patterns {
 		if strings.Contains(word, p) {
-			res++
+			ans++
 		}
 	}
-    return res
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function numOfStrings(patterns: string[], word: string): number {
+    return patterns.filter(p => word.includes(p)).length;
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn num_of_strings(patterns: Vec<String>, word: String) -> i32 {
+        patterns.iter().filter(|p| word.contains(&**p)).count() as i32
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

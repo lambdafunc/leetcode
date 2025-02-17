@@ -1,10 +1,20 @@
-# [1117. H2O 生成](https://leetcode-cn.com/problems/building-h2o)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1100-1199/1117.Building%20H2O/README.md
+tags:
+    - 多线程
+---
+
+<!-- problem:start -->
+
+# [1117. H2O 生成](https://leetcode.cn/problems/building-h2o)
 
 [English Version](/solution/1100-1199/1117.Building%20H2O/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>现在有两种线程，氧 <code>oxygen</code> 和氢 <code>hydrogen</code>，你的目标是组织这两种线程来产生水分子。</p>
 
@@ -29,16 +39,18 @@
 
 <p><strong>示例 1:</strong></p>
 
-<pre><strong>输入: </strong>&quot;HOH&quot;
-<strong>输出: </strong>&quot;HHO&quot;
-<strong>解释:</strong> &quot;HOH&quot; 和 &quot;OHH&quot; 依然都是有效解。
+<pre>
+<strong>输入: </strong>water = "HOH"
+<strong>输出: </strong>"HHO"
+<strong>解释:</strong> "HOH" 和 "OHH" 依然都是有效解。
 </pre>
 
 <p><strong>示例 2:</strong></p>
 
-<pre><strong>输入: </strong>&quot;OOHHHH&quot;
-<strong>输出: </strong>&quot;HHOHHO&quot;
-<strong>解释:</strong> &quot;HOHHHO&quot;, &quot;OHHHHO&quot;, &quot;HHOHOH&quot;, &quot;HOHHOH&quot;, &quot;OHHHOH&quot;, &quot;HHOOHH&quot;, &quot;HOHOHH&quot; 和 &quot;OHHOHH&quot; 依然都是有效解。
+<pre>
+<strong>输入: </strong>water = "OOHHHH"
+<strong>输出: </strong>"HHOHHO"
+<strong>解释:</strong> "HOHHHO", "OHHHHO", "HHOHOH", "HOHHOH", "OHHHOH", "HHOOHH", "HOHOHH" 和 "OHHOHH" 依然都是有效解。
 </pre>
 
 <p>&nbsp;</p>
@@ -46,37 +58,114 @@
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li>输入字符串的总长将会是 3<em>n</em>, 1 &le;&nbsp;<em>n</em>&nbsp;&le; 50；</li>
-	<li>输入字符串中的 &ldquo;H&rdquo; 总数将会是 2n 。</li>
-	<li>输入字符串中的 &ldquo;O&rdquo; 总数将会是 n 。</li>
+	<li><code>3 * n == water.length</code></li>
+	<li><code>1 &lt;= n &lt;= 20</code></li>
+	<li><code>water[i] == 'O' or 'H'</code></li>
+	<li>输入字符串&nbsp;<code>water</code>&nbsp;中的 <font color="#c7254e"><font face="Menlo, Monaco, Consolas, Courier New, monospace"><span style="font-size:12.6px"><span style="background-color:#f9f2f4">'H'</span></span></font></font>&nbsp;总数将会是 <code>2 * n</code> 。</li>
+	<li>输入字符串&nbsp;<code>water</code>&nbsp;中的 <font color="#c7254e"><font face="Menlo, Monaco, Consolas, Courier New, monospace"><span style="font-size:12.6px"><span style="background-color:#f9f2f4">'O'</span></span></font></font>&nbsp;总数将会是 <code>n</code> 。</li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
+from threading import Semaphore
 
+
+class H2O:
+    def __init__(self):
+        self.h = Semaphore(2)
+        self.o = Semaphore(0)
+
+    def hydrogen(self, releaseHydrogen: "Callable[[], None]") -> None:
+        self.h.acquire()
+        # releaseHydrogen() outputs "H". Do not change or remove this line.
+        releaseHydrogen()
+        if self.h._value == 0:
+            self.o.release()
+
+    def oxygen(self, releaseOxygen: "Callable[[], None]") -> None:
+        self.o.acquire()
+        # releaseOxygen() outputs "O". Do not change or remove this line.
+        releaseOxygen()
+        self.h.release(2)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
+class H2O {
+    private Semaphore h = new Semaphore(2);
+    private Semaphore o = new Semaphore(0);
 
+    public H2O() {
+    }
+
+    public void hydrogen(Runnable releaseHydrogen) throws InterruptedException {
+        h.acquire();
+        // releaseHydrogen.run() outputs "H". Do not change or remove this line.
+        releaseHydrogen.run();
+        o.release();
+    }
+
+    public void oxygen(Runnable releaseOxygen) throws InterruptedException {
+        o.acquire(2);
+        // releaseOxygen.run() outputs "O". Do not change or remove this line.
+        releaseOxygen.run();
+        h.release(2);
+    }
+}
 ```
 
-### **...**
+#### C++
 
-```
+```cpp
+#include <semaphore.h>
 
+class H2O {
+private:
+    sem_t h, o;
+    int st;
+
+public:
+    H2O() {
+        sem_init(&h, 0, 2);
+        sem_init(&o, 0, 0);
+        st = 0;
+    }
+
+    void hydrogen(function<void()> releaseHydrogen) {
+        sem_wait(&h);
+        // releaseHydrogen() outputs "H". Do not change or remove this line.
+        releaseHydrogen();
+        ++st;
+        if (st == 2) {
+            sem_post(&o);
+        }
+    }
+
+    void oxygen(function<void()> releaseOxygen) {
+        sem_wait(&o);
+        // releaseOxygen() outputs "O". Do not change or remove this line.
+        releaseOxygen();
+        st = 0;
+        sem_post(&h);
+        sem_post(&h);
+    }
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

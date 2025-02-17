@@ -4,9 +4,9 @@ class Solution:
         for l, r in ranges:
             diff[l] += 1
             diff[r + 1] -= 1
-        cur = 0
-        for i, df in enumerate(diff):
-            cur += df
-            if left <= i <= right and cur == 0:
+        s = 0
+        for i, x in enumerate(diff):
+            s += x
+            if s <= 0 and left <= i <= right:
                 return False
         return True

@@ -1,50 +1,50 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0900-0999/0951.Flip%20Equivalent%20Binary%20Trees/README_EN.md
+tags:
+    - Tree
+    - Depth-First Search
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
 # [951. Flip Equivalent Binary Trees](https://leetcode.com/problems/flip-equivalent-binary-trees)
 
 [中文文档](/solution/0900-0999/0951.Flip%20Equivalent%20Binary%20Trees/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>For a binary tree <strong>T</strong>, we can define a <strong>flip operation</strong> as follows: choose any node, and swap the left and right child subtrees.</p>
 
 <p>A binary tree <strong>X</strong>&nbsp;is <em>flip equivalent</em> to a binary tree <strong>Y</strong> if and only if we can make <strong>X</strong> equal to <strong>Y</strong> after some number of flip operations.</p>
 
-<p>Given the roots of two binary trees <code>root1</code> and <code>root2</code>, return <code>true</code> if the two trees are flip equivelent or <code>false</code> otherwise.</p>
+<p>Given the roots of two binary trees <code>root1</code> and <code>root2</code>, return <code>true</code> if the two trees are flip equivalent or <code>false</code> otherwise.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="Flipped Trees Diagram" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0951.Flip%20Equivalent%20Binary%20Trees/images/tree_ex.png" style="width: 500px; height: 220px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="Flipped Trees Diagram" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0900-0999/0951.Flip%20Equivalent%20Binary%20Trees/images/tree_ex.png" style="width: 500px; height: 220px;" />
 <pre>
 <strong>Input:</strong> root1 = [1,2,3,4,5,6,null,null,null,7,8], root2 = [1,3,2,null,6,4,5,null,null,null,null,8,7]
 <strong>Output:</strong> true
 <strong>Explanation: </strong>We flipped at nodes with values 1, 3, and 5.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> root1 = [], root2 = []
 <strong>Output:</strong> true
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> root1 = [], root2 = [1]
 <strong>Output:</strong> false
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> root1 = [0,null,1], root2 = []
-<strong>Output:</strong> false
-</pre>
-
-<p><strong>Example 5:</strong></p>
-
-<pre>
-<strong>Input:</strong> root1 = [0,null,1], root2 = [0,1]
-<strong>Output:</strong> true
 </pre>
 
 <p>&nbsp;</p>
@@ -55,13 +55,17 @@
 	<li>Each tree will have <strong>unique node values</strong> in the range <code>[0, 99]</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-DFS.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -77,12 +81,14 @@ class Solution:
                 return True
             if root1 is None or root2 is None or root1.val != root2.val:
                 return False
-            return (dfs(root1.left, root2.left) and dfs(root1.right, root2.right)) or (dfs(root1.left, root2.right) and dfs(root1.right, root2.left))
+            return (dfs(root1.left, root2.left) and dfs(root1.right, root2.right)) or (
+                dfs(root1.left, root2.right) and dfs(root1.right, root2.left)
+            )
 
         return dfs(root1, root2)
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -112,12 +118,13 @@ class Solution {
         if (root1 == null || root2 == null || root1.val != root2.val) {
             return false;
         }
-        return (dfs(root1.left, root2.left) && dfs(root1.right, root2.right)) || (dfs(root1.left, root2.right) && dfs(root1.right, root2.left));
+        return (dfs(root1.left, root2.left) && dfs(root1.right, root2.right))
+            || (dfs(root1.left, root2.right) && dfs(root1.right, root2.left));
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -145,7 +152,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -171,10 +178,36 @@ func flipEquiv(root1 *TreeNode, root2 *TreeNode) bool {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function flipEquiv(root1: TreeNode | null, root2: TreeNode | null): boolean {
+    if (root1 === root2) return true;
+    if (!root1 || !root2 || root1?.val !== root2?.val) return false;
+
+    const { left: l1, right: r1 } = root1!;
+    const { left: l2, right: r2 } = root2!;
+
+    return (flipEquiv(l1, l2) && flipEquiv(r1, r2)) || (flipEquiv(l1, r2) && flipEquiv(r1, l2));
+}
 ```
 
+#### JavaScript
+
+```js
+function flipEquiv(root1, root2) {
+    if (root1 === root2) return true;
+    if (!root1 || !root2 || root1?.val !== root2?.val) return false;
+
+    const { left: l1, right: r1 } = root1;
+    const { left: l2, right: r2 } = root2;
+
+    return (flipEquiv(l1, l2) && flipEquiv(r1, r2)) || (flipEquiv(l1, r2) && flipEquiv(r1, l2));
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

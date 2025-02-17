@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/README_EN.md
+rating: 2201
+source: Weekly Contest 263 Q4
+tags:
+    - Breadth-First Search
+    - Graph
+    - Shortest Path
+---
+
+<!-- problem:start -->
+
 # [2045. Second Minimum Time to Reach Destination](https://leetcode.com/problems/second-minimum-time-to-reach-destination)
 
 [中文文档](/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A city is represented as a <strong>bi-directional connected</strong> graph with <code>n</code> vertices where each vertex is labeled from <code>1</code> to <code>n</code> (<strong>inclusive</strong>). The edges in the graph are represented as a 2D integer array <code>edges</code>, where each <code>edges[i] = [u<sub>i</sub>, v<sub>i</sub>]</code> denotes a bi-directional edge between vertex <code>u<sub>i</sub></code> and vertex <code>v<sub>i</sub></code>. Every vertex pair is connected by <strong>at most one</strong> edge, and no vertex has an edge to itself. The time taken to traverse any edge is <code>time</code> minutes.</p>
 
@@ -24,8 +40,8 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/e1.png" style="width: 200px; height: 250px;" /> &emsp; &emsp; &emsp; &emsp;<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/e2.png" style="width: 200px; height: 250px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/e1.png" style="width: 200px; height: 250px;" /> &emsp; &emsp; &emsp; &emsp;<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/e2.png" style="width: 200px; height: 250px;" />
 <pre>
 <strong>Input:</strong> n = 5, edges = [[1,2],[1,3],[1,4],[3,4],[4,5]], time = 3, change = 5
 <strong>Output:</strong> 13
@@ -40,16 +56,16 @@ Hence the minimum time needed is 6 minutes.
 
 The red path shows the path to get the second minimum time.
 
-- Start at 1, time elapsed=0
-- 1 -&gt; 3: 3 minutes, time elapsed=3
-- 3 -&gt; 4: 3 minutes, time elapsed=6
-- Wait at 4 for 4 minutes, time elapsed=10
-- 4 -&gt; 5: 3 minutes, time elapsed=13
+-   Start at 1, time elapsed=0
+-   1 -&gt; 3: 3 minutes, time elapsed=3
+-   3 -&gt; 4: 3 minutes, time elapsed=6
+-   Wait at 4 for 4 minutes, time elapsed=10
+-   4 -&gt; 5: 3 minutes, time elapsed=13
 Hence the second minimum time is 13 minutes.
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/eg2.png" style="width: 225px; height: 50px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2045.Second%20Minimum%20Time%20to%20Reach%20Destination/images/eg2.png" style="width: 225px; height: 50px;" />
 <pre>
 <strong>Input:</strong> n = 2, edges = [[1,2]], time = 3, change = 2
 <strong>Output:</strong> 11
@@ -71,21 +87,29 @@ The second minimum time path is 1 -&gt; 2 -&gt; 1 -&gt; 2 with time = 11 minutes
 	<li><code>1 &lt;= time, change &lt;= 10<sup>3</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
-    def secondMinimum(self, n: int, edges: List[List[int]], time: int, change: int) -> int:
+    def secondMinimum(
+        self, n: int, edges: List[List[int]], time: int, change: int
+    ) -> int:
         g = defaultdict(set)
         for u, v in edges:
             g[u].add(v)
             g[v].add(u)
         q = deque([(1, 0)])
-        dist = [[float('inf')] * 2 for _ in range(n + 1)]
+        dist = [[inf] * 2 for _ in range(n + 1)]
         dist[1][1] = 0
         while q:
             u, d = q.popleft()
@@ -106,22 +130,20 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int secondMinimum(int n, int[][] edges, int time, int change) {
         List<Integer>[] g = new List[n + 1];
-        for (int i = 0; i < n + 1; ++i) {
-            g[i] = new ArrayList<>();
-        }
+        Arrays.setAll(g, k -> new ArrayList<>());
         for (int[] e : edges) {
             int u = e[0], v = e[1];
             g[u].add(v);
             g[v].add(u);
         }
         Deque<int[]> q = new LinkedList<>();
-        q.offerLast(new int[]{1, 0});
+        q.offerLast(new int[] {1, 0});
         int[][] dist = new int[n + 1][2];
         for (int i = 0; i < n + 1; ++i) {
             Arrays.fill(dist[i], Integer.MAX_VALUE);
@@ -133,13 +155,13 @@ class Solution {
             for (int v : g[u]) {
                 if (d + 1 < dist[v][0]) {
                     dist[v][0] = d + 1;
-                    q.offerLast(new int[]{v, d + 1});
+                    q.offerLast(new int[] {v, d + 1});
                 } else if (dist[v][0] < d + 1 && d + 1 < dist[v][1]) {
                     dist[v][1] = d + 1;
                     if (v == n) {
                         break;
                     }
-                    q.offerLast(new int[]{v, d + 1});
+                    q.offerLast(new int[] {v, d + 1});
                 }
             }
         }
@@ -155,10 +177,8 @@ class Solution {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

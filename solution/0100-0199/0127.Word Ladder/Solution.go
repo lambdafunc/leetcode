@@ -6,6 +6,7 @@ func ladderLength(beginWord string, endWord string, wordList []string) int {
 	q := []string{beginWord}
 	ans := 1
 	for len(q) > 0 {
+		ans++
 		for i := len(q); i > 0; i-- {
 			s := q[0]
 			q = q[1:]
@@ -19,7 +20,7 @@ func ladderLength(beginWord string, endWord string, wordList []string) int {
 						continue
 					}
 					if t == endWord {
-						return ans + 1
+						return ans
 					}
 					q = append(q, t)
 					words[t] = false
@@ -27,7 +28,6 @@ func ladderLength(beginWord string, endWord string, wordList []string) int {
 				chars[j] = ch
 			}
 		}
-		ans++
 	}
 	return 0
 }

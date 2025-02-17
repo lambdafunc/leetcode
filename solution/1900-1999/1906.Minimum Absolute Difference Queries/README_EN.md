@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1906.Minimum%20Absolute%20Difference%20Queries/README_EN.md
+rating: 2146
+source: Weekly Contest 246 Q4
+tags:
+    - Array
+    - Hash Table
+---
+
+<!-- problem:start -->
+
 # [1906. Minimum Absolute Difference Queries](https://leetcode.com/problems/minimum-absolute-difference-queries)
 
 [中文文档](/solution/1900-1999/1906.Minimum%20Absolute%20Difference%20Queries/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>The <strong>minimum absolute difference</strong> of an array <code>a</code> is defined as the <strong>minimum value</strong> of <code>|a[i] - a[j]|</code>, where <code>0 &lt;= i &lt; j &lt; a.length</code> and <code>a[i] != a[j]</code>. If all elements of <code>a</code> are the <strong>same</strong>, the minimum absolute difference is <code>-1</code>.</p>
 
@@ -24,7 +39,7 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,3,4,8], queries = [[0,1],[1,2],[2,3],[0,3]]
@@ -36,7 +51,7 @@
 - queries[3] = [0,3]: The subarray is [1,<u>3</u>,<u>4</u>,8] and the minimum absolute difference is |3-4| = 1.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [4,5,2,2,7,10], queries = [[2,3],[0,2],[0,5],[3,5]]
@@ -59,11 +74,17 @@
 	<li><code>0 &lt;= l<sub>i</sub> &lt; r<sub>i</sub> &lt; nums.length</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -78,20 +99,20 @@ class Solution:
         ans = []
         for i in range(n):
             left, right = queries[i][0], queries[i][1] + 1
-            t = float('inf')
+            t = inf
             last = -1
             for j in range(1, 101):
                 if pre_sum[right][j] - pre_sum[left][j] > 0:
                     if last != -1:
                         t = min(t, j - last)
                     last = j
-            if t == float('inf'):
+            if t == inf:
                 t = -1
             ans.append(t)
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -128,41 +149,7 @@ class Solution {
 }
 ```
 
-### **TypeScript**
-
-```ts
-function minDifference(nums: number[], queries: number[][]): number[] {
-    let m = nums.length,
-        n = queries.length;
-    let max = 100;
-    // let max = Math.max(...nums);
-    let pre: number[][] = [];
-    pre.push(new Array(max + 1).fill(0));
-    for (let i = 0; i < m; ++i) {
-        let num = nums[i];
-        pre.push(pre[i].slice());
-        pre[i + 1][num] += 1;
-    }
-
-    let ans = [];
-    for (let [left, right] of queries) {
-        let last = -1;
-        let min = Infinity;
-        for (let j = 1; j < max + 1; ++j) {
-            if (pre[left][j] < pre[right + 1][j]) {
-                if (last != -1) {
-                    min = Math.min(min, j - last);
-                }
-                last = j;
-            }
-        }
-        ans.push(min == Infinity ? -1 : min);
-    }
-    return ans;
-}
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -200,7 +187,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func minDifference(nums []int, queries [][]int) []int {
@@ -239,10 +226,42 @@ func minDifference(nums []int, queries [][]int) []int {
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+function minDifference(nums: number[], queries: number[][]): number[] {
+    let m = nums.length,
+        n = queries.length;
+    let max = 100;
+    // let max = Math.max(...nums);
+    let pre: number[][] = [];
+    pre.push(new Array(max + 1).fill(0));
+    for (let i = 0; i < m; ++i) {
+        let num = nums[i];
+        pre.push(pre[i].slice());
+        pre[i + 1][num] += 1;
+    }
 
+    let ans = [];
+    for (let [left, right] of queries) {
+        let last = -1;
+        let min = Infinity;
+        for (let j = 1; j < max + 1; ++j) {
+            if (pre[left][j] < pre[right + 1][j]) {
+                if (last != -1) {
+                    min = Math.min(min, j - last);
+                }
+                last = j;
+            }
+        }
+        ans.push(min == Infinity ? -1 : min);
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

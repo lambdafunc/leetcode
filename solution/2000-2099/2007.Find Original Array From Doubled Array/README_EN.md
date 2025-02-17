@@ -1,15 +1,32 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2007.Find%20Original%20Array%20From%20Doubled%20Array/README_EN.md
+rating: 1557
+source: Biweekly Contest 61 Q2
+tags:
+    - Greedy
+    - Array
+    - Hash Table
+    - Sorting
+---
+
+<!-- problem:start -->
+
 # [2007. Find Original Array From Doubled Array](https://leetcode.com/problems/find-original-array-from-doubled-array)
 
 [中文文档](/solution/2000-2099/2007.Find%20Original%20Array%20From%20Doubled%20Array/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>An integer array <code>original</code> is transformed into a <strong>doubled</strong> array <code>changed</code> by appending <strong>twice the value</strong> of every element in <code>original</code>, and then randomly <strong>shuffling</strong> the resulting array.</p>
 
 <p>Given an array <code>changed</code>, return <code>original</code><em> if </em><code>changed</code><em> is a <strong>doubled</strong> array. If </em><code>changed</code><em> is not a <strong>doubled</strong> array, return an empty array. The elements in</em> <code>original</code> <em>may be returned in <strong>any</strong> order</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> changed = [1,3,4,2,6,8]
@@ -21,7 +38,7 @@
 Other original arrays could be [4,3,1] or [3,1,4].
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> changed = [6,3,0,1]
@@ -29,7 +46,7 @@ Other original arrays could be [4,3,1] or [3,1,4].
 <strong>Explanation:</strong> changed is not a doubled array.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> changed = [1]
@@ -45,133 +62,155 @@ Other original arrays could be [4,3,1] or [3,1,4].
 	<li><code>0 &lt;= changed[i] &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Sorting
+
+We notice that if the array `changed` is a double array, then the smallest element in the array `changed` must also be an element in the original array. Therefore, we can first sort the array `changed`, and then start from the first element to traverse the array `changed` in ascending order.
+
+We use a hash table or array $cnt$ to count the occurrence of each element in the array `changed`. For each element $x$ in the array `changed`, we first check whether $x$ exists in $cnt$. If it does not exist, we skip this element. Otherwise, we subtract one from $cnt[x]$, and check whether $x \times 2$ exists in $cnt$. If it does not exist, we return an empty array directly. Otherwise, we subtract one from $cnt[x \times 2]$, and add $x$ to the answer array.
+
+After the traversal, we return the answer array.
+
+The time complexity is $O(n \times \log n)$, and the space complexity is $O(n)$, where $n$ is the length of the array `changed`.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def findOriginalArray(self, changed: List[int]) -> List[int]:
-        if len(changed) % 2 != 0:
-            return []
-        n = 100010
-        counter = [0] * n
+        changed.sort()
+        cnt = Counter(changed)
+        ans = []
         for x in changed:
-            counter[x] += 1
-        if counter[0] % 2 != 0:
-            return []
-        res = [0] * (counter[0] // 2)
-        for i in range(1, n):
-            if counter[i] == 0:
+            if cnt[x] == 0:
                 continue
-            if i * 2 > n or counter[i] > counter[i*2]:
+            cnt[x] -= 1
+            if cnt[x << 1] <= 0:
                 return []
-            res.extend([i] * counter[i])
-            counter[i*2] -= counter[i]
-        return res
+            cnt[x << 1] -= 1
+            ans.append(x)
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int[] findOriginalArray(int[] changed) {
-        if (changed.length % 2 != 0) {
-            return new int[]{};
-        }
-        int n = 100010;
-        int[] counter = new int[n];
+        int n = changed.length;
+        Arrays.sort(changed);
+        int[] cnt = new int[changed[n - 1] + 1];
         for (int x : changed) {
-            ++counter[x];
+            ++cnt[x];
         }
-        if (counter[0] % 2 != 0) {
-            return new int[]{};
-        }
-        int[] res = new int[changed.length / 2];
-        int j = counter[0] / 2;
-        for (int i = 1; i < n; ++i) {
-            if (counter[i] == 0) {
+        int[] ans = new int[n >> 1];
+        int i = 0;
+        for (int x : changed) {
+            if (cnt[x] == 0) {
                 continue;
             }
-            if (i * 2 >= n || counter[i] > counter[i * 2]) {
-                return new int[]{};
+            --cnt[x];
+            int y = x << 1;
+            if (y >= cnt.length || cnt[y] <= 0) {
+                return new int[0];
             }
-            counter[i * 2] -= counter[i];
-            while (counter[i]-- > 0) {
-                res[j++] = i;
-            }
+            --cnt[y];
+            ans[i++] = x;
         }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<int> findOriginalArray(vector<int>& changed) {
-        if (changed.size() % 2 != 0) return {};
-        int n = 100010;
-        vector<int> counter(n);
-        for (int x : changed) ++counter[x];
-        if (counter[0] % 2 != 0) return {};
-        vector<int> res(changed.size() / 2);
-        int j = counter[0] / 2;
-        for (int i = 1; i < n; ++i)
-        {
-            if (counter[i] == 0) continue;
-            if (i * 2 >= n || counter[i] > counter[i * 2]) return {};
-            counter[i * 2] -= counter[i];
-            while (counter[i]--) res[j++] = i;
+        sort(changed.begin(), changed.end());
+        vector<int> cnt(changed.back() + 1);
+        for (int x : changed) {
+            ++cnt[x];
         }
-        return res;
+        vector<int> ans;
+        for (int x : changed) {
+            if (cnt[x] == 0) {
+                continue;
+            }
+            --cnt[x];
+            int y = x << 1;
+            if (y >= cnt.size() || cnt[y] <= 0) {
+                return {};
+            }
+            --cnt[y];
+            ans.push_back(x);
+        }
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func findOriginalArray(changed []int) []int {
-	if len(changed)%2 != 0 {
-		return []int{}
-	}
-	n := 100010
-	counter := make([]int, n)
+func findOriginalArray(changed []int) (ans []int) {
+	sort.Ints(changed)
+	cnt := make([]int, changed[len(changed)-1]+1)
 	for _, x := range changed {
-		counter[x]++
+		cnt[x]++
 	}
-	if counter[0]%2 != 0 {
-		return []int{}
-	}
-	var res []int
-	for j := 0; j < counter[0]/2; j++ {
-		res = append(res, 0)
-	}
-	for i := 1; i < n; i++ {
-		if counter[i] == 0 {
+	for _, x := range changed {
+		if cnt[x] == 0 {
 			continue
 		}
-		if i*2 >= n || counter[i] > counter[i*2] {
+		cnt[x]--
+		y := x << 1
+		if y >= len(cnt) || cnt[y] <= 0 {
 			return []int{}
 		}
-		for j := 0; j < counter[i]; j++ {
-			res = append(res, i)
-		}
-		counter[i*2] -= counter[i]
+		cnt[y]--
+		ans = append(ans, x)
 	}
-	return res
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function findOriginalArray(changed: number[]): number[] {
+    changed.sort((a, b) => a - b);
+    const cnt: number[] = Array(changed.at(-1)! + 1).fill(0);
+    for (const x of changed) {
+        ++cnt[x];
+    }
+    const ans: number[] = [];
+    for (const x of changed) {
+        if (cnt[x] === 0) {
+            continue;
+        }
+        cnt[x]--;
+        const y = x << 1;
+        if (y >= cnt.length || cnt[y] <= 0) {
+            return [];
+        }
+        cnt[y]--;
+        ans.push(x);
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

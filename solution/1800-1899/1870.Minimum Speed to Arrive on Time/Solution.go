@@ -1,25 +1,24 @@
 func minSpeedOnTime(dist []int, hour float64) int {
+	if float64(len(dist)) > math.Ceil(hour) {
+		return -1
+	}
+	const m int = 1e7
 	n := len(dist)
-	left, right := 1, int(1e7)
-	for left < right {
-		mid := (left + right) >> 1
-		if arriveOnTime(dist, n, float64(mid), hour) {
-			right = mid
-		} else {
-			left = mid + 1
+	ans := sort.Search(m+1, func(v int) bool {
+		v++
+		s := 0.0
+		for i, d := range dist {
+			t := float64(d) / float64(v)
+			if i == n-1 {
+				s += t
+			} else {
+				s += math.Ceil(t)
+			}
 		}
+		return s <= hour
+	}) + 1
+	if ans > m {
+		return -1
 	}
-	if arriveOnTime(dist, n, float64(left), hour) {
-		return left
-	}
-	return -1
-}
-
-func arriveOnTime(dist []int, n int, speed, hour float64) bool {
-	var cost float64
-	for _, v := range dist[:n-1] {
-		cost += math.Ceil(float64(v) / speed)
-	}
-	cost += float64(dist[n-1]) / speed
-	return cost <= hour
+	return ans
 }

@@ -1,30 +1,28 @@
 class Solution {
     public String[] sortFeatures(String[] features, String[] responses) {
-        Set<String> featureSet = new HashSet<>();
-        Map<String, Integer> order = new HashMap<>();
-        for (int i = 0; i < features.length; ++i) {
-            featureSet.add(features[i]);
-            order.put(features[i], i);
-        }
-
-        Map<String, Integer> counter = new HashMap<>();
-        for (String resp : responses) {
-            Set<String> s = new HashSet<>();
-            String[] words = resp.split(" ");
-            for (String word : words) {
-                s.add(word);
-            }
-            for (String word : s) {
-                if (featureSet.contains(word)) {
-                    counter.put(word, counter.getOrDefault(word, 0) + 1);
+        Map<String, Integer> cnt = new HashMap<>();
+        for (String s : responses) {
+            Set<String> vis = new HashSet<>();
+            for (String w : s.split(" ")) {
+                if (vis.add(w)) {
+                    cnt.merge(w, 1, Integer::sum);
                 }
             }
         }
-        String[] copyFeatures = Arrays.copyOf(features, features.length);
-        Arrays.sort(copyFeatures, (a, b) -> {
-            int diff = counter.getOrDefault(b, 0) - counter.getOrDefault(a, 0);
-            return diff == 0 ? order.get(a) - order.get(b) : diff;
+        int n = features.length;
+        Integer[] idx = new Integer[n];
+        for (int i = 0; i < n; i++) {
+            idx[i] = i;
+        }
+        Arrays.sort(idx, (i, j) -> {
+            int x = cnt.getOrDefault(features[i], 0);
+            int y = cnt.getOrDefault(features[j], 0);
+            return x == y ? i - j : y - x;
         });
-        return copyFeatures;
+        String[] ans = new String[n];
+        for (int i = 0; i < n; i++) {
+            ans[i] = features[idx[i]];
+        }
+        return ans;
     }
 }

@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0652.Find%20Duplicate%20Subtrees/README_EN.md
+tags:
+    - Tree
+    - Depth-First Search
+    - Hash Table
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
 # [652. Find Duplicate Subtrees](https://leetcode.com/problems/find-duplicate-subtrees)
 
 [中文文档](/solution/0600-0699/0652.Find%20Duplicate%20Subtrees/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given the <code>root</code>&nbsp;of a binary tree, return all <strong>duplicate subtrees</strong>.</p>
 
@@ -11,22 +26,22 @@
 <p>Two trees are <strong>duplicate</strong> if they have the <strong>same structure</strong> with the <strong>same node values</strong>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0652.Find%20Duplicate%20Subtrees/images/e1.jpg" style="width: 450px; height: 354px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0652.Find%20Duplicate%20Subtrees/images/e1.jpg" style="width: 450px; height: 354px;" />
 <pre>
 <strong>Input:</strong> root = [1,2,3,4,null,2,4,null,null,4]
 <strong>Output:</strong> [[2,4],[4]]
 </pre>
 
-<p><strong>Example 2:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0652.Find%20Duplicate%20Subtrees/images/e2.jpg" style="width: 321px; height: 201px;" />
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0652.Find%20Duplicate%20Subtrees/images/e2.jpg" style="width: 321px; height: 201px;" />
 <pre>
 <strong>Input:</strong> root = [2,1,1]
 <strong>Output:</strong> [[1]]
 </pre>
 
-<p><strong>Example 3:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0652.Find%20Duplicate%20Subtrees/images/e33.jpg" style="width: 450px; height: 303px;" />
+<p><strong class="example">Example 3:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0652.Find%20Duplicate%20Subtrees/images/e33.jpg" style="width: 450px; height: 303px;" />
 <pre>
 <strong>Input:</strong> root = [2,2,2,3,null,3,null]
 <strong>Output:</strong> [[2,3],[3]]
@@ -36,15 +51,21 @@
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li>The number of the nodes in the tree will be in the range <code>[1, 10^4]</code></li>
+	<li>The number of the nodes in the tree will be in the range <code>[1, 5000]</code></li>
 	<li><code>-200 &lt;= Node.val &lt;= 200</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -54,7 +75,9 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def findDuplicateSubtrees(self, root: Optional[TreeNode]) -> List[Optional[TreeNode]]:
+    def findDuplicateSubtrees(
+        self, root: Optional[TreeNode]
+    ) -> List[Optional[TreeNode]]:
         def dfs(root):
             if root is None:
                 return '#'
@@ -70,7 +93,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -113,7 +136,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -147,7 +170,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -178,10 +201,106 @@ func findDuplicateSubtrees(root *TreeNode) []*TreeNode {
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function findDuplicateSubtrees(root: TreeNode | null): Array<TreeNode | null> {
+    const map = new Map<string, number>();
+    const res = [];
+    const dfs = (root: TreeNode | null) => {
+        if (root == null) {
+            return '#';
+        }
+        const { val, left, right } = root;
+        const s = `${val},${dfs(left)},${dfs(right)}`;
+        map.set(s, (map.get(s) ?? 0) + 1);
+        if (map.get(s) === 2) {
+            res.push(root);
+        }
+        return s;
+    };
+    dfs(root);
+    return res;
+}
 ```
 
+#### Rust
+
+```rust
+// Definition for a binary tree node.
+// #[derive(Debug, PartialEq, Eq)]
+// pub struct TreeNode {
+//   pub val: i32,
+//   pub left: Option<Rc<RefCell<TreeNode>>>,
+//   pub right: Option<Rc<RefCell<TreeNode>>>,
+// }
+//
+// impl TreeNode {
+//   #[inline]
+//   pub fn new(val: i32) -> Self {
+//     TreeNode {
+//       val,
+//       left: None,
+//       right: None
+//     }
+//   }
+// }
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::rc::Rc;
+impl Solution {
+    fn dfs(
+        root: &Option<Rc<RefCell<TreeNode>>>,
+        map: &mut HashMap<String, i32>,
+        res: &mut Vec<Option<Rc<RefCell<TreeNode>>>>,
+    ) -> String {
+        if root.is_none() {
+            return String::from('#');
+        }
+
+        let s = {
+            let root = root.as_ref().unwrap().as_ref().borrow();
+            format!(
+                "{},{},{}",
+                root.val.to_string(),
+                Self::dfs(&root.left, map, res),
+                Self::dfs(&root.right, map, res)
+            )
+        };
+        *map.entry(s.clone()).or_insert(0) += 1;
+        if *map.get(&s).unwrap() == 2 {
+            res.push(root.clone());
+        }
+        return s;
+    }
+
+    pub fn find_duplicate_subtrees(
+        root: Option<Rc<RefCell<TreeNode>>>,
+    ) -> Vec<Option<Rc<RefCell<TreeNode>>>> {
+        let mut map = HashMap::new();
+        let mut res = Vec::new();
+        Self::dfs(&root, &mut map, &mut res);
+        res
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

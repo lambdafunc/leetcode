@@ -1,15 +1,28 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0377.Combination%20Sum%20IV/README_EN.md
+tags:
+    - Array
+    - Dynamic Programming
+---
+
+<!-- problem:start -->
+
 # [377. Combination Sum IV](https://leetcode.com/problems/combination-sum-iv)
 
 [中文文档](/solution/0300-0399/0377.Combination%20Sum%20IV/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given an array of <strong>distinct</strong> integers <code>nums</code> and a target integer <code>target</code>, return <em>the number of possible combinations that add up to</em>&nbsp;<code>target</code>.</p>
 
-<p>The answer is <strong>guaranteed</strong> to fit in a <strong>32-bit</strong> integer.</p>
+<p>The test cases are generated so that the answer can fit in a <strong>32-bit</strong> integer.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,2,3], target = 4
@@ -26,7 +39,7 @@ The possible combination ways are:
 Note that different sequences are counted as different combinations.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [9], target = 3
@@ -46,88 +59,154 @@ Note that different sequences are counted as different combinations.
 <p>&nbsp;</p>
 <p><strong>Follow up:</strong> What if negative numbers are allowed in the given array? How does it change the problem? What limitation we need to add to the question to allow negative numbers?</p>
 
+<!-- description:end -->
+
 ## Solutions
 
-Dynamic programming.
+<!-- solution:start -->
 
-`dp[i]` represents the number of element combinations whose sum is `i`.
+### Solution 1: Dynamic Programming
+
+We define $f[i]$ as the number of combinations that sum up to $i$. Initially, $f[0] = 1$, and the rest $f[i] = 0$. The final answer is $f[target]$.
+
+For $f[i]$, we can enumerate each element $x$ in the array. If $i \ge x$, then $f[i] = f[i] + f[i - x]$.
+
+Finally, return $f[target]$.
+
+The time complexity is $O(n \times target)$, and the space complexity is $O(target)$, where $n$ is the length of the array.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def combinationSum4(self, nums: List[int], target: int) -> int:
-        dp = [0] * (target + 1)
-        dp[0] = 1
+        f = [1] + [0] * target
         for i in range(1, target + 1):
-            for num in nums:
-                if i >= num:
-                    dp[i] += dp[i - num]
-        return dp[-1]
+            for x in nums:
+                if i >= x:
+                    f[i] += f[i - x]
+        return f[target]
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int combinationSum4(int[] nums, int target) {
-        int[] dp = new int[target + 1];
-        dp[0] = 1;
+        int[] f = new int[target + 1];
+        f[0] = 1;
         for (int i = 1; i <= target; ++i) {
-            for (int num : nums) {
-                if (i >= num) {
-                    dp[i] += dp[i - num];
+            for (int x : nums) {
+                if (i >= x) {
+                    f[i] += f[i - x];
                 }
             }
         }
-        return dp[target];
+        return f[target];
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int combinationSum4(vector<int>& nums, int target) {
-        vector<int> dp(target + 1);
-        dp[0] = 1;
+        int f[target + 1];
+        memset(f, 0, sizeof(f));
+        f[0] = 1;
         for (int i = 1; i <= target; ++i) {
-            for (int num : nums) {
-                if (i >= num && dp[i - num] < INT_MAX - dp[i]) {
-                    dp[i] += dp[i - num];
+            for (int x : nums) {
+                if (i >= x && f[i - x] < INT_MAX - f[i]) {
+                    f[i] += f[i - x];
                 }
             }
         }
-        return dp[target];
+        return f[target];
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func combinationSum4(nums []int, target int) int {
-	dp := make([]int, target+1)
-	dp[0] = 1
+	f := make([]int, target+1)
+	f[0] = 1
 	for i := 1; i <= target; i++ {
-		for _, num := range nums {
-			if i >= num {
-				dp[i] += dp[i-num]
+		for _, x := range nums {
+			if i >= x {
+				f[i] += f[i-x]
 			}
 		}
 	}
-	return dp[target]
+	return f[target]
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function combinationSum4(nums: number[], target: number): number {
+    const f: number[] = Array(target + 1).fill(0);
+    f[0] = 1;
+    for (let i = 1; i <= target; ++i) {
+        for (const x of nums) {
+            if (i >= x) {
+                f[i] += f[i - x];
+            }
+        }
+    }
+    return f[target];
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var combinationSum4 = function (nums, target) {
+    const f = Array(target + 1).fill(0);
+    f[0] = 1;
+    for (let i = 1; i <= target; ++i) {
+        for (const x of nums) {
+            if (i >= x) {
+                f[i] += f[i - x];
+            }
+        }
+    }
+    return f[target];
+};
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int CombinationSum4(int[] nums, int target) {
+        int[] f = new int[target + 1];
+        f[0] = 1;
+        for (int i = 1; i <= target; ++i) {
+            foreach (int x in nums) {
+                if (i >= x) {
+                    f[i] += f[i - x];
+                }
+            }
+        }
+        return f[target];
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

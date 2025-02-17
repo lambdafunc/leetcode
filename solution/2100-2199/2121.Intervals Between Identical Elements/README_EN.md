@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2100-2199/2121.Intervals%20Between%20Identical%20Elements/README_EN.md
+rating: 1760
+source: Weekly Contest 273 Q3
+tags:
+    - Array
+    - Hash Table
+    - Prefix Sum
+---
+
+<!-- problem:start -->
+
 # [2121. Intervals Between Identical Elements](https://leetcode.com/problems/intervals-between-identical-elements)
 
 [中文文档](/solution/2100-2199/2121.Intervals%20Between%20Identical%20Elements/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a <strong>0-indexed</strong> array of <code>n</code> integers <code>arr</code>.</p>
 
@@ -13,7 +29,7 @@
 <p><strong>Note:</strong> <code>|x|</code> is the absolute value of <code>x</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> arr = [2,1,3,1,2,3,3]
@@ -28,7 +44,7 @@
 - Index 6: Two more 3s are found at indices 2 and 5. |6 - 2| + |6 - 5| = 5
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> arr = [10,5,10,10]
@@ -49,11 +65,20 @@
 	<li><code>1 &lt;= arr[i] &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<p>&nbsp;</p>
+<p><strong>Note:</strong> This question is the same as <a href="https://leetcode.com/problems/sum-of-distances/description/" target="_blank"> 2615: Sum of Distances.</a></p>
+
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -73,7 +98,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -102,7 +127,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -112,15 +137,13 @@ public:
         int n = arr.size();
         for (int i = 0; i < n; ++i) d[arr[i]].push_back(i);
         vector<long long> ans(n);
-        for (auto& item : d)
-        {
+        for (auto& item : d) {
             auto& v = item.second;
             int m = v.size();
             long long val = 0;
             for (int e : v) val += e;
             val -= m * v[0];
-            for (int i = 0; i < v.size(); ++i)
-            {
+            for (int i = 0; i < v.size(); ++i) {
                 int delta = i >= 1 ? v[i] - v[i - 1] : 0;
                 val += i * delta - (m - i) * delta;
                 ans[v[i]] = val;
@@ -131,7 +154,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func getDistances(arr []int) []int64 {
@@ -161,16 +184,8 @@ func getDistances(arr []int) []int64 {
 }
 ```
 
-### **TypeScript**
-
-```ts
-
-```
-
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

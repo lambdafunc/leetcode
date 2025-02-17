@@ -1,6 +1,6 @@
-func numEnclaves(grid [][]int) int {
+func numEnclaves(grid [][]int) (ans int) {
 	m, n := len(grid), len(grid[0])
-	dirs := []int{-1, 0, 1, 0, -1}
+	dirs := [5]int{-1, 0, 1, 0, -1}
 	var dfs func(i, j int)
 	dfs = func(i, j int) {
 		grid[i][j] = 0
@@ -11,20 +11,24 @@ func numEnclaves(grid [][]int) int {
 			}
 		}
 	}
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if grid[i][j] == 1 && (i == 0 || i == m-1 || j == 0 || j == n-1) {
+	for j := 0; j < n; j++ {
+		for _, i := range [2]int{0, m - 1} {
+			if grid[i][j] == 1 {
 				dfs(i, j)
 			}
 		}
 	}
-	ans := 0
 	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
+		for _, j := range [2]int{0, n - 1} {
 			if grid[i][j] == 1 {
-				ans++
+				dfs(i, j)
 			}
 		}
 	}
-	return ans
+	for _, row := range grid {
+		for _, x := range row {
+			ans += x
+		}
+	}
+	return
 }

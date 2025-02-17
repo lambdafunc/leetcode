@@ -1,10 +1,20 @@
-# [1549. 每件商品的最新订单](https://leetcode-cn.com/problems/the-most-recent-orders-for-each-product)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1549.The%20Most%20Recent%20Orders%20for%20Each%20Product/README.md
+tags:
+    - 数据库
+---
+
+<!-- problem:start -->
+
+# [1549. 每件商品的最新订单 🔒](https://leetcode.cn/problems/the-most-recent-orders-for-each-product)
 
 [English Version](/solution/1500-1599/1549.The%20Most%20Recent%20Orders%20for%20Each%20Product/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>表: <code>Customers</code></p>
 
@@ -54,14 +64,19 @@ product_id 是该表主键.
 
 <p>&nbsp;</p>
 
-<p>写一个SQL 语句,&nbsp;找到每件商品的最新订单(可能有多个).</p>
+<p>写一个解决方案,&nbsp;找到每件商品的最新订单(可能有多个).</p>
 
 <p>返回的结果以&nbsp;<code>product_name</code> <strong>升序排列</strong>,&nbsp;如果有排序相同,&nbsp;再以&nbsp;<code>product_id</code> <strong>升序</strong>排列.&nbsp;如果还有排序相同,&nbsp;再以&nbsp;<code>order_id</code> <strong>升序</strong>排列.</p>
 
-<p>查询结果格式如下例所示:</p>
+<p>查询结果格式如下例所示。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>示例 1：</strong></p>
 
 <pre>
-<code>Customers</code>
+<strong>输入:</strong>
+<code>Customers表：</code>
 +-------------+-----------+
 | customer_id | name      |
 +-------------+-----------+
@@ -71,8 +86,7 @@ product_id 是该表主键.
 | 4           | Marwan    |
 | 5           | Khaled    |
 +-------------+-----------+
-
-<code>Orders</code>
+<code>Orders表：</code>
 +----------+------------+-------------+------------+
 | order_id | order_date | customer_id | product_id |
 +----------+------------+-------------+------------+
@@ -87,8 +101,7 @@ product_id 是该表主键.
 | 9        | 2020-08-07 | 2           | 3          |
 | 10       | 2020-07-15 | 1           | 2          |
 +----------+------------+-------------+------------+
-
-<code>Products</code>
+<code>Products表：</code>
 +------------+--------------+-------+
 | product_id | product_name | price |
 +------------+--------------+-------+
@@ -97,8 +110,7 @@ product_id 是该表主键.
 | 3          | screen       | 600   |
 | 4          | hard disk    | 450   |
 +------------+--------------+-------+
-
-Result
+<strong>输出：</strong>
 +--------------+------------+----------+------------+
 | product_name | product_id | order_id | order_date |
 +--------------+------------+----------+------------+
@@ -107,22 +119,48 @@ Result
 | mouse        | 2          | 8        | 2020-08-03 |
 | screen       | 3          | 3        | 2020-08-29 |
 +--------------+------------+----------+------------+
+<strong>解释：</strong>
 keyboard 的最新订单在2020-08-01, 在这天有两次下单.
 mouse 的最新订单在2020-08-03, 在这天只有一次下单.
 screen 的最新订单在2020-08-29, 在这天只有一次下单.
-hard disk 没有被下单, 我们不把它包含在结果表中.
-</pre>
+hard disk 没有被下单, 我们不把它包含在结果表中.</pre>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：等值连接 + 窗口函数
+
+我们可以使用等值连接，将 `Orders` 表和 `Products` 表按照 `product_id` 连接起来，然后使用窗口函数 `rank()`，对 `Orders` 表中的每个 `product_id` 进行分组，按照 `order_date` 降序排列，然后取出每个分组中排名第一的记录。
 
 <!-- tabs:start -->
 
-### **SQL**
+#### MySQL
 
 ```sql
-
+# Write your MySQL query statement below
+WITH
+    T AS (
+        SELECT
+            *,
+            RANK() OVER (
+                PARTITION BY product_id
+                ORDER BY order_date DESC
+            ) AS rk
+        FROM
+            Orders
+            JOIN Products USING (product_id)
+    )
+SELECT product_name, product_id, order_id, order_date
+FROM T
+WHERE rk = 1
+ORDER BY 1, 2, 3;
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

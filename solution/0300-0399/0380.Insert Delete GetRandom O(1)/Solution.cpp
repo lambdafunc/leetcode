@@ -1,36 +1,36 @@
 class RandomizedSet {
-    unordered_map<int, int> mp;
-    vector<int> nums;
 public:
     RandomizedSet() {
-
     }
 
     bool insert(int val) {
-        if (mp.count(val))
+        if (d.count(val)) {
             return false;
-
-        mp[val] = nums.size();
-        nums.push_back(val);
+        }
+        d[val] = q.size();
+        q.push_back(val);
         return true;
     }
 
     bool remove(int val) {
-        if (!mp.count(val))
+        if (!d.count(val)) {
             return false;
-
-        int removeIndex = mp[val];
-        nums[removeIndex] = nums.back();
-        mp[nums.back()] = removeIndex;
-
-        mp.erase(val);
-        nums.pop_back();
+        }
+        int i = d[val];
+        d[q.back()] = i;
+        q[i] = q.back();
+        q.pop_back();
+        d.erase(val);
         return true;
     }
 
     int getRandom() {
-        return nums[rand() % nums.size()];
+        return q[rand() % q.size()];
     }
+
+private:
+    unordered_map<int, int> d;
+    vector<int> q;
 };
 
 /**
@@ -40,4 +40,3 @@ public:
  * bool param_2 = obj->remove(val);
  * int param_3 = obj->getRandom();
  */
-```

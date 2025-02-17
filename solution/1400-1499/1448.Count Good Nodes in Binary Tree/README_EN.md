@@ -1,8 +1,25 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1400-1499/1448.Count%20Good%20Nodes%20in%20Binary%20Tree/README_EN.md
+rating: 1360
+source: Biweekly Contest 26 Q3
+tags:
+    - Tree
+    - Depth-First Search
+    - Breadth-First Search
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
 # [1448. Count Good Nodes in Binary Tree](https://leetcode.com/problems/count-good-nodes-in-binary-tree)
 
 [中文文档](/solution/1400-1499/1448.Count%20Good%20Nodes%20in%20Binary%20Tree/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>Given a binary tree <code>root</code>, a node <em>X</em> in the tree is named&nbsp;<strong>good</strong> if in the path from root to <em>X</em> there are no nodes with a value <em>greater than</em> X.</p>
 
@@ -10,9 +27,9 @@
 
 <p>&nbsp;</p>
 
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1400-1499/1448.Count%20Good%20Nodes%20in%20Binary%20Tree/images/test_sample_1.png" style="width: 263px; height: 156px;" /></strong></p>
+<p><strong><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1400-1499/1448.Count%20Good%20Nodes%20in%20Binary%20Tree/images/test_sample_1.png" style="width: 263px; height: 156px;" /></strong></p>
 
 <pre>
 
@@ -30,9 +47,9 @@ Node 5 -&gt; (3,4,5) is the maximum value in the path
 
 Node 3 -&gt; (3,1,3) is the maximum value in the path.</pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/1400-1499/1448.Count%20Good%20Nodes%20in%20Binary%20Tree/images/test_sample_2.png" style="width: 157px; height: 161px;" /></strong></p>
+<p><strong><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/1400-1499/1448.Count%20Good%20Nodes%20in%20Binary%20Tree/images/test_sample_2.png" style="width: 157px; height: 161px;" /></strong></p>
 
 <pre>
 
@@ -42,7 +59,7 @@ Node 3 -&gt; (3,1,3) is the maximum value in the path.</pre>
 
 <strong>Explanation:</strong> Node 2 -&gt; (3, 3, 2) is not good, because &quot;3&quot; is higher than it.</pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 
@@ -57,15 +74,24 @@ Node 3 -&gt; (3,1,3) is the maximum value in the path.</pre>
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li>The number of nodes in the binary tree is in the range&nbsp;<code>[1, 10^5]</code>.</li>
-	<li>Each node&#39;s value is between <code>[-10^4, 10^4]</code>.</li>
+
+    <li>The number of nodes in the binary tree is in the range&nbsp;<code>[1, 10^5]</code>.</li>
+
+    <li>Each node&#39;s value is between <code>[-10^4, 10^4]</code>.</li>
+
 </ul>
+
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -76,7 +102,7 @@ Node 3 -&gt; (3,1,3) is the maximum value in the path.</pre>
 #         self.right = right
 class Solution:
     def goodNodes(self, root: TreeNode) -> int:
-        def dfs(root, mx):
+        def dfs(root: TreeNode, mx: int):
             if root is None:
                 return
             nonlocal ans
@@ -87,11 +113,11 @@ class Solution:
             dfs(root.right, mx)
 
         ans = 0
-        dfs(root, -10000)
+        dfs(root, -1000000)
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -110,11 +136,10 @@ class Solution:
  * }
  */
 class Solution {
-    private int ans;
+    private int ans = 0;
 
     public int goodNodes(TreeNode root) {
-        ans = 0;
-        dfs(root, -10000);
+        dfs(root, -100000);
         return ans;
     }
 
@@ -132,7 +157,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -148,28 +173,26 @@ class Solution {
  */
 class Solution {
 public:
-    int ans;
-
     int goodNodes(TreeNode* root) {
-        ans = 0;
-        dfs(root, -10000);
+        int ans = 0;
+        function<void(TreeNode*, int)> dfs = [&](TreeNode* root, int mx) {
+            if (!root) {
+                return;
+            }
+            if (mx <= root->val) {
+                ++ans;
+                mx = root->val;
+            }
+            dfs(root->left, mx);
+            dfs(root->right, mx);
+        };
+        dfs(root, -1e6);
         return ans;
-    }
-
-    void dfs(TreeNode* root, int mx) {
-        if (!root) return;
-        if (mx <= root->val)
-        {
-            ++ans;
-            mx = root->val;
-        }
-        dfs(root->left, mx);
-        dfs(root->right, mx);
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -180,9 +203,8 @@ public:
  *     Right *TreeNode
  * }
  */
-func goodNodes(root *TreeNode) int {
-	ans := 0
-	var dfs func(root *TreeNode, mx int)
+func goodNodes(root *TreeNode) (ans int) {
+	var dfs func(*TreeNode, int)
 	dfs = func(root *TreeNode, mx int) {
 		if root == nil {
 			return
@@ -194,15 +216,48 @@ func goodNodes(root *TreeNode) int {
 		dfs(root.Left, mx)
 		dfs(root.Right, mx)
 	}
-	dfs(root, -10000)
-	return ans
+	dfs(root, -10001)
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
 
+function goodNodes(root: TreeNode | null): number {
+    let ans = 0;
+    const dfs = (root: TreeNode | null, mx: number) => {
+        if (!root) {
+            return;
+        }
+        if (mx <= root.val) {
+            ++ans;
+            mx = root.val;
+        }
+        dfs(root.left, mx);
+        dfs(root.right, mx);
+    };
+    dfs(root, -1e6);
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

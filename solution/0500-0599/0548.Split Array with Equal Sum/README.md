@@ -1,25 +1,38 @@
-# [548. 将数组分割成和相等的子数组](https://leetcode-cn.com/problems/split-array-with-equal-sum)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0548.Split%20Array%20with%20Equal%20Sum/README.md
+tags:
+    - 数组
+    - 哈希表
+    - 前缀和
+---
+
+<!-- problem:start -->
+
+# [548. 将数组分割成和相等的子数组 🔒](https://leetcode.cn/problems/split-array-with-equal-sum)
 
 [English Version](/solution/0500-0599/0548.Split%20Array%20with%20Equal%20Sum/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个有 n 个整数的数组，你需要找到满足以下条件的三元组 (i, j, k) ：</p>
+<p>给定一个有 <code>n</code> 个整数的数组 <code>nums</code>&nbsp;，如果能找到满足以下条件的三元组&nbsp; <code>(i, j, k)</code>&nbsp; 则返回 <code>true</code> ：</p>
 
 <ol>
-	<li>0 &lt; i, i + 1 &lt; j, j + 1 &lt; k &lt; n - 1</li>
-	<li>子数组 (0, i - 1)，(i + 1, j - 1)，(j + 1, k - 1)，(k + 1, n - 1) 的和应该相等。</li>
+	<li><code>0 &lt; i, i + 1 &lt; j, j + 1 &lt; k &lt; n - 1</code></li>
+	<li>子数组 <code>(0, i - 1)</code>&nbsp;， <code>(i + 1, j - 1)</code> ， <code>(j + 1, k - 1)</code> ， <code>(k + 1, n - 1)</code> 的和应该相等。</li>
 </ol>
 
-<p>这里我们定义子数组 (L, R) 表示原数组从索引为L的元素开始至索引为R的元素。</p>
+<p>这里我们定义子数组&nbsp;<code>(l, r)</code>&nbsp;表示原数组从索引为&nbsp;<code>l</code>&nbsp;的元素开始至索引为&nbsp;<code>r</code> 的元素。</p>
 
 <p>&nbsp;</p>
 
-<p><strong>示例:</strong></p>
+<p><strong>示例 1:&nbsp;</strong></p>
 
-<pre><strong>输入:</strong> [1,2,1,2,1,2,1]
+<pre>
+<strong>输入:</strong> nums = [1,2,1,2,1,2,1]
 <strong>输出:</strong> True
 <strong>解释:</strong>
 i = 1, j = 3, k = 5. 
@@ -29,20 +42,30 @@ sum(j + 1, k - 1) = sum(4, 4) = 1
 sum(k + 1, n - 1) = sum(6, 6) = 1
 </pre>
 
+<p><strong>示例 2:</strong></p>
+
+<pre>
+<strong>输入:</strong> nums = [1,2,1,2,1,2,1,2]
+<strong>输出:</strong> false
+</pre>
+
 <p>&nbsp;</p>
 
-<p><strong>注意:</strong></p>
+<p><strong>提示:</strong></p>
 
-<ol>
-	<li>1 &lt;= n &lt;= 2000。</li>
-	<li>给定数组中的元素会在 [-1,000,000, 1,000,000] 范围内。</li>
-</ol>
+<ul>
+	<li><code>n ==&nbsp;nums.length</code></li>
+	<li><code>1 &lt;= n &lt;= 2000</code></li>
+	<li><code>-10<sup>6</sup>&nbsp;&lt;= nums[i] &lt;= 10<sup>6</sup></code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-前缀和 + 哈希表。
+### 方法一：前缀和 + 哈希表
 
 先求出前缀和数组 s。
 
@@ -52,13 +75,11 @@ sum(k + 1, n - 1) = sum(6, 6) = 1
 
 否则遍历结束返回 false。
 
-时间复杂度 O(n²)。
+时间复杂度 $O(n^2)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
@@ -78,9 +99,7 @@ class Solution:
         return False
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -108,7 +127,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -117,8 +136,7 @@ public:
         int n = nums.size();
         vector<int> s(n + 1);
         for (int i = 0; i < n; ++i) s[i + 1] = s[i] + nums[i];
-        for (int j = 3; j < n - 3; ++j)
-        {
+        for (int j = 3; j < n - 3; ++j) {
             unordered_set<int> seen;
             for (int i = 1; i < j - 1; ++i)
                 if (s[i] == s[j] - s[i + 1])
@@ -132,7 +150,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func splitArray(nums []int) bool {
@@ -158,10 +176,8 @@ func splitArray(nums []int) bool {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,23 @@
-# [1583. 统计不开心的朋友](https://leetcode-cn.com/problems/count-unhappy-friends)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1583.Count%20Unhappy%20Friends/README.md
+rating: 1658
+source: 第 206 场周赛 Q2
+tags:
+    - 数组
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [1583. 统计不开心的朋友](https://leetcode.cn/problems/count-unhappy-friends)
 
 [English Version](/solution/1500-1599/1583.Count%20Unhappy%20Friends/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一份 <code>n</code> 位朋友的亲近程度列表，其中 <code>n</code> 总是 <strong>偶数</strong> 。</p>
 
@@ -12,7 +25,7 @@
 
 <p>所有的朋友被分成几对，配对情况以列表 <code>pairs</code> 给出，其中 <code>pairs[i] = [x<sub>i</sub>, y<sub>i</sub>]</code> 表示 <code>x<sub>i</sub></code> 与 <code>y<sub>i</sub></code> 配对，且 <code>y<sub>i</sub></code> 与 <code>x<sub>i</sub></code> 配对。</p>
 
-<p>但是，这样的配对情况可能会是其中部分朋友感到不开心。在 <code>x</code> 与 <code>y</code> 配对且 <code>u</code> 与 <code>v</code> 配对的情况下，如果同时满足下述两个条件，<code>x</code> 就会不开心：</p>
+<p>但是，这样的配对情况可能会使其中部分朋友感到不开心。在 <code>x</code> 与 <code>y</code> 配对且 <code>u</code> 与 <code>v</code> 配对的情况下，如果同时满足下述两个条件，<code>x</code> 就会不开心：</p>
 
 <ul>
 	<li><code>x</code> 与 <code>u</code> 的亲近程度胜过 <code>x</code> 与 <code>y</code>，且</li>
@@ -25,7 +38,8 @@
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入：</strong>n = 4, preferences = [[1, 2, 3], [3, 2, 0], [3, 1, 0], [1, 2, 0]], pairs = [[0, 1], [2, 3]]
+<pre>
+<strong>输入：</strong>n = 4, preferences = [[1, 2, 3], [3, 2, 0], [3, 1, 0], [1, 2, 0]], pairs = [[0, 1], [2, 3]]
 <strong>输出：</strong>2
 <strong>解释：</strong>
 朋友 1 不开心，因为：
@@ -39,14 +53,16 @@
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入：</strong>n = 2, preferences = [[1], [0]], pairs = [[1, 0]]
+<pre>
+<strong>输入：</strong>n = 2, preferences = [[1], [0]], pairs = [[1, 0]]
 <strong>输出：</strong>0
 <strong>解释：</strong>朋友 0 和 1 都开心。
 </pre>
 
 <p><strong>示例 3：</strong></p>
 
-<pre><strong>输入：</strong>n = 4, preferences = [[1, 3, 2], [2, 3, 0], [1, 3, 0], [0, 2, 1]], pairs = [[1, 3], [0, 2]]
+<pre>
+<strong>输入：</strong>n = 4, preferences = [[1, 3, 2], [2, 3, 0], [1, 3, 0], [0, 2, 1]], pairs = [[1, 3], [0, 2]]
 <strong>输出：</strong>4
 </pre>
 
@@ -69,32 +85,188 @@
 	<li>每位朋友都 <strong>恰好</strong> 被包含在一对中</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：枚举
+
+我们用数组 $\textit{d}$ 记录每个朋友与其它朋友的亲近程度，其中 $\textit{d}[i][j]$ 表示朋友 $i$ 对 $j$ 的亲近程度（值越小，越亲近），另外，用数组 $\textit{p}$ 记录每个朋友的配对朋友。
+
+我们枚举每个朋友 $x$，对于 $x$ 的配对朋友 $y$，我们找到 $x$ 对 $y$ 的亲近程度 $\textit{d}[x][y]$，然后枚举比 $\textit{d}[x][y]$ 更亲近的其它朋友 $u$，如果存在 $u$ 对 $x$ 的亲近程度 $\textit{d}[u][x]$ 比 $\textit{d}[u][y]$ 更高，那么 $x$ 就是不开心的朋友，将结果加一即可。
+
+枚举结束后，即可得到不开心的朋友的数目。
+
+时间复杂度 $O(n^2)$，空间复杂度 $O(n^2)$。其中 $n$ 为朋友的数目。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def unhappyFriends(
+        self, n: int, preferences: List[List[int]], pairs: List[List[int]]
+    ) -> int:
+        d = [{x: j for j, x in enumerate(p)} for p in preferences]
+        p = {}
+        for x, y in pairs:
+            p[x] = y
+            p[y] = x
+        ans = 0
+        for x in range(n):
+            y = p[x]
+            for i in range(d[x][y]):
+                u = preferences[x][i]
+                v = p[u]
+                if d[u][x] < d[u][v]:
+                    ans += 1
+                    break
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int unhappyFriends(int n, int[][] preferences, int[][] pairs) {
+        int[][] d = new int[n][n];
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n - 1; ++j) {
+                d[i][preferences[i][j]] = j;
+            }
+        }
+        int[] p = new int[n];
+        for (var e : pairs) {
+            int x = e[0], y = e[1];
+            p[x] = y;
+            p[y] = x;
+        }
+        int ans = 0;
+        for (int x = 0; x < n; ++x) {
+            int y = p[x];
+            for (int i = 0; i < d[x][y]; ++i) {
+                int u = preferences[x][i];
+                int v = p[u];
+                if (d[u][x] < d[u][v]) {
+                    ++ans;
+                    break;
+                }
+            }
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int unhappyFriends(int n, vector<vector<int>>& preferences, vector<vector<int>>& pairs) {
+        vector<vector<int>> d(n, vector<int>(n));
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n - 1; ++j) {
+                d[i][preferences[i][j]] = j;
+            }
+        }
+        vector<int> p(n, 0);
+        for (auto& e : pairs) {
+            int x = e[0], y = e[1];
+            p[x] = y;
+            p[y] = x;
+        }
+        int ans = 0;
+        for (int x = 0; x < n; ++x) {
+            int y = p[x];
+            for (int i = 0; i < d[x][y]; ++i) {
+                int u = preferences[x][i];
+                int v = p[u];
+                if (d[u][x] < d[u][v]) {
+                    ++ans;
+                    break;
+                }
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func unhappyFriends(n int, preferences [][]int, pairs [][]int) (ans int) {
+	d := make([][]int, n)
+	for i := range d {
+		d[i] = make([]int, n)
+	}
+
+	for i := 0; i < n; i++ {
+		for j := 0; j < n-1; j++ {
+			d[i][preferences[i][j]] = j
+		}
+	}
+
+	p := make([]int, n)
+	for _, e := range pairs {
+		x, y := e[0], e[1]
+		p[x] = y
+		p[y] = x
+	}
+
+	for x := 0; x < n; x++ {
+		y := p[x]
+		for i := 0; i < d[x][y]; i++ {
+			u := preferences[x][i]
+			v := p[u]
+			if d[u][x] < d[u][v] {
+				ans++
+				break
+			}
+		}
+	}
+
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function unhappyFriends(n: number, preferences: number[][], pairs: number[][]): number {
+    const d: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
+    for (let i = 0; i < n; ++i) {
+        for (let j = 0; j < n - 1; ++j) {
+            d[i][preferences[i][j]] = j;
+        }
+    }
+    const p: number[] = Array(n).fill(0);
+    for (const [x, y] of pairs) {
+        p[x] = y;
+        p[y] = x;
+    }
+    let ans = 0;
+    for (let x = 0; x < n; ++x) {
+        const y = p[x];
+        for (let i = 0; i < d[x][y]; ++i) {
+            const u = preferences[x][i];
+            const v = p[u];
+            if (d[u][x] < d[u][v]) {
+                ++ans;
+                break;
+            }
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

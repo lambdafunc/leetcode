@@ -1,8 +1,24 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1685.Sum%20of%20Absolute%20Differences%20in%20a%20Sorted%20Array/README_EN.md
+rating: 1495
+source: Biweekly Contest 41 Q2
+tags:
+    - Array
+    - Math
+    - Prefix Sum
+---
+
+<!-- problem:start -->
+
 # [1685. Sum of Absolute Differences in a Sorted Array](https://leetcode.com/problems/sum-of-absolute-differences-in-a-sorted-array)
 
 [中文文档](/solution/1600-1699/1685.Sum%20of%20Absolute%20Differences%20in%20a%20Sorted%20Array/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given an integer array <code>nums</code> sorted in <strong>non-decreasing</strong> order.</p>
 
@@ -11,7 +27,7 @@
 <p>In other words, <code>result[i]</code> is equal to <code>sum(|nums[i]-nums[j]|)</code> where <code>0 &lt;= j &lt; nums.length</code> and <code>j != i</code> (<strong>0-indexed</strong>).</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [2,3,5]
@@ -22,7 +38,7 @@ result[1] = |3-2| + |3-3| + |3-5| = 1 + 0 + 2 = 3,
 result[2] = |5-2| + |5-3| + |5-5| = 3 + 2 + 0 = 5.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,4,6,8,10]
@@ -37,88 +53,155 @@ result[2] = |5-2| + |5-3| + |5-5| = 3 + 2 + 0 = 5.
 	<li><code>1 &lt;= nums[i] &lt;= nums[i + 1] &lt;= 10<sup>4</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Summation + Enumeration
+
+First, we calculate the sum of all elements in the array $nums$, denoted as $s$. We use a variable $t$ to record the sum of the elements that have been enumerated so far.
+
+Next, we enumerate $nums[i]$. Then $ans[i] = nums[i] \times i - t + s - t - nums[i] \times (n - i)$. After that, we update $t$, i.e., $t = t + nums[i]$. We continue to enumerate the next element until all elements are enumerated.
+
+The time complexity is $O(n)$, where $n$ is the length of the array $nums$. The space complexity is $O(1)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def getSumAbsoluteDifferences(self, nums: List[int]) -> List[int]:
-        n = len(nums)
-        presum = [0] * (n + 1)
-        for i in range(n):
-            presum[i + 1] = presum[i] + nums[i]
-        res = []
-        for i, num in enumerate(nums):
-            t = num * i - presum[i] + presum[n] - presum[i + 1] - num * (n - i - 1)
-            res.append(t)
-        return res
+        ans = []
+        s, t = sum(nums), 0
+        for i, x in enumerate(nums):
+            v = x * i - t + s - t - x * (len(nums) - i)
+            ans.append(v)
+            t += x
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int[] getSumAbsoluteDifferences(int[] nums) {
+        // int s = Arrays.stream(nums).sum();
+        int s = 0, t = 0;
+        for (int x : nums) {
+            s += x;
+        }
         int n = nums.length;
-        int[] presum = new int[n + 1];
+        int[] ans = new int[n];
         for (int i = 0; i < n; ++i) {
-            presum[i + 1] = presum[i] + nums[i];
+            int v = nums[i] * i - t + s - t - nums[i] * (n - i);
+            ans[i] = v;
+            t += nums[i];
         }
-        int[] res = new int[n];
-        for (int i = 0; i < n; ++i) {
-            res[i] = nums[i] * i - presum[i] + presum[n] - presum[i + 1] - nums[i] * (n - i - 1);
-        }
-        return res;
+        return ans;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<int> getSumAbsoluteDifferences(vector<int>& nums) {
+        int s = accumulate(nums.begin(), nums.end(), 0), t = 0;
         int n = nums.size();
-        vector<int> presum(n + 1);
+        vector<int> ans(n);
         for (int i = 0; i < n; ++i) {
-            presum[i + 1] = presum[i] + nums[i];
+            int v = nums[i] * i - t + s - t - nums[i] * (n - i);
+            ans[i] = v;
+            t += nums[i];
         }
-        vector<int> res;
-        for (int i = 0; i < n; ++i) {
-            int t = nums[i] * i - presum[i] + presum[n] - presum[i + 1] - nums[i] * (n - i - 1);
-            res.push_back(t);
-        }
-        return res;
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func getSumAbsoluteDifferences(nums []int) []int {
-	n := len(nums)
-	presum := make([]int, n+1)
-	for i := 0; i < n; i++ {
-		presum[i+1] = presum[i] + nums[i]
+func getSumAbsoluteDifferences(nums []int) (ans []int) {
+	var s, t int
+	for _, x := range nums {
+		s += x
 	}
-	var res []int
-	for i := 0; i < n; i++ {
-		t := nums[i]*i - presum[i] + presum[n] - presum[i+1] - nums[i]*(n-i-1)
-		res = append(res, t)
+	for i, x := range nums {
+		v := x*i - t + s - t - x*(len(nums)-i)
+		ans = append(ans, v)
+		t += x
 	}
-	return res
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function getSumAbsoluteDifferences(nums: number[]): number[] {
+    const s = nums.reduce((a, b) => a + b);
+    let t = 0;
+    const n = nums.length;
+    const ans = new Array(n);
+    for (let i = 0; i < n; ++i) {
+        const v = nums[i] * i - t + s - t - nums[i] * (n - i);
+        ans[i] = v;
+        t += nums[i];
+    }
+    return ans;
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var getSumAbsoluteDifferences = function (nums) {
+    const s = nums.reduce((a, b) => a + b);
+    let t = 0;
+    const n = nums.length;
+    const ans = new Array(n);
+    for (let i = 0; i < n; ++i) {
+        const v = nums[i] * i - t + s - t - nums[i] * (n - i);
+        ans[i] = v;
+        t += nums[i];
+    }
+    return ans;
+};
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int[] GetSumAbsoluteDifferences(int[] nums) {
+        int s = 0, t = 0;
+        foreach (int x in nums) {
+            s += x;
+        }
+        int n = nums.Length;
+        int[] ans = new int[n];
+        for (int i = 0; i < n; ++i) {
+            int v = nums[i] * i - t + s - t - nums[i] * (n - i);
+            ans[i] = v;
+            t += nums[i];
+        }
+        return ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

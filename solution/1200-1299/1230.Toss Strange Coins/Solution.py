@@ -1,10 +1,11 @@
 class Solution:
     def probabilityOfHeads(self, prob: List[float], target: int) -> float:
-        dp = [0] * (target + 1)
-        dp[0] = 1
-        for v in prob:
-            for j in range(target, -1, -1):
-                dp[j] *= (1 - v)
-                if j >= 1:
-                    dp[j] += dp[j - 1] * v
-        return dp[-1]
+        n = len(prob)
+        f = [[0] * (target + 1) for _ in range(n + 1)]
+        f[0][0] = 1
+        for i, p in enumerate(prob, 1):
+            for j in range(min(i, target) + 1):
+                f[i][j] = (1 - p) * f[i - 1][j]
+                if j:
+                    f[i][j] += p * f[i - 1][j - 1]
+        return f[n][target]

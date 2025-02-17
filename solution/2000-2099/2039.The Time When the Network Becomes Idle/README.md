@@ -1,10 +1,24 @@
-# [2039. 网络空闲的时刻](https://leetcode-cn.com/problems/the-time-when-the-network-becomes-idle)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2039.The%20Time%20When%20the%20Network%20Becomes%20Idle/README.md
+rating: 1865
+source: 第 63 场双周赛 Q3
+tags:
+    - 广度优先搜索
+    - 图
+    - 数组
+---
+
+<!-- problem:start -->
+
+# [2039. 网络空闲的时刻](https://leetcode.cn/problems/the-time-when-the-network-becomes-idle)
 
 [English Version](/solution/2000-2099/2039.The%20Time%20When%20the%20Network%20Becomes%20Idle/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个有 <code>n</code>&nbsp;个服务器的计算机网络，服务器编号为&nbsp;<code>0</code>&nbsp;到&nbsp;<code>n - 1</code>&nbsp;。同时给你一个二维整数数组&nbsp;<code>edges</code>&nbsp;，其中&nbsp;<code>edges[i] = [u<sub>i</sub>, v<sub>i</sub>]</code>&nbsp;表示服务器&nbsp;<code>u<sub>i</sub></code> 和&nbsp;<code>v<sub>i</sub></code><sub>&nbsp;</sub>之间有一条信息线路，在&nbsp;<strong>一秒</strong>&nbsp;内它们之间可以传输&nbsp;<strong>任意</strong>&nbsp;数目的信息。再给你一个长度为 <code>n</code>&nbsp;且下标从&nbsp;<strong>0</strong>&nbsp;开始的整数数组&nbsp;<code>patience</code>&nbsp;。</p>
 
@@ -27,7 +41,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><img alt="example 1" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2039.The%20Time%20When%20the%20Network%20Becomes%20Idle/images/quiet-place-example1.png" style="width: 750px; height: 384px;"></p>
+<p><img alt="example 1" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2039.The%20Time%20When%20the%20Network%20Becomes%20Idle/images/quiet-place-example1.png" style="width: 750px; height: 384px;"></p>
 
 <pre><b>输入：</b>edges = [[0,1],[1,2]], patience = [0,2,1]
 <b>输出：</b>8
@@ -57,7 +71,7 @@
 
 <p><strong>示例 2：</strong></p>
 
-<p><img alt="example 2" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2039.The%20Time%20When%20the%20Network%20Becomes%20Idle/images/network_a_quiet_place_2.png" style="width: 100px; height: 85px;"></p>
+<p><img alt="example 2" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/2000-2099/2039.The%20Time%20When%20the%20Network%20Becomes%20Idle/images/network_a_quiet_place_2.png" style="width: 100px; height: 85px;"></p>
 
 <pre><b>输入：</b>edges = [[0,1],[0,2],[1,2]], patience = [0,10,10]
 <b>输出：</b>3
@@ -82,32 +96,188 @@
 	<li>每个服务器都直接或间接与别的服务器相连。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：BFS
+
+我们先根据二维数组 $edges$ 构建无向图 $g$，其中 $g[u]$ 表示节点 $u$ 的所有邻居节点。
+
+然后，我们可以使用广度优先搜索的方式，找出每个节点 $i$ 距离主服务器的最短距离 $d_i$，那么节点 $i$ 发出信息后，最早能收到回复的时间为 $2 \times d_i$。由于每个数据服务器 $i$ 每隔 $patience[i]$ 会重发一条信息，因此，每个数据服务器最后一次发出信息的时间为 $(2 \times d_i - 1) / patience[i] \times patience[i]$，那么最后收到回复的时间为 $(2 \times d_i - 1) / patience[i] \times patience[i] + 2 \times d_i$，再加上 $1$ 秒的处理时间，即为该数据服务器变为空闲的最早时间。我们找出最晚的这个时间，即为计算机网络变为空闲的最早时间。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为节点数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def networkBecomesIdle(self, edges: List[List[int]], patience: List[int]) -> int:
+        g = defaultdict(list)
+        for u, v in edges:
+            g[u].append(v)
+            g[v].append(u)
+        q = deque([0])
+        vis = {0}
+        ans = d = 0
+        while q:
+            d += 1
+            t = d * 2
+            for _ in range(len(q)):
+                u = q.popleft()
+                for v in g[u]:
+                    if v not in vis:
+                        vis.add(v)
+                        q.append(v)
+                        ans = max(ans, (t - 1) // patience[v] * patience[v] + t + 1)
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int networkBecomesIdle(int[][] edges, int[] patience) {
+        int n = patience.length;
+        List<Integer>[] g = new List[n];
+        Arrays.setAll(g, k -> new ArrayList<>());
+        for (int[] e : edges) {
+            int u = e[0], v = e[1];
+            g[u].add(v);
+            g[v].add(u);
+        }
+        Deque<Integer> q = new ArrayDeque<>();
+        q.offer(0);
+        boolean[] vis = new boolean[n];
+        vis[0] = true;
+        int ans = 0, d = 0;
+        while (!q.isEmpty()) {
+            ++d;
+            int t = d * 2;
+            for (int i = q.size(); i > 0; --i) {
+                int u = q.poll();
+                for (int v : g[u]) {
+                    if (!vis[v]) {
+                        vis[v] = true;
+                        q.offer(v);
+                        ans = Math.max(ans, (t - 1) / patience[v] * patience[v] + t + 1);
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int networkBecomesIdle(vector<vector<int>>& edges, vector<int>& patience) {
+        int n = patience.size();
+        vector<int> g[n];
+        for (auto& e : edges) {
+            int u = e[0], v = e[1];
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+        queue<int> q{{0}};
+        bool vis[n];
+        memset(vis, false, sizeof(vis));
+        vis[0] = true;
+        int ans = 0, d = 0;
+        while (!q.empty()) {
+            ++d;
+            int t = d * 2;
+            for (int i = q.size(); i; --i) {
+                int u = q.front();
+                q.pop();
+                for (int v : g[u]) {
+                    if (!vis[v]) {
+                        vis[v] = true;
+                        q.push(v);
+                        ans = max(ans, (t - 1) / patience[v] * patience[v] + t + 1);
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func networkBecomesIdle(edges [][]int, patience []int) (ans int) {
+	n := len(patience)
+	g := make([][]int, n)
+	for _, e := range edges {
+		u, v := e[0], e[1]
+		g[u] = append(g[u], v)
+		g[v] = append(g[v], u)
+	}
+	q := []int{0}
+	vis := make([]bool, n)
+	vis[0] = true
+	for d := 1; len(q) > 0; d++ {
+		t := d * 2
+		for i := len(q); i > 0; i-- {
+			u := q[0]
+			q = q[1:]
+			for _, v := range g[u] {
+				if !vis[v] {
+					vis[v] = true
+					q = append(q, v)
+					ans = max(ans, (t-1)/patience[v]*patience[v]+t+1)
+				}
+			}
+		}
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function networkBecomesIdle(edges: number[][], patience: number[]): number {
+    const n = patience.length;
+    const g: number[][] = Array.from({ length: n }, () => []);
+    for (const [u, v] of edges) {
+        g[u].push(v);
+        g[v].push(u);
+    }
+    const vis: boolean[] = Array.from({ length: n }, () => false);
+    vis[0] = true;
+    let q: number[] = [0];
+    let ans = 0;
+    for (let d = 1; q.length > 0; ++d) {
+        const t = d * 2;
+        const nq: number[] = [];
+        for (const u of q) {
+            for (const v of g[u]) {
+                if (!vis[v]) {
+                    vis[v] = true;
+                    nq.push(v);
+                    ans = Math.max(ans, (((t - 1) / patience[v]) | 0) * patience[v] + t + 1);
+                }
+            }
+        }
+        q = nq;
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

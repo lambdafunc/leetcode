@@ -1,23 +1,20 @@
 func rankTeams(votes []string) string {
-	n := len(votes[0])
-	counter := make(map[byte][]int)
-	for _, v := range votes[0] {
-		counter[byte(v)] = make([]int, n)
-	}
+	m := len(votes[0])
+	cnt := [26][27]int{}
 	for _, vote := range votes {
-		for i, v := range vote {
-			counter[byte(v)][i]++
+		for i, ch := range vote {
+			cnt[ch-'A'][i]++
 		}
 	}
-	ans := []byte(votes[0])
-	sort.Slice(ans, func(i, j int) bool {
-		v1, v2 := counter[ans[i]], counter[ans[j]]
-		for i := range v1 {
-			if v1[i] != v2[i] {
-				return v1[i] > v2[i]
+	s := []rune(votes[0])
+	sort.Slice(s, func(i, j int) bool {
+		a, b := s[i]-'A', s[j]-'A'
+		for k := 0; k < m; k++ {
+			if cnt[a][k] != cnt[b][k] {
+				return cnt[a][k] > cnt[b][k]
 			}
 		}
-		return ans[i] < ans[j]
+		return s[i] < s[j]
 	})
-	return string(ans)
+	return string(s)
 }

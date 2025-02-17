@@ -1,10 +1,23 @@
-# [1333. 餐厅过滤器](https://leetcode-cn.com/problems/filter-restaurants-by-vegan-friendly-price-and-distance)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1300-1399/1333.Filter%20Restaurants%20by%20Vegan-Friendly%2C%20Price%20and%20Distance/README.md
+rating: 1423
+source: 第 173 场周赛 Q2
+tags:
+    - 数组
+    - 排序
+---
+
+<!-- problem:start -->
+
+# [1333. 餐厅过滤器](https://leetcode.cn/problems/filter-restaurants-by-vegan-friendly-price-and-distance)
 
 [English Version](/solution/1300-1399/1333.Filter%20Restaurants%20by%20Vegan-Friendly%2C%20Price%20and%20Distance/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个餐馆信息数组&nbsp;<code>restaurants</code>，其中&nbsp;&nbsp;<code>restaurants[i] = [id<sub>i</sub>, rating<sub>i</sub>, veganFriendly<sub>i</sub>, price<sub>i</sub>, distance<sub>i</sub>]</code>。你必须使用以下三个过滤器来过滤这些餐馆信息。</p>
 
@@ -54,32 +67,122 @@
 	<li>所有 <code>id<sub>i</sub></code> 各不相同。</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：排序
+
+我们先将数组 `restaurants` 按照 `rating` 和 `id` 两个维度进行排序，然后再按照题目给定的条件进行筛选即可。
+
+时间复杂度 $O(n \times \log n)$，空间复杂度 $O(\log n)$。其中 $n$ 是数组 `restaurants` 的长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def filterRestaurants(
+        self,
+        restaurants: List[List[int]],
+        veganFriendly: int,
+        maxPrice: int,
+        maxDistance: int,
+    ) -> List[int]:
+        restaurants.sort(key=lambda x: (-x[1], -x[0]))
+        ans = []
+        for idx, _, vegan, price, dist in restaurants:
+            if vegan >= veganFriendly and price <= maxPrice and dist <= maxDistance:
+                ans.append(idx)
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public List<Integer> filterRestaurants(
+        int[][] restaurants, int veganFriendly, int maxPrice, int maxDistance) {
+        Arrays.sort(restaurants, (a, b) -> a[1] == b[1] ? b[0] - a[0] : b[1] - a[1]);
+        List<Integer> ans = new ArrayList<>();
+        for (int[] r : restaurants) {
+            if (r[2] >= veganFriendly && r[3] <= maxPrice && r[4] <= maxDistance) {
+                ans.add(r[0]);
+            }
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    vector<int> filterRestaurants(vector<vector<int>>& restaurants, int veganFriendly, int maxPrice, int maxDistance) {
+        sort(restaurants.begin(), restaurants.end(), [](const vector<int>& a, const vector<int>& b) {
+            if (a[1] != b[1]) {
+                return a[1] > b[1];
+            }
+            return a[0] > b[0];
+        });
+        vector<int> ans;
+        for (auto& r : restaurants) {
+            if (r[2] >= veganFriendly && r[3] <= maxPrice && r[4] <= maxDistance) {
+                ans.push_back(r[0]);
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func filterRestaurants(restaurants [][]int, veganFriendly int, maxPrice int, maxDistance int) (ans []int) {
+	sort.Slice(restaurants, func(i, j int) bool {
+		a, b := restaurants[i], restaurants[j]
+		if a[1] != b[1] {
+			return a[1] > b[1]
+		}
+		return a[0] > b[0]
+	})
+	for _, r := range restaurants {
+		if r[2] >= veganFriendly && r[3] <= maxPrice && r[4] <= maxDistance {
+			ans = append(ans, r[0])
+		}
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function filterRestaurants(
+    restaurants: number[][],
+    veganFriendly: number,
+    maxPrice: number,
+    maxDistance: number,
+): number[] {
+    restaurants.sort((a, b) => (a[1] === b[1] ? b[0] - a[0] : b[1] - a[1]));
+    const ans: number[] = [];
+    for (const [id, _, vegan, price, distance] of restaurants) {
+        if (vegan >= veganFriendly && price <= maxPrice && distance <= maxDistance) {
+            ans.push(id);
+        }
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,23 @@
-# [1646. 获取生成数组中的最大值](https://leetcode-cn.com/problems/get-maximum-in-generated-array)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1646.Get%20Maximum%20in%20Generated%20Array/README.md
+rating: 1301
+source: 第 214 场周赛 Q1
+tags:
+    - 数组
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [1646. 获取生成数组中的最大值](https://leetcode.cn/problems/get-maximum-in-generated-array)
 
 [English Version](/solution/1600-1699/1646.Get%20Maximum%20in%20Generated%20Array/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个整数 <code>n</code> 。按下述规则生成一个长度为 <code>n + 1</code> 的数组 <code>nums</code> ：</p>
 
@@ -60,44 +73,51 @@
 	<li><code>0 <= n <= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-直接模拟生成 nums 数组，然后求 nums 中元素的最大值即可。
+### 方法一：模拟
+
+我们先判断 $n$ 的值，如果 $n < 2$，则直接返回 $n$。
+
+否则，我们创建一个长度为 $n + 1$ 的数组 $nums$，并初始化 $nums[0] = 0$ 以及 $nums[1] = 1$。
+
+然后从下标 $2$ 开始遍历，如果当前下标 $i$ 为偶数，则 $nums[i] = nums[i / 2]$，否则 $nums[i] = nums[i / 2] + nums[i / 2 + 1]$。
+
+最后返回数组 $nums$ 中的最大值即可。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为给定的整数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def getMaximumGenerated(self, n: int) -> int:
-        if n == 0:
-            return 0
+        if n < 2:
+            return n
         nums = [0] * (n + 1)
         nums[1] = 1
         for i in range(2, n + 1):
-            nums[i] = nums[i >> 1] if i % 2 == 0 else nums[i >> 1] + \
-                nums[(i >> 1) + 1]
+            nums[i] = nums[i >> 1] if i % 2 == 0 else nums[i >> 1] + nums[(i >> 1) + 1]
         return max(nums)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int getMaximumGenerated(int n) {
-        if (n == 0) {
-            return 0;
+        if (n < 2) {
+            return n;
         }
         int[] nums = new int[n + 1];
         nums[1] = 1;
-        for (int i = 2; i < n + 1; ++i) {
+        for (int i = 2; i <= n; ++i) {
             nums[i] = i % 2 == 0 ? nums[i >> 1] : nums[i >> 1] + nums[(i >> 1) + 1];
         }
         return Arrays.stream(nums).max().getAsInt();
@@ -105,57 +125,64 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int getMaximumGenerated(int n) {
-        if (n == 0) return 0;
-        vector<int> ans(n + 1, 0);
-        ans[1] = 1;
-        for (int i = 2; i < n + 1; ++i)
-            ans[i] = i % 2 == 0 ? ans[i >> 1] : ans[i >> 1] + ans[(i >> 1) + 1];
-        return *max_element(ans.begin(), ans.end());
+        if (n < 2) {
+            return n;
+        }
+        int nums[n + 1];
+        nums[0] = 0;
+        nums[1] = 1;
+        for (int i = 2; i <= n; ++i) {
+            nums[i] = i % 2 == 0 ? nums[i >> 1] : nums[i >> 1] + nums[(i >> 1) + 1];
+        }
+        return *max_element(nums, nums + n + 1);
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func getMaximumGenerated(n int) int {
-	if n == 0 {
-		return 0
+	if n < 2 {
+		return n
 	}
 	nums := make([]int, n+1)
 	nums[1] = 1
 	for i := 2; i <= n; i++ {
 		if i%2 == 0 {
-			nums[i] = nums[i>>1]
+			nums[i] = nums[i/2]
 		} else {
-			nums[i] = nums[i>>1] + nums[(i>>1)+1]
+			nums[i] = nums[i/2] + nums[i/2+1]
 		}
 	}
-	var ans int
-	for _, num := range nums {
-		ans = max(ans, num)
-	}
-	return ans
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return slices.Max(nums)
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
-
+```ts
+function getMaximumGenerated(n: number): number {
+    if (n === 0) {
+        return 0;
+    }
+    const nums: number[] = new Array(n + 1).fill(0);
+    nums[1] = 1;
+    for (let i = 2; i < n + 1; ++i) {
+        nums[i] = i % 2 === 0 ? nums[i >> 1] : nums[i >> 1] + nums[(i >> 1) + 1];
+    }
+    return Math.max(...nums);
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

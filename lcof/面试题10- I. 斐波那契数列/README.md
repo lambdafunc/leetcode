@@ -1,6 +1,16 @@
-# [面试题 10- I. 斐波那契数列](https://leetcode-cn.com/problems/fei-bo-na-qi-shu-lie-lcof/)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9810-%20I.%20%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0%E5%88%97/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 10- I. 斐波那契数列](https://leetcode.cn/problems/fei-bo-na-qi-shu-lie-lcof/)
 
 ## 题目描述
+
+<!-- description:start -->
 
 <p>写一个函数，输入 <code>n</code> ，求斐波那契（Fibonacci）数列的第 <code>n</code> 项（即 <code>F(N)</code>）。斐波那契数列的定义如下：</p>
 
@@ -36,30 +46,38 @@ F(N) = F(N - 1) + F(N - 2), 其中 N > 1.</pre>
 	<li><code>0 <= n <= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-递推求解。
+<!-- solution:start -->
+
+### 方法一：递推
+
+我们定义初始项 $a=0$, $b=1$，接下来执行 $n$ 次循环，每次循环中，计算 $c=a+b$，并更新 $a=b$, $b=c$，循环 $n$ 次后，答案即为 $a$。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 为输入的整数。
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def fib(self, n: int) -> int:
         a, b = 0, 1
         for _ in range(n):
-            a, b = b, a + b
-        return a % 1000000007
+            a, b = b, (a + b) % 1000000007
+        return a
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int fib(int n) {
         int a = 0, b = 1;
-        for (int i = 0; i < n; ++i) {
+        while (n-- > 0) {
             int c = (a + b) % 1000000007;
             a = b;
             b = c;
@@ -69,14 +87,14 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int fib(int n) {
         int a = 0, b = 1;
-        for (int i = 0; i < n; ++i) {
+        while (n--) {
             int c = (a + b) % 1000000007;
             a = b;
             b = c;
@@ -86,26 +104,7 @@ public:
 };
 ```
 
-### **JavaScript**
-
-```js
-/**
- * @param {number} n
- * @return {number}
- */
-var fib = function (n) {
-    let a = 0,
-        b = 1;
-    for (let i = 0; i < n; ++i) {
-        const c = (a + b) % (1e9 + 7);
-        a = b;
-        b = c;
-    }
-    return a;
-};
-```
-
-### **Go**
+#### Go
 
 ```go
 func fib(n int) int {
@@ -117,7 +116,7 @@ func fib(n int) int {
 }
 ```
 
-### **TypeScript**
+#### TypeScript
 
 ```ts
 function fib(n: number): number {
@@ -131,7 +130,7 @@ function fib(n: number): number {
 }
 ```
 
-### **Rust**
+#### Rust
 
 ```rust
 impl Solution {
@@ -145,10 +144,60 @@ impl Solution {
 }
 ```
 
-### **...**
+#### JavaScript
 
+```js
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var fib = function (n) {
+    let a = 0;
+    let b = 1;
+    while (n--) {
+        [a, b] = [b, (a + b) % (1e9 + 7)];
+    }
+    return a;
+};
 ```
 
+#### C#
+
+```cs
+public class Solution {
+    public int Fib(int n) {
+        int a = 0, b = 1, tmp;
+        for (int i = 0; i < n; i++) {
+            tmp = a;
+            a = b;
+            b = (tmp + b) % 1000000007;
+        }
+        return a % 1000000007;
+    }
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func fib(_ n: Int) -> Int {
+        var a = 0
+        var b = 1
+        var count = n
+        while count > 0 {
+            let c = (a + b) % 1000000007
+            a = b
+            b = c
+            count -= 1
+        }
+        return a
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

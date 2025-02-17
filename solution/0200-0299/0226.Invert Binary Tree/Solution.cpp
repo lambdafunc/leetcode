@@ -12,16 +12,13 @@
 class Solution {
 public:
     TreeNode* invertTree(TreeNode* root) {
-        dfs(root);
+        if (!root) {
+            return root;
+        }
+        TreeNode* l = invertTree(root->left);
+        TreeNode* r = invertTree(root->right);
+        root->left = r;
+        root->right = l;
         return root;
-    }
-
-    void dfs(TreeNode* root) {
-        if (!root) return;
-        TreeNode* t = root->left;
-        root->left = root->right;
-        root->right = t;
-        dfs(root->left);
-        dfs(root->right);
     }
 };

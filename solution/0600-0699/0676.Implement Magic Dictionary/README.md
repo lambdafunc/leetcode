@@ -1,10 +1,24 @@
-# [676. 实现一个魔法字典](https://leetcode-cn.com/problems/implement-magic-dictionary)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0676.Implement%20Magic%20Dictionary/README.md
+tags:
+    - 深度优先搜索
+    - 设计
+    - 字典树
+    - 哈希表
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [676. 实现一个魔法字典](https://leetcode.cn/problems/implement-magic-dictionary)
 
 [English Version](/solution/0600-0699/0676.Implement%20Magic%20Dictionary/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>设计一个使用单词列表进行初始化的数据结构，单词列表中的单词 <strong>互不相同</strong> 。 如果给出一个单词，请判定能否只将这个单词中<strong>一个</strong>字母换成另一个字母，使得所形成的新单词存在于你构建的字典中。</p>
 
@@ -57,39 +71,65 @@ magicDictionary.search("leetcoded"); // 返回 False
 </div>
 </div>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-哈希表实现。
+### 方法一：前缀树 + DFS
+
+我们可以使用前缀树来存储字典中的所有单词，然后对于每个搜索的单词，我们使用深度优先搜索的方法，具体地，我们从前缀树的根节点开始，对于当前遍历到的字母，我们首先判断是否存在与其相同的子节点，如果存在，则继续向下遍历，否则我们需要判断是否还有剩余的修改次数，如果没有，则说明无法匹配，返回 false。如果有剩余的修改次数，我们可以尝试对当前的字母进行修改，然后继续向下遍历，如果当前的字母修改后对应的子节点存在，则说明可以匹配，否则说明无法匹配，返回 false。如果我们遍历到了单词的结尾，且修改次数恰好为 1，那么说明可以匹配，返回 true。
+
+时间复杂度 $O(n \times l + q \times l \times |\Sigma|)$，空间复杂度 $O(n \times l)$，其中 $n$ 和 $l$ 分别是字典中的单词数量和单词的平均长度，而 $q$ 是搜索的单词数量。另外 $|\Sigma|$ 表示字符集的大小，这里字符集为小写英文字母，因此 $|\Sigma|=26$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-class MagicDictionary:
+class Trie:
+    __slots__ = "children", "is_end"
 
     def __init__(self):
-        """
-        Initialize your data structure here.
-        """
+        self.children: List[Optional[Trie]] = [None] * 26
+        self.is_end = False
 
-    def _patterns(self, word):
-        return [word[:i] + '*' + word[i + 1:] for i in range(len(word))]
+    def insert(self, w: str) -> None:
+        node = self
+        for c in w:
+            idx = ord(c) - ord("a")
+            if node.children[idx] is None:
+                node.children[idx] = Trie()
+            node = node.children[idx]
+        node.is_end = True
+
+    def search(self, w: str) -> bool:
+        def dfs(i: int, node: Optional[Trie], diff: int) -> bool:
+            if i == len(w):
+                return diff == 1 and node.is_end
+            j = ord(w[i]) - ord("a")
+            if node.children[j] and dfs(i + 1, node.children[j], diff):
+                return True
+            return diff == 0 and any(
+                node.children[k] and dfs(i + 1, node.children[k], 1)
+                for k in range(26)
+                if k != j
+            )
+
+        return dfs(0, self, 0)
+
+
+class MagicDictionary:
+    def __init__(self):
+        self.trie = Trie()
 
     def buildDict(self, dictionary: List[str]) -> None:
-        self.words = set(dictionary)
-        self.counter = Counter(
-            p for word in dictionary for p in self._patterns(word))
+        for w in dictionary:
+            self.trie.insert(w)
 
     def search(self, searchWord: str) -> bool:
-        for p in self._patterns(searchWord):
-            if self.counter[p] > 1 or (self.counter[p] == 1 and searchWord not in self.words):
-                return True
-        return False
+        return self.trie.search(searchWord)
 
 
 # Your MagicDictionary object will be instantiated and called as such:
@@ -98,89 +138,66 @@ class MagicDictionary:
 # param_2 = obj.search(searchWord)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-暴力法。直接遍历字典，判断是否存在一个单词与所要查找的单词之间只有一个字符不同，若是返回 true，否则返回 false。
+#### Java
 
 ```java
-class MagicDictionary {
-    List<char[]> dict;
-    /** Initialize your data structure here. */
-    public MagicDictionary() {
-        dict = new ArrayList<>();
-    }
+class Trie {
+    private Trie[] children = new Trie[26];
+    private boolean isEnd;
 
-    public void buildDict(String[] dictionary) {
-        for (String item : dictionary) {
-            dict.add(item.toCharArray());
+    public void insert(String w) {
+        Trie node = this;
+        for (char c : w.toCharArray()) {
+            int i = c - 'a';
+            if (node.children[i] == null) {
+                node.children[i] = new Trie();
+            }
+            node = node.children[i];
         }
+        node.isEnd = true;
     }
 
-    public boolean search(String searchWord) {
-        char[] target = searchWord.toCharArray();
-        for (char[] item : dict) {
-            if (item.length != target.length) {
-                continue;
-            }
-            int diff = 0;
-            for (int i = 0; i < target.length; i++) {
-                if (target[i] != item[i]) {
-                    diff += 1;
-                }
-            }
-            if (diff == 1) {
+    public boolean search(String w) {
+        return dfs(w, 0, this, 0);
+    }
+
+    private boolean dfs(String w, int i, Trie node, int diff) {
+        if (i == w.length()) {
+            return diff == 1 && node.isEnd;
+        }
+        int j = w.charAt(i) - 'a';
+        if (node.children[j] != null) {
+            if (dfs(w, i + 1, node.children[j], diff)) {
                 return true;
+            }
+        }
+        if (diff == 0) {
+            for (int k = 0; k < 26; k++) {
+                if (k != j && node.children[k] != null) {
+                    if (dfs(w, i + 1, node.children[k], 1)) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
     }
 }
-```
 
-哈希表。
-
-```java
 class MagicDictionary {
-    private Set<String> words;
-    private Map<String, Integer> counter;
+    private Trie trie = new Trie();
 
-    /** Initialize your data structure here. */
     public MagicDictionary() {
-        words = new HashSet<>();
-        counter = new HashMap<>();
     }
 
     public void buildDict(String[] dictionary) {
-        for (String word : dictionary) {
-            words.add(word);
-            for (String p : patterns(word)) {
-                counter.put(p, counter.getOrDefault(p, 0) + 1);
-            }
+        for (String w : dictionary) {
+            trie.insert(w);
         }
     }
 
     public boolean search(String searchWord) {
-        for (String p : patterns(searchWord)) {
-            int cnt = counter.getOrDefault(p, 0);
-            if (cnt > 1 || (cnt == 1 && !words.contains(searchWord))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private List<String> patterns(String word) {
-        List<String> res = new ArrayList<>();
-        char[] chars = word.toCharArray();
-        for (int i = 0; i < chars.length; ++i) {
-            char c = chars[i];
-            chars[i] = '*';
-            res.add(new String(chars));
-            chars[i] = c;
-        }
-        return res;
+        return trie.search(searchWord);
     }
 }
 
@@ -192,47 +209,73 @@ class MagicDictionary {
  */
 ```
 
-### **C++**
+#### C++
 
 ```cpp
+class Trie {
+private:
+    Trie* children[26];
+    bool isEnd = false;
+
+public:
+    Trie() {
+        fill(begin(children), end(children), nullptr);
+    }
+
+    void insert(const string& w) {
+        Trie* node = this;
+        for (char c : w) {
+            int i = c - 'a';
+            if (!node->children[i]) {
+                node->children[i] = new Trie();
+            }
+            node = node->children[i];
+        }
+        node->isEnd = true;
+    }
+
+    bool search(const string& w) {
+        function<bool(int, Trie*, int)> dfs = [&](int i, Trie* node, int diff) {
+            if (i >= w.size()) {
+                return diff == 1 && node->isEnd;
+            }
+            int j = w[i] - 'a';
+            if (node->children[j] && dfs(i + 1, node->children[j], diff)) {
+                return true;
+            }
+            if (diff == 0) {
+                for (int k = 0; k < 26; ++k) {
+                    if (k != j && node->children[k]) {
+                        if (dfs(i + 1, node->children[k], 1)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        };
+        return dfs(0, this, 0);
+    }
+};
+
 class MagicDictionary {
 public:
-    /** Initialize your data structure here. */
     MagicDictionary() {
-
+        trie = new Trie();
     }
 
     void buildDict(vector<string> dictionary) {
-        for (string word : dictionary)
-        {
-            words.insert(word);
-            for (string p : patterns(word)) ++counter[p];
+        for (auto& w : dictionary) {
+            trie->insert(w);
         }
     }
 
     bool search(string searchWord) {
-        for (string p : patterns(searchWord))
-        {
-            if (counter[p] > 1 || (counter[p] == 1 && !words.count(searchWord))) return true;
-        }
-        return false;
+        return trie->search(searchWord);
     }
 
 private:
-    unordered_set<string> words;
-    unordered_map<string, int> counter;
-
-    vector<string> patterns(string word) {
-        vector<string> res;
-        for (int i = 0; i < word.size(); ++i)
-        {
-            char c = word[i];
-            word[i] = '*';
-            res.push_back(word);
-            word[i] = c;
-        }
-        return res;
-    }
+    Trie* trie;
 };
 
 /**
@@ -243,46 +286,68 @@ private:
  */
 ```
 
-### **Go**
+#### Go
 
 ```go
-type MagicDictionary struct {
-	words   map[string]bool
-	counter map[string]int
+type Trie struct {
+	children [26]*Trie
+	isEnd    bool
 }
 
-/** Initialize your data structure here. */
-func Constructor() MagicDictionary {
-	return MagicDictionary{
-		words:   make(map[string]bool),
-		counter: make(map[string]int),
-	}
+func NewTrie() *Trie {
+	return &Trie{}
 }
 
-func (this *MagicDictionary) BuildDict(dictionary []string) {
-	for _, word := range dictionary {
-		this.words[word] = true
-		for _, p := range patterns(word) {
-			this.counter[p]++
+func (t *Trie) Insert(w string) {
+	node := t
+	for _, c := range w {
+		i := c - 'a'
+		if node.children[i] == nil {
+			node.children[i] = NewTrie()
 		}
+		node = node.children[i]
 	}
+	node.isEnd = true
 }
 
-func (this *MagicDictionary) Search(searchWord string) bool {
-	for _, p := range patterns(searchWord) {
-		if this.counter[p] > 1 || (this.counter[p] == 1 && !this.words[searchWord]) {
+func (t *Trie) Search(w string) bool {
+	var dfs func(int, *Trie, int) bool
+	dfs = func(i int, node *Trie, diff int) bool {
+		if i >= len(w) {
+			return diff == 1 && node.isEnd
+		}
+		j := int(w[i] - 'a')
+		if node.children[j] != nil && dfs(i+1, node.children[j], diff) {
 			return true
 		}
+		if diff == 0 {
+			for k := 0; k < 26; k++ {
+				if k != j && node.children[k] != nil && dfs(i+1, node.children[k], 1) {
+					return true
+				}
+			}
+		}
+		return false
 	}
-	return false
+	return dfs(0, t, 0)
 }
 
-func patterns(word string) []string {
-	var res []string
-	for i := 0; i < len(word); i++ {
-		res = append(res, word[:i]+"."+word[i+1:])
+type MagicDictionary struct {
+	trie *Trie
+}
+
+func Constructor() MagicDictionary {
+	return MagicDictionary{trie: NewTrie()}
+}
+
+func (md *MagicDictionary) BuildDict(dictionary []string) {
+	for _, w := range dictionary {
+		md.trie.Insert(w)
 	}
-	return res
+}
+
+func (md *MagicDictionary) Search(searchWord string) bool {
+	return md.trie.Search(searchWord)
 }
 
 /**
@@ -293,10 +358,156 @@ func patterns(word string) []string {
  */
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+class Trie {
+    private children: Trie[] = Array(26).fill(null);
+    private isEnd: boolean = false;
+
+    constructor() {}
+
+    insert(w: string): void {
+        let node: Trie = this;
+        for (const c of w) {
+            const i: number = c.charCodeAt(0) - 'a'.charCodeAt(0);
+            if (!node.children[i]) {
+                node.children[i] = new Trie();
+            }
+            node = node.children[i];
+        }
+        node.isEnd = true;
+    }
+
+    search(w: string): boolean {
+        const dfs = (i: number, node: Trie, diff: number): boolean => {
+            if (i >= w.length) {
+                return diff === 1 && node.isEnd;
+            }
+            const j: number = w.charCodeAt(i) - 'a'.charCodeAt(0);
+            if (node.children[j] && dfs(i + 1, node.children[j], diff)) {
+                return true;
+            }
+            if (diff === 0) {
+                for (let k = 0; k < 26; k++) {
+                    if (k !== j && node.children[k] && dfs(i + 1, node.children[k], 1)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        return dfs(0, this, 0);
+    }
+}
+
+class MagicDictionary {
+    private trie: Trie;
+
+    constructor() {
+        this.trie = new Trie();
+    }
+
+    buildDict(dictionary: string[]): void {
+        for (const w of dictionary) {
+            this.trie.insert(w);
+        }
+    }
+
+    search(searchWord: string): boolean {
+        return this.trie.search(searchWord);
+    }
+}
+
+/**
+ * Your MagicDictionary object will be instantiated and called as such:
+ * var obj = new MagicDictionary()
+ * obj.buildDict(dictionary)
+ * var param_2 = obj.search(searchWord)
+ */
 ```
 
+#### Rust
+
+```rust
+use std::collections::HashMap;
+
+#[derive(Clone)]
+struct Trie {
+    children: Vec<Option<Box<Trie>>>,
+    is_end: bool,
+}
+
+impl Trie {
+    fn new() -> Self {
+        Trie {
+            children: vec![None; 26],
+            is_end: false,
+        }
+    }
+
+    fn insert(&mut self, word: &str) {
+        let mut node = self;
+        for &ch in word.as_bytes() {
+            let index = (ch - b'a') as usize;
+            node = node.children[index].get_or_insert_with(|| Box::new(Trie::new()));
+        }
+        node.is_end = true;
+    }
+
+    fn search(&self, word: &str, diff: i32) -> bool {
+        if word.is_empty() {
+            return diff == 1 && self.is_end;
+        }
+
+        let index = (word.as_bytes()[0] - b'a') as usize;
+        if let Some(child) = &self.children[index] {
+            if child.search(&word[1..], diff) {
+                return true;
+            }
+        }
+
+        if diff == 0 {
+            for (i, child) in self.children.iter().enumerate() {
+                if i != index && child.is_some() {
+                    if child.as_ref().unwrap().search(&word[1..], 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        false
+    }
+}
+
+struct MagicDictionary {
+    trie: Trie,
+}
+
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl MagicDictionary {
+    fn new() -> Self {
+        MagicDictionary { trie: Trie::new() }
+    }
+
+    fn build_dict(&mut self, dictionary: Vec<String>) {
+        for word in dictionary {
+            self.trie.insert(&word);
+        }
+    }
+
+    fn search(&self, search_word: String) -> bool {
+        self.trie.search(&search_word, 0)
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

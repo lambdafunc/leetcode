@@ -1,15 +1,18 @@
 class Solution {
 public:
     int countPalindromicSubsequence(string s) {
-        int res = 0;
+        int ans = 0;
         for (char c = 'a'; c <= 'z'; ++c) {
             int l = s.find_first_of(c), r = s.find_last_of(c);
-            unordered_set<char> chars;
+            int mask = 0;
             for (int i = l + 1; i < r; ++i) {
-                chars.insert(s[i]);
+                int j = s[i] - 'a';
+                if (mask >> j & 1 ^ 1) {
+                    mask |= 1 << j;
+                    ++ans;
+                }
             }
-            res += chars.size();
         }
-        return res;
+        return ans;
     }
 };

@@ -1,69 +1,67 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0800-0899/0863.All%20Nodes%20Distance%20K%20in%20Binary%20Tree/README_EN.md
+tags:
+    - Tree
+    - Depth-First Search
+    - Breadth-First Search
+    - Hash Table
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
 # [863. All Nodes Distance K in Binary Tree](https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree)
 
 [中文文档](/solution/0800-0899/0863.All%20Nodes%20Distance%20K%20in%20Binary%20Tree/README.md)
 
 ## Description
 
-<p>We are given a binary tree (with root node&nbsp;<code>root</code>), a <code>target</code> node, and an integer value <code>K</code>.</p>
+<!-- description:start -->
 
-<p>Return a list of the values of all&nbsp;nodes that have a distance <code>K</code> from the <code>target</code> node.&nbsp; The answer can be returned in any order.</p>
+<p>Given the <code>root</code> of a binary tree, the value of a target node <code>target</code>, and an integer <code>k</code>, return <em>an array of the values of all nodes that have a distance </em><code>k</code><em> from the target node.</em></p>
+
+<p>You can return the answer in <strong>any order</strong>.</p>
 
 <p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0800-0899/0863.All%20Nodes%20Distance%20K%20in%20Binary%20Tree/images/sketch0.png" style="width: 500px; height: 429px;" />
+<pre>
+<strong>Input:</strong> root = [3,5,1,6,2,0,8,null,null,7,4], target = 5, k = 2
+<strong>Output:</strong> [7,4,1]
+Explanation: The nodes that are a distance 2 from the target node (with value 5) have values 7, 4, and 1.
+</pre>
 
-<ol>
-
-</ol>
-
-<div>
-
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
-
-<strong>Input: </strong>root = <span id="example-input-1-1">[3,5,1,6,2,0,8,null,null,7,4]</span>, target = <span id="example-input-1-2">5</span>, K = <span id="example-input-1-3">2</span>
-
-
-
-<strong>Output: </strong><span id="example-output-1">[7,4,1]</span>
-
-
-
-<strong>Explanation: </strong>
-
-The nodes that are a distance 2 from the target node (with value 5)
-
-have values 7, 4, and 1.
-
-
-
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0800-0899/0863.All%20Nodes%20Distance%20K%20in%20Binary%20Tree/images/sketch0.png" style="width: 280px; height: 240px;" />
-
-
-
-Note that the inputs &quot;root&quot; and &quot;target&quot; are actually TreeNodes.
-
-The descriptions of the inputs above are just serializations of these objects.
-
+<strong>Input:</strong> root = [1], target = 1, k = 3
+<strong>Output:</strong> []
 </pre>
 
 <p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><strong>Note:</strong></p>
+<ul>
+	<li>The number of nodes in the tree is in the range <code>[1, 500]</code>.</li>
+	<li><code>0 &lt;= Node.val &lt;= 500</code></li>
+	<li>All the values <code>Node.val</code> are <strong>unique</strong>.</li>
+	<li><code>target</code> is the value of one of the nodes in the tree.</li>
+	<li><code>0 &lt;= k &lt;= 1000</code></li>
+</ul>
 
-<ol>
-	<li>The given tree is non-empty.</li>
-	<li>Each node in the tree has unique values&nbsp;<code>0 &lt;= node.val &lt;= 500</code>.</li>
-	<li>The <code>target</code>&nbsp;node is a node in the tree.</li>
-	<li><code>0 &lt;= K &lt;= 1000</code>.</li>
-</ol>
-
-</div>
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -72,6 +70,7 @@ The descriptions of the inputs above are just serializations of these objects.
 #         self.val = x
 #         self.left = None
 #         self.right = None
+
 
 class Solution:
     def distanceK(self, root: TreeNode, target: TreeNode, k: int) -> List[int]:
@@ -103,7 +102,7 @@ class Solution:
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -154,7 +153,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -188,8 +187,7 @@ public:
     void dfs(TreeNode* root, int k) {
         if (!root || vis.count(root->val)) return;
         vis.insert(root->val);
-        if (k == 0)
-        {
+        if (k == 0) {
             ans.push_back(root->val);
             return;
         }
@@ -200,7 +198,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -244,10 +242,113 @@ func distanceK(root *TreeNode, target *TreeNode, k int) []int {
 }
 ```
 
-### **...**
+#### TypeScript
 
-```
+```ts
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
 
+function distanceK(root: TreeNode | null, target: TreeNode | null, k: number): number[] {
+    if (!root) return [0];
+
+    const g: Record<number, number[]> = {};
+
+    const dfs = (node: TreeNode | null, parent: TreeNode | null = null) => {
+        if (!node) return;
+
+        g[node.val] ??= [];
+        if (parent) g[node.val].push(parent.val);
+        if (node.left) g[node.val].push(node.left.val);
+        if (node.right) g[node.val].push(node.right.val);
+
+        dfs(node.left, node);
+        dfs(node.right, node);
+    };
+
+    dfs(root);
+
+    const vis = new Set<number>();
+    let q = [target!.val];
+
+    while (q.length) {
+        if (!k--) return q;
+
+        const nextQ: number[] = [];
+
+        for (const x of q) {
+            if (vis.has(x)) continue;
+
+            vis.add(x);
+            nextQ.push(...g[x].filter(x => !vis.has(x)));
+        }
+
+        q = nextQ;
+    }
+
+    return [];
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+
+class Solution:
+    def distanceK(self, root: TreeNode, target: TreeNode, k: int) -> List[int]:
+        def dfs1(root, fa):
+            if root is None:
+                return
+            p[root] = fa
+            dfs1(root.left, root)
+            dfs1(root.right, root)
+
+        def dfs2(root, fa, k):
+            if root is None:
+                return
+            if k == 0:
+                ans.append(root.val)
+                return
+            for nxt in (root.left, root.right, p[root]):
+                if nxt != fa:
+                    dfs2(nxt, root, k - 1)
+
+        p = {}
+        dfs1(root, None)
+        ans = []
+        dfs2(target, None, k)
+        return ans
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

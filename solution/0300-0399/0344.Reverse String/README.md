@@ -1,52 +1,76 @@
-# [344. 反转字符串](https://leetcode-cn.com/problems/reverse-string)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0344.Reverse%20String/README.md
+tags:
+    - 双指针
+    - 字符串
+---
+
+<!-- problem:start -->
+
+# [344. 反转字符串](https://leetcode.cn/problems/reverse-string)
 
 [English Version](/solution/0300-0399/0344.Reverse%20String/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 <code>char[]</code> 的形式给出。</p>
+<p>编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 <code>s</code> 的形式给出。</p>
 
 <p>不要给另外的数组分配额外的空间，你必须<strong><a href="https://baike.baidu.com/item/原地算法" target="_blank">原地</a>修改输入数组</strong>、使用 O(1) 的额外空间解决这一问题。</p>
-
-<p>你可以假设数组中的所有字符都是 <a href="https://baike.baidu.com/item/ASCII" target="_blank">ASCII</a> 码表中的可打印字符。</p>
 
 <p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入：</strong>[&quot;h&quot;,&quot;e&quot;,&quot;l&quot;,&quot;l&quot;,&quot;o&quot;]
-<strong>输出：</strong>[&quot;o&quot;,&quot;l&quot;,&quot;l&quot;,&quot;e&quot;,&quot;h&quot;]
+<pre>
+<strong>输入：</strong>s = ["h","e","l","l","o"]
+<strong>输出：</strong>["o","l","l","e","h"]
 </pre>
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入：</strong>[&quot;H&quot;,&quot;a&quot;,&quot;n&quot;,&quot;n&quot;,&quot;a&quot;,&quot;h&quot;]
-<strong>输出：</strong>[&quot;h&quot;,&quot;a&quot;,&quot;n&quot;,&quot;n&quot;,&quot;a&quot;,&quot;H&quot;]</pre>
+<pre>
+<strong>输入：</strong>s = ["H","a","n","n","a","h"]
+<strong>输出：</strong>["h","a","n","n","a","H"]</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+	<li><code>1 &lt;= s.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>s[i]</code> 都是 <a href="https://baike.baidu.com/item/ASCII" target="_blank">ASCII</a> 码表中的可打印字符</li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：双指针
+
+我们用两个指针 $i$ 和 $j$，初始时分别指向数组的首尾，每次将 $i$ 和 $j$ 对应的元素交换，然后 $i$ 向后移动，$j$ 向前移动，直到 $i$ 和 $j$ 相遇。
+
+时间复杂度 $O(n)$，其中 $n$ 是数组的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def reverseString(self, s: List[str]) -> None:
-        """
-        Do not return anything, modify s in-place instead.
-        """
-        s[:] = s[::-1]
+        i, j = 0, len(s) - 1
+        while i < j:
+            s[i], s[j] = s[j], s[i]
+            i, j = i + 1, j - 1
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -60,19 +84,20 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     void reverseString(vector<char>& s) {
-        for (int i = 0, j = s.size() - 1; i < j; ++i, --j)
-            swap(s[i], s[j]);
+        for (int i = 0, j = s.size() - 1; i < j;) {
+            swap(s[i++], s[j--]);
+        }
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func reverseString(s []byte) {
@@ -82,7 +107,36 @@ func reverseString(s []byte) {
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+/**
+ Do not return anything, modify s in-place instead.
+ */
+function reverseString(s: string[]): void {
+    for (let i = 0, j = s.length - 1; i < j; ++i, --j) {
+        [s[i], s[j]] = [s[j], s[i]];
+    }
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn reverse_string(s: &mut Vec<char>) {
+        let mut i = 0;
+        let mut j = s.len() - 1;
+        while i < j {
+            s.swap(i, j);
+            i += 1;
+            j -= 1;
+        }
+    }
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -96,10 +150,8 @@ var reverseString = function (s) {
 };
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

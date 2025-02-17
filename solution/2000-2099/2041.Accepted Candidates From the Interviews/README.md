@@ -1,12 +1,22 @@
-# [2041. Accepted Candidates From the Interviews](https://leetcode-cn.com/problems/accepted-candidates-from-the-interviews)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2041.Accepted%20Candidates%20From%20the%20Interviews/README.md
+tags:
+    - 数据库
+---
+
+<!-- problem:start -->
+
+# [2041. 面试中被录取的候选人 🔒](https://leetcode.cn/problems/accepted-candidates-from-the-interviews)
 
 [English Version](/solution/2000-2099/2041.Accepted%20Candidates%20From%20the%20Interviews/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>Table: <code>Candidates</code></p>
+<p>表：<code>Candidates</code></p>
 
 <pre>
 +--------------+----------+
@@ -17,13 +27,13 @@
 | years_of_exp | int      |
 | interview_id | int      |
 +--------------+----------+
-candidate_id is the primary key column for this table.
-Each row of this table indicates the name of a candidate, their number of years of experience, and their interview ID.
+candidate_id 是这个表的主键（具有唯一值的列）。
+该表的每一行都表示候选人的姓名、工作年限以及面试 ID 。
 </pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
-<p>Table: <code>Rounds</code></p>
+<p>表：<code>Rounds</code></p>
 
 <pre>
 +--------------+------+
@@ -33,23 +43,24 @@ Each row of this table indicates the name of a candidate, their number of years 
 | round_id     | int  |
 | score        | int  |
 +--------------+------+
-(interview_id, round_id) is the primary key column for this table.
-Each row of this table indicates the score of one round of an interview.
+(interview_id, round_id）是本表的主键（具有唯一值的列的组合）。
+本表的每一行都表示一轮面试的分数
 </pre>
 
-<p> </p>
+<p>&nbsp;</p>
 
-<p>Write an SQL query to report the IDs of the candidates who have <strong>at least two</strong> years of experience and the sum of the score of their interview rounds is <strong>strictly greater than <code>16</code></strong>.</p>
+<p>编写解决方案，找出 <strong>至少有两年</strong> 工作经验、且面试分数之和 <strong>严格大于 <code>15</code>&nbsp;</strong>的候选人的 ID<strong> 。</strong></p>
 
-<p>Return the result table in <strong>any order</strong>.</p>
+<p>可以以 <strong>任何顺序 </strong>返回结果表。</p>
 
-<p>The query result format is in the following example.</p>
+<p>查询结果的格式如下例所示。</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+
+<p><strong>示例 1：</strong></p>
 
 <pre>
-<strong>Input:</strong> 
+<strong>输入：</strong>
 Candidates table:
 +--------------+---------+--------------+--------------+
 | candidate_id | name    | years_of_exp | interview_id |
@@ -76,31 +87,59 @@ Rounds table:
 | 107          | 2        | 3     |
 | 101          | 1        | 8     |
 +--------------+----------+-------+
-<strong>Output:</strong> 
+<strong>输出：</strong>
 +--------------+
 | candidate_id |
 +--------------+
 | 9            |
 +--------------+
-<strong>Explanation:</strong> 
-- Candidate 11: The total score is 16, and they have one year of experience. We do not include them in the result table because of their years of experience.
-- Candidate 9: The total score is 22, and they have six years of experience. We include them in the result table.
-- Candidate 6: The total score is 10, and they have ten years of experience. We do not include them in the result table because the score is not good enough.
-- Candidate 8: The total score is 6, and they have zero years of experience. We do not include them in the result table because of their years of experience and the score.
+<strong>解释：</strong>
+- 候选人 11 ：总分是 16 ，1 年工作经验。由于工作年限，不列入结果表。
+- 候选人 9 ：总分是 22 ，6 年工作经验。列入结果表。
+- 候选人 6 ：总分是 10 ，10 年工作经验。由于分数不足，不列入结果表。
+- 候选人 8 ：总分是 6 ，0 年工作经验。由于工作年限和分数，不列入结果表。
 </pre>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：连接表 + 分组 + 过滤
+
+我们可以将 `Candidates` 表和 `Rounds` 表按照 `interview_id` 进行连接，筛选出工作年限至少为 2 年的候选人，然后按照 `candidate_id` 进行分组，计算每个候选人的总分，最后筛选出总分大于 15 分的候选人。
 
 <!-- tabs:start -->
 
-### **SQL**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### MySQL
 
 ```sql
+# Write your MySQL query statement below
+SELECT candidate_id
+FROM
+    Candidates
+    JOIN Rounds USING (interview_id)
+WHERE years_of_exp >= 2
+GROUP BY 1
+HAVING SUM(score) > 15;
+```
 
+#### Pandas
+
+```python
+import pandas as pd
+
+
+def accepted_candidates(candidates: pd.DataFrame, rounds: pd.DataFrame) -> pd.DataFrame:
+    merged_df = pd.merge(candidates, rounds, on="interview_id")
+    filtered_df = merged_df[merged_df["years_of_exp"] >= 2]
+    grouped_df = filtered_df.groupby("candidate_id").agg({"score": "sum"})
+    return grouped_df[grouped_df["score"] > 15].reset_index()[["candidate_id"]]
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

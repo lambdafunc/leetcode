@@ -1,30 +1,15 @@
 class Solution:
     def checkValidString(self, s: str) -> bool:
         n = len(s)
-        left, asterisk = 0, 0
-        for i in range(n):
-            if s[i] == "(":
-                left += 1
-            elif s[i] == ")":
-                if left > 0:
-                    left -= 1
-                elif asterisk > 0:
-                    asterisk -= 1
-                else:
-                    return False
-            else:
-                asterisk += 1
-        right, asterisk = 0, 0
-        for i in range(n - 1, -1, -1):
-            if s[i] == ")":
-                right += 1
-            elif s[i] == "(":
-                if right > 0:
-                    right -= 1
-                elif asterisk > 0:
-                    asterisk -= 1
-                else:
-                    return False
-            else:
-                asterisk += 1
-        return True
+        dp = [[False] * n for _ in range(n)]
+        for i, c in enumerate(s):
+            dp[i][i] = c == '*'
+        for i in range(n - 2, -1, -1):
+            for j in range(i + 1, n):
+                dp[i][j] = (
+                    s[i] in '(*' and s[j] in '*)' and (i + 1 == j or dp[i + 1][j - 1])
+                )
+                dp[i][j] = dp[i][j] or any(
+                    dp[i][k] and dp[k + 1][j] for k in range(i, j)
+                )
+        return dp[0][-1]

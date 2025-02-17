@@ -1,10 +1,22 @@
-# [157. 用 Read4 读取 N 个字符](https://leetcode-cn.com/problems/read-n-characters-given-read4)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0157.Read%20N%20Characters%20Given%20Read4/README.md
+tags:
+    - 数组
+    - 交互
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [157. 用 Read4 读取 N 个字符 🔒](https://leetcode.cn/problems/read-n-characters-given-read4)
 
 [English Version](/solution/0100-0199/0157.Read%20N%20Characters%20Given%20Read4/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个文件，并且该文件只能通过给定的&nbsp;<code>read4</code>&nbsp;方法来读取，请实现一个方法使其能够读取 n 个字符。</p>
 
@@ -87,32 +99,160 @@ read4(buf4); // read4 返回 0。现在 buf = &quot;&quot;，fp 指向文件末�
 	<li>你可以假定目标缓存数组&nbsp;<code>buf</code> 保证有足够的空间存下 n 个字符。&nbsp;</li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：模拟
+
+直接模拟读取文件的过程，每次读取 4 个字符，然后将读取的字符存入缓存数组中，直到读取的字符数目达到 n 或者文件读取完毕。
+
+时间复杂度 $O(n)$。其中 $n$ 为要读取的字符数目。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
+"""
+The read4 API is already defined for you.
 
+    @param buf4, a list of characters
+    @return an integer
+    def read4(buf4):
+
+# Below is an example of how the read4 API can be called.
+file = File("abcdefghijk") # File is "abcdefghijk", initially file pointer (fp) points to 'a'
+buf4 = [' '] * 4 # Create buffer with enough space to store characters
+read4(buf4) # read4 returns 4. Now buf = ['a','b','c','d'], fp points to 'e'
+read4(buf4) # read4 returns 4. Now buf = ['e','f','g','h'], fp points to 'i'
+read4(buf4) # read4 returns 3. Now buf = ['i','j','k',...], fp points to end of file
+"""
+
+
+class Solution:
+    def read(self, buf, n):
+        """
+        :type buf: Destination buffer (List[str])
+        :type n: Number of characters to read (int)
+        :rtype: The number of actual characters read (int)
+        """
+        i = 0
+        buf4 = [0] * 4
+        v = 5
+        while v >= 4:
+            v = read4(buf4)
+            for j in range(v):
+                buf[i] = buf4[j]
+                i += 1
+                if i >= n:
+                    return n
+        return i
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
+/**
+ * The read4 API is defined in the parent class Reader4.
+ *     int read4(char[] buf4);
+ */
 
+public class Solution extends Reader4 {
+    /**
+     * @param buf Destination buffer
+     * @param n   Number of characters to read
+     * @return    The number of actual characters read
+     */
+    public int read(char[] buf, int n) {
+        char[] buf4 = new char[4];
+        int i = 0, v = 5;
+        while (v >= 4) {
+            v = read4(buf4);
+            for (int j = 0; j < v; ++j) {
+                buf[i++] = buf4[j];
+                if (i >= n) {
+                    return n;
+                }
+            }
+        }
+        return i;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+/**
+ * The read4 API is defined in the parent class Reader4.
+ *     int read4(char *buf4);
+ */
+
+class Solution {
+public:
+    /**
+     * @param buf Destination buffer
+     * @param n   Number of characters to read
+     * @return    The number of actual characters read
+     */
+    int read(char* buf, int n) {
+        char buf4[4];
+        int i = 0, v = 5;
+        while (v >= 4) {
+            v = read4(buf4);
+            for (int j = 0; j < v; ++j) {
+                buf[i++] = buf4[j];
+                if (i >= n) {
+                    return n;
+                }
+            }
+        }
+        return i;
+    }
+};
 ```
 
+#### Go
+
+```go
+/**
+ * The read4 API is already defined for you.
+ *
+ *     read4 := func(buf4 []byte) int
+ *
+ * // Below is an example of how the read4 API can be called.
+ * file := File("abcdefghijk") // File is "abcdefghijk", initially file pointer (fp) points to 'a'
+ * buf4 := make([]byte, 4) // Create buffer with enough space to store characters
+ * read4(buf4) // read4 returns 4. Now buf = ['a','b','c','d'], fp points to 'e'
+ * read4(buf4) // read4 returns 4. Now buf = ['e','f','g','h'], fp points to 'i'
+ * read4(buf4) // read4 returns 3. Now buf = ['i','j','k',...], fp points to end of file
+ */
+
+var solution = func(read4 func([]byte) int) func([]byte, int) int {
+	// implement read below.
+	return func(buf []byte, n int) int {
+		buf4 := make([]byte, 4)
+		i, v := 0, 5
+		for v >= 4 {
+			v = read4(buf4)
+			for j := 0; j < v; j++ {
+				buf[i] = buf4[j]
+				i++
+				if i >= n {
+					return n
+				}
+			}
+		}
+		return i
+	}
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

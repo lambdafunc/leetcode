@@ -1,55 +1,77 @@
-# [373. 查找和最小的 K 对数字](https://leetcode-cn.com/problems/find-k-pairs-with-smallest-sums)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0373.Find%20K%20Pairs%20with%20Smallest%20Sums/README.md
+tags:
+    - 数组
+    - 堆（优先队列）
+---
+
+<!-- problem:start -->
+
+# [373. 查找和最小的 K 对数字](https://leetcode.cn/problems/find-k-pairs-with-smallest-sums)
 
 [English Version](/solution/0300-0399/0373.Find%20K%20Pairs%20with%20Smallest%20Sums/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定两个以升序排列的整形数组 <strong>nums1</strong> 和 <strong>nums2</strong>, 以及一个整数 <strong>k</strong>。</p>
+<p>给定两个以 <strong>非递减顺序排列</strong> 的整数数组 <code>nums1</code> 和<strong> </strong><code>nums2</code><strong>&nbsp;</strong>,&nbsp;以及一个整数 <code>k</code><strong>&nbsp;</strong>。</p>
 
-<p>定义一对值&nbsp;<strong>(u,v)</strong>，其中第一个元素来自&nbsp;<strong>nums1</strong>，第二个元素来自 <strong>nums2</strong>。</p>
+<p>定义一对值&nbsp;<code>(u,v)</code>，其中第一个元素来自&nbsp;<code>nums1</code>，第二个元素来自 <code>nums2</code><strong>&nbsp;</strong>。</p>
 
-<p>找到和最小的 k 对数字&nbsp;<strong>(u<sub>1</sub>,v<sub>1</sub>), (u<sub>2</sub>,v<sub>2</sub>) ... (u<sub>k</sub>,v<sub>k</sub>)</strong>。</p>
+<p>请找到和最小的 <code>k</code>&nbsp;个数对&nbsp;<code>(u<sub>1</sub>,v<sub>1</sub>)</code>, <code>&nbsp;(u<sub>2</sub>,v<sub>2</sub>)</code> &nbsp;... &nbsp;<code>(u<sub>k</sub>,v<sub>k</sub>)</code>&nbsp;。</p>
 
-<p><strong>示例 1:</strong></p>
+<p>&nbsp;</p>
 
-<pre><strong>输入:</strong> nums1 = [1,7,11], nums2 = [2,4,6], k = 3
+<p><strong class="example">示例 1:</strong></p>
+
+<pre>
+<strong>输入:</strong> nums1 = [1,7,11], nums2 = [2,4,6], k = 3
 <strong>输出:</strong> [1,2],[1,4],[1,6]
 <strong>解释: </strong>返回序列中的前 3 对数：
      [1,2],[1,4],[1,6],[7,2],[7,4],[11,2],[7,6],[11,4],[11,6]
 </pre>
 
-<p><strong>示例 2:</strong></p>
+<p><strong class="example">示例 2:</strong></p>
 
-<pre><strong>输入: </strong>nums1 = [1,1,2], nums2 = [1,2,3], k = 2
+<pre>
+<strong>输入: </strong>nums1 = [1,1,2], nums2 = [1,2,3], k = 2
 <strong>输出: </strong>[1,1],[1,1]
 <strong>解释: </strong>返回序列中的前 2 对数：
 &nbsp;    [1,1],[1,1],[1,2],[2,1],[1,2],[2,2],[1,3],[1,3],[2,3]
 </pre>
 
-<p><strong>示例 3:</strong></p>
+<p>&nbsp;</p>
 
-<pre><strong>输入: </strong>nums1 = [1,2], nums2 = [3], k = 3 
-<strong>输出:</strong> [1,3],[2,3]
-<strong>解释: </strong>也可能序列中所有的数对都被返回:[1,3],[2,3]
-</pre>
+<p><strong>提示:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= nums1.length, nums2.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>-10<sup>9</sup> &lt;= nums1[i], nums2[i] &lt;= 10<sup>9</sup></code></li>
+	<li><code>nums1</code> 和 <code>nums2</code> 均为 <strong>升序排列</strong></li>
+	<li><meta charset="UTF-8" /><code>1 &lt;= k &lt;= 10<sup>4</sup></code></li>
+	<li><code>k &lt;=&nbsp;nums1.length *&nbsp;nums2.length</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0373.Find%20K%20Pairs%20with%20Smallest%20Sums/images/demo.png"/>
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-    def kSmallestPairs(self, nums1: List[int], nums2: List[int], k: int) -> List[List[int]]:
+    def kSmallestPairs(
+        self, nums1: List[int], nums2: List[int], k: int
+    ) -> List[List[int]]:
         q = [[u + nums2[0], i, 0] for i, u in enumerate(nums1[:k])]
         heapify(q)
         ans = []
@@ -62,16 +84,14 @@ class Solution:
         return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
         PriorityQueue<int[]> q = new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
         for (int i = 0; i < Math.min(nums1.length, k); ++i) {
-            q.offer(new int[]{nums1[i] + nums2[0], i, 0});
+            q.offer(new int[] {nums1[i] + nums2[0], i, 0});
         }
         List<List<Integer>> ans = new ArrayList<>();
         while (!q.isEmpty() && k > 0) {
@@ -79,7 +99,7 @@ class Solution {
             ans.add(Arrays.asList(nums1[e[1]], nums2[e[2]]));
             --k;
             if (e[2] + 1 < nums2.length) {
-                q.offer(new int[]{nums1[e[1]] + nums2[e[2] + 1], e[1], e[2] + 1});
+                q.offer(new int[] {nums1[e[1]] + nums2[e[2] + 1], e[1], e[2] + 1});
             }
         }
         return ans;
@@ -87,14 +107,13 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    vector<vector<int>> kSmallestPairs(vector<int> &nums1, vector<int> &nums2, int k) {
-        auto cmp = [&nums1, &nums2](const pair<int, int> &a, const pair<int, int> &b)
-        {
+    vector<vector<int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+        auto cmp = [&nums1, &nums2](const pair<int, int>& a, const pair<int, int>& b) {
             return nums1[a.first] + nums2[a.second] > nums1[b.first] + nums2[b.second];
         };
 
@@ -104,8 +123,7 @@ public:
         priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> pq(cmp);
         for (int i = 0; i < min(k, m); i++)
             pq.emplace(i, 0);
-        while (k-- && !pq.empty())
-        {
+        while (k-- && !pq.empty()) {
             auto [x, y] = pq.top();
             pq.pop();
             ans.emplace_back(initializer_list<int>{nums1[x], nums2[y]});
@@ -118,7 +136,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func kSmallestPairs(nums1, nums2 []int, k int) (ans [][]int) {
@@ -149,15 +167,13 @@ func (h hp) Less(i, j int) bool {
 	a, b := h.data[i], h.data[j]
 	return h.nums1[a.i]+h.nums2[a.j] < h.nums1[b.i]+h.nums2[b.j]
 }
-func (h hp) Swap(i, j int)       { h.data[i], h.data[j] = h.data[j], h.data[i] }
-func (h *hp) Push(v interface{}) { h.data = append(h.data, v.(pair)) }
-func (h *hp) Pop() interface{}   { a := h.data; v := a[len(a)-1]; h.data = a[:len(a)-1]; return v }
-```
-
-### **...**
-
-```
-
+func (h hp) Swap(i, j int) { h.data[i], h.data[j] = h.data[j], h.data[i] }
+func (h *hp) Push(v any)   { h.data = append(h.data, v.(pair)) }
+func (h *hp) Pop() any     { a := h.data; v := a[len(a)-1]; h.data = a[:len(a)-1]; return v }
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,31 +1,26 @@
 class Solution {
     public int numRookCaptures(char[][] board) {
-        int[] pos = find(board);
-        int ans = 0, n = 8;
-        int[][] dirs = new int[][]{{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
-        for (int[] dir : dirs) {
-            int x = pos[0], y = pos[1], a = dir[0], b = dir[1];
-            while (x + a >= 0 && x + a < n && y + b >= 0 && y + b < n && board[x + a][y + b] != 'B') {
-                x += a;
-                y += b;
-                if (board[x][y] == 'p') {
-                    ++ans;
-                    break;
-                }
-            }
-        }
-        return ans;
-    }
-
-    private int[] find(char[][] board) {
-        int n = 8;
+        final int[] dirs = {-1, 0, 1, 0, -1};
+        int n = board.length;
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
                 if (board[i][j] == 'R') {
-                    return new int[]{i, j};
+                    int ans = 0;
+                    for (int k = 0; k < 4; ++k) {
+                        int x = i + dirs[k], y = j + dirs[k + 1];
+                        while (x >= 0 && x < n && y >= 0 && y < n && board[x][y] != 'B') {
+                            if (board[x][y] == 'p') {
+                                ++ans;
+                                break;
+                            }
+                            x += dirs[k];
+                            y += dirs[k + 1];
+                        }
+                    }
+                    return ans;
                 }
             }
         }
-        return null;
+        return 0;
     }
 }

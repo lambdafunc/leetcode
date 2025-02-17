@@ -1,33 +1,30 @@
 func eventualSafeNodes(graph [][]int) []int {
 	n := len(graph)
-	outDegree := make([]int, n)
-	revGraph := make([][]int, n)
-	queue := make([]int, 0)
-	ans := make([]int, 0)
-
-	for u, vs := range graph {
-		for _, v := range vs {
-			revGraph[v] = append(revGraph[v], u)
+	indeg := make([]int, n)
+	rg := make([][]int, n)
+	q := []int{}
+	for i, vs := range graph {
+		for _, j := range vs {
+			rg[j] = append(rg[j], i)
 		}
-		outDegree[u] = len(vs)
-		if outDegree[u] == 0 {
-			queue = append(queue, u)
+		indeg[i] = len(vs)
+		if indeg[i] == 0 {
+			q = append(q, i)
 		}
 	}
-
-	for len(queue) > 0 {
-		v := queue[0]
-		queue = queue[1:]
-		for _, u := range revGraph[v] {
-			outDegree[u]--
-			if outDegree[u] == 0 {
-				queue = append(queue, u)
+	for len(q) > 0 {
+		i := q[0]
+		q = q[1:]
+		for _, j := range rg[i] {
+			indeg[j]--
+			if indeg[j] == 0 {
+				q = append(q, j)
 			}
 		}
 	}
-
-	for i, d := range outDegree {
-		if d == 0 {
+	ans := []int{}
+	for i, v := range indeg {
+		if v == 0 {
 			ans = append(ans, i)
 		}
 	}

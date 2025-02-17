@@ -1,10 +1,19 @@
-# [面试题 01.03. URL 化](https://leetcode-cn.com/problems/string-to-url-lcci)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcci/01.03.String%20to%20URL/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 01.03. URL 化](https://leetcode.cn/problems/string-to-url-lcci)
 
 [English Version](/lcci/01.03.String%20to%20URL/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
+
 <p>URL化。编写一种方法，将字符串中的空格全部替换为<code>%20</code>。假定该字符串尾部有足够的空间存放新增字符，并且知道字符串的&ldquo;真实&rdquo;长度。（注：用<code>Java</code>实现的话，请使用字符数组实现，以便直接在数组上操作。）</p>
 
 <p><strong>示例1:</strong></p>
@@ -25,15 +34,21 @@
 	<li>字符串长度在[0, 500000]范围内。</li>
 </ol>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：使用 `replace()` 函数
+
+直接利用 `replace` 将所有 ` ` 替换为 `%20`：
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为字符串长度。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-直接利用 `replace` 将所有 ` ` 替换为 `%20`：
+#### Python3
 
 ```python
 class Solution:
@@ -41,41 +56,25 @@ class Solution:
         return S[:length].replace(' ', '%20')
 ```
 
-初始化一个空列表 `chars`，遍历字符串中每个字符 `c`，遇到空格字符时，往 `chars` 中追加元素 `%20`，否则追加 `c`。最后返回 `''.join(chars)` 即可。
+#### TypeScript
 
-```python
-class Solution:
-    def replaceSpaces(self, S: str, length: int) -> str:
-        chars = []
-        for c in S[:length]:
-            chars.append('%20' if c == ' ' else c)
-        return ''.join(chars)
+```ts
+function replaceSpaces(S: string, length: number): string {
+    return S.slice(0, length).replace(/\s/g, '%20');
+}
 ```
 
-### **Java**
+#### Rust
 
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```java
-class Solution {
-    public String replaceSpaces(String S, int length) {
-        char[] chars = S.toCharArray();
-        int j = chars.length;
-        for (int i = length - 1; i >= 0; --i) {
-            if (chars[i] == ' ') {
-                chars[--j] = '0';
-                chars[--j] = '2';
-                chars[--j] = '%';
-            } else {
-                chars[--j] = chars[i];
-            }
-        }
-        return new String(chars, j, chars.length - j);
+```rust
+impl Solution {
+    pub fn replace_spaces(s: String, length: i32) -> String {
+        s[..length as usize].replace(' ', "%20")
     }
 }
 ```
 
-### **JavaScript**
+#### JavaScript
 
 ```js
 /**
@@ -88,7 +87,71 @@ var replaceSpaces = function (S, length) {
 };
 ```
 
-### **Go**
+#### Swift
+
+```swift
+class Solution {
+    func replaceSpaces(_ S: String, _ length: Int) -> String {
+        let substring = S.prefix(length)
+        var result = ""
+
+        for character in substring {
+            if character == " " {
+                result += "%20"
+            } else {
+                result.append(character)
+            }
+        }
+
+        return result
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start-->
+
+### 方法二：模拟
+
+遍历字符串每个字符 $c$，遇到空格则将 `%20` 添加到结果中，否则添加 $c$。
+
+时间复杂度 $O(n)$，空间复杂度 $O(n)$。其中 $n$ 为字符串长度。
+
+<!-- tabs:start -->
+
+#### Python3
+
+```python
+class Solution:
+    def replaceSpaces(self, S: str, length: int) -> str:
+        return ''.join(['%20' if c == ' ' else c for c in S[:length]])
+```
+
+#### Java
+
+```java
+class Solution {
+    public String replaceSpaces(String S, int length) {
+        char[] cs = S.toCharArray();
+        int j = cs.length;
+        for (int i = length - 1; i >= 0; --i) {
+            if (cs[i] == ' ') {
+                cs[--j] = '0';
+                cs[--j] = '2';
+                cs[--j] = '%';
+            } else {
+                cs[--j] = cs[i];
+            }
+        }
+        return new String(cs, j, cs.length - j);
+    }
+}
+```
+
+#### Go
 
 ```go
 func replaceSpaces(S string, length int) string {
@@ -110,10 +173,27 @@ func replaceSpaces(S string, length int) string {
 }
 ```
 
-### **...**
+#### Rust
 
-```
-
+```rust
+impl Solution {
+    pub fn replace_spaces(s: String, length: i32) -> String {
+        s.chars()
+            .take(length as usize)
+            .map(|c| {
+                if c == ' ' {
+                    "%20".to_string()
+                } else {
+                    c.to_string()
+                }
+            })
+            .collect()
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

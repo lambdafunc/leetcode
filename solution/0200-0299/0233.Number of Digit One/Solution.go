@@ -1,42 +1,37 @@
 func countDigitOne(n int) int {
-	digit := make([]int, 0)
-	for i := n; i > 0; i /= 10 {
-		digit = append(digit, i%10)
-	}
-
-	dp := make([][]int, 10)
-	for i := range dp {
-		dp[i] = make([]int, 10)
-		for j := 0; j < 10; j++ {
-			dp[i][j] = -1
+	s := strconv.Itoa(n)
+	m := len(s)
+	f := make([][]int, m)
+	for i := range f {
+		f[i] = make([]int, m)
+		for j := range f[i] {
+			f[i][j] = -1
 		}
 	}
-
-	var dfs func(pos, cnt int, limit bool) int
-	dfs = func(pos, cnt int, limit bool) int {
-		if pos == -1 {
+	var dfs func(i, cnt int, limit bool) int
+	dfs = func(i, cnt int, limit bool) int {
+		if i >= m {
 			return cnt
 		}
-		if !limit && dp[pos][cnt] != -1 {
-			return dp[pos][cnt]
+		if !limit && f[i][cnt] != -1 {
+			return f[i][cnt]
 		}
 		up := 9
 		if limit {
-			up = digit[pos]
+			up = int(s[i] - '0')
 		}
 		ans := 0
-		for i := 0; i <= up; i++ {
-			next := cnt
-			if i == 1 {
-				next++
+		for j := 0; j <= up; j++ {
+			t := 0
+			if j == 1 {
+				t = 1
 			}
-			ans += dfs(pos-1, next, limit && i == digit[pos])
+			ans += dfs(i+1, cnt+t, limit && j == up)
 		}
 		if !limit {
-			dp[pos][cnt] = ans
+			f[i][cnt] = ans
 		}
 		return ans
 	}
-
-	return dfs(len(digit)-1, 0, true)
+	return dfs(0, 0, true)
 }

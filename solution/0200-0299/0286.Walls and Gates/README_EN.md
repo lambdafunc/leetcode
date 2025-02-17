@@ -1,8 +1,22 @@
-# [286. Walls and Gates](https://leetcode.com/problems/walls-and-gates)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0286.Walls%20and%20Gates/README_EN.md
+tags:
+    - Breadth-First Search
+    - Array
+    - Matrix
+---
+
+<!-- problem:start -->
+
+# [286. Walls and Gates 🔒](https://leetcode.com/problems/walls-and-gates)
 
 [中文文档](/solution/0200-0299/0286.Walls%20and%20Gates/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given an <code>m x n</code> grid <code>rooms</code>&nbsp;initialized with these three possible values.</p>
 
@@ -15,32 +29,18 @@
 <p>Fill each empty room with the distance to <em>its nearest gate</em>. If it is impossible to reach a gate, it should be filled with <code>INF</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0200-0299/0286.Walls%20and%20Gates/images/grid.jpg" style="width: 500px; height: 223px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0200-0299/0286.Walls%20and%20Gates/images/grid.jpg" style="width: 500px; height: 223px;" />
 <pre>
 <strong>Input:</strong> rooms = [[2147483647,-1,0,2147483647],[2147483647,2147483647,2147483647,-1],[2147483647,-1,2147483647,-1],[0,-1,2147483647,2147483647]]
 <strong>Output:</strong> [[3,-1,0,1],[2,2,1,-1],[1,-1,2,-1],[0,-1,3,4]]
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> rooms = [[-1]]
 <strong>Output:</strong> [[-1]]
-</pre>
-
-<p><strong>Example 3:</strong></p>
-
-<pre>
-<strong>Input:</strong> rooms = [[2147483647]]
-<strong>Output:</strong> [[2147483647]]
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> rooms = [[0]]
-<strong>Output:</strong> [[0]]
 </pre>
 
 <p>&nbsp;</p>
@@ -53,13 +53,17 @@
 	<li><code>rooms[i][j]</code> is <code>-1</code>, <code>0</code>, or <code>2<sup>31</sup> - 1</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-BFS.
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
@@ -68,13 +72,12 @@ class Solution:
         Do not return anything, modify rooms in-place instead.
         """
         m, n = len(rooms), len(rooms[0])
-        inf = 2 ** 31 - 1
-        q = deque([(i, j) for i in range(m)
-                   for j in range(n) if rooms[i][j] == 0])
+        inf = 2**31 - 1
+        q = deque([(i, j) for i in range(m) for j in range(n) if rooms[i][j] == 0])
         d = 0
         while q:
             d += 1
-            for _ in range(len(q), 0, -1):
+            for _ in range(len(q)):
                 i, j = q.popleft()
                 for a, b in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
                     x, y = i + a, j + b
@@ -83,7 +86,7 @@ class Solution:
                         q.append((x, y))
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
@@ -94,7 +97,7 @@ class Solution {
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
                 if (rooms[i][j] == 0) {
-                    q.offer(new int[]{i, j});
+                    q.offer(new int[] {i, j});
                 }
             }
         }
@@ -109,7 +112,7 @@ class Solution {
                     int y = p[1] + dirs[j + 1];
                     if (x >= 0 && x < m && y >= 0 && y < n && rooms[x][y] == Integer.MAX_VALUE) {
                         rooms[x][y] = d;
-                        q.offer(new int[]{x, y});
+                        q.offer(new int[] {x, y});
                     }
                 }
             }
@@ -118,7 +121,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
@@ -133,19 +136,15 @@ public:
                     q.emplace(i, j);
         int d = 0;
         vector<int> dirs = {-1, 0, 1, 0, -1};
-        while (!q.empty())
-        {
+        while (!q.empty()) {
             ++d;
-            for (int i = q.size(); i > 0; --i)
-            {
+            for (int i = q.size(); i > 0; --i) {
                 auto p = q.front();
                 q.pop();
-                for (int j = 0; j < 4; ++j)
-                {
+                for (int j = 0; j < 4; ++j) {
                     int x = p.first + dirs[j];
                     int y = p.second + dirs[j + 1];
-                    if (x >= 0 && x < m && y >= 0 && y < n && rooms[x][y] == INT_MAX)
-                    {
+                    if (x >= 0 && x < m && y >= 0 && y < n && rooms[x][y] == INT_MAX) {
                         rooms[x][y] = d;
                         q.emplace(x, y);
                     }
@@ -156,7 +155,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func wallsAndGates(rooms [][]int) {
@@ -188,10 +187,8 @@ func wallsAndGates(rooms [][]int) {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

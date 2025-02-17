@@ -1,10 +1,24 @@
-# [1742. 盒子中小球的最大数量](https://leetcode-cn.com/problems/maximum-number-of-balls-in-a-box)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1742.Maximum%20Number%20of%20Balls%20in%20a%20Box/README.md
+rating: 1277
+source: 第 226 场周赛 Q1
+tags:
+    - 哈希表
+    - 数学
+    - 计数
+---
+
+<!-- problem:start -->
+
+# [1742. 盒子中小球的最大数量](https://leetcode.cn/problems/maximum-number-of-balls-in-a-box)
 
 [English Version](/solution/1700-1799/1742.Maximum%20Number%20of%20Balls%20in%20a%20Box/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>你在一家生产小球的玩具厂工作，有 <code>n</code> 个小球，编号从 <code>lowLimit</code> 开始，到 <code>highLimit</code> 结束（包括 <code>lowLimit</code> 和 <code>highLimit</code> ，即 <code>n == highLimit - lowLimit + 1</code>）。另有无限数量的盒子，编号从 <code>1</code> 到 <code>infinity</code> 。</p>
 
@@ -54,102 +68,173 @@
 	<li><code>1 <= lowLimit <= highLimit <= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：数组 + 模拟
+
+观察题目的数据范围，小球的编号最大不超过 $10^5$，那么每个编号的各个位数之和的最大值小于 $50$。因此，我们可以直接开一个长度为 $50$ 的数组 $\textit{cnt}$ 来统计每个编号的各个位数之和的数量。
+
+答案就是数组 $\textit{cnt}$ 中的最大值。
+
+时间复杂度 $O(n \times \log_{10}m)$。其中 $n = \textit{highLimit} - \textit{lowLimit} + 1$，而 $m = \textit{highLimit}$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def countBalls(self, lowLimit: int, highLimit: int) -> int:
-        counter = [0] * 60
-        for i in range(lowLimit, highLimit + 1):
-            s = 0
-            while i:
-                s += (i % 10)
-                i //= 10
-            counter[s] += 1
-        return max(counter)
+        cnt = [0] * 50
+        for x in range(lowLimit, highLimit + 1):
+            y = 0
+            while x:
+                y += x % 10
+                x //= 10
+            cnt[y] += 1
+        return max(cnt)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int countBalls(int lowLimit, int highLimit) {
-        int[] counter = new int[60];
-        int ans = 0;
+        int[] cnt = new int[50];
         for (int i = lowLimit; i <= highLimit; ++i) {
-            int s = 0;
-            int j = i;
-            while (j > 0) {
-                s += (j % 10);
-                j /= 10;
+            int y = 0;
+            for (int x = i; x > 0; x /= 10) {
+                y += x % 10;
             }
-            ++counter[s];
-            ans = Math.max(ans, counter[s]);
+            ++cnt[y];
         }
-        return ans;
+        return Arrays.stream(cnt).max().getAsInt();
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int countBalls(int lowLimit, int highLimit) {
-        vector<int> counter(60);
+        int cnt[50] = {0};
         int ans = 0;
-        for (int i = lowLimit; i <= highLimit; ++i)
-        {
-            int s = 0, j = i;
-            while (j)
-            {
-                s += (j % 10);
-                j /= 10;
+        for (int i = lowLimit; i <= highLimit; ++i) {
+            int y = 0;
+            for (int x = i; x; x /= 10) {
+                y += x % 10;
             }
-            ++counter[s];
-            ans = max(ans, counter[s]);
+            ans = max(ans, ++cnt[y]);
         }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func countBalls(lowLimit int, highLimit int) int {
-	counter := make([]int, 60)
-	ans := 0
+func countBalls(lowLimit int, highLimit int) (ans int) {
+	cnt := [50]int{}
 	for i := lowLimit; i <= highLimit; i++ {
-		s, j := 0, i
-		for j > 0 {
-			s += (j % 10)
-			j /= 10
+		y := 0
+		for x := i; x > 0; x /= 10 {
+			y += x % 10
 		}
-		counter[s]++
-		if counter[s] > ans {
-			ans = counter[s]
+		cnt[y]++
+		if ans < cnt[y] {
+			ans = cnt[y]
 		}
 	}
-	return ans
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function countBalls(lowLimit: number, highLimit: number): number {
+    const cnt: number[] = Array(50).fill(0);
+    for (let i = lowLimit; i <= highLimit; ++i) {
+        let y = 0;
+        for (let x = i; x; x = Math.floor(x / 10)) {
+            y += x % 10;
+        }
+        ++cnt[y];
+    }
+    return Math.max(...cnt);
+}
 ```
 
+#### Rust
+
+```rust
+impl Solution {
+    pub fn count_balls(low_limit: i32, high_limit: i32) -> i32 {
+        let mut cnt = vec![0; 50];
+        for x in low_limit..=high_limit {
+            let mut y = 0;
+            let mut n = x;
+            while n > 0 {
+                y += n % 10;
+                n /= 10;
+            }
+            cnt[y as usize] += 1;
+        }
+        *cnt.iter().max().unwrap()
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * @param {number} lowLimit
+ * @param {number} highLimit
+ * @return {number}
+ */
+var countBalls = function (lowLimit, highLimit) {
+    const cnt = Array(50).fill(0);
+    for (let i = lowLimit; i <= highLimit; ++i) {
+        let y = 0;
+        for (let x = i; x; x = Math.floor(x / 10)) {
+            y += x % 10;
+        }
+        ++cnt[y];
+    }
+    return Math.max(...cnt);
+};
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int CountBalls(int lowLimit, int highLimit) {
+        int[] cnt = new int[50];
+        for (int x = lowLimit; x <= highLimit; x++) {
+            int y = 0;
+            int n = x;
+            while (n > 0) {
+                y += n % 10;
+                n /= 10;
+            }
+            cnt[y]++;
+        }
+        return cnt.Max();
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,40 +1,84 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0690.Employee%20Importance/README_EN.md
+tags:
+    - Tree
+    - Depth-First Search
+    - Breadth-First Search
+    - Array
+    - Hash Table
+---
+
+<!-- problem:start -->
+
 # [690. Employee Importance](https://leetcode.com/problems/employee-importance)
 
 [中文文档](/solution/0600-0699/0690.Employee%20Importance/README.md)
 
 ## Description
 
-<p>You are given a data structure of employee information, which includes the employee&#39;s <b>unique id</b>, their&nbsp;<b>importance value</b> and their&nbsp;<b>direct</b> subordinates&#39; id.</p>
+<!-- description:start -->
 
-<p>For example, employee 1 is the leader of employee 2, and employee 2 is the leader of employee 3. They have importance value 15, 10 and 5, respectively. Then employee 1 has a data structure like [1, 15, [2]], and employee 2 has [2, 10, [3]], and employee 3 has [3, 5, []]. Note that although employee 3 is also a subordinate of employee 1, the relationship is <b>not direct</b>.</p>
+<p>You have a data structure of employee information, including the employee&#39;s unique ID, importance value, and direct subordinates&#39; IDs.</p>
 
-<p>Now given the employee information of a company, and an employee id, you need to return the total importance value of this employee and all their&nbsp;subordinates.</p>
+<p>You are given an array of employees <code>employees</code> where:</p>
 
-<p><b>Example 1:</b></p>
+<ul>
+	<li><code>employees[i].id</code> is the ID of the <code>i<sup>th</sup></code> employee.</li>
+	<li><code>employees[i].importance</code> is the importance value of the <code>i<sup>th</sup></code> employee.</li>
+	<li><code>employees[i].subordinates</code> is a list of the IDs of the direct subordinates of the <code>i<sup>th</sup></code> employee.</li>
+</ul>
 
+<p>Given an integer <code>id</code> that represents an employee&#39;s ID, return <em>the <strong>total</strong> importance value of this employee and all their direct and indirect subordinates</em>.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0690.Employee%20Importance/images/emp1-tree.jpg" style="width: 400px; height: 258px;" />
 <pre>
-<b>Input:</b> [[1, 5, [2, 3]], [2, 3, []], [3, 3, []]], 1
-<b>Output:</b> 11
-<b>Explanation:</b>
-Employee 1 has importance value 5, and he has two direct subordinates: employee 2 and employee 3. They both have importance value 3. So the total importance value of employee 1 is 5 + 3 + 3 = 11.
+<strong>Input:</strong> employees = [[1,5,[2,3]],[2,3,[]],[3,3,[]]], id = 1
+<strong>Output:</strong> 11
+<strong>Explanation:</strong> Employee 1 has an importance value of 5 and has two direct subordinates: employee 2 and employee 3.
+They both have an importance value of 3.
+Thus, the total importance value of employee 1 is 5 + 3 + 3 = 11.
+</pre>
+
+<p><strong class="example">Example 2:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0600-0699/0690.Employee%20Importance/images/emp2-tree.jpg" style="width: 362px; height: 361px;" />
+<pre>
+<strong>Input:</strong> employees = [[1,2,[5]],[5,-3,[]]], id = 5
+<strong>Output:</strong> -3
+<strong>Explanation:</strong> Employee 5 has an importance value of -3 and has no direct subordinates.
+Thus, the total importance value of employee 5 is -3.
 </pre>
 
 <p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
 
-<p><b>Note:</b></p>
+<ul>
+	<li><code>1 &lt;= employees.length &lt;= 2000</code></li>
+	<li><code>1 &lt;= employees[i].id &lt;= 2000</code></li>
+	<li>All <code>employees[i].id</code> are <strong>unique</strong>.</li>
+	<li><code>-100 &lt;= employees[i].importance &lt;= 100</code></li>
+	<li>One employee has at most one direct leader and may have several subordinates.</li>
+	<li>The IDs in <code>employees[i].subordinates</code> are valid IDs.</li>
+</ul>
 
-<ol>
-	<li>One employee has at most one <b>direct</b> leader and may have several subordinates.</li>
-	<li>The maximum number of employees won&#39;t exceed 2000.</li>
-</ol>
+<!-- description:end -->
 
 ## Solutions
 
-"all their subordinates" include "subordinates of subordinates", first use a hash table to store the mapping relationship between `employee.id` and `employee`, and then recursively solve it (it can also be implemented with BFS)
+<!-- solution:start -->
+
+### Solution 1: Hash Table + DFS
+
+We use a hash table $d$ to store all employee information, where the key is the employee's ID, and the value is the employee object. Then we start a depth-first search from the given employee ID. Each time we traverse to an employee, we add the employee's importance to the answer, and recursively traverse all the subordinates of the employee, adding the importance of the subordinates to the answer as well.
+
+The time complexity is $O(n)$, and the space complexity is $O(n)$. Where $n$ is the number of employees.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 """
@@ -46,21 +90,17 @@ class Employee:
         self.subordinates = subordinates
 """
 
+
 class Solution:
-    def getImportance(self, employees: List['Employee'], id: int) -> int:
-        m = {emp.id: emp for emp in employees}
+    def getImportance(self, employees: List["Employee"], id: int) -> int:
+        def dfs(i: int) -> int:
+            return d[i].importance + sum(dfs(j) for j in d[i].subordinates)
 
-        def dfs(id: int) -> int:
-            emp = m[id]
-            s = emp.importance
-            for sub in emp.subordinates:
-                s += dfs(sub)
-            return s
-
+        d = {e.id: e for e in employees}
         return dfs(id)
 ```
 
-### **Java**
+#### Java
 
 ```java
 /*
@@ -73,28 +113,121 @@ class Employee {
 */
 
 class Solution {
-
-    private final Map<Integer, Employee> map = new HashMap<>();
+    private final Map<Integer, Employee> d = new HashMap<>();
 
     public int getImportance(List<Employee> employees, int id) {
-        for (Employee employee : employees) {
-            map.put(employee.id, employee);
+        for (var e : employees) {
+            d.put(e.id, e);
         }
         return dfs(id);
     }
 
-    private int dfs(int id) {
-        Employee employee = map.get(id);
-        int sum = employee.importance;
-        for (Integer subordinate : employee.subordinates) {
-            sum += dfs(subordinate);
+    private int dfs(int i) {
+        Employee e = d.get(i);
+        int s = e.importance;
+        for (int j : e.subordinates) {
+            s += dfs(j);
         }
-        return sum;
+        return s;
     }
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+/*
+// Definition for Employee.
+class Employee {
+public:
+    int id;
+    int importance;
+    vector<int> subordinates;
+};
+*/
+
+class Solution {
+public:
+    int getImportance(vector<Employee*> employees, int id) {
+        unordered_map<int, Employee*> d;
+        for (auto& e : employees) {
+            d[e->id] = e;
+        }
+        function<int(int)> dfs = [&](int i) -> int {
+            int s = d[i]->importance;
+            for (int j : d[i]->subordinates) {
+                s += dfs(j);
+            }
+            return s;
+        };
+        return dfs(id);
+    }
+};
+```
+
+#### Go
+
+```go
+/**
+ * Definition for Employee.
+ * type Employee struct {
+ *     Id int
+ *     Importance int
+ *     Subordinates []int
+ * }
+ */
+
+func getImportance(employees []*Employee, id int) int {
+	d := map[int]*Employee{}
+	for _, e := range employees {
+		d[e.Id] = e
+	}
+	var dfs func(int) int
+	dfs = func(i int) int {
+		s := d[i].Importance
+		for _, j := range d[i].Subordinates {
+			s += dfs(j)
+		}
+		return s
+	}
+	return dfs(id)
+}
+```
+
+#### TypeScript
+
+```ts
+/**
+ * Definition for Employee.
+ * class Employee {
+ *     id: number
+ *     importance: number
+ *     subordinates: number[]
+ *     constructor(id: number, importance: number, subordinates: number[]) {
+ *         this.id = (id === undefined) ? 0 : id;
+ *         this.importance = (importance === undefined) ? 0 : importance;
+ *         this.subordinates = (subordinates === undefined) ? [] : subordinates;
+ *     }
+ * }
+ */
+
+function getImportance(employees: Employee[], id: number): number {
+    const d = new Map<number, Employee>();
+    for (const e of employees) {
+        d.set(e.id, e);
+    }
+    const dfs = (i: number): number => {
+        let s = d.get(i)!.importance;
+        for (const j of d.get(i)!.subordinates) {
+            s += dfs(j);
+        }
+        return s;
+    };
+    return dfs(id);
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -112,26 +245,23 @@ class Solution {
  * @return {number}
  */
 var GetImportance = function (employees, id) {
-    const map = new Map();
-    for (const employee of employees) {
-        map.set(employee.id, employee);
+    const d = new Map();
+    for (const e of employees) {
+        d.set(e.id, e);
     }
-    const dfs = id => {
-        const employee = map.get(id);
-        let sum = employee.importance;
-        for (const subId of employee.subordinates) {
-            sum += dfs(subId);
+    const dfs = i => {
+        let s = d.get(i).importance;
+        for (const j of d.get(i).subordinates) {
+            s += dfs(j);
         }
-        return sum;
+        return s;
     };
     return dfs(id);
 };
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

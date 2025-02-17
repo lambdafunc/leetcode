@@ -1,10 +1,23 @@
-# [1701. 平均等待时间](https://leetcode-cn.com/problems/average-waiting-time)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1701.Average%20Waiting%20Time/README.md
+rating: 1436
+source: 第 42 场双周赛 Q2
+tags:
+    - 数组
+    - 模拟
+---
+
+<!-- problem:start -->
+
+# [1701. 平均等待时间](https://leetcode.cn/problems/average-waiting-time)
 
 [English Version](/solution/1700-1799/1701.Average%20Waiting%20Time/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>有一个餐厅，只有一位厨师。你有一个顾客数组 <code>customers</code> ，其中 <code>customers[i] = [arrival<sub>i</sub>, time<sub>i</sub>]</code> ：</p>
 
@@ -54,50 +67,135 @@
 	<li><code>arrival<sub>i </sub><= arrival<sub>i+1</sub></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-记 totalWaitingTime 表示总等待时间，f 表示当次做菜完成时间。
+### 方法一：模拟
+
+我们用变量 `tot` 记录顾客的总等待时间，用变量 `t` 记录做完每个顾客的订单的时间，初始值均为 $0$。
+
+遍历顾客数组 `customers`，对于每个顾客：
+
+如果当前时间 `t` 小于等于顾客的到达时间 `customers[i][0]`，说明厨师没有在做菜，那么厨师可以立即开始做菜，做完这道菜的时间为 $t = customers[i][0] + customers[i][1]$，顾客的等待时间为 `customers[i][1]`。
+
+否则，说明厨师正在做菜，那么顾客需要等待厨师做完此前的菜，才能开始做自己的菜，做完这道菜的时间为 $t = t + customers[i][1]$，顾客的等待时间为 $t - customers[i][0]$。
+
+时间复杂度 $O(n)$，其中 $n$ 为顾客数组 `customers` 的长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def averageWaitingTime(self, customers: List[List[int]]) -> float:
-        f = total_waiting_time = 0
-        for arrival, time in customers:
-            f = max(arrival, f) + time
-            total_waiting_time += (f - arrival)
-        return total_waiting_time / len(customers)
+        tot = t = 0
+        for a, b in customers:
+            t = max(t, a) + b
+            tot += t - a
+        return tot / len(customers)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public double averageWaitingTime(int[][] customers) {
-        int f = 0;
-        double totalWaitingTime = 0;
-        for (int[] customer : customers) {
-            f = Math.max(f, customer[0]) + customer[1];
-            totalWaitingTime += (f - customer[0]);
+        double tot = 0;
+        int t = 0;
+        for (var e : customers) {
+            int a = e[0], b = e[1];
+            t = Math.max(t, a) + b;
+            tot += t - a;
         }
-        return totalWaitingTime / customers.length;
+        return tot / customers.length;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    double averageWaitingTime(vector<vector<int>>& customers) {
+        double tot = 0;
+        int t = 0;
+        for (auto& e : customers) {
+            int a = e[0], b = e[1];
+            t = max(t, a) + b;
+            tot += t - a;
+        }
+        return tot / customers.size();
+    }
+};
 ```
 
+#### Go
+
+```go
+func averageWaitingTime(customers [][]int) float64 {
+	tot, t := 0, 0
+	for _, e := range customers {
+		a, b := e[0], e[1]
+		t = max(t, a) + b
+		tot += t - a
+	}
+	return float64(tot) / float64(len(customers))
+}
+```
+
+#### TypeScript
+
+```ts
+function averageWaitingTime(customers: number[][]): number {
+    let [tot, t] = [0, 0];
+    for (const [a, b] of customers) {
+        t = Math.max(t, a) + b;
+        tot += t - a;
+    }
+    return tot / customers.length;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn average_waiting_time(customers: Vec<Vec<i32>>) -> f64 {
+        let mut tot = 0.0;
+        let mut t = 0;
+
+        for e in customers.iter() {
+            let a = e[0];
+            let b = e[1];
+            t = t.max(a) + b;
+            tot += (t - a) as f64;
+        }
+
+        tot / customers.len() as f64
+    }
+}
+```
+
+#### JavaScript
+
+```js
+function averageWaitingTime(customers) {
+    let [tot, t] = [0, 0];
+    for (const [a, b] of customers) {
+        t = Math.max(t, a) + b;
+        tot += t - a;
+    }
+    return tot / customers.length;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

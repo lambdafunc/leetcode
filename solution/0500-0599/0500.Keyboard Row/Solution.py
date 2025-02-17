@@ -3,9 +3,9 @@ class Solution:
         s1 = set('qwertyuiop')
         s2 = set('asdfghjkl')
         s3 = set('zxcvbnm')
-        res = []
-        for word in words:
-            t = set(word.lower())
-            if t <= s1 or t <= s2 or t <= s3:
-                res.append(word)
-        return res
+        ans = []
+        for w in words:
+            s = set(w.lower())
+            if s <= s1 or s <= s2 or s <= s3:
+                ans.append(w)
+        return ans

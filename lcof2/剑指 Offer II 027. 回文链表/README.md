@@ -1,8 +1,15 @@
-# [剑指 Offer II 027. 回文链表](https://leetcode-cn.com/problems/aMhZSa)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20027.%20%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 027. 回文链表](https://leetcode.cn/problems/aMhZSa)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给定一个链表的 <strong>头节点&nbsp;</strong><code>head</code><strong>&nbsp;，</strong>请判断其是否为回文链表。</p>
 
@@ -12,7 +19,7 @@
 
 <p><strong>示例 1：</strong></p>
 
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20027.%20%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/images/1626421737-LjXceN-image.png" /></strong></p>
+<p><strong><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20027.%20%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/images/1626421737-LjXceN-image.png" /></strong></p>
 
 <pre>
 <strong>输入:</strong> head = [1,2,3,3,2,1]
@@ -20,7 +27,7 @@
 
 <p><strong>示例 2：</strong></p>
 
-<p><strong><img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20027.%20%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/images/1626422231-wgvnWh-image.png" style="width: 138px; height: 62px;" /></strong></p>
+<p><strong><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20027.%20%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/images/1626422231-wgvnWh-image.png" style="width: 138px; height: 62px;" /></strong></p>
 
 <pre>
 <strong>输入:</strong> head = [1,2]
@@ -42,19 +49,19 @@
 
 <p>&nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 234&nbsp;题相同：<a href="https://leetcode-cn.com/problems/palindrome-linked-list/">https://leetcode-cn.com/problems/palindrome-linked-list/</a></p>
+<p><meta charset="UTF-8" />注意：本题与主站 234&nbsp;题相同：<a href="https://leetcode.cn/problems/palindrome-linked-list/">https://leetcode.cn/problems/palindrome-linked-list/</a></p>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-先用快慢指针找到链表的中点，接着反转右半部分的链表。然后同时遍历前后两段链表，若前后两段链表节点对应的值不等，说明不是回文链表，否则说明是回文链表。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for singly-linked list.
@@ -81,9 +88,7 @@ class Solution:
         return True
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -128,7 +133,7 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -147,22 +152,19 @@ public:
         if (!head || !head->next) return true;
         ListNode* slow = head;
         ListNode* fast = head->next;
-        while (fast && fast->next)
-        {
+        while (fast && fast->next) {
             slow = slow->next;
             fast = fast->next->next;
         }
         ListNode* pre = nullptr;
         ListNode* cur = slow->next;
-        while (cur)
-        {
+        while (cur) {
             ListNode* t = cur->next;
             cur->next = pre;
             pre = cur;
             cur = t;
         }
-        while (pre)
-        {
+        while (pre) {
             if (pre->val != head->val) return false;
             pre = pre->next;
             head = head->next;
@@ -172,7 +174,7 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -208,7 +210,51 @@ func isPalindrome(head *ListNode) bool {
 }
 ```
 
-### **JavaScript**
+#### TypeScript
+
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+function isPalindrome(head: ListNode | null): boolean {
+    if (head == null || head.next == null) return true;
+    // 快慢指针定位到中点
+    let slow: ListNode = head,
+        fast: ListNode = head.next;
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    // 翻转链表
+    let cur: ListNode = slow.next;
+    slow.next = null;
+    let prev: ListNode = null;
+    while (cur != null) {
+        let t: ListNode = cur.next;
+        cur.next = prev;
+        prev = cur;
+        cur = t;
+    }
+    // 判断回文
+    while (prev != null) {
+        if (prev.val != head.val) return false;
+        prev = prev.next;
+        head = head.next;
+    }
+    return true;
+}
+```
+
+#### JavaScript
 
 ```js
 /**
@@ -252,7 +298,7 @@ var isPalindrome = function (head) {
 };
 ```
 
-### **C#**
+#### C#
 
 ```cs
 /**
@@ -303,54 +349,57 @@ public class Solution {
 }
 ```
 
-### **TypeScript**
+#### Swift
 
-```ts
+```swift
 /**
  * Definition for singly-linked list.
- * class ListNode {
- *     val: number
- *     next: ListNode | null
- *     constructor(val?: number, next?: ListNode | null) {
- *         this.val = (val===undefined ? 0 : val)
- *         this.next = (next===undefined ? null : next)
- *     }
+ * public class ListNode {
+ *     var val: Int
+ *     var next: ListNode?
+ *     init() { self.val = 0; self.next = nil; }
+ *     init(_ val: Int) { self.val = val; self.next = nil; }
+ *     init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
  * }
  */
 
-function isPalindrome(head: ListNode | null): boolean {
-    if (head == null || head.next == null) return true;
-    // 快慢指针定位到中点
-    let slow: ListNode = head,
-        fast: ListNode = head.next;
-    while (fast != null && fast.next != null) {
-        slow = slow.next;
-        fast = fast.next.next;
+class Solution {
+    func isPalindrome(_ head: ListNode?) -> Bool {
+        guard let head = head else { return true }
+
+        var slow = head
+        var fast = head.next
+        while fast != nil && fast?.next != nil {
+            slow = slow.next!
+            fast = fast?.next?.next
+        }
+
+        var cur = slow.next
+
+        var prev: ListNode? = nil
+        while cur != nil {
+            let nextTemp = cur?.next
+            cur?.next = prev
+            prev = cur
+            cur = nextTemp
+        }
+
+        var left = head
+        var right = prev
+        while right != nil {
+            if left.val != right?.val {
+                return false
+            }
+            left = left.next!
+            right = right?.next
+        }
+        return true
     }
-    // 翻转链表
-    let cur: ListNode = slow.next;
-    slow.next = null;
-    let prev: ListNode = null;
-    while (cur != null) {
-        let t: ListNode = cur.next;
-        cur.next = prev;
-        prev = cur;
-        cur = t;
-    }
-    // 判断回文
-    while (prev != null) {
-        if (prev.val != head.val) return false;
-        prev = prev.next;
-        head = head.next;
-    }
-    return true;
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

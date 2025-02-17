@@ -1,29 +1,43 @@
+---
+comments: true
+difficulty: Hard
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0300-0399/0301.Remove%20Invalid%20Parentheses/README_EN.md
+tags:
+    - Breadth-First Search
+    - String
+    - Backtracking
+---
+
+<!-- problem:start -->
+
 # [301. Remove Invalid Parentheses](https://leetcode.com/problems/remove-invalid-parentheses)
 
 [中文文档](/solution/0300-0399/0301.Remove%20Invalid%20Parentheses/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given a string <code>s</code> that contains parentheses and letters, remove the minimum number of invalid parentheses to make the input string valid.</p>
 
-<p>Return <em>all the possible results</em>. You may return the answer in <strong>any order</strong>.</p>
+<p>Return <em>a list of <strong>unique strings</strong> that are valid with the minimum number of removals</em>. You may return the answer in <strong>any order</strong>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;()())()&quot;
 <strong>Output:</strong> [&quot;(())()&quot;,&quot;()()()&quot;]
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;(a)())()&quot;
 <strong>Output:</strong> [&quot;(a())()&quot;,&quot;(a)()()&quot;]
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> s = &quot;)(&quot;
@@ -39,155 +53,200 @@
 	<li>There will be at most <code>20</code> parentheses in <code>s</code>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def removeInvalidParentheses(self, s: str) -> List[str]:
-        def dfs(i, t, lcnt, rcnt, ldel, rdel):
-            nonlocal tdel, ans
-            if ldel * rdel < 0 or lcnt < rcnt or ldel + rdel > len(s) - i:
-                return
-            if ldel == 0 and rdel == 0:
-                if len(s) - len(t) == tdel:
+        def dfs(i, l, r, lcnt, rcnt, t):
+            if i == n:
+                if l == 0 and r == 0:
                     ans.add(t)
-            if i == len(s):
                 return
-            if s[i] == '(':
-                dfs(i + 1, t, lcnt, rcnt, ldel - 1, rdel)
-                dfs(i + 1, t + '(', lcnt + 1, rcnt, ldel, rdel)
-            elif s[i] == ')':
-                dfs(i + 1, t, lcnt, rcnt, ldel, rdel - 1)
-                dfs(i + 1, t + ')', lcnt, rcnt + 1, ldel, rdel)
-            else:
-                dfs(i + 1, t + s[i], lcnt, rcnt, ldel, rdel)
+            if n - i < l + r or lcnt < rcnt:
+                return
+            if s[i] == '(' and l:
+                dfs(i + 1, l - 1, r, lcnt, rcnt, t)
+            elif s[i] == ')' and r:
+                dfs(i + 1, l, r - 1, lcnt, rcnt, t)
+            dfs(i + 1, l, r, lcnt + (s[i] == '('), rcnt + (s[i] == ')'), t + s[i])
 
-        ldel = rdel = 0
+        l = r = 0
         for c in s:
             if c == '(':
-                ldel += 1
+                l += 1
             elif c == ')':
-                if ldel == 0:
-                    rdel += 1
+                if l:
+                    l -= 1
                 else:
-                    ldel -= 1
-        tdel = ldel + rdel
+                    r += 1
         ans = set()
-        dfs(0, '', 0, 0, ldel, rdel)
+        n = len(s)
+        dfs(0, l, r, 0, 0, '')
         return list(ans)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
-    private int tdel;
     private String s;
-    private Set<String> ans;
+    private int n;
+    private Set<String> ans = new HashSet<>();
 
     public List<String> removeInvalidParentheses(String s) {
-        int ldel = 0, rdel = 0;
+        this.s = s;
+        this.n = s.length();
+        int l = 0, r = 0;
         for (char c : s.toCharArray()) {
             if (c == '(') {
-                ++ldel;
+                ++l;
             } else if (c == ')') {
-                if (ldel == 0) {
-                    ++rdel;
+                if (l > 0) {
+                    --l;
                 } else {
-                    --ldel;
+                    ++r;
                 }
             }
         }
-        tdel = ldel + rdel;
-        this.s = s;
-        ans = new HashSet<>();
-        dfs(0, "", 0, 0, ldel, rdel);
+        dfs(0, l, r, 0, 0, "");
         return new ArrayList<>(ans);
     }
 
-    private void dfs(int i, String t, int lcnt, int rcnt, int ldel, int rdel) {
-        if (ldel * rdel < 0 || lcnt < rcnt || ldel + rdel > s.length() - i) {
-            return;
-        }
-        if (ldel == 0 && rdel == 0) {
-            if (s.length() - t.length() == tdel) {
+    private void dfs(int i, int l, int r, int lcnt, int rcnt, String t) {
+        if (i == n) {
+            if (l == 0 && r == 0) {
                 ans.add(t);
             }
+            return;
         }
-        if (i == s.length()) {
+        if (n - i < l + r || lcnt < rcnt) {
             return;
         }
         char c = s.charAt(i);
-        if (c == '(') {
-            dfs(i + 1, t, lcnt, rcnt, ldel - 1, rdel);
-            dfs(i + 1, t + String.valueOf(c), lcnt + 1, rcnt, ldel, rdel);
-        } else if (c == ')') {
-            dfs(i + 1, t, lcnt, rcnt, ldel, rdel - 1);
-            dfs(i + 1, t + String.valueOf(c), lcnt, rcnt + 1, ldel, rdel);
-        } else {
-            dfs(i + 1, t + String.valueOf(c), lcnt, rcnt, ldel, rdel);
+        if (c == '(' && l > 0) {
+            dfs(i + 1, l - 1, r, lcnt, rcnt, t);
         }
+        if (c == ')' && r > 0) {
+            dfs(i + 1, l, r - 1, lcnt, rcnt, t);
+        }
+        int x = c == '(' ? 1 : 0;
+        int y = c == ')' ? 1 : 0;
+        dfs(i + 1, l, r, lcnt + x, rcnt + y, t + c);
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<string> removeInvalidParentheses(string s) {
-        int ldel = 0, rdel = 0;
-        for (char c : s)
-        {
-            if (c == '(') ++ldel;
-            else if (c == ')')
-            {
-                if (ldel == 0) ++rdel;
-                else --ldel;
+        unordered_set<string> ans;
+        int l = 0, r = 0, n = s.size();
+        for (char& c : s) {
+            if (c == '(') {
+                ++l;
+            } else if (c == ')') {
+                if (l) {
+                    --l;
+                } else {
+                    ++r;
+                }
             }
         }
-        int tdel = ldel + rdel;
-        unordered_set<string> ans;
-        dfs(0, "", s, 0, 0, ldel, rdel, tdel, ans);
-        vector<string> res;
-        res.assign(ans.begin(), ans.end());
-        return res;
-    }
+        function<void(int, int, int, int, int, string)> dfs;
+        dfs = [&](int i, int l, int r, int lcnt, int rcnt, string t) {
+            if (i == n) {
+                if (l == 0 && r == 0) {
+                    ans.insert(t);
+                }
+                return;
+            }
+            if (n - i < l + r || lcnt < rcnt) {
+                return;
+            }
+            if (s[i] == '(' && l) {
+                dfs(i + 1, l - 1, r, lcnt, rcnt, t);
+            }
+            if (s[i] == ')' && r) {
+                dfs(i + 1, l, r - 1, lcnt, rcnt, t);
+            }
+            int x = s[i] == '(' ? 1 : 0;
+            int y = s[i] == ')' ? 1 : 0;
+            dfs(i + 1, l, r, lcnt + x, rcnt + y, t + s[i]);
+        };
 
-    void dfs(int i, string t, string s, int lcnt, int rcnt, int ldel, int rdel, int tdel, unordered_set<string>& ans) {
-        if (ldel * rdel < 0 || lcnt < rcnt || ldel + rdel > s.size() - i) return;
-        if (ldel == 0 && rdel == 0)
-        {
-            if (s.size() - t.size() == tdel) ans.insert(t);
-        }
-        if (i == s.size()) return;
-        if (s[i] == '(')
-        {
-            dfs(i + 1, t, s, lcnt, rcnt, ldel - 1, rdel, tdel, ans);
-            dfs(i + 1, t + s[i], s, lcnt + 1, rcnt, ldel, rdel, tdel, ans);
-        }
-        else if (s[i] == ')')
-        {
-            dfs(i + 1, t, s, lcnt, rcnt, ldel, rdel - 1, tdel, ans);
-            dfs(i + 1, t + s[i], s, lcnt, rcnt + 1, ldel, rdel, tdel, ans);
-        }
-        else
-        {
-            dfs(i + 1, t + s[i], s, lcnt, rcnt, ldel, rdel, tdel, ans);
-        }
+        dfs(0, l, r, 0, 0, "");
+        return vector<string>(ans.begin(), ans.end());
     }
 };
 ```
 
-### **...**
+#### Go
 
-```
-
+```go
+func removeInvalidParentheses(s string) []string {
+	vis := map[string]bool{}
+	l, r, n := 0, 0, len(s)
+	for _, c := range s {
+		if c == '(' {
+			l++
+		} else if c == ')' {
+			if l > 0 {
+				l--
+			} else {
+				r++
+			}
+		}
+	}
+	var dfs func(i, l, r, lcnt, rcnt int, t string)
+	dfs = func(i, l, r, lcnt, rcnt int, t string) {
+		if i == n {
+			if l == 0 && r == 0 {
+				vis[t] = true
+			}
+			return
+		}
+		if n-i < l+r || lcnt < rcnt {
+			return
+		}
+		if s[i] == '(' && l > 0 {
+			dfs(i+1, l-1, r, lcnt, rcnt, t)
+		}
+		if s[i] == ')' && r > 0 {
+			dfs(i+1, l, r-1, lcnt, rcnt, t)
+		}
+		x, y := 0, 0
+		if s[i] == '(' {
+			x = 1
+		} else if s[i] == ')' {
+			y = 1
+		}
+		dfs(i+1, l, r, lcnt+x, rcnt+y, t+string(s[i]))
+	}
+	dfs(0, l, r, 0, 0, "")
+	ans := make([]string, 0, len(vis))
+	for v := range vis {
+		ans = append(ans, v)
+	}
+	return ans
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,24 @@
-# [1665. 完成所有任务的最少初始能量](https://leetcode-cn.com/problems/minimum-initial-energy-to-finish-tasks)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1665.Minimum%20Initial%20Energy%20to%20Finish%20Tasks/README.md
+rating: 1900
+source: 第 216 场周赛 Q4
+tags:
+    - 贪心
+    - 数组
+    - 排序
+---
+
+<!-- problem:start -->
+
+# [1665. 完成所有任务的最少初始能量](https://leetcode.cn/problems/minimum-initial-energy-to-finish-tasks)
 
 [English Version](/solution/1600-1699/1665.Minimum%20Initial%20Energy%20to%20Finish%20Tasks/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个任务数组 <code>tasks</code> ，其中 <code>tasks[i] = [actual<sub>i</sub>, minimum<sub>i</sub>]</code> ：</p>
 
@@ -67,32 +81,133 @@
 	<li><code>1 &lt;= actual<sub>​i</sub> &lt;= minimum<sub>i</sub> &lt;= 10<sup>4</sup></code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：贪心 + 自定义排序
+
+我们假设任务数为 $n$，初始能量值为 $E$，考虑完成最后一个任务，这需要我们完成前 $n-1$ 个任务后，剩余的能量值不小于完成最后一个任务需要达到的能量值 $m_n$，即：
+
+$$
+E-\sum_{i=1}^{n-1} a_i \geq m_n
+$$
+
+我们可以将 $m_n$ 表示成 $a_n+(m_n - a_n)$，然后将上面的式子变形，得到：
+
+$$
+E-\sum_{i=1}^{n-1} a_i \geq a_n+(m_n - a_n)
+$$
+
+整理可得：
+
+$$
+E \geq \sum_{i=1}^{n} a_i + (m_n - a_n)
+$$
+
+其中 $\sum_{i=1}^{n} a_i$ 是固定不变的，要使得初始值能量值 $E$ 最小，我们需要让 $m_n - a_n$ 最小，即 $a_n-m_n$ 最大。
+
+因此，我们可以将任务按照 $a_i-m_i$ 从小到大排序。然后从前往后遍历任务，对于每个任务，如果当前能量值 $cur$ 小于 $m_i$，则需要增加能量值 $m_i - cur$，使得当前能量值刚好等于 $m_i$，然后再完成任务，更新 $cur = cur - a_i$。继续遍历，直到完成所有任务，即可得到初始所需的最少能量值。
+
+时间复杂度 $O(n\times \log n)$。其中 $n$ 为任务数。忽略排序的空间开销，空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def minimumEffort(self, tasks: List[List[int]]) -> int:
+        ans = cur = 0
+        for a, m in sorted(tasks, key=lambda x: x[0] - x[1]):
+            if cur < m:
+                ans += m - cur
+                cur = m
+            cur -= a
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int minimumEffort(int[][] tasks) {
+        Arrays.sort(tasks, (a, b) -> a[0] - b[0] - (a[1] - b[1]));
+        int ans = 0, cur = 0;
+        for (var task : tasks) {
+            int a = task[0], m = task[1];
+            if (cur < m) {
+                ans += m - cur;
+                cur = m;
+            }
+            cur -= a;
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int minimumEffort(vector<vector<int>>& tasks) {
+        sort(tasks.begin(), tasks.end(), [&](const auto& a, const auto& b) { return a[0] - a[1] < b[0] - b[1]; });
+        int ans = 0, cur = 0;
+        for (auto& task : tasks) {
+            int a = task[0], m = task[1];
+            if (cur < m) {
+                ans += m - cur;
+                cur = m;
+            }
+            cur -= a;
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func minimumEffort(tasks [][]int) (ans int) {
+	sort.Slice(tasks, func(i, j int) bool { return tasks[i][0]-tasks[i][1] < tasks[j][0]-tasks[j][1] })
+	cur := 0
+	for _, task := range tasks {
+		a, m := task[0], task[1]
+		if cur < m {
+			ans += m - cur
+			cur = m
+		}
+		cur -= a
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function minimumEffort(tasks: number[][]): number {
+    tasks.sort((a, b) => a[0] - a[1] - (b[0] - b[1]));
+    let ans = 0;
+    let cur = 0;
+    for (const [a, m] of tasks) {
+        if (cur < m) {
+            ans += m - cur;
+            cur = m;
+        }
+        cur -= a;
+    }
+    return ans;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

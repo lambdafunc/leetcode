@@ -1,17 +1,28 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0900-0999/0967.Numbers%20With%20Same%20Consecutive%20Differences/README_EN.md
+tags:
+    - Breadth-First Search
+    - Backtracking
+---
+
+<!-- problem:start -->
+
 # [967. Numbers With Same Consecutive Differences](https://leetcode.com/problems/numbers-with-same-consecutive-differences)
 
 [中文文档](/solution/0900-0999/0967.Numbers%20With%20Same%20Consecutive%20Differences/README.md)
 
 ## Description
 
-<p>Return all <strong>non-negative</strong> integers of length <code>n</code> such that the absolute difference between every two consecutive digits is <code>k</code>.</p>
+<!-- description:start -->
 
-<p>Note that <strong>every</strong> number in the answer <strong>must not</strong> have leading zeros. For example, <code>01</code> has one leading zero and is invalid.</p>
+<p>Given two integers n and k, return <em>an array of all the integers of length </em><code>n</code><em> where the difference between every two consecutive digits is </em><code>k</code>. You may return the answer in <strong>any order</strong>.</p>
 
-<p>You may return the answer in <strong>any order</strong>.</p>
+<p>Note that the integers should not have leading zeros. Integers as <code>02</code> and <code>043</code> are not allowed.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 3, k = 7
@@ -19,25 +30,11 @@
 <strong>Explanation:</strong> Note that 070 is not a valid number, because it has leading zeroes.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> n = 2, k = 1
 <strong>Output:</strong> [10,12,21,23,32,34,43,45,54,56,65,67,76,78,87,89,98]
-</pre>
-
-<p><strong>Example 3:</strong></p>
-
-<pre>
-<strong>Input:</strong> n = 2, k = 0
-<strong>Output:</strong> [11,22,33,44,55,66,77,88,99]
-</pre>
-
-<p><strong>Example 4:</strong></p>
-
-<pre>
-<strong>Input:</strong> n = 2, k = 2
-<strong>Output:</strong> [13,20,24,31,35,42,46,53,57,64,68,75,79,86,97]
 </pre>
 
 <p>&nbsp;</p>
@@ -48,123 +45,191 @@
 	<li><code>0 &lt;= k &lt;= 9</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
 
-DFS.
+<!-- solution:start -->
+
+### Solution 1: DFS
+
+We can enumerate the first digit of all numbers of length $n$, and then use the depth-first search method to recursively construct all numbers that meet the conditions.
+
+Specifically, we first define a boundary value $\textit{boundary} = 10^{n-1}$, which represents the minimum value of the number we need to construct. Then, we enumerate the first digit from $1$ to $9$. For each digit $i$, we recursively construct the number of length $n$ with $i$ as the first digit.
+
+The time complexity is $(n \times 2^n \times |\Sigma|)$, where $|\Sigma|$ represents the set of digits, and in this problem $|\Sigma| = 9$. The space complexity is $O(2^n)$.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def numsSameConsecDiff(self, n: int, k: int) -> List[int]:
-        ans = []
-
-        def dfs(n, k, t):
-            if n == 0:
-                ans.append(t)
+        def dfs(x: int):
+            if x >= boundary:
+                ans.append(x)
                 return
-            last = t % 10
+            last = x % 10
             if last + k <= 9:
-                dfs(n - 1, k, t * 10 + last + k)
+                dfs(x * 10 + last + k)
             if last - k >= 0 and k != 0:
-                dfs(n - 1, k, t * 10 + last - k)
+                dfs(x * 10 + last - k)
 
+        ans = []
+        boundary = 10 ** (n - 1)
         for i in range(1, 10):
-            dfs(n - 1, k, i)
+            dfs(i)
         return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
+    private List<Integer> ans = new ArrayList<>();
+    private int boundary;
+    private int k;
+
     public int[] numsSameConsecDiff(int n, int k) {
-        List<Integer> res = new ArrayList<>();
+        this.k = k;
+        boundary = (int) Math.pow(10, n - 1);
         for (int i = 1; i < 10; ++i) {
-            dfs(n - 1, k, i, res);
+            dfs(i);
         }
-        int[] ans = new int[res.size()];
-        for (int i = 0; i < res.size(); ++i) {
-            ans[i] = res.get(i);
-        }
-        return ans;
+        return ans.stream().mapToInt(i -> i).toArray();
     }
 
-    private void dfs(int n, int k, int t, List<Integer> res) {
-        if (n == 0) {
-            res.add(t);
+    private void dfs(int x) {
+        if (x >= boundary) {
+            ans.add(x);
             return;
         }
-        int last = t % 10;
-        if (last + k <= 9) {
-            dfs(n - 1, k, t * 10 + last + k, res);
+        int last = x % 10;
+        if (last + k < 10) {
+            dfs(x * 10 + last + k);
         }
-        if (last - k >= 0 && k != 0) {
-            dfs(n - 1, k, t * 10 + last - k, res);
+        if (k != 0 && last - k >= 0) {
+            dfs(x * 10 + last - k);
         }
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    vector<int> ans;
-
     vector<int> numsSameConsecDiff(int n, int k) {
-        for (int i = 1; i < 10; ++i)
-            dfs(n - 1, k, i);
-        return ans;
-    }
-
-    void dfs(int n, int k, int t) {
-        if (n == 0)
-        {
-            ans.push_back(t);
-            return;
+        vector<int> ans;
+        int boundary = pow(10, n - 1);
+        auto dfs = [&](this auto&& dfs, int x) {
+            if (x >= boundary) {
+                ans.push_back(x);
+                return;
+            }
+            int last = x % 10;
+            if (last + k < 10) {
+                dfs(x * 10 + last + k);
+            }
+            if (k != 0 && last - k >= 0) {
+                dfs(x * 10 + last - k);
+            }
+        };
+        for (int i = 1; i < 10; ++i) {
+            dfs(i);
         }
-        int last = t % 10;
-        if (last + k <= 9) dfs(n - 1, k, t * 10 + last + k);
-        if (last - k >= 0 && k != 0) dfs(n - 1, k, t * 10 + last - k);
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func numsSameConsecDiff(n int, k int) []int {
-	var ans []int
-	var dfs func(n, k, t int)
-	dfs = func(n, k, t int) {
-		if n == 0 {
-			ans = append(ans, t)
+func numsSameConsecDiff(n int, k int) (ans []int) {
+	bounary := int(math.Pow10(n - 1))
+	var dfs func(int)
+	dfs = func(x int) {
+		if x >= bounary {
+			ans = append(ans, x)
 			return
 		}
-		last := t % 10
-		if last+k <= 9 {
-			dfs(n-1, k, t*10+last+k)
+		last := x % 10
+		if last+k < 10 {
+			dfs(x*10 + last + k)
 		}
-		if last-k >= 0 && k != 0 {
-			dfs(n-1, k, t*10+last-k)
+		if k > 0 && last-k >= 0 {
+			dfs(x*10 + last - k)
 		}
 	}
-
 	for i := 1; i < 10; i++ {
-		dfs(n-1, k, i)
+		dfs(i)
 	}
-	return ans
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function numsSameConsecDiff(n: number, k: number): number[] {
+    const ans: number[] = [];
+    const boundary = 10 ** (n - 1);
+    const dfs = (x: number) => {
+        if (x >= boundary) {
+            ans.push(x);
+            return;
+        }
+        const last = x % 10;
+        if (last + k < 10) {
+            dfs(x * 10 + last + k);
+        }
+        if (k > 0 && last - k >= 0) {
+            dfs(x * 10 + last - k);
+        }
+    };
+    for (let i = 1; i < 10; i++) {
+        dfs(i);
+    }
+    return ans;
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * @param {number} n
+ * @param {number} k
+ * @return {number[]}
+ */
+var numsSameConsecDiff = function (n, k) {
+    const ans = [];
+    const boundary = 10 ** (n - 1);
+    const dfs = x => {
+        if (x >= boundary) {
+            ans.push(x);
+            return;
+        }
+        const last = x % 10;
+        if (last + k < 10) {
+            dfs(x * 10 + last + k);
+        }
+        if (k > 0 && last - k >= 0) {
+            dfs(x * 10 + last - k);
+        }
+    };
+    for (let i = 1; i < 10; i++) {
+        dfs(i);
+    }
+    return ans;
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

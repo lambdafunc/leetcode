@@ -1,8 +1,18 @@
-# [17.16. The Masseuse](https://leetcode-cn.com/problems/the-masseuse-lcci)
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/lcci/17.16.The%20Masseuse/README_EN.md
+---
+
+<!-- problem:start -->
+
+# [17.16. The Masseuse](https://leetcode.cn/problems/the-masseuse-lcci)
 
 [中文文档](/lcci/17.16.The%20Masseuse/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A popular masseuse receives a sequence of back-to-back appointment requests and is debating which ones to accept. She needs a break between appointments and therefore she cannot accept any adjacent requests. Given a sequence of back-to-back appoint&shy; ment requests, find the optimal (highest total booked minutes) set the masseuse can honor. Return the number of minutes.</p>
 
@@ -46,56 +56,112 @@
 
 </pre>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def massage(self, nums: List[int]) -> int:
-        if not nums:
-            return 0
-        n = len(nums)
-        if n < 2:
-            return nums[0]
-        a, b = nums[0], max(nums[0], nums[1])
-        res = b
-        for i in range(2, n):
-            res = max(a + nums[i], b)
-            a, b = b, res
-        return res
+        f = g = 0
+        for x in nums:
+            f, g = g + x, max(f, g)
+        return max(f, g)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int massage(int[] nums) {
-        if (nums == null) {
-            return 0;
+        int f = 0, g = 0;
+        for (int x : nums) {
+            int ff = g + x;
+            int gg = Math.max(f, g);
+            f = ff;
+            g = gg;
         }
-        int n = nums.length;
-        if (n < 2) {
-            return n == 0 ? 0 : nums[0];
-        }
-        int a = nums[0], b = Math.max(nums[0], nums[1]);
-        int res = b;
-        for (int i = 2; i < n; ++i) {
-            res = Math.max(a + nums[i], b);
-            a = b;
-            b = res;
-        }
-        return res;
+        return Math.max(f, g);
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int massage(vector<int>& nums) {
+        int f = 0, g = 0;
+        for (int& x : nums) {
+            int ff = g + x;
+            int gg = max(f, g);
+            f = ff;
+            g = gg;
+        }
+        return max(f, g);
+    }
+};
 ```
 
+#### Go
+
+```go
+func massage(nums []int) int {
+	f, g := 0, 0
+	for _, x := range nums {
+		f, g = g+x, max(f, g)
+	}
+	return max(f, g)
+}
+```
+
+#### TypeScript
+
+```ts
+function massage(nums: number[]): number {
+    let f = 0,
+        g = 0;
+    for (const x of nums) {
+        const ff = g + x;
+        const gg = Math.max(f, g);
+        f = ff;
+        g = gg;
+    }
+    return Math.max(f, g);
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func massage(_ nums: [Int]) -> Int {
+        var f = 0
+        var g = 0
+
+        for x in nums {
+            let ff = g + x
+            let gg = max(f, g)
+            f = ff
+            g = gg
+        }
+
+        return max(f, g)
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,10 +1,24 @@
-# [114. 二叉树展开为链表](https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0114.Flatten%20Binary%20Tree%20to%20Linked%20List/README.md
+tags:
+    - 栈
+    - 树
+    - 深度优先搜索
+    - 链表
+    - 二叉树
+---
+
+<!-- problem:start -->
+
+# [114. 二叉树展开为链表](https://leetcode.cn/problems/flatten-binary-tree-to-linked-list)
 
 [English Version](/solution/0100-0199/0114.Flatten%20Binary%20Tree%20to%20Linked%20List/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你二叉树的根结点 <code>root</code> ，请你将它展开为一个单链表：</p>
 
@@ -16,7 +30,7 @@
 <p> </p>
 
 <p><strong>示例 1：</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0114.Flatten%20Binary%20Tree%20to%20Linked%20List/images/flaten.jpg" style="width: 500px; height: 226px;" />
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0114.Flatten%20Binary%20Tree%20to%20Linked%20List/images/flaten.jpg" style="width: 500px; height: 226px;" />
 <pre>
 <strong>输入：</strong>root = [1,2,5,3,4,null,6]
 <strong>输出：</strong>[1,null,2,null,3,null,4,null,5,null,6]
@@ -49,15 +63,23 @@
 
 <p><strong>进阶：</strong>你可以使用原地算法（<code>O(1)</code> 额外空间）展开这棵树吗？</p>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：寻找前驱节点
+
+先序遍历的访问顺序是“根、左子树、右子树”，左子树最后一个节点访问完后，接着会访问根节点的右子树节点。
+
+因此，对于当前节点，如果其左子节点不为空，我们找到左子树的最右节点，作为前驱节点，然后将当前节点的右子节点赋给前驱节点的右子节点。然后将当前节点的左子节点赋给当前节点的右子节点，并将当前节点的左子节点置为空。然后将当前节点的右子节点作为下一个节点，继续处理，直至所有节点处理完毕。
+
+时间复杂度 $O(n)$，其中 $n$ 是树中节点的个数。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -67,7 +89,7 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def flatten(self, root: TreeNode) -> None:
+    def flatten(self, root: Optional[TreeNode]) -> None:
         """
         Do not return anything, modify root in-place instead.
         """
@@ -82,9 +104,7 @@ class Solution:
             root = root.right
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -125,7 +145,67 @@ class Solution {
 }
 ```
 
-### **TypeScript**
+#### C++
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    void flatten(TreeNode* root) {
+        while (root) {
+            if (root->left) {
+                TreeNode* pre = root->left;
+                while (pre->right) {
+                    pre = pre->right;
+                }
+                pre->right = root->right;
+                root->right = root->left;
+                root->left = nullptr;
+            }
+            root = root->right;
+        }
+    }
+};
+```
+
+#### Go
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func flatten(root *TreeNode) {
+	for root != nil {
+		if root.Left != nil {
+			pre := root.Left
+			for pre.Right != nil {
+				pre = pre.Right
+			}
+			pre.Right = root.Right
+			root.Right = root.Left
+			root.Left = nil
+		}
+		root = root.Right
+	}
+}
+```
+
+#### TypeScript
 
 ```ts
 /**
@@ -146,10 +226,10 @@ class Solution {
  Do not return anything, modify root in-place instead.
  */
 function flatten(root: TreeNode | null): void {
-    while (root != null) {
-        if (root.left != null) {
+    while (root !== null) {
+        if (root.left !== null) {
             let pre = root.left;
-            while (pre.right != null) {
+            while (pre.right !== null) {
                 pre = pre.right;
             }
             pre.right = root.right;
@@ -161,43 +241,133 @@ function flatten(root: TreeNode | null): void {
 }
 ```
 
-### **C++**
+#### Rust
 
-```cpp
+```rust
+// Definition for a binary tree node.
+// #[derive(Debug, PartialEq, Eq)]
+// pub struct TreeNode {
+//   pub val: i32,
+//   pub left: Option<Rc<RefCell<TreeNode>>>,
+//   pub right: Option<Rc<RefCell<TreeNode>>>,
+// }
+//
+// impl TreeNode {
+//   #[inline]
+//   pub fn new(val: i32) -> Self {
+//     TreeNode {
+//       val,
+//       left: None,
+//       right: None
+//     }
+//   }
+// }
+use std::cell::RefCell;
+use std::rc::Rc;
+impl Solution {
+    #[allow(dead_code)]
+    pub fn flatten(root: &mut Option<Rc<RefCell<TreeNode>>>) {
+        if root.is_none() {
+            return;
+        }
+        let mut v: Vec<Option<Rc<RefCell<TreeNode>>>> = Vec::new();
+        // Initialize the vector
+        Self::pre_order_traverse(&mut v, root);
+        // Traverse the vector
+        let n = v.len();
+        for i in 0..n - 1 {
+            v[i].as_ref().unwrap().borrow_mut().left = None;
+            v[i].as_ref().unwrap().borrow_mut().right = v[i + 1].clone();
+        }
+    }
+
+    #[allow(dead_code)]
+    fn pre_order_traverse(
+        v: &mut Vec<Option<Rc<RefCell<TreeNode>>>>,
+        root: &Option<Rc<RefCell<TreeNode>>>,
+    ) {
+        if root.is_none() {
+            return;
+        }
+        v.push(root.clone());
+        let left = root.as_ref().unwrap().borrow().left.clone();
+        let right = root.as_ref().unwrap().borrow().right.clone();
+        Self::pre_order_traverse(v, &left);
+        Self::pre_order_traverse(v, &right);
+    }
+}
+```
+
+#### JavaScript
+
+```js
 /**
  * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
  */
-class Solution {
-public:
-    void flatten(TreeNode* root) {
-        while (root) {
-            if (root->left) {
-                TreeNode *pre = root->left;
-                while (pre->right) {
-                    pre = pre->right;
-                }
-                pre->right = root->right;
-                root->right = root->left;
-                root->left = nullptr;
+/**
+ * @param {TreeNode} root
+ * @return {void} Do not return anything, modify root in-place instead.
+ */
+var flatten = function (root) {
+    while (root) {
+        if (root.left) {
+            let pre = root.left;
+            while (pre.right) {
+                pre = pre.right;
             }
-            root = root->right;
+            pre.right = root.right;
+            root.right = root.left;
+            root.left = null;
         }
+        root = root.right;
     }
 };
 ```
 
-### **...**
+<!-- tabs:end -->
 
-```
+<!-- solution:end -->
 
+<!-- solution:start -->
+
+### 方法二
+
+<!-- tabs:start -->
+
+#### Go
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func flatten(root *TreeNode) {
+	for root != nil {
+		left, right := root.Left, root.Right
+		root.Left = nil
+		if left != nil {
+			root.Right = left
+			for left.Right != nil {
+				left = left.Right
+			}
+			left.Right = right
+		}
+		root = root.Right
+	}
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

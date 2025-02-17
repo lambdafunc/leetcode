@@ -1,15 +1,31 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1700-1799/1748.Sum%20of%20Unique%20Elements/README_EN.md
+rating: 1228
+source: Biweekly Contest 45 Q1
+tags:
+    - Array
+    - Hash Table
+    - Counting
+---
+
+<!-- problem:start -->
+
 # [1748. Sum of Unique Elements](https://leetcode.com/problems/sum-of-unique-elements)
 
 [中文文档](/solution/1700-1799/1748.Sum%20of%20Unique%20Elements/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>You are given an integer array <code>nums</code>. The unique elements of an array are the elements that appear <strong>exactly once</strong> in the array.</p>
 
 <p>Return <em>the <strong>sum</strong> of all the unique elements of </em><code>nums</code>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,2,3,2]
@@ -17,7 +33,7 @@
 <strong>Explanation:</strong> The unique elements are [1,3], and the sum is 4.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,1,1,1,1]
@@ -25,7 +41,7 @@
 <strong>Explanation:</strong> There are no unique elements, and the sum is 0.
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> nums = [1,2,3,4,5]
@@ -41,32 +57,38 @@
 	<li><code>1 &lt;= nums[i] &lt;= 100</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Solution:
     def sumOfUnique(self, nums: List[int]) -> int:
-        counter = Counter(nums)
-        return sum(num for num, cnt in counter.items() if cnt == 1)
+        cnt = Counter(nums)
+        return sum(x for x, v in cnt.items() if v == 1)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Solution {
     public int sumOfUnique(int[] nums) {
-        int[] counter = new int[101];
-        for (int num : nums) {
-            ++counter[num];
+        int[] cnt = new int[101];
+        for (int x : nums) {
+            ++cnt[x];
         }
         int ans = 0;
-        for (int i = 0; i < 101; ++i) {
-            if (counter[i] == 1) {
-                ans += i;
+        for (int x = 0; x < 101; ++x) {
+            if (cnt[x] == 1) {
+                ans += x;
             }
         }
         return ans;
@@ -74,85 +96,190 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     int sumOfUnique(vector<int>& nums) {
-        vector<int> counter(101);
-        for (int num : nums) ++ counter[num];
+        int cnt[101]{};
+        for (int& x : nums) {
+            ++cnt[x];
+        }
         int ans = 0;
-        for (int i = 0; i < 101; ++i)
-            if (counter[i] == 1)
-                ans += i;
+        for (int x = 0; x < 101; ++x) {
+            if (cnt[x] == 1) {
+                ans += x;
+            }
+        }
         return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-func sumOfUnique(nums []int) int {
-	counter := make([]int, 101)
-	for _, num := range nums {
-		counter[num]++
+func sumOfUnique(nums []int) (ans int) {
+	cnt := [101]int{}
+	for _, x := range nums {
+		cnt[x]++
 	}
-	ans := 0
-	for i := 0; i < 101; i++ {
-		if counter[i] == 1 {
-			ans += i
+	for x := 0; x < 101; x++ {
+		if cnt[x] == 1 {
+			ans += x
 		}
 	}
-	return ans
+	return
 }
 ```
 
-### **TypeScript**
+#### TypeScript
 
 ```ts
 function sumOfUnique(nums: number[]): number {
-    let res = 0;
-    const map = new Map();
-    for (const num of nums) {
-        if (map.has(num)) {
-            if (map.get(num)) {
-                map.set(num, false);
-                res -= num;
-            }
-        } else {
-            map.set(num, true);
-            res += num;
+    const cnt = new Array(101).fill(0);
+    for (const x of nums) {
+        ++cnt[x];
+    }
+    let ans = 0;
+    for (let x = 0; x < 101; ++x) {
+        if (cnt[x] == 1) {
+            ans += x;
         }
     }
-    return res;
+    return ans;
 }
 ```
 
-### **Rust**
-
-- Count
+#### Rust
 
 ```rust
 impl Solution {
     pub fn sum_of_unique(nums: Vec<i32>) -> i32 {
-        let mut arr = [0; 101];
-        for num in nums {
-            arr[num as usize] += 1;
+        let mut cnt = [0; 101];
+        for x in nums {
+            cnt[x as usize] += 1;
         }
-        let mut res = 0;
-        for i in 1..101 {
-            if arr[i] == 1 {
-                res += i;
+        let mut ans = 0;
+        for x in 1..101 {
+            if cnt[x] == 1 {
+                ans += x;
             }
         }
-        res as i32
+        ans as i32
     }
 }
 ```
 
-- HashMap
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param Integer[] $nums
+     * @return Integer
+     */
+    function sumOfUnique($nums) {
+        $sum = 0;
+        for ($i = 0; $i < count($nums); $i++) {
+            $hashtable[$nums[$i]] += 1;
+            if ($hashtable[$nums[$i]] == 1) {
+                $sum += $nums[$i];
+            }
+            if ($hashtable[$nums[$i]] == 2) {
+                $sum -= $nums[$i];
+            }
+        }
+        return $sum;
+    }
+}
+```
+
+<!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- solution:start -->
+
+### Solution 2
+
+<!-- tabs:start -->
+
+#### Java
+
+```java
+class Solution {
+    public int sumOfUnique(int[] nums) {
+        int ans = 0;
+        int[] cnt = new int[101];
+        for (int x : nums) {
+            if (++cnt[x] == 1) {
+                ans += x;
+            } else if (cnt[x] == 2) {
+                ans -= x;
+            }
+        }
+        return ans;
+    }
+}
+```
+
+#### C++
+
+```cpp
+class Solution {
+public:
+    int sumOfUnique(vector<int>& nums) {
+        int ans = 0;
+        int cnt[101]{};
+        for (int& x : nums) {
+            if (++cnt[x] == 1) {
+                ans += x;
+            } else if (cnt[x] == 2) {
+                ans -= x;
+            }
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+func sumOfUnique(nums []int) (ans int) {
+	cnt := [101]int{}
+	for _, x := range nums {
+		cnt[x]++
+		if cnt[x] == 1 {
+			ans += x
+		} else if cnt[x] == 2 {
+			ans -= x
+		}
+	}
+	return
+}
+```
+
+#### TypeScript
+
+```ts
+function sumOfUnique(nums: number[]): number {
+    let ans = 0;
+    const cnt = new Array(101).fill(0);
+    for (const x of nums) {
+        if (++cnt[x] === 1) {
+            ans += x;
+        } else if (cnt[x] === 2) {
+            ans -= x;
+        }
+    }
+    return ans;
+}
+```
+
+#### Rust
 
 ```rust
 use std::collections::HashMap;
@@ -177,10 +304,8 @@ impl Solution {
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -3,8 +3,20 @@
     "useTabs": false,
     "semi": true,
     "singleQuote": true,
-    "TrailingCooma": "all",
+    "trailingComma": "all",
+    "printWidth": 100,
     "bracketSpacing": true,
-    "jsxBracketSameLine": false,
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "phpVersion": "8.1",
+    "braceStyle": "1tbs",
+    "endOfLine": "lf",
+    "sqlKeywordCase": "upper",
+    "sqlCanonicalSyntax": false,
+    "overrides": [
+        {
+            "files": ["*.sql"],
+            "options": { "parser": "mysql" }
+        }
+    ],
+    "plugins": ["prettier-plugin-sql-cst", "@prettier/plugin-php"]
 }

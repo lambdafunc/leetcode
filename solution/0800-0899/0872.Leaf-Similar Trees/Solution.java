@@ -22,13 +22,16 @@ class Solution {
         return l1.equals(l2);
     }
 
-    private void dfs(TreeNode root, List<Integer> leaves) {
-        if (root == null) return;
-        if (root.left == null && root.right == null) {
-            leaves.add(root.val);
+    private void dfs(TreeNode root, List<Integer> nums) {
+        if (root.left == root.right) {
+            nums.add(root.val);
             return;
         }
-        dfs(root.left, leaves);
-        dfs(root.right, leaves);
+        if (root.left != null) {
+            dfs(root.left, nums);
+        }
+        if (root.right != null) {
+            dfs(root.right, nums);
+        }
     }
 }

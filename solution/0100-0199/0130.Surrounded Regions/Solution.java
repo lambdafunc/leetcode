@@ -1,41 +1,39 @@
 class Solution {
-    private int[] p;
-    private int[][] dirs = new int[][]{{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
+    private final int[] dirs = {-1, 0, 1, 0, -1};
+    private char[][] board;
+    private int m;
+    private int n;
 
     public void solve(char[][] board) {
-        int m = board.length, n = board[0].length;
-        p = new int[m * n + 1];
-        for (int i = 0; i < p.length; ++i) {
-            p[i] = i;
+        m = board.length;
+        n = board[0].length;
+        this.board = board;
+        for (int i = 0; i < m; ++i) {
+            dfs(i, 0);
+            dfs(i, n - 1);
+        }
+        for (int j = 0; j < n; ++j) {
+            dfs(0, j);
+            dfs(m - 1, j);
         }
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                if (board[i][j] == 'O') {
-                    if (i == 0 || j == 0 || i == m - 1 || j == n - 1) {
-                        p[find(i * n + j)] = find(m * n);
-                    } else {
-                        for (int[] e : dirs) {
-                            if (board[i + e[0]][j + e[1]] == 'O') {
-                                p[find(i * n + j)] = find((i + e[0]) * n + j + e[1]);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (board[i][j] == 'O' && find(i * n + j) != find(m * n)) {
+                if (board[i][j] == '.') {
+                    board[i][j] = 'O';
+                } else if (board[i][j] == 'O') {
                     board[i][j] = 'X';
                 }
             }
         }
     }
 
-    private int find(int x) {
-        if (p[x] != x) {
-            p[x] = find(p[x]);
+    private void dfs(int i, int j) {
+        if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] != 'O') {
+            return;
         }
-        return p[x];
+        board[i][j] = '.';
+        for (int k = 0; k < 4; ++k) {
+            dfs(i + dirs[k], j + dirs[k + 1]);
+        }
     }
 }

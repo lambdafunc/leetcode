@@ -1,14 +1,13 @@
 function findDisappearedNumbers(nums: number[]): number[] {
-    for (let i = 0; i < nums.length; i++) {
-        let idx = Math.abs(nums[i]) - 1;
-        if (nums[idx] > 0) {
-            nums[idx] *= -1;
-        }
+    const n = nums.length;
+    const s: boolean[] = new Array(n + 1).fill(false);
+    for (const x of nums) {
+        s[x] = true;
     }
-    let ans = [];
-    for (let i = 0; i < nums.length; i++) {
-        if (nums[i] > 0) {
-            ans.push(i + 1);
+    const ans: number[] = [];
+    for (let i = 1; i <= n; ++i) {
+        if (!s[i]) {
+            ans.push(i);
         }
     }
     return ans;
